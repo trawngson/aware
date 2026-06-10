@@ -28,11 +28,12 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
+<p align="center">
 <img src="https://i.postimg.cc/zX1kFc7d/Clean-Shot-2026-06-10-at-12-12-06-2x.png" alt="Login (Dark)" width="200"/>
 <img src="https://i.postimg.cc/tTxhh3xb/Clean-Shot-2026-06-10-at-12-14-00-2x.png" alt="Login (Light)" width="200"/>
 <img src="https://i.postimg.cc/26Z44QZf/Clean-Shot-2026-06-10-at-12-14-17-2x.png" alt="Homepage" width="200"/>
 <img src="https://i.postimg.cc/k5ZQ61Bg/Clean-Shot-2026-06-10-at-12-14-23-2x.png" alt="Log" width="200"/>
+</p>
 
 <p>AWARE (AI Waste-sorting and Recycling Enhancement) is a mobile AI application utilizing the YOLO framework to provide real-time, offline waste classification and actionable recycling instructions directly from live video footage. To drive community engagement, the platform features user dashboards equipped with a gamified streak system and an interactive local map showcasing nearby recycling activities. To ensure maximum classification accuracy, the underlying model is trained on a massive 150+ GB dataset pipeline that integrates the open-source TACO and COCO libraries across 50+ distinct waste categories.</p>
 
