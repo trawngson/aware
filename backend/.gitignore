@@ -1,0 +1,124 @@
+# Local OS/editor metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
+
+# Local instructions for AI coding assistants
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+COPILOT.md
+CURSOR.md
+AIDER.md
+.github/copilot-instructions.md
+.github/instructions/*.instructions.md
+.github/prompts/*.prompt.md
+.agents/**/*.md
+.codex/**/*.md
+.claude/**/*.md
+
+# Secrets and local environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+
+# Datasets and data directories (including downloaded or mounted data)
+data/
+datasets/
+dataset/
+**/data/
+**/datasets/
+**/dataset/
+raw_data/
+processed_data/
+artifacts/
+tests/fixtures/data/*
+!tests/fixtures/data/.gitkeep
+
+# Model checkpoints, weights, and training state
+checkpoints/
+**/checkpoints/
+weights/
+**/weights/
+runs/
+**/runs/
+training_runs/
+**/training_runs/
+models/
+**/models/
+
+# Generated outputs and experiment logs
+outputs/*
+!outputs/.gitkeep
+logs/
+**/logs/
+tensorboard/
+**/tensorboard/
+*.log
+
+# Weights & Biases and other experiment tracking state
+wandb/
+**/wandb/
+.wandb/
+wandb-metadata.json
+wandb-summary.json
+wandb-history.jsonl
+mlruns/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Python caches, test caches, and local environments
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.venv/
+venv/
+env/
+ENV/
+
+# Common large AI and serialized artifacts
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.safetensors
+*.bin
+*.pb
+*.tflite
+*.keras
+*.joblib
+*.parquet
+*.feather
+*.arrow
+
+# Temporary archives and generated bundles
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar

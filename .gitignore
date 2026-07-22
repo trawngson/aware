@@ -1,0 +1,26 @@
+# Local instructions for AI coding assistants
+**/AGENTS.md
+**/CLAUDE.md
+**/GEMINI.md
+**/COPILOT.md
+**/CURSOR.md
+**/AIDER.md
+.github/copilot-instructions.md
+.github/instructions/*.instructions.md
+.github/prompts/*.prompt.md
+**/.agents/**/*.md
+**/.codex/**/*.md
+**/.claude/**/*.md
+
+# Local backend planning, workflow, and paper notes
+/backend/*.md
+/backend/**/*.md
+
+# Local AI-assistant configuration
+**/.agents/
+**/.codex/
+**/.claude/
+
+# Local Xcode user state
+**/xcuserdata/
+*.xcuserstate

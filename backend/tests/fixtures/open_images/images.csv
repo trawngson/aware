@@ -1,0 +1,2 @@
+ImageID,RelativePath,Width,Height,GroupID,SHA256,Author,License,OriginalLandingURL
+abc,train/abc.jpg,640,480,capture-abc,0123456789abcdef,Fixture Author,https://creativecommons.org/licenses/by/2.0/,https://example.invalid/image/abc

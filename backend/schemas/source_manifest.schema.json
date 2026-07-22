@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aware.local/schemas/source_manifest.schema.json",
+  "title": "AWARE source manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "manifest_version",
+    "ontology_version",
+    "status",
+    "policy",
+    "sources"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "manifest_version": {"type": "string", "minLength": 1},
+    "ontology_version": {"type": "string", "minLength": 1},
+    "status": {"enum": ["draft", "approved_for_acquisition", "frozen", "retired"]},
+    "policy": {
+      "type": "object",
+      "required": [
+        "raw_data_immutable",
+        "remote_data_only",
+        "acquisition_requires_manual_review",
+        "unidentified_sources_allowed",
+        "approved_training_source_ids"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "role",
+          "approval_status",
+          "include_in_training",
+          "include_in_evaluation",
+          "owner",
+          "version",
+          "license",
+          "original_annotations",
+          "acquisition",
+          "preprocessing",
+          "augmentation",
+          "mapping_ledger_version",
+          "inventory_status",
+          "counts",
+          "limitations"
+        ],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+          "role": {"enum": ["training", "target_test", "legacy_evidence", "pretraining_only"]},
+          "approval_status": {"enum": ["approved", "planned", "conditional", "excluded"]},
+          "include_in_training": {"type": "boolean"},
+          "include_in_evaluation": {"type": "boolean"},
+          "license": {
+            "type": "object",
+            "required": ["name", "spdx", "attribution_required", "verification_status"]
+          },
+          "original_annotations": {
+            "type": "object",
+            "required": ["format", "class_count", "class_list_reference"]
+          },
+          "acquisition": {
+            "type": "object",
+            "required": ["method", "access_status", "raw_subdirectory", "expected_bytes", "checksum"]
+          },
+          "preprocessing": {"type": "array"},
+          "augmentation": {"type": "array"},
+          "limitations": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

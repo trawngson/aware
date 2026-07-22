@@ -1,0 +1,186 @@
+schema_version: "1.0"
+manifest_version: "aware-sources-v1"
+ontology_version: "aware-ontology-v1"
+status: approved_for_acquisition
+approved_on: "2026-07-22"
+policy:
+  raw_data_immutable: true
+  remote_data_only: true
+  acquisition_requires_manual_review: true
+  unidentified_sources_allowed: false
+  approved_training_source_ids:
+    - taco-v1.0
+    - open-images-v7-waste-subset
+
+sources:
+  - id: taco-v1.0
+    name: TACO - Trash Annotations in Context
+    role: training
+    approval_status: approved
+    include_in_training: true
+    include_in_evaluation: false
+    owner: Pedro F. Proenca and Pedro Simoes
+    stable_url: https://doi.org/10.5281/zenodo.3587843
+    version: v1.0
+    published_date: "2019-06-09"
+    accessed_date: "2026-07-22"
+    license:
+      name: Creative Commons Attribution 4.0 International
+      spdx: CC-BY-4.0
+      url: https://creativecommons.org/licenses/by/4.0/
+      attribution_required: true
+      verification_status: verified
+    original_annotations:
+      format: COCO instances with segmentation polygons
+      class_count: 60
+      class_list_reference: data/annotations.json within the pinned archive
+    acquisition:
+      method: manual_remote_download
+      access_status: public
+      raw_subdirectory: raw/taco/v1.0
+      expected_bytes: 2700000000
+      archive_name: TACO.zip
+      checksum:
+        algorithm: md5
+        value: e9149407d883e21a8d224feef8210920
+    preprocessing: []
+    augmentation: []
+    mapping_ledger_version: aware-mappings-v1
+    inventory_status: pending_remote_verification
+    counts:
+      images: 1500
+      annotations: 4784
+      source: published_paper
+    limitations:
+      - Outdoor litter domain differs from close handheld household scans.
+      - Several classes are rare and some material distinctions are visually ambiguous.
+      - Only the official reviewed annotations are allowed; unofficial weekly annotations are excluded.
+
+  - id: open-images-v7-waste-subset
+    name: Open Images V7 selected waste-related bounding-box subset
+    role: training
+    approval_status: approved
+    include_in_training: true
+    include_in_evaluation: false
+    owner: Google LLC and the credited image authors
+    stable_url: https://storage.googleapis.com/openimages/web/download_v7.html
+    version: V7 (October 2022 release)
+    published_date: "2022-10-25"
+    accessed_date: "2026-07-22"
+    license:
+      name: CC BY 4.0 annotations; images listed as CC BY 2.0
+      spdx: LicenseRef-OpenImages-V7-mixed
+      url: https://storage.googleapis.com/openimages/web/factsfigures_v7.html
+      attribution_required: true
+      verification_status: per_image_verification_required
+    original_annotations:
+      format: Open Images CSV normalized bounding boxes
+      class_count: 600
+      class_list_reference: https://storage.googleapis.com/openimages/v5/class-descriptions-boxable.csv
+    candidate_source_classes:
+      - Bottle
+      - Box
+      - Plastic bag
+      - Tin can
+    acquisition:
+      method: manual_remote_subset
+      access_status: public
+      raw_subdirectory: raw/open-images/v7-waste-subset
+      expected_bytes: null
+      checksum: null
+    preprocessing: []
+    augmentation: []
+    mapping_ledger_version: aware-mappings-v1
+    inventory_status: pending_remote_verification
+    counts:
+      images: null
+      annotations: null
+      source: selected_subset_inventory_pending
+    limitations:
+      - Source labels can be broader than the AWARE object classes and require mapping review.
+      - Open Images is partially annotated; unlabeled objects are not reliable negatives.
+      - Image licenses and attribution metadata must be verified and preserved per selected image.
+      - The subset must be deduplicated against TACO and the frozen smartphone test set.
+
+  - id: aware-smartphone-test-v1
+    name: AWARE newly captured smartphone-domain test set
+    role: target_test
+    approval_status: planned
+    include_in_training: false
+    include_in_evaluation: true
+    owner: AWARE project
+    stable_url: internal://aware-smartphone-test-v1
+    version: v1
+    published_date: null
+    accessed_date: null
+    license:
+      name: Internal research data; release decision pending
+      spdx: LicenseRef-AWARE-Internal
+      url: null
+      attribution_required: false
+      verification_status: pending
+    original_annotations:
+      format: canonical YOLO detection labels
+      class_count: 9
+      class_list_reference: ontology.yaml
+    acquisition:
+      method: manual_smartphone_capture_and_annotation
+      access_status: not_yet_collected
+      raw_subdirectory: raw/aware-smartphone-test/v1
+      expected_bytes: null
+      checksum: null
+    preprocessing: []
+    augmentation: []
+    mapping_ledger_version: aware-mappings-v1
+    inventory_status: planned
+    counts:
+      images: null
+      annotations: null
+      minimum_images_per_class: 10
+      minimum_total_images: 90
+    freeze_requirements:
+      frozen_before_model_comparison: true
+      capture_session_ids_required: true
+      original_files_immutable: true
+      augmentation_forbidden: true
+    limitations:
+      - Small test set intended for target-domain comparison, not training.
+      - Capture devices, sessions, lighting, and scenes must be recorded.
+
+  - id: legacy-unidentified-merge-v5.1
+    name: Unidentified legacy Roboflow and COCO merge
+    role: legacy_evidence
+    approval_status: excluded
+    include_in_training: false
+    include_in_evaluation: false
+    owner: unknown
+    stable_url: null
+    version: unrecoverable
+    published_date: null
+    accessed_date: null
+    license:
+      name: unknown
+      spdx: NOASSERTION
+      url: null
+      attribution_required: true
+      verification_status: failed
+    original_annotations:
+      format: mixed and incompletely recorded
+      class_count: null
+      class_list_reference: Baseline Record 1.md
+    acquisition:
+      method: preserved_in_place_only
+      access_status: existing_remote_evidence
+      raw_subdirectory: null
+      expected_bytes: null
+      checksum: null
+    preprocessing: []
+    augmentation: []
+    mapping_ledger_version: none
+    inventory_status: unrecoverable
+    counts:
+      images: null
+      annotations: null
+    limitations:
+      - Exact source projects, versions, licenses, mappings, and split history are unknown.
+      - Preserved only as an exploratory non-reproducible baseline.

@@ -1,0 +1,22 @@
+{
+  "MLModelVersionStringKey" : "8.4.19",
+  "MLModelDescriptionKey" : "Ultralytics YOLO26s model trained on awarev5-1\/data.yaml",
+  "MLModelCreatorDefinedKey" : {
+    "batch" : "1",
+    "com.github.apple.coremltools.version" : "9.0",
+    "names" : "{0: 'battery', 1: 'disposable cup', 2: 'glass', 3: 'metal can', 4: 'organics', 5: 'plastic bag', 6: 'plastic bottle', 7: 'plastic bottle cap', 8: 'plastic container', 9: 'plastic cutlery', 10: 'straw', 11: 'styrofoam', 12: 'toothbrush'}",
+    "imgsz" : "[640, 640]",
+    "docs" : "https:\/\/docs.ultralytics.com",
+    "com.github.apple.coremltools.conversion_date" : "2026-04-15",
+    "channels" : "3",
+    "stride" : "32",
+    "date" : "2026-04-15T06:00:17.073122",
+    "args" : "{'batch': 1, 'half': True, 'int8': False, 'dynamic': False, 'nms': False}",
+    "com.github.apple.coremltools.source_dialect" : "TorchScript",
+    "com.github.apple.coremltools.source" : "torch==2.9.0+cu128",
+    "task" : "detect",
+    "end2end" : "True"
+  },
+  "MLModelAuthorKey" : "Ultralytics",
+  "MLModelLicenseKey" : "AGPL-3.0 License (https:\/\/ultralytics.com\/license)"
+}

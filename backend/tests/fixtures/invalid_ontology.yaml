@@ -1,0 +1,11 @@
+schema_version: "1.0"
+ontology_version: broken-v1
+status: draft
+id_policy:
+  contiguous_from_zero: false
+  ids_are_never_reused: true
+global_annotation_rules:
+  bounding_box: visible pixels
+classes:
+  - id: 1
+    name: wrong_class

@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F23BD0482F8F61A600B44D11 /* aware.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = F23BD0472F8F61A600B44D11 /* aware.mlpackage */; };
+		F23BD04B2F8F651A00B44D11 /* OnboardingKit in Frameworks */ = {isa = PBXBuildFile; productRef = F23BD04A2F8F651A00B44D11 /* OnboardingKit */; };
+		F2A505E02F906BD80030B234 /* YOLO in Frameworks */ = {isa = PBXBuildFile; productRef = F2A505DF2F906BD80030B234 /* YOLO */; };
+		F2E334FD2F470FFB0066A9B2 /* Expandable in Frameworks */ = {isa = PBXBuildFile; productRef = F2E334FC2F470FFB0066A9B2 /* Expandable */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		F28AA3FA2F42F9CA00B1F978 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,12 +31,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F23BD0472F8F61A600B44D11 /* aware.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = aware.mlpackage; sourceTree = "<group>"; };
 		F28AA3EC2F42F9C900B1F978 /* awareapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = awareapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F28AA3F92F42F9CA00B1F978 /* awareappTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = awareappTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F28AA4032F42F9CA00B1F978 /* awareappUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = awareappUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		F25A66DD2F5D559C00756EEB /* UltralyticsYOLO */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = UltralyticsYOLO;
+			sourceTree = "<group>";
+		};
 		F28AA3EE2F42F9C900B1F978 /* awareapp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = awareapp;
@@ -52,6 +65,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F23BD04B2F8F651A00B44D11 /* OnboardingKit in Frameworks */,
+				F2A505E02F906BD80030B234 /* YOLO in Frameworks */,
+				F2E334FD2F470FFB0066A9B2 /* Expandable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,10 +91,12 @@
 		F28AA3E32F42F9C900B1F978 = {
 			isa = PBXGroup;
 			children = (
+				F25A66DD2F5D559C00756EEB /* UltralyticsYOLO */,
 				F28AA3EE2F42F9C900B1F978 /* awareapp */,
 				F28AA3FC2F42F9CA00B1F978 /* awareappTests */,
 				F28AA4062F42F9CA00B1F978 /* awareappUITests */,
 				F28AA3ED2F42F9C900B1F978 /* Products */,
+				F23BD0472F8F61A600B44D11 /* aware.mlpackage */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,10 +126,14 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				F25A66DD2F5D559C00756EEB /* UltralyticsYOLO */,
 				F28AA3EE2F42F9C900B1F978 /* awareapp */,
 			);
 			name = awareapp;
 			packageProductDependencies = (
+				F2E334FC2F470FFB0066A9B2 /* Expandable */,
+				F23BD04A2F8F651A00B44D11 /* OnboardingKit */,
+				F2A505DF2F906BD80030B234 /* YOLO */,
 			);
 			productName = awareapp;
 			productReference = F28AA3EC2F42F9C900B1F978 /* awareapp.app */;
@@ -195,6 +217,11 @@
 			);
 			mainGroup = F28AA3E32F42F9C900B1F978;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F2E334FB2F470FFB0066A9B2 /* XCRemoteSwiftPackageReference "Expandable" */,
+				F23BD0492F8F651A00B44D11 /* XCRemoteSwiftPackageReference "OnboardingKit" */,
+				F2A505DE2F906BD80030B234 /* XCRemoteSwiftPackageReference "yolo-ios-app" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F28AA3ED2F42F9C900B1F978 /* Products */;
 			projectDirPath = "";
@@ -236,6 +263,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F23BD0482F8F61A600B44D11 /* aware.mlpackage in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,11 +428,14 @@
 				DEVELOPMENT_TEAM = FD9TWN6KUN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = AWARE;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSCameraUsageDescription = "scan and identify waste";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -428,11 +459,14 @@
 				DEVELOPMENT_TEAM = FD9TWN6KUN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = AWARE;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSCameraUsageDescription = "scan and identify waste";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -558,6 +592,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F23BD0492F8F651A00B44D11 /* XCRemoteSwiftPackageReference "OnboardingKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielsaidi/OnboardingKit.git";
+			requirement = {
+				kind = exactVersion;
+				version = 9.1.0;
+			};
+		};
+		F2A505DE2F906BD80030B234 /* XCRemoteSwiftPackageReference "yolo-ios-app" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ultralytics/yolo-ios-app";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		F2E334FB2F470FFB0066A9B2 /* XCRemoteSwiftPackageReference "Expandable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ryanashcraft/Expandable.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F23BD04A2F8F651A00B44D11 /* OnboardingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F23BD0492F8F651A00B44D11 /* XCRemoteSwiftPackageReference "OnboardingKit" */;
+			productName = OnboardingKit;
+		};
+		F2A505DF2F906BD80030B234 /* YOLO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2A505DE2F906BD80030B234 /* XCRemoteSwiftPackageReference "yolo-ios-app" */;
+			productName = YOLO;
+		};
+		F2E334FC2F470FFB0066A9B2 /* Expandable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2E334FB2F470FFB0066A9B2 /* XCRemoteSwiftPackageReference "Expandable" */;
+			productName = Expandable;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F28AA3E42F42F9C900B1F978 /* Project object */;
 }

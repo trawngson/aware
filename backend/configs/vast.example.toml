@@ -1,0 +1,21 @@
+# VAST execution profile template.
+#
+# Set these variables in the existing remote Jupyter kernel environment using
+# approved, manual procedures. Keep the actual values out of this repository.
+# The placeholders below intentionally contain no server, username, or token.
+
+[project]
+name = "vast"
+code_root = "${PROJECT_CODE_ROOT}"
+data_root = "${PROJECT_DATA_ROOT}"
+output_root = "${PROJECT_OUTPUT_ROOT}"
+
+[training]
+dataset_mode = "existing_remote_data"
+max_samples = 0
+num_workers = 0
+validation_only = false
+
+[execution]
+requires_manual_cell_review = true
+remote_kernel_only = true

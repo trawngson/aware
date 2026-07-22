@@ -1,0 +1,35 @@
+schema_version: "1.0"
+manifest_version: broken-sources
+ontology_version: broken-v1
+policy:
+  raw_data_immutable: false
+  remote_data_only: false
+  acquisition_requires_manual_review: false
+  unidentified_sources_allowed: true
+  approved_training_source_ids:
+    - unknown-source
+sources:
+  - id: unknown-source
+    name: Unknown source
+    role: training
+    approval_status: approved
+    include_in_training: true
+    include_in_evaluation: true
+    owner: unknown
+    stable_url: null
+    version: unknown
+    license:
+      name: unknown
+      spdx: NOASSERTION
+      verification_status: failed
+    original_annotations:
+      format: unknown
+      class_list_reference: unknown
+    acquisition:
+      method: automatic_download
+      raw_subdirectory: ../../unsafe
+    preprocessing:
+      - resize
+    augmentation: []
+    mapping_ledger_version: none
+    limitations: []

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aware.local/schemas/ontology.schema.json",
+  "title": "AWARE canonical ontology",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "ontology_version",
+    "status",
+    "id_policy",
+    "global_annotation_rules",
+    "classes"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "ontology_version": {"type": "string", "minLength": 1},
+    "status": {"enum": ["draft", "frozen", "retired"]},
+    "id_policy": {
+      "type": "object",
+      "required": ["contiguous_from_zero", "ids_are_never_reused"],
+      "properties": {
+        "contiguous_from_zero": {"const": true},
+        "ids_are_never_reused": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "global_annotation_rules": {
+      "type": "object",
+      "required": [
+        "bounding_box",
+        "occlusion",
+        "truncation",
+        "damage",
+        "contamination",
+        "multiple_instances",
+        "ambiguity",
+        "caps"
+      ],
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
+    "classes": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "definition",
+          "positive",
+          "negative",
+          "ambiguity",
+          "attached_parts"
+        ],
+        "properties": {
+          "id": {"type": "integer", "minimum": 0, "maximum": 8},
+          "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+          "definition": {"type": "string", "minLength": 1},
+          "positive": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "negative": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "ambiguity": {"type": "string", "minLength": 1},
+          "attached_parts": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": true
+}

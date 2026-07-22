@@ -1,0 +1,392 @@
+schema_version: "1.0"
+mapping_ledger_version: aware-mappings-v1
+ontology_version: aware-ontology-v1
+status: initial_review
+expected_source_class_counts:
+  taco-v1.0: 60
+  open-images-v7-waste-subset: 4
+mappings:
+  - source: taco-v1.0
+    source_class: Clear plastic bottle
+    canonical_class: plastic_bottle
+    action: safe_merge
+    reason: Source label explicitly identifies both the material and bottle form.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Glass bottle
+    canonical_class: glass_container
+    action: safe_merge
+    reason: Glass bottle is fully contained by the canonical glass-container definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Drink can
+    canonical_class: metal_can
+    action: safe_merge
+    reason: Drink cans meet the canonical metal-can definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Disposable plastic cup
+    canonical_class: disposable_cup
+    action: safe_merge
+    reason: Material-specific source class is contained by the material-neutral cup class.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Other plastic cup
+    canonical_class: disposable_cup
+    action: manual_review
+    reason: Reusable cups must be excluded.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Styrofoam piece
+    canonical_class: styrofoam
+    action: safe_merge
+    reason: Source meaning matches ontology v1 when the minimum-size rule passes.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Plastic bottle cap
+    canonical_class: null
+    action: reject
+    reason: Loose caps are outside ontology v1.
+    review_status: approved
+  - source: open-images-v7-waste-subset
+    source_class: Bottle
+    canonical_class: null
+    action: manual_review
+    reason: The source class does not identify glass versus plastic.
+    review_status: unresolved
+  - source: open-images-v7-waste-subset
+    source_class: Box
+    canonical_class: null
+    action: manual_review
+    reason: The source class does not guarantee cardboard material.
+    review_status: unresolved
+  - source: open-images-v7-waste-subset
+    source_class: Plastic bag
+    canonical_class: plastic_bag
+    action: safe_merge
+    reason: Source name matches the canonical material and object form.
+    review_status: representative_samples_required
+  - source: open-images-v7-waste-subset
+    source_class: Tin can
+    canonical_class: metal_can
+    action: safe_merge
+    reason: Tin cans are included in the canonical metal-can definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Aluminium foil
+    canonical_class: null
+    action: reject
+    reason: Foil is not a metal can.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Battery
+    canonical_class: battery
+    action: safe_merge
+    reason: The source class is the same household object category.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Aluminium blister pack
+    canonical_class: null
+    action: reject
+    reason: Blister packs are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Carded blister pack
+    canonical_class: null
+    action: reject
+    reason: Mixed-material blister packs are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Other plastic bottle
+    canonical_class: plastic_bottle
+    action: safe_merge
+    reason: The source label identifies both plastic material and bottle form.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Metal bottle cap
+    canonical_class: null
+    action: reject
+    reason: Loose caps are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Broken glass
+    canonical_class: null
+    action: reject
+    reason: Loose glass fragments are not glass containers.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Food Can
+    canonical_class: metal_can
+    action: safe_merge
+    reason: Food cans meet the canonical metal-can definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Aerosol
+    canonical_class: metal_can
+    action: manual_review
+    reason: Include only examples with a clearly metallic can form.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Toilet tube
+    canonical_class: null
+    action: reject
+    reason: Paper tubes are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Other carton
+    canonical_class: cardboard
+    action: manual_review
+    reason: Carton material and packaging form require inspection.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Egg carton
+    canonical_class: cardboard
+    action: manual_review
+    reason: Foam egg cartons must not be mapped to cardboard.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Drink carton
+    canonical_class: cardboard
+    action: manual_review
+    reason: Composite drink cartons require material-policy review.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Corrugated carton
+    canonical_class: cardboard
+    action: safe_merge
+    reason: Corrugated cartons meet the canonical cardboard definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Meal carton
+    canonical_class: cardboard
+    action: manual_review
+    reason: Meal cartons may be plastic-coated or made from other materials.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Pizza box
+    canonical_class: cardboard
+    action: safe_merge
+    reason: Pizza boxes retain cardboard class even when soiled.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Paper cup
+    canonical_class: disposable_cup
+    action: safe_merge
+    reason: Paper cups are disposable cups under the material-neutral definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Foam cup
+    canonical_class: disposable_cup
+    action: safe_merge
+    reason: Foam cups are disposable cups under the material-neutral definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Glass cup
+    canonical_class: null
+    action: reject
+    reason: Reusable glassware is excluded from disposable_cup.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Food waste
+    canonical_class: null
+    action: reject
+    reason: Food waste is outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Glass jar
+    canonical_class: glass_container
+    action: safe_merge
+    reason: Glass jars meet the canonical glass-container definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Plastic lid
+    canonical_class: null
+    action: reject
+    reason: Loose lids are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Metal lid
+    canonical_class: null
+    action: reject
+    reason: Loose lids are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Other plastic
+    canonical_class: null
+    action: reject
+    reason: A broad material label cannot identify an ontology v1 object form.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Magazine paper
+    canonical_class: null
+    action: reject
+    reason: Paper is not cardboard packaging.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Tissues
+    canonical_class: null
+    action: reject
+    reason: Tissues are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Wrapping paper
+    canonical_class: null
+    action: reject
+    reason: Wrapping paper is outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Normal paper
+    canonical_class: null
+    action: reject
+    reason: Paper is not cardboard packaging.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Paper bag
+    canonical_class: null
+    action: reject
+    reason: Paper bags are not plastic bags.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Plastified paper bag
+    canonical_class: plastic_bag
+    action: manual_review
+    reason: Mixed paper-plastic bags require material inspection.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Plastic film
+    canonical_class: plastic_bag
+    action: manual_review
+    reason: Loose film without a bag or pouch form must be rejected.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Six pack rings
+    canonical_class: null
+    action: reject
+    reason: Six-pack rings are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Garbage bag
+    canonical_class: plastic_bag
+    action: safe_merge
+    reason: Garbage bags meet the flexible plastic bag definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Other plastic wrapper
+    canonical_class: plastic_bag
+    action: manual_review
+    reason: Include only wrappers with a clear bag or pouch form.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Single-use carrier bag
+    canonical_class: plastic_bag
+    action: safe_merge
+    reason: Single-use plastic carrier bags match the canonical class.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Polypropylene bag
+    canonical_class: plastic_bag
+    action: safe_merge
+    reason: Polypropylene bags meet the material and object-form definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Crisp packet
+    canonical_class: plastic_bag
+    action: manual_review
+    reason: Include only flexible packets with a pouch form; reject flat fragments.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Spread tub
+    canonical_class: plastic_container
+    action: safe_merge
+    reason: Rigid spread tubs meet the plastic-container definition.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Tupperware
+    canonical_class: plastic_container
+    action: safe_merge
+    reason: Rigid reusable plastic storage boxes match the visual object class.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Disposable food container
+    canonical_class: plastic_container
+    action: manual_review
+    reason: Source examples may include non-plastic materials.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Foam food container
+    canonical_class: styrofoam
+    action: manual_review
+    reason: Include only expanded-polystyrene foam examples.
+    review_status: unresolved
+  - source: taco-v1.0
+    source_class: Other plastic container
+    canonical_class: plastic_container
+    action: safe_merge
+    reason: The source label identifies rigid plastic container form.
+    review_status: representative_samples_required
+  - source: taco-v1.0
+    source_class: Plastic glooves
+    canonical_class: null
+    action: reject
+    reason: Gloves are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Plastic utensils
+    canonical_class: null
+    action: reject
+    reason: Cutlery is outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Pop tab
+    canonical_class: null
+    action: reject
+    reason: Loose tabs are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Rope & strings
+    canonical_class: null
+    action: reject
+    reason: Rope and string are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Scrap metal
+    canonical_class: null
+    action: reject
+    reason: Scrap metal is not a metal can.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Shoe
+    canonical_class: null
+    action: reject
+    reason: Shoes are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Squeezable tube
+    canonical_class: null
+    action: reject
+    reason: Tubes are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Plastic straw
+    canonical_class: null
+    action: reject
+    reason: Straws are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Paper straw
+    canonical_class: null
+    action: reject
+    reason: Straws are outside ontology v1.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Unlabeled litter
+    canonical_class: null
+    action: reject
+    reason: Unlabeled litter cannot be forced into a canonical class.
+    review_status: approved
+  - source: taco-v1.0
+    source_class: Cigarette
+    canonical_class: null
+    action: reject
+    reason: Cigarettes are outside ontology v1.
+    review_status: approved

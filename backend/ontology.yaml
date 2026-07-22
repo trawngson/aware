@@ -1,0 +1,162 @@
+schema_version: "1.0"
+ontology_version: "aware-ontology-v1"
+status: frozen
+frozen_on: "2026-07-22"
+task: object_detection
+id_policy:
+  contiguous_from_zero: true
+  ids_are_never_reused: true
+runtime_outcomes_not_classes:
+  - unknown
+  - abstain
+  - no_detection
+
+global_annotation_rules:
+  bounding_box: >-
+    Draw one tight axis-aligned box around the visible pixels of each accepted
+    object. Do not guess the hidden extent of an occluded object.
+  occlusion: >-
+    Annotate when at least 25 percent is visible and the class is still clear.
+    Send less-visible or uncertain cases to manual review; reject if identity
+    cannot be established.
+  truncation: >-
+    Annotate an object cut by the image edge when the class is clear and at
+    least 25 percent of the object is visible. Box only the visible region.
+  damage: >-
+    Annotate crushed, dented, torn, or broken objects when their original class
+    is still visually clear. Reject isolated fragments that have lost the
+    defining object shape, except styrofoam pieces allowed by class rule 8.
+  contamination: >-
+    Dirt, residue, labels, and small contents do not change the visual class.
+    Reject or manually review an object when contamination hides the features
+    needed to identify it.
+  multiple_instances: >-
+    Annotate each separable object with its own box. Do not draw one box around
+    a pile unless individual boundaries cannot be separated; such a pile is
+    rejected from automatic training and sent to manual review.
+  ambiguity: >-
+    Never force a label. If material or object form cannot be distinguished
+    using visible evidence, use manual_review; reject it if review cannot
+    resolve the class.
+  minimum_visibility: >-
+    Reject objects that remain too small to identify at a 640 by 640 training
+    view. As a review guide, either box dimension below 12 pixels after resize
+    requires manual review.
+  caps: >-
+    An attached cap belongs to a plastic_bottle box and gets no separate box.
+    A loose cap is outside ontology v1 and is rejected.
+
+classes:
+  - id: 0
+    name: plastic_bottle
+    definition: A rigid plastic bottle with a neck narrower than its body.
+    positive:
+      - PET beverage and water bottles
+      - rigid shampoo, detergent, and personal-care bottles
+      - crushed bottles whose neck and bottle form remain identifiable
+    negative:
+      - glass bottles
+      - rigid tubs, trays, and wide-mouth food containers
+      - flexible drink pouches and plastic bags
+      - loose bottle caps
+    ambiguity: Manual review when plastic material or bottle form is unclear.
+    attached_parts: Include an attached cap in the bottle box; do not box it separately.
+
+  - id: 1
+    name: glass_container
+    definition: A glass bottle or jar made to hold household contents.
+    positive:
+      - beverage and food glass bottles
+      - glass jars
+      - intact or damaged containers whose glass container form is clear
+    negative:
+      - drinking glasses, stemware, windows, mirrors, and light bulbs
+      - plastic bottles that only look transparent
+      - unidentifiable glass shards
+    ambiguity: Manual review when glass cannot be distinguished from clear plastic.
+    attached_parts: Include an attached lid or cap; do not box it separately.
+
+  - id: 2
+    name: metal_can
+    definition: An aluminum or steel food, beverage, or household product can.
+    positive:
+      - beverage cans
+      - food tins and cans
+      - aerosol cans when the cylindrical can form is clear
+    negative:
+      - foil, trays, pots, cups, scrap metal, and loose metal lids
+      - composite cartons with a metallic lining
+    ambiguity: Manual review when a cylindrical object may be plastic or when can form is lost.
+    attached_parts: Include an attached pull tab or lid in the can box.
+
+  - id: 3
+    name: cardboard
+    definition: Corrugated or paperboard box material and recognizable packaging made from it.
+    positive:
+      - shipping and product boxes
+      - flattened cartons with recognizable cardboard packaging form
+      - clean or soiled cardboard packaging
+    negative:
+      - loose office paper, books, tissues, and disposable paper cups
+      - plastic-coated drink cartons unless cardboard structure is visually clear
+    ambiguity: Manual review when paper and cardboard cannot be distinguished.
+    attached_parts: Include attached flaps; box separate detached pieces only if individually recognizable.
+
+  - id: 4
+    name: plastic_container
+    definition: A rigid plastic package that is not primarily a bottle.
+    positive:
+      - food tubs, takeaway boxes, trays, clamshells, and rigid jars
+      - rigid plastic cups with a storage-container form
+    negative:
+      - plastic bottles, flexible bags or film, disposable drink cups, and styrofoam
+      - broad source labels named only plastic without an object-form review
+    ambiguity: Manual review when rigidity, material, or bottle-versus-container form is unclear.
+    attached_parts: Include an attached lid; a separate loose lid is outside ontology v1.
+
+  - id: 5
+    name: plastic_bag
+    definition: A flexible plastic carrier bag, produce bag, pouch, or film bag.
+    positive:
+      - shopping and grocery bags
+      - transparent produce bags
+      - flexible plastic pouches whose bag form is clear
+    negative:
+      - rigid plastic packaging, wrappers without a bag form, fabric bags, and paper bags
+    ambiguity: Manual review when plastic film cannot be distinguished from paper, fabric, or loose wrapping.
+    attached_parts: Handles are included in the same box.
+
+  - id: 6
+    name: disposable_cup
+    definition: A single-use drinking cup of paper, plastic, or foam.
+    positive:
+      - takeaway coffee cups
+      - single-use cold-drink cups
+      - crushed cups whose rim and cup form remain identifiable
+    negative:
+      - reusable mugs, glassware, bowls, tubs, and cup lids by themselves
+    ambiguity: Keep the class material-neutral; review when reusable and disposable forms cannot be distinguished.
+    attached_parts: Include an attached lid; reject a loose lid.
+
+  - id: 7
+    name: battery
+    definition: A recognizable household electrochemical battery.
+    positive:
+      - AA, AAA, C, D, 9-volt, button-cell, and removable household battery packs
+      - damaged or leaking batteries when safe imagery already exists
+    negative:
+      - power banks, phones, vehicle batteries, electronics, and battery packaging
+    ambiguity: Manual review when the object may be a capacitor, electronic part, or power bank.
+    attached_parts: Do not box a battery still enclosed inside an electronic device.
+
+  - id: 8
+    name: styrofoam
+    definition: Expanded polystyrene foam packaging, foodware, or identifiable pieces.
+    positive:
+      - foam protective packaging
+      - foam trays, cups, and takeaway boxes when foam texture is clear
+      - broken foam pieces at least 20 pixels on their shortest side after 640 resize
+    negative:
+      - polyurethane sponge, paper, bubble wrap, and other plastic foam of unclear type
+    ambiguity: Manual review when expanded-polystyrene texture is not visible.
+    attached_parts: Annotate separable pieces individually; reject unseparable piles.

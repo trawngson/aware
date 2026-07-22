@@ -1,0 +1,16 @@
+# Local development profile.
+#
+# Keep this profile code-only and small. The relative paths intentionally stay
+# inside this project. Do not replace them with a VAST path on the Mac.
+
+[project]
+name = "local"
+code_root = "."
+data_root = "tests/fixtures"
+output_root = "outputs"
+
+[training]
+dataset_mode = "synthetic_or_fixture"
+max_samples = 8
+num_workers = 0
+validation_only = true

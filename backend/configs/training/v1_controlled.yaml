@@ -1,0 +1,45 @@
+schema_version: "1.0"
+configuration_id: aware-yolo26-v1-controlled
+approval_status: approved
+approved_on: "2026-07-22"
+
+hardware:
+  accelerator: NVIDIA A100
+  device: 0
+  gpu_count: 1
+
+training:
+  imgsz: 640
+  epochs: 200
+  patience: 40
+  batch: 64
+  optimizer: AdamW
+  lr0: 0.001
+  seed: 26
+  deterministic: true
+  workers: 8
+  amp: true
+  cache: false
+  rect: false
+  multi_scale: 0.0
+  cos_lr: false
+  close_mosaic: 10
+  pretrained: true
+  save: true
+  save_period: 10
+  plots: true
+  val: true
+  fraction: 1.0
+
+smoke_test:
+  epochs: 1
+  fraction: 0.02
+
+comparison_policy:
+  models:
+    - yolo26n.pt
+    - yolo26s.pt
+  use_identical_settings: true
+  batch_failure_action: lower_batch_for_both_models
+  epoch_300_policy: requires_new_approval_after_reviewing_200_epoch_curves
+
