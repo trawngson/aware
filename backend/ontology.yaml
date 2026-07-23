@@ -1,7 +1,12 @@
 schema_version: "1.0"
-ontology_version: "aware-ontology-v1"
+ontology_version: "aware-ontology-v2"
 status: frozen
-frozen_on: "2026-07-22"
+frozen_on: "2026-07-23"
+supersedes: "aware-ontology-v1"
+revision_reason: >-
+  Battery was deferred before dataset release because the approved sources
+  provide only two usable bounding boxes. No model or dataset release used the
+  superseded numeric IDs.
 task: object_detection
 id_policy:
   contiguous_from_zero: true
@@ -25,7 +30,7 @@ global_annotation_rules:
   damage: >-
     Annotate crushed, dented, torn, or broken objects when their original class
     is still visually clear. Reject isolated fragments that have lost the
-    defining object shape, except styrofoam pieces allowed by class rule 8.
+    defining object shape, except styrofoam pieces allowed by class rule 7.
   contamination: >-
     Dirt, residue, labels, and small contents do not change the visual class.
     Reject or manually review an object when contamination hides the features
@@ -44,7 +49,7 @@ global_annotation_rules:
     requires manual review.
   caps: >-
     An attached cap belongs to a plastic_bottle box and gets no separate box.
-    A loose cap is outside ontology v1 and is rejected.
+    A loose cap is outside ontology v2 and is rejected.
 
 classes:
   - id: 0
@@ -112,7 +117,7 @@ classes:
       - plastic bottles, flexible bags or film, disposable drink cups, and styrofoam
       - broad source labels named only plastic without an object-form review
     ambiguity: Manual review when rigidity, material, or bottle-versus-container form is unclear.
-    attached_parts: Include an attached lid; a separate loose lid is outside ontology v1.
+    attached_parts: Include an attached lid; a separate loose lid is outside ontology v2.
 
   - id: 5
     name: plastic_bag
@@ -139,17 +144,6 @@ classes:
     attached_parts: Include an attached lid; reject a loose lid.
 
   - id: 7
-    name: battery
-    definition: A recognizable household electrochemical battery.
-    positive:
-      - AA, AAA, C, D, 9-volt, button-cell, and removable household battery packs
-      - damaged or leaking batteries when safe imagery already exists
-    negative:
-      - power banks, phones, vehicle batteries, electronics, and battery packaging
-    ambiguity: Manual review when the object may be a capacitor, electronic part, or power bank.
-    attached_parts: Do not box a battery still enclosed inside an electronic device.
-
-  - id: 8
     name: styrofoam
     definition: Expanded polystyrene foam packaging, foodware, or identifiable pieces.
     positive:

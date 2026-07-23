@@ -26,8 +26,8 @@ class ExperimentRecordTests(unittest.TestCase):
             "run_kind": "full",
             "status": "planned",
             "model": "yolo26n.pt",
-            "ontology_version": "aware-ontology-v1",
-            "source_manifest_version": "aware-sources-v1",
+            "ontology_version": "aware-ontology-v2",
+            "source_manifest_version": "aware-sources-v2",
             "split_version": "aware-splits-v1",
             "code_revision": "0123456789abcdef",
             "training": {
@@ -54,8 +54,8 @@ class ExperimentRecordTests(unittest.TestCase):
             "run_kind": "full",
             "status": "planned",
             "model": "yolo26s.pt",
-            "ontology_version": "aware-ontology-v1",
-            "source_manifest_version": "aware-sources-v1",
+            "ontology_version": "aware-ontology-v2",
+            "source_manifest_version": "aware-sources-v2",
             "split_version": "aware-splits-v1",
             "code_revision": "0123456789abcdef",
             "training": {
@@ -75,6 +75,35 @@ class ExperimentRecordTests(unittest.TestCase):
 
         self.assertFalse(result.ok)
         self.assertIn("training.epochs", result.render("experiment"))
+
+    def test_retired_ontology_version_is_rejected(self) -> None:
+        record = {
+            "schema_version": "1.0",
+            "run_id": "e3-yolo26n-seed26",
+            "run_kind": "smoke",
+            "status": "planned",
+            "model": "yolo26n.pt",
+            "ontology_version": "aware-ontology-v1",
+            "source_manifest_version": "aware-sources-v2",
+            "split_version": "aware-splits-v1",
+            "code_revision": "0123456789abcdef",
+            "training": {
+                "image_size": 640,
+                "seed": 26,
+                "deterministic": True,
+                "epochs": 1,
+                "patience": 40,
+                "batch": 64,
+                "optimizer": "AdamW",
+                "initial_learning_rate": 0.001,
+                "config_file": "configs/training/v1_controlled.yaml",
+            },
+        }
+
+        result = validate_experiment_record(record)
+
+        self.assertFalse(result.ok)
+        self.assertIn("ontology_version", result.render("experiment"))
 
 
 if __name__ == "__main__":

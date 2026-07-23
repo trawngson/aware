@@ -36,7 +36,7 @@ class OntologyValidationTests(unittest.TestCase):
         result = validate_ontology(changed)
 
         self.assertFalse(result.ok)
-        self.assertIn("exactly 0 through 8", result.render("ontology"))
+        self.assertIn("exactly 0 through 7", result.render("ontology"))
 
     def test_small_invalid_fixture_reports_missing_rules_and_classes(self) -> None:
         document = load_yaml_mapping(FIXTURES / "invalid_ontology.yaml")
@@ -45,7 +45,7 @@ class OntologyValidationTests(unittest.TestCase):
 
         self.assertFalse(result.ok)
         self.assertIn("global_annotation_rules.occlusion", result.render("ontology"))
-        self.assertIn("exactly nine classes", result.render("ontology"))
+        self.assertIn("exactly 8 classes", result.render("ontology"))
 
 
 class SourceManifestValidationTests(unittest.TestCase):

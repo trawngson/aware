@@ -126,12 +126,12 @@ class AuditTests(unittest.TestCase):
     def test_missing_required_class_is_reported(self) -> None:
         report = audit_canonical_images(
             [sample_image("only-bottle")],
-            required_classes=("plastic_bottle", "battery"),
+            required_classes=("plastic_bottle", "styrofoam"),
         )
 
         self.assertFalse(report.ok)
         self.assertIn("missing_required_class", report.render())
-        self.assertIn("battery", report.render())
+        self.assertIn("styrofoam", report.render())
 
     def test_corrupt_image_is_reported_when_full_verification_is_enabled(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

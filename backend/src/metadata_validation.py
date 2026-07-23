@@ -25,9 +25,10 @@ EXPECTED_CLASSES = (
     "plastic_container",
     "plastic_bag",
     "disposable_cup",
-    "battery",
     "styrofoam",
 )
+EXPECTED_ONTOLOGY_VERSION = "aware-ontology-v2"
+EXPECTED_SOURCE_MANIFEST_VERSION = "aware-sources-v2"
 
 REQUIRED_GLOBAL_RULES = (
     "bounding_box",
@@ -132,10 +133,15 @@ def validate_ontology(document: Mapping[str, Any]) -> MetadataValidationResult:
 
     if document.get("schema_version") != "1.0":
         issues.append(MetadataIssue("schema_version", "must equal '1.0'"))
-    if not _nonempty_text(document.get("ontology_version")):
-        issues.append(MetadataIssue("ontology_version", "must be non-empty"))
+    if document.get("ontology_version") != EXPECTED_ONTOLOGY_VERSION:
+        issues.append(
+            MetadataIssue(
+                "ontology_version",
+                f"must equal {EXPECTED_ONTOLOGY_VERSION!r}",
+            )
+        )
     if document.get("status") != "frozen":
-        issues.append(MetadataIssue("status", "ontology v1 must be frozen"))
+        issues.append(MetadataIssue("status", "current ontology must be frozen"))
 
     id_policy = document.get("id_policy")
     if not isinstance(id_policy, Mapping):
@@ -161,7 +167,12 @@ def validate_ontology(document: Mapping[str, Any]) -> MetadataValidationResult:
             tuple(issues + [MetadataIssue("classes", "must be a list")])
         )
     if len(classes) != len(EXPECTED_CLASSES):
-        issues.append(MetadataIssue("classes", "must contain exactly nine classes"))
+        issues.append(
+            MetadataIssue(
+                "classes",
+                f"must contain exactly {len(EXPECTED_CLASSES)} classes",
+            )
+        )
 
     ids: list[Any] = []
     names: list[Any] = []
@@ -185,7 +196,12 @@ def validate_ontology(document: Mapping[str, Any]) -> MetadataValidationResult:
                 )
 
     if ids != list(range(len(EXPECTED_CLASSES))):
-        issues.append(MetadataIssue("classes[*].id", "must be exactly 0 through 8 in order"))
+        issues.append(
+            MetadataIssue(
+                "classes[*].id",
+                f"must be exactly 0 through {len(EXPECTED_CLASSES) - 1} in order",
+            )
+        )
     if names != list(EXPECTED_CLASSES):
         issues.append(
             MetadataIssue(
@@ -223,6 +239,13 @@ def validate_source_manifest(
         issues.append(MetadataIssue("schema_version", "must equal '1.0'"))
     if not _nonempty_text(document.get("manifest_version")):
         issues.append(MetadataIssue("manifest_version", "must be non-empty"))
+    elif document.get("manifest_version") != EXPECTED_SOURCE_MANIFEST_VERSION:
+        issues.append(
+            MetadataIssue(
+                "manifest_version",
+                f"must equal {EXPECTED_SOURCE_MANIFEST_VERSION!r}",
+            )
+        )
     if ontology_version and document.get("ontology_version") != ontology_version:
         issues.append(MetadataIssue("ontology_version", "must match ontology.yaml"))
 
@@ -362,8 +385,17 @@ def validate_source_manifest(
                 issues.append(MetadataIssue(prefix, "target test must be evaluation-only"))
             if not isinstance(counts, Mapping) or counts.get("minimum_images_per_class", 0) < 10:
                 issues.append(MetadataIssue(f"{prefix}.counts", "must require at least 10 images per class"))
-            if not isinstance(counts, Mapping) or counts.get("minimum_total_images", 0) < 90:
-                issues.append(MetadataIssue(f"{prefix}.counts", "must require at least 90 images total"))
+            minimum_total = 10 * len(EXPECTED_CLASSES)
+            if (
+                not isinstance(counts, Mapping)
+                or counts.get("minimum_total_images", 0) < minimum_total
+            ):
+                issues.append(
+                    MetadataIssue(
+                        f"{prefix}.counts",
+                        f"must require at least {minimum_total} images total",
+                    )
+                )
             if not isinstance(freeze, Mapping) or freeze.get("frozen_before_model_comparison") is not True:
                 issues.append(MetadataIssue(f"{prefix}.freeze_requirements", "must freeze before comparison"))
 

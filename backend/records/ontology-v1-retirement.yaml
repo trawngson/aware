@@ -1,0 +1,28 @@
+schema_version: "1.0"
+ontology_version: aware-ontology-v1
+status: retired_before_dataset_release
+original_frozen_on: "2026-07-22"
+retired_on: "2026-07-23"
+last_code_revision: 8d8e60db3a5cccc8647c980ebb940305e568060c
+reason: >-
+  Battery had only two TACO bounding boxes and no Open Images V7 boxable
+  detection class. It was therefore not defensible for backend v1 training.
+released_models_using_this_ontology: 0
+released_datasets_using_this_ontology: 0
+classes:
+  0: plastic_bottle
+  1: glass_container
+  2: metal_can
+  3: cardboard
+  4: plastic_container
+  5: plastic_bag
+  6: disposable_cup
+  7: battery
+  8: styrofoam
+superseded_by: aware-ontology-v2
+breaking_id_change:
+  old:
+    7: battery
+    8: styrofoam
+  new:
+    7: styrofoam

@@ -1,8 +1,8 @@
 schema_version: "1.0"
-manifest_version: "aware-sources-v1"
-ontology_version: "aware-ontology-v1"
+manifest_version: "aware-sources-v2"
+ontology_version: "aware-ontology-v2"
 status: approved_for_acquisition
-approved_on: "2026-07-22"
+approved_on: "2026-07-23"
 policy:
   raw_data_immutable: true
   remote_data_only: true
@@ -60,7 +60,7 @@ sources:
     derived_release_transforms:
       - Apply EXIF orientation only while materializing derived release images; never modify raw files.
     augmentation: []
-    mapping_ledger_version: aware-mappings-v1
+    mapping_ledger_version: aware-mappings-v2
     inventory_status: raw_files_verified_remote
     counts:
       images: 1500
@@ -69,6 +69,7 @@ sources:
     limitations:
       - Outdoor litter domain differs from close handheld household scans.
       - Several classes are rare and some material distinctions are visually ambiguous.
+      - Battery is excluded from ontology v2; TACO provides only two battery boxes.
       - Only the official reviewed annotations are allowed; unofficial weekly annotations are excluded.
       - Current images were acquired from author-declared Flickr URLs rather than the fixed Zenodo archive; exact per-file hashes must be frozen before release.
 
@@ -106,7 +107,7 @@ sources:
       checksum: null
     preprocessing: []
     augmentation: []
-    mapping_ledger_version: aware-mappings-v1
+    mapping_ledger_version: aware-mappings-v2
     inventory_status: pending_remote_verification
     counts:
       images: null
@@ -137,7 +138,7 @@ sources:
       verification_status: pending
     original_annotations:
       format: canonical YOLO detection labels
-      class_count: 9
+      class_count: 8
       class_list_reference: ontology.yaml
     acquisition:
       method: manual_smartphone_capture_and_annotation
@@ -147,13 +148,13 @@ sources:
       checksum: null
     preprocessing: []
     augmentation: []
-    mapping_ledger_version: aware-mappings-v1
+    mapping_ledger_version: aware-mappings-v2
     inventory_status: planned
     counts:
       images: null
       annotations: null
       minimum_images_per_class: 10
-      minimum_total_images: 90
+      minimum_total_images: 80
     freeze_requirements:
       frozen_before_model_comparison: true
       capture_session_ids_required: true

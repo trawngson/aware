@@ -5,7 +5,12 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from .metadata_validation import MetadataIssue, MetadataValidationResult
+from .metadata_validation import (
+    EXPECTED_ONTOLOGY_VERSION,
+    EXPECTED_SOURCE_MANIFEST_VERSION,
+    MetadataIssue,
+    MetadataValidationResult,
+)
 
 
 def validate_experiment_record(document: Mapping[str, Any]) -> MetadataValidationResult:
@@ -23,6 +28,15 @@ def validate_experiment_record(document: Mapping[str, Any]) -> MetadataValidatio
         value = document.get(field)
         if not isinstance(value, str) or not value.strip() or "replace-before-run" in value:
             issues.append(MetadataIssue(field, "must be recorded before a run"))
+    expected_versions = {
+        "ontology_version": EXPECTED_ONTOLOGY_VERSION,
+        "source_manifest_version": EXPECTED_SOURCE_MANIFEST_VERSION,
+    }
+    for field, expected in expected_versions.items():
+        value = document.get(field)
+        if isinstance(value, str) and value.strip() and "replace-before-run" not in value:
+            if value != expected:
+                issues.append(MetadataIssue(field, f"must equal {expected!r}"))
     if document.get("model") not in {"yolo26n.pt", "yolo26s.pt"}:
         issues.append(MetadataIssue("model", "must be yolo26n.pt or yolo26s.pt"))
     if document.get("status") not in {"planned", "running", "completed", "failed", "cancelled"}:

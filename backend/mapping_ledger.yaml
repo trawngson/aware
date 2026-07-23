@@ -1,6 +1,6 @@
 schema_version: "1.0"
-mapping_ledger_version: aware-mappings-v1
-ontology_version: aware-ontology-v1
+mapping_ledger_version: aware-mappings-v2
+ontology_version: aware-ontology-v2
 status: initial_review
 expected_source_class_counts:
   taco-v1.0: 60
@@ -80,10 +80,10 @@ mappings:
     review_status: approved
   - source: taco-v1.0
     source_class: Battery
-    canonical_class: battery
-    action: safe_merge
-    reason: The source class is the same household object category.
-    review_status: representative_samples_required
+    canonical_class: null
+    action: reject
+    reason: Battery is deferred from ontology v2 because approved sources provide only two boxes.
+    review_status: approved
   - source: taco-v1.0
     source_class: Aluminium blister pack
     canonical_class: null

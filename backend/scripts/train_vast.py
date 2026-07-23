@@ -15,7 +15,12 @@ from pathlib import Path
 from typing import Any
 
 from src.experiment_records import validate_experiment_record
-from src.metadata_validation import EXPECTED_CLASSES, load_yaml_mapping
+from src.metadata_validation import (
+    EXPECTED_CLASSES,
+    EXPECTED_ONTOLOGY_VERSION,
+    EXPECTED_SOURCE_MANIFEST_VERSION,
+    load_yaml_mapping,
+)
 from src.project_paths import PathConfigurationError, ProjectPaths, require_path_within
 from src.training_config import APPROVED_MODELS, training_arguments, validate_training_config
 from src.validation import validate_environment
@@ -140,8 +145,8 @@ def main() -> int:
         "run_kind": "smoke" if args.smoke else "full",
         "status": "running",
         "model": weights.name,
-        "ontology_version": "aware-ontology-v1",
-        "source_manifest_version": "aware-sources-v1",
+        "ontology_version": EXPECTED_ONTOLOGY_VERSION,
+        "source_manifest_version": EXPECTED_SOURCE_MANIFEST_VERSION,
         "split_version": split_version,
         "code_revision": args.code_revision,
         "training": {
