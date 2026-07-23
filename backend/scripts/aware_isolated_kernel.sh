@@ -59,10 +59,6 @@ set +e
   --symlink usr/lib /lib \
   --symlink usr/lib64 /lib64 \
   --dev /dev \
-  --perms 0666 --mknod c 195 0 /dev/nvidia0 \
-  --perms 0666 --mknod c 195 255 /dev/nvidiactl \
-  --perms 0666 --mknod c 509 0 /dev/nvidia-uvm \
-  --perms 0666 --mknod c 509 1 /dev/nvidia-uvm-tools \
   --proc /proc \
   --dir /etc \
   --ro-bind-try /etc/ld.so.cache /etc/ld.so.cache \
@@ -81,32 +77,40 @@ set +e
   --symlink "${PROJECT_ROOT}/.vast/tmp" /var/tmp \
   --ro-bind /dev/null /usr/bin/python3.12 \
   --chdir "${PROJECT_ROOT}" \
-  /usr/bin/setpriv \
-  --reuid "${TRAIN_UID}" \
-  --regid "${TRAIN_GID}" \
-  --clear-groups \
-  --no-new-privs \
-  --bounding-set=-all \
-  --inh-caps=-all \
-  --ambient-caps=-all \
-  /usr/bin/env -i \
-  HOME="${PROJECT_ROOT}/.train-home" \
-  USER=train \
-  LOGNAME=train \
-  SHELL=/bin/bash \
-  VIRTUAL_ENV="${VENV_ROOT}" \
-  PATH="${VENV_ROOT}/bin:/usr/local/cuda/bin:/usr/bin:/bin" \
-  LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/lib/x86_64-linux-gnu \
-  PYTHONNOUSERSITE=1 \
-  PIP_REQUIRE_VIRTUALENV=true \
-  TMPDIR="${PROJECT_ROOT}/.vast/tmp" \
-  JUPYTER_RUNTIME_DIR="${SANDBOX_RUNTIME}" \
-  PROJECT_CODE_ROOT="${PROJECT_ROOT}" \
-  PROJECT_DATA_ROOT="${PROJECT_ROOT}/.vast/data" \
-  PROJECT_OUTPUT_ROOT="${PROJECT_ROOT}/.vast/output" \
-  CUDA_VISIBLE_DEVICES=0 \
-  NVIDIA_VISIBLE_DEVICES=0 \
-  "${VENV_PYTHON}" -m ipykernel_launcher -f "${sandbox_connection}"
+  /bin/bash -c '
+    set -Eeuo pipefail
+    /usr/bin/mknod -m 0666 /dev/nvidia0 c 195 0
+    /usr/bin/mknod -m 0666 /dev/nvidiactl c 195 255
+    /usr/bin/mknod -m 0666 /dev/nvidia-uvm c 509 0
+    /usr/bin/mknod -m 0666 /dev/nvidia-uvm-tools c 509 1
+    exec /usr/bin/setpriv \
+      --reuid 999 \
+      --regid 989 \
+      --clear-groups \
+      --no-new-privs \
+      --bounding-set=-all \
+      --inh-caps=-all \
+      --ambient-caps=-all \
+      /usr/bin/env -i \
+      HOME=/mnt/data/Son/notebook/AWARE/.train-home \
+      USER=train \
+      LOGNAME=train \
+      SHELL=/bin/bash \
+      VIRTUAL_ENV=/mnt/data/Son/notebook/AWARE/.venv \
+      PATH=/mnt/data/Son/notebook/AWARE/.venv/bin:/usr/local/cuda/bin:/usr/bin:/bin \
+      LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/lib/x86_64-linux-gnu \
+      PYTHONNOUSERSITE=1 \
+      PIP_REQUIRE_VIRTUALENV=true \
+      TMPDIR=/mnt/data/Son/notebook/AWARE/.vast/tmp \
+      JUPYTER_RUNTIME_DIR=/mnt/data/Son/notebook/AWARE/.vast/runtime \
+      PROJECT_CODE_ROOT=/mnt/data/Son/notebook/AWARE \
+      PROJECT_DATA_ROOT=/mnt/data/Son/notebook/AWARE/.vast/data \
+      PROJECT_OUTPUT_ROOT=/mnt/data/Son/notebook/AWARE/.vast/output \
+      CUDA_VISIBLE_DEVICES=0 \
+      NVIDIA_VISIBLE_DEVICES=0 \
+      /mnt/data/Son/notebook/AWARE/.venv/bin/python \
+      -m ipykernel_launcher -f "$1"
+  ' aware-isolated-kernel "${sandbox_connection}"
 kernel_status=$?
 set -e
 
