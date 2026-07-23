@@ -20,7 +20,8 @@ sources:
     include_in_training: true
     include_in_evaluation: false
     owner: Pedro F. Proenca and Pedro Simoes
-    stable_url: https://doi.org/10.5281/zenodo.3587843
+    stable_url: https://github.com/pedropro/TACO/tree/ad8a693f16c0bab2208786c6e97e1075546400d5
+    archival_record_url: https://doi.org/10.5281/zenodo.3587843
     version: v1.0
     published_date: "2019-06-09"
     accessed_date: "2026-07-22"
@@ -33,28 +34,43 @@ sources:
     original_annotations:
       format: COCO instances with segmentation polygons
       class_count: 60
-      class_list_reference: data/annotations.json within the pinned archive
+      class_list_reference: author-github/data/annotations.json at the pinned commit
     acquisition:
-      method: manual_remote_download
+      method: manual_remote_pinned_author_repository
       access_status: public
       raw_subdirectory: raw/taco/v1.0
       expected_bytes: 2700000000
-      archive_name: TACO.zip
+      repository_url: https://github.com/pedropro/TACO
+      repository_tag: "1.0"
+      repository_commit: ad8a693f16c0bab2208786c6e97e1075546400d5
+      downloader: download.py from the pinned repository commit
+      image_delivery: Original Flickr URLs declared in the official annotations
       checksum:
-        algorithm: md5
-        value: e9149407d883e21a8d224feef8210920
+        algorithm: sha256
+        scope: author-github/data/annotations.json
+        value: ac1ec605c9e1fcda767970de3457c69b4a43b62c02aca8c4c80f51d1b5ae8449
+      archival_record:
+        archive_name: TACO.zip
+        expected_bytes: 2719810615
+        checksum:
+          algorithm: md5
+          value: e9149407d883e21a8d224feef8210920
+        used_for_current_raw_acquisition: false
     preprocessing: []
+    derived_release_transforms:
+      - Apply EXIF orientation only while materializing derived release images; never modify raw files.
     augmentation: []
     mapping_ledger_version: aware-mappings-v1
-    inventory_status: pending_remote_verification
+    inventory_status: raw_files_verified_remote
     counts:
       images: 1500
       annotations: 4784
-      source: published_paper
+      source: remote_full_file_audit_2026-07-23
     limitations:
       - Outdoor litter domain differs from close handheld household scans.
       - Several classes are rare and some material distinctions are visually ambiguous.
       - Only the official reviewed annotations are allowed; unofficial weekly annotations are excluded.
+      - Current images were acquired from author-declared Flickr URLs rather than the fixed Zenodo archive; exact per-file hashes must be frozen before release.
 
   - id: open-images-v7-waste-subset
     name: Open Images V7 selected waste-related bounding-box subset

@@ -8,7 +8,7 @@ from pathlib import Path
 from src.adapters import adapt_open_images_csv, adapt_taco_coco
 from src.audit import audit_canonical_images
 from src.canonical_data import CanonicalAnnotation, CanonicalImage, NormalizedBox
-from src.dedup import exact_duplicate_groups, perceptual_duplicate_groups
+from src.dedup import difference_hash, exact_duplicate_groups, perceptual_duplicate_groups
 from src.mappings import MappingTable, validate_mapping_ledger
 from src.metadata_validation import load_yaml_mapping
 from src.splitting import assign_group_aware_splits, find_leakage
@@ -149,6 +149,29 @@ class AuditTests(unittest.TestCase):
 
 
 class DeduplicationAndSplitTests(unittest.TestCase):
+    def test_perceptual_hash_uses_visual_exif_orientation(self) -> None:
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            portrait = Image.new("L", (8, 16))
+            for y in range(16):
+                for x in range(8):
+                    portrait.putpixel((x, y), (x * 31 + y * 7) % 256)
+            upright_path = root / "upright.png"
+            portrait.save(upright_path)
+
+            stored_sideways = portrait.transpose(Image.Transpose.ROTATE_90)
+            exif = Image.Exif()
+            exif[274] = 6
+            sideways_path = root / "sideways.png"
+            stored_sideways.save(sideways_path, exif=exif)
+
+            self.assertEqual(
+                difference_hash(upright_path),
+                difference_hash(sideways_path),
+            )
+
     def test_exact_and_perceptual_duplicate_groups(self) -> None:
         exact = exact_duplicate_groups({"a": "one", "b": "one", "c": "two"})
         perceptual = perceptual_duplicate_groups(

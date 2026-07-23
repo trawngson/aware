@@ -13,6 +13,7 @@ import yaml
 from .audit import DatasetAuditReport
 from .canonical_data import CanonicalImage, ExclusionEvent, image_to_dict
 from .dedup import difference_hash, perceptual_duplicate_groups, sha256_file
+from .image_files import materialize_exif_oriented_copy
 from .metadata_validation import EXPECTED_CLASSES
 from .splitting import LeakageViolation
 
@@ -68,7 +69,7 @@ def write_yolo_release(
     leakage_violations: Sequence[LeakageViolation],
     exclusions: Sequence[ExclusionEvent] = (),
 ) -> Path:
-    """Write one new release with symlinks to immutable raw images."""
+    """Write one new release without modifying immutable raw images."""
 
     output = Path(destination)
     if output.exists():
@@ -94,7 +95,24 @@ def write_yolo_release(
         filename = _release_filename(image)
         source_path = (source_roots[image.source_id] / image.relative_path).resolve()
         image_link = output / "images" / split / filename
-        os.symlink(source_path, image_link)
+        source_orientation = materialize_exif_oriented_copy(
+            source_path,
+            image_link,
+            expected_size=(image.width, image.height),
+        )
+        if source_orientation is None:
+            os.symlink(source_path, image_link)
+            release_image = {
+                "mode": "raw_symlink",
+                "exif_transposed": False,
+                "source_exif_orientation": 1,
+            }
+        else:
+            release_image = {
+                "mode": "derived_copy",
+                "exif_transposed": True,
+                "source_exif_orientation": source_orientation,
+            }
         label_path = output / "labels" / split / f"{Path(filename).stem}.txt"
         with label_path.open("x", encoding="utf-8") as handle:
             for annotation in image.annotations:
@@ -106,6 +124,7 @@ def write_yolo_release(
         record = image_to_dict(image)
         record["split"] = split
         record["release_filename"] = filename
+        record["release_image"] = release_image
         record["duplicate_group"] = duplicate_groups.get(image.image_id)
         release_images.append(record)
 

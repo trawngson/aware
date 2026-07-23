@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
 
 import yaml
+from PIL import Image
 
 from src.audit import audit_canonical_images
 from src.canonical_data import CanonicalAnnotation, CanonicalImage, NormalizedBox
@@ -18,7 +20,7 @@ class ReleaseTests(unittest.TestCase):
             source = root / "source"
             source.mkdir()
             image_file = source / "image.jpg"
-            image_file.write_bytes(b"fixture")
+            Image.new("RGB", (100, 100), "white").save(image_file)
             image = CanonicalImage(
                 image_id="fixture:1",
                 source_id="fixture",
@@ -69,6 +71,75 @@ class ReleaseTests(unittest.TestCase):
                     duplicate_groups={},
                     leakage_violations=(),
                 )
+
+    def test_release_normalizes_exif_orientation_without_changing_raw_image(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            source = root / "source"
+            source.mkdir()
+            image_file = source / "portrait.jpg"
+            exif = Image.Exif()
+            exif[274] = 6
+            Image.new("RGB", (40, 20), "blue").save(image_file, exif=exif)
+            image = CanonicalImage(
+                image_id="fixture:portrait",
+                source_id="fixture",
+                source_version="v1",
+                relative_path="portrait.jpg",
+                width=20,
+                height=40,
+                group_id="capture-portrait",
+                annotations=(
+                    CanonicalAnnotation(
+                        "1",
+                        "Clear plastic bottle",
+                        0,
+                        "plastic_bottle",
+                        NormalizedBox(0.1, 0.2, 0.5, 0.8),
+                    ),
+                ),
+            )
+            audit = audit_canonical_images(
+                [image],
+                source_roots={"fixture": source},
+                verify_image_files=True,
+            )
+            self.assertTrue(audit.ok, audit.render())
+
+            destination = root / "release"
+            write_yolo_release(
+                [image],
+                {"fixture:portrait": "train"},
+                {"fixture": source},
+                destination,
+                release_id="fixture-oriented-v1",
+                seed=26,
+                audit_report=audit,
+                duplicate_groups={},
+                leakage_violations=(),
+            )
+
+            released = next((destination / "images" / "train").iterdir())
+            self.assertFalse(released.is_symlink())
+            with Image.open(released) as opened:
+                self.assertEqual(opened.size, (20, 40))
+                self.assertEqual(opened.getexif().get(274, 1), 1)
+            with Image.open(image_file) as opened:
+                self.assertEqual(opened.size, (40, 20))
+                self.assertEqual(opened.getexif().get(274), 6)
+
+            manifest_line = (
+                destination / "manifests" / "canonical_images.jsonl"
+            ).read_text(encoding="utf-8")
+            record = json.loads(manifest_line)
+            self.assertEqual(
+                record["release_image"],
+                {
+                    "mode": "derived_copy",
+                    "exif_transposed": True,
+                    "source_exif_orientation": 6,
+                },
+            )
 
 
 if __name__ == "__main__":

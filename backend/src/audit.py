@@ -87,18 +87,17 @@ def audit_canonical_images(
                     )
                 elif verify_image_files:
                     try:
-                        from PIL import Image
+                        from .image_files import visually_oriented_size
 
-                        with Image.open(image_path) as opened:
-                            actual_size = opened.size
-                            opened.verify()
+                        actual_size = visually_oriented_size(image_path)
                         if actual_size != (image.width, image.height):
                             findings.append(
                                 AuditFinding(
                                     "error",
                                     "dimension_mismatch",
                                     image.image_id,
-                                    f"metadata={(image.width, image.height)} file={actual_size}",
+                                    f"metadata={(image.width, image.height)} "
+                                    f"visually_oriented_file={actual_size}",
                                 )
                             )
                     except (OSError, ValueError) as error:

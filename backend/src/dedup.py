@@ -19,11 +19,12 @@ def sha256_file(path: str | Path, *, chunk_size: int = 1024 * 1024) -> str:
 def difference_hash(path: str | Path, *, hash_size: int = 8) -> str:
     """Return a small dHash. Pillow is imported only when this check is run."""
 
-    from PIL import Image
+    from PIL import Image, ImageOps
 
     with Image.open(path) as image:
-        grayscale = image.convert("L").resize((hash_size + 1, hash_size))
-        pixels = list(grayscale.getdata())
+        oriented = ImageOps.exif_transpose(image)
+        grayscale = oriented.convert("L").resize((hash_size + 1, hash_size))
+        pixels = list(grayscale.get_flattened_data())
     bits = []
     row_width = hash_size + 1
     for row in range(hash_size):
