@@ -208,6 +208,30 @@ def render_review_sheets(
             ]
         )
     (output / "index.html").write_text("\n".join(html) + "\n", encoding="utf-8")
+
+    if rendered:
+        opened = [Image.open(path) for path in rendered]
+        try:
+            composite_width = max(image.width for image in opened)
+            composite_height = sum(image.height for image in opened)
+            composite = Image.new(
+                "RGB",
+                (composite_width, composite_height),
+                (230, 230, 230),
+            )
+            offset_y = 0
+            for image in opened:
+                composite.paste(image, (0, offset_y))
+                offset_y += image.height
+            composite.save(
+                output / "complete-review.jpg",
+                format="JPEG",
+                quality=90,
+                optimize=True,
+            )
+        finally:
+            for image in opened:
+                image.close()
     return tuple(rendered)
 
 

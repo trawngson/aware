@@ -26,6 +26,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--images", required=True)
     parser.add_argument("--seed", type=int, default=26)
     parser.add_argument("--samples-per-class", type=int, default=12)
+    parser.add_argument(
+        "--source-class",
+        action="append",
+        default=[],
+        help=(
+            "exact unresolved manual-review source class; repeat for multiple "
+            "classes. When omitted, review pending proposed-safe mappings."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -47,21 +56,50 @@ def main() -> int:
         raise ValueError(f"image root is not a directory: {image_root}")
 
     ledger = load_yaml_mapping(paths.project_root / "mapping_ledger.yaml")
-    safe_mappings = [
-        entry
-        for entry in ledger["mappings"]
-        if entry["source"] == "taco-v1.0"
-        and entry["action"] in {"keep", "safe_merge"}
-        and entry["review_status"] == "representative_samples_required"
+    taco_mappings = [
+        entry for entry in ledger["mappings"] if entry["source"] == "taco-v1.0"
     ]
-    safe_classes = [entry["source_class"] for entry in safe_mappings]
+    if args.source_class:
+        if len(args.source_class) != len(set(args.source_class)):
+            raise ValueError("source classes must not be repeated")
+        requested = set(args.source_class)
+        review_mappings = [
+            entry
+            for entry in taco_mappings
+            if entry["source_class"] in requested
+        ]
+        found = {entry["source_class"] for entry in review_mappings}
+        missing = sorted(requested - found)
+        if missing:
+            raise ValueError(f"source classes are absent from ledger: {missing}")
+        invalid = [
+            entry["source_class"]
+            for entry in review_mappings
+            if entry["action"] != "manual_review"
+            or entry["review_status"] != "unresolved"
+        ]
+        if invalid:
+            raise ValueError(
+                "explicit source classes must be unresolved manual mappings: "
+                f"{sorted(invalid)}"
+            )
+    else:
+        review_mappings = [
+            entry
+            for entry in taco_mappings
+            if entry["action"] in {"keep", "safe_merge"}
+            and entry["review_status"] == "representative_samples_required"
+        ]
+
+    source_classes = [entry["source_class"] for entry in review_mappings]
     target_classes = {
-        entry["source_class"]: entry["canonical_class"] for entry in safe_mappings
+        entry["source_class"]: entry["canonical_class"]
+        for entry in review_mappings
     }
     document = load_coco_document(annotation_file)
     selected = select_review_samples(
         document,
-        safe_classes,
+        source_classes,
         seed=args.seed,
         samples_per_class=args.samples_per_class,
     )
@@ -80,9 +118,10 @@ def main() -> int:
         ),
     )
     print(f"review directory: {destination}")
-    print(f"safe source classes: {len(rendered)}")
+    print(f"source classes: {len(rendered)}")
     print(f"selected annotations: {sum(len(items) for items in selected.values())}")
     print(f"index: {destination / 'index.html'}")
+    print(f"complete review: {destination / 'complete-review.jpg'}")
     return 0
 
 

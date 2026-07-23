@@ -71,6 +71,7 @@ class MappingReviewTests(unittest.TestCase):
             self.assertEqual(len(rendered), 1)
             self.assertTrue(rendered[0].is_file())
             self.assertTrue((destination / "index.html").is_file())
+            self.assertTrue((destination / "complete-review.jpg").is_file())
             with self.assertRaises(FileExistsError):
                 render_review_sheets(samples, images, destination)
 
