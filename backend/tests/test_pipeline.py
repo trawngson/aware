@@ -60,6 +60,37 @@ class MappingAndAdapterTests(unittest.TestCase):
 
         self.assertTrue(result.ok, result.render("mapping ledger"))
 
+    def test_only_reviewed_taco_safe_mappings_are_approved(self) -> None:
+        approved_taco = [
+            entry
+            for entry in self.ledger["mappings"]
+            if entry["source"] == "taco-v1.0"
+            and entry["action"] == "safe_merge"
+            and entry["review_status"] == "approved"
+        ]
+        open_images_safe = [
+            entry
+            for entry in self.ledger["mappings"]
+            if entry["source"] == "open-images-v7-waste-subset"
+            and entry["action"] == "safe_merge"
+        ]
+        battery = next(
+            entry
+            for entry in self.ledger["mappings"]
+            if entry["source"] == "taco-v1.0"
+            and entry["source_class"] == "Battery"
+        )
+
+        self.assertEqual(len(approved_taco), 18)
+        self.assertTrue(
+            all(
+                entry["review_status"] == "representative_samples_required"
+                for entry in open_images_safe
+            )
+        )
+        self.assertEqual(battery["action"], "reject")
+        self.assertIsNone(battery["canonical_class"])
+
     def test_included_mapping_requires_a_canonical_class(self) -> None:
         changed = copy.deepcopy(self.ledger)
         changed["mappings"][0]["canonical_class"] = None

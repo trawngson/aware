@@ -1,7 +1,7 @@
 schema_version: "1.0"
 mapping_ledger_version: aware-mappings-v2
 ontology_version: aware-ontology-v2
-status: initial_review
+status: taco_review_complete
 expected_source_class_counts:
   taco-v1.0: 60
   open-images-v7-waste-subset: 4
@@ -11,25 +11,25 @@ mappings:
     canonical_class: plastic_bottle
     action: safe_merge
     reason: Source label explicitly identifies both the material and bottle form.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Glass bottle
     canonical_class: glass_container
     action: safe_merge
     reason: Glass bottle is fully contained by the canonical glass-container definition.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Drink can
     canonical_class: metal_can
     action: safe_merge
     reason: Drink cans meet the canonical metal-can definition.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Disposable plastic cup
     canonical_class: disposable_cup
     action: safe_merge
     reason: Material-specific source class is contained by the material-neutral cup class.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Other plastic cup
     canonical_class: disposable_cup
@@ -41,7 +41,7 @@ mappings:
     canonical_class: styrofoam
     action: safe_merge
     reason: Source meaning matches ontology v1 when the minimum-size rule passes.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Plastic bottle cap
     canonical_class: null
@@ -101,7 +101,7 @@ mappings:
     canonical_class: plastic_bottle
     action: safe_merge
     reason: The source label identifies both plastic material and bottle form.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Metal bottle cap
     canonical_class: null
@@ -119,7 +119,7 @@ mappings:
     canonical_class: metal_can
     action: safe_merge
     reason: Food cans meet the canonical metal-can definition.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Aerosol
     canonical_class: metal_can
@@ -155,7 +155,7 @@ mappings:
     canonical_class: cardboard
     action: safe_merge
     reason: Corrugated cartons meet the canonical cardboard definition.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Meal carton
     canonical_class: cardboard
@@ -167,19 +167,19 @@ mappings:
     canonical_class: cardboard
     action: safe_merge
     reason: Pizza boxes retain cardboard class even when soiled.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Paper cup
     canonical_class: disposable_cup
     action: safe_merge
     reason: Paper cups are disposable cups under the material-neutral definition.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Foam cup
     canonical_class: disposable_cup
     action: safe_merge
     reason: Foam cups are disposable cups under the material-neutral definition.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Glass cup
     canonical_class: null
@@ -197,7 +197,7 @@ mappings:
     canonical_class: glass_container
     action: safe_merge
     reason: Glass jars meet the canonical glass-container definition.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Plastic lid
     canonical_class: null
@@ -269,7 +269,7 @@ mappings:
     canonical_class: plastic_bag
     action: safe_merge
     reason: Garbage bags meet the flexible plastic bag definition.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Other plastic wrapper
     canonical_class: plastic_bag
@@ -281,13 +281,13 @@ mappings:
     canonical_class: plastic_bag
     action: safe_merge
     reason: Single-use plastic carrier bags match the canonical class.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Polypropylene bag
     canonical_class: plastic_bag
     action: safe_merge
     reason: Polypropylene bags meet the material and object-form definition.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Crisp packet
     canonical_class: plastic_bag
@@ -299,13 +299,13 @@ mappings:
     canonical_class: plastic_container
     action: safe_merge
     reason: Rigid spread tubs meet the plastic-container definition.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Tupperware
     canonical_class: plastic_container
     action: safe_merge
     reason: Rigid reusable plastic storage boxes match the visual object class.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Disposable food container
     canonical_class: plastic_container
@@ -323,7 +323,7 @@ mappings:
     canonical_class: plastic_container
     action: safe_merge
     reason: The source label identifies rigid plastic container form.
-    review_status: representative_samples_required
+    review_status: approved
   - source: taco-v1.0
     source_class: Plastic glooves
     canonical_class: null
