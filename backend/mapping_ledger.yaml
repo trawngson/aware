@@ -135,21 +135,21 @@ mappings:
   - source: taco-v1.0
     source_class: Other carton
     canonical_class: cardboard
-    action: manual_review
-    reason: Carton material and packaging form require inspection.
-    review_status: unresolved
+    action: safe_merge
+    reason: The approved deterministic review showed paperboard packaging consistent with the cardboard class.
+    review_status: approved
   - source: taco-v1.0
     source_class: Egg carton
-    canonical_class: cardboard
-    action: manual_review
-    reason: Foam egg cartons must not be mapped to cardboard.
-    review_status: unresolved
+    canonical_class: null
+    action: reject
+    reason: The approved review showed mixed paperboard, foam, and plastic materials that cannot be separated by the source label.
+    review_status: approved
   - source: taco-v1.0
     source_class: Drink carton
-    canonical_class: cardboard
-    action: manual_review
-    reason: Composite drink cartons require material-policy review.
-    review_status: unresolved
+    canonical_class: null
+    action: reject
+    reason: Composite drink cartons are not reliably cardboard under the v2 ontology.
+    review_status: approved
   - source: taco-v1.0
     source_class: Corrugated carton
     canonical_class: cardboard
@@ -159,9 +159,9 @@ mappings:
   - source: taco-v1.0
     source_class: Meal carton
     canonical_class: cardboard
-    action: manual_review
-    reason: Meal cartons may be plastic-coated or made from other materials.
-    review_status: unresolved
+    action: safe_merge
+    reason: The approved deterministic review showed cardboard and paperboard meal packaging consistent with the canonical class.
+    review_status: approved
   - source: taco-v1.0
     source_class: Pizza box
     canonical_class: cardboard
@@ -315,9 +315,9 @@ mappings:
   - source: taco-v1.0
     source_class: Foam food container
     canonical_class: styrofoam
-    action: manual_review
-    reason: Include only expanded-polystyrene foam examples.
-    review_status: unresolved
+    action: safe_merge
+    reason: The approved deterministic review showed expanded-polystyrene food containers consistent with the styrofoam class.
+    review_status: approved
   - source: taco-v1.0
     source_class: Other plastic container
     canonical_class: plastic_container
