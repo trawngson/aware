@@ -86,7 +86,7 @@ class MappingAndAdapterTests(unittest.TestCase):
             and entry["source_class"] == "Battery"
         )
 
-        self.assertEqual(len(approved_taco), 21)
+        self.assertEqual(len(approved_taco), 18)
         self.assertTrue(
             all(
                 entry["review_status"] == "representative_samples_required"

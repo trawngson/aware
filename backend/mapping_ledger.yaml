@@ -1,6 +1,6 @@
 schema_version: "1.0"
-mapping_ledger_version: aware-mappings-v2
-ontology_version: aware-ontology-v2
+mapping_ledger_version: aware-mappings-v3
+ontology_version: aware-ontology-v3
 status: taco_review_complete
 expected_source_class_counts:
   taco-v1.0: 60
@@ -296,22 +296,22 @@ mappings:
     review_status: unresolved
   - source: taco-v1.0
     source_class: Spread tub
-    canonical_class: plastic_container
-    action: safe_merge
-    reason: Rigid spread tubs meet the plastic-container definition.
+    canonical_class: null
+    action: reject
+    reason: Plastic container was deferred from ontology v3 before dataset release.
     review_status: approved
   - source: taco-v1.0
     source_class: Tupperware
-    canonical_class: plastic_container
-    action: safe_merge
-    reason: Rigid reusable plastic storage boxes match the visual object class.
+    canonical_class: null
+    action: reject
+    reason: Plastic container was deferred from ontology v3 before dataset release.
     review_status: approved
   - source: taco-v1.0
     source_class: Disposable food container
-    canonical_class: plastic_container
-    action: manual_review
-    reason: Source examples may include non-plastic materials.
-    review_status: unresolved
+    canonical_class: null
+    action: reject
+    reason: Whole-class review mixed plastic, foam, molded fiber, non-disposable, and materially unclear examples.
+    review_status: approved
   - source: taco-v1.0
     source_class: Foam food container
     canonical_class: styrofoam
@@ -320,9 +320,9 @@ mappings:
     review_status: approved
   - source: taco-v1.0
     source_class: Other plastic container
-    canonical_class: plastic_container
-    action: safe_merge
-    reason: The source label identifies rigid plastic container form.
+    canonical_class: null
+    action: reject
+    reason: Plastic container was deferred from ontology v3 before dataset release.
     review_status: approved
   - source: taco-v1.0
     source_class: Plastic glooves

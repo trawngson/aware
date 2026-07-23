@@ -26,8 +26,8 @@ class ExperimentRecordTests(unittest.TestCase):
             "run_kind": "full",
             "status": "planned",
             "model": "yolo26n.pt",
-            "ontology_version": "aware-ontology-v2",
-            "source_manifest_version": "aware-sources-v2",
+            "ontology_version": "aware-ontology-v3",
+            "source_manifest_version": "aware-sources-v3",
             "split_version": "aware-splits-v1",
             "code_revision": "0123456789abcdef",
             "training": {
@@ -54,8 +54,8 @@ class ExperimentRecordTests(unittest.TestCase):
             "run_kind": "full",
             "status": "planned",
             "model": "yolo26s.pt",
-            "ontology_version": "aware-ontology-v2",
-            "source_manifest_version": "aware-sources-v2",
+            "ontology_version": "aware-ontology-v3",
+            "source_manifest_version": "aware-sources-v3",
             "split_version": "aware-splits-v1",
             "code_revision": "0123456789abcdef",
             "training": {
@@ -84,7 +84,7 @@ class ExperimentRecordTests(unittest.TestCase):
             "status": "planned",
             "model": "yolo26n.pt",
             "ontology_version": "aware-ontology-v1",
-            "source_manifest_version": "aware-sources-v2",
+            "source_manifest_version": "aware-sources-v3",
             "split_version": "aware-splits-v1",
             "code_revision": "0123456789abcdef",
             "training": {

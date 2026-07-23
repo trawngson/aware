@@ -1,11 +1,13 @@
 schema_version: "1.0"
-ontology_version: "aware-ontology-v2"
+ontology_version: "aware-ontology-v3"
 status: frozen
 frozen_on: "2026-07-23"
-supersedes: "aware-ontology-v1"
+supersedes: "aware-ontology-v2"
 revision_reason: >-
-  Battery was deferred before dataset release because the approved sources
-  provide only two usable bounding boxes. No model or dataset release used the
+  Plastic container was deferred before dataset release because only 17
+  automatically accepted TACO boxes remained. The broader Disposable food
+  container class mixed plastic, foam, molded fiber, and unclear examples, so
+  whole-class merging was rejected. No model or dataset release used the
   superseded numeric IDs.
 task: object_detection
 id_policy:
@@ -30,7 +32,7 @@ global_annotation_rules:
   damage: >-
     Annotate crushed, dented, torn, or broken objects when their original class
     is still visually clear. Reject isolated fragments that have lost the
-    defining object shape, except styrofoam pieces allowed by class rule 7.
+    defining object shape, except styrofoam pieces allowed by class rule 6.
   contamination: >-
     Dirt, residue, labels, and small contents do not change the visual class.
     Reject or manually review an object when contamination hides the features
@@ -49,7 +51,7 @@ global_annotation_rules:
     requires manual review.
   caps: >-
     An attached cap belongs to a plastic_bottle box and gets no separate box.
-    A loose cap is outside ontology v2 and is rejected.
+    A loose cap is outside ontology v3 and is rejected.
 
 classes:
   - id: 0
@@ -108,18 +110,6 @@ classes:
     attached_parts: Include attached flaps; box separate detached pieces only if individually recognizable.
 
   - id: 4
-    name: plastic_container
-    definition: A rigid plastic package that is not primarily a bottle.
-    positive:
-      - food tubs, takeaway boxes, trays, clamshells, and rigid jars
-      - rigid plastic cups with a storage-container form
-    negative:
-      - plastic bottles, flexible bags or film, disposable drink cups, and styrofoam
-      - broad source labels named only plastic without an object-form review
-    ambiguity: Manual review when rigidity, material, or bottle-versus-container form is unclear.
-    attached_parts: Include an attached lid; a separate loose lid is outside ontology v2.
-
-  - id: 5
     name: plastic_bag
     definition: A flexible plastic carrier bag, produce bag, pouch, or film bag.
     positive:
@@ -131,7 +121,7 @@ classes:
     ambiguity: Manual review when plastic film cannot be distinguished from paper, fabric, or loose wrapping.
     attached_parts: Handles are included in the same box.
 
-  - id: 6
+  - id: 5
     name: disposable_cup
     definition: A single-use drinking cup of paper, plastic, or foam.
     positive:
@@ -143,7 +133,7 @@ classes:
     ambiguity: Keep the class material-neutral; review when reusable and disposable forms cannot be distinguished.
     attached_parts: Include an attached lid; reject a loose lid.
 
-  - id: 7
+  - id: 6
     name: styrofoam
     definition: Expanded polystyrene foam packaging, foodware, or identifiable pieces.
     positive:

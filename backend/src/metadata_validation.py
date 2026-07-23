@@ -22,13 +22,12 @@ EXPECTED_CLASSES = (
     "glass_container",
     "metal_can",
     "cardboard",
-    "plastic_container",
     "plastic_bag",
     "disposable_cup",
     "styrofoam",
 )
-EXPECTED_ONTOLOGY_VERSION = "aware-ontology-v2"
-EXPECTED_SOURCE_MANIFEST_VERSION = "aware-sources-v2"
+EXPECTED_ONTOLOGY_VERSION = "aware-ontology-v3"
+EXPECTED_SOURCE_MANIFEST_VERSION = "aware-sources-v3"
 
 REQUIRED_GLOBAL_RULES = (
     "bounding_box",

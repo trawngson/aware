@@ -3,8 +3,8 @@ run_id: replace-before-run
 run_kind: full
 status: planned
 model: yolo26n.pt
-ontology_version: aware-ontology-v2
-source_manifest_version: aware-sources-v2
+ontology_version: aware-ontology-v3
+source_manifest_version: aware-sources-v3
 split_version: replace-before-run
 code_revision: replace-before-run
 training:

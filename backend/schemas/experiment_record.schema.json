@@ -14,8 +14,8 @@
     "run_kind": {"enum": ["full", "smoke"]},
     "status": {"enum": ["planned", "running", "completed", "failed", "cancelled"]},
     "model": {"enum": ["yolo26n.pt", "yolo26s.pt"]},
-    "ontology_version": {"const": "aware-ontology-v2"},
-    "source_manifest_version": {"const": "aware-sources-v2"},
+    "ontology_version": {"const": "aware-ontology-v3"},
+    "source_manifest_version": {"const": "aware-sources-v3"},
     "training": {
       "type": "object",
       "required": [

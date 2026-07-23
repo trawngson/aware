@@ -1,0 +1,35 @@
+schema_version: "1.0"
+ontology_version: aware-ontology-v2
+status: retired_before_dataset_release
+original_frozen_on: "2026-07-23"
+retired_on: "2026-07-23"
+last_code_revision: e07791021b6175a39841151aea9ba77c92e690fa
+reason: >-
+  Plastic container had only 17 automatically accepted TACO boxes. Review of
+  all 38 Disposable food container boxes found mixed plastic, foam, molded
+  fiber, non-disposable, and materially unclear objects. The user rejected
+  annotation-level filtering in favor of a simpler whole-class policy, so the
+  broad source class and plastic-container target class were deferred.
+released_models_using_this_ontology: 0
+released_datasets_using_this_ontology: 0
+classes:
+  0: plastic_bottle
+  1: glass_container
+  2: metal_can
+  3: cardboard
+  4: plastic_container
+  5: plastic_bag
+  6: disposable_cup
+  7: styrofoam
+superseded_by: aware-ontology-v3
+breaking_id_change:
+  removed:
+    4: plastic_container
+  old:
+    5: plastic_bag
+    6: disposable_cup
+    7: styrofoam
+  new:
+    4: plastic_bag
+    5: disposable_cup
+    6: styrofoam
