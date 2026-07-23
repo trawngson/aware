@@ -7,6 +7,7 @@ from pathlib import Path
 
 from src.adapters import adapt_open_images_csv, adapt_taco_coco
 from src.audit import audit_canonical_images
+from src.box_policy import minimum_size_review_reason, short_side_after_letterbox_resize
 from src.canonical_data import CanonicalAnnotation, CanonicalImage, NormalizedBox
 from src.dedup import difference_hash, exact_duplicate_groups, perceptual_duplicate_groups
 from src.image_files import materialize_exif_oriented_copy
@@ -127,6 +128,59 @@ class MappingAndAdapterTests(unittest.TestCase):
         self.assertEqual(result.images[0].attribution["author"], "Fixture Author")
         self.assertEqual(len(result.exclusions), 1)
         self.assertEqual(result.exclusions[0].action, "manual_review")
+
+    def test_training_view_size_policy_holds_tiny_boxes(self) -> None:
+        tiny = NormalizedBox(0.1, 0.1, 0.11, 0.11)
+        regular = NormalizedBox(0.1, 0.1, 0.3, 0.3)
+
+        self.assertAlmostEqual(
+            short_side_after_letterbox_resize(
+                tiny,
+                image_width=4000,
+                image_height=3000,
+            ),
+            4.8,
+        )
+        self.assertIn(
+            "below 12px",
+            minimum_size_review_reason(
+                tiny,
+                class_name="plastic_bottle",
+                image_width=4000,
+                image_height=3000,
+            )
+            or "",
+        )
+        self.assertIsNone(
+            minimum_size_review_reason(
+                regular,
+                class_name="plastic_bottle",
+                image_width=4000,
+                image_height=3000,
+            )
+        )
+
+    def test_styrofoam_uses_stricter_twenty_pixel_minimum(self) -> None:
+        box = NormalizedBox(0.1, 0.1, 0.13, 0.13)
+
+        self.assertIsNone(
+            minimum_size_review_reason(
+                box,
+                class_name="plastic_bottle",
+                image_width=640,
+                image_height=640,
+            )
+        )
+        self.assertIn(
+            "below 20px",
+            minimum_size_review_reason(
+                box,
+                class_name="styrofoam",
+                image_width=640,
+                image_height=640,
+            )
+            or "",
+        )
 
 
 class AuditTests(unittest.TestCase):

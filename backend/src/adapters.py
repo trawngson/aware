@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .box_policy import minimum_size_review_reason
 from .canonical_data import (
     CanonicalAnnotation,
     CanonicalImage,
@@ -58,6 +59,27 @@ def _exclude(
     )
 
 
+def _hold_small_box(
+    exclusions: list[ExclusionEvent],
+    *,
+    source_id: str,
+    image_id: str,
+    annotation_id: str,
+    source_class: str,
+    reason: str,
+) -> None:
+    exclusions.append(
+        ExclusionEvent(
+            source_id=source_id,
+            image_id=image_id,
+            annotation_id=annotation_id,
+            source_class=source_class,
+            action="hold_for_review",
+            reason=reason,
+        )
+    )
+
+
 def adapt_taco_coco(
     annotation_file: str | Path,
     *,
@@ -101,12 +123,29 @@ def adapt_taco_coco(
             xmax=(x + box_width) / width,
             ymax=(y + box_height) / height,
         )
+        class_name = str(decision.canonical_class)
+        size_reason = minimum_size_review_reason(
+            box,
+            class_name=class_name,
+            image_width=width,
+            image_height=height,
+        )
+        if size_reason is not None:
+            _hold_small_box(
+                exclusions,
+                source_id=source_id,
+                image_id=str(image_id),
+                annotation_id=annotation_id,
+                source_class=source_class,
+                reason=size_reason,
+            )
+            continue
         annotations_by_image[image_id].append(
             CanonicalAnnotation(
                 annotation_id=annotation_id,
                 source_class=source_class,
                 class_id=_mapped_class_id(decision),
-                class_name=str(decision.canonical_class),
+                class_name=class_name,
                 box=box,
             )
         )
@@ -168,18 +207,37 @@ def adapt_open_images_csv(
                 continue
             if image_id not in metadata:
                 raise ValueError(f"Open Images metadata missing for ImageID {image_id}")
+            image_metadata = metadata[image_id]
+            box = NormalizedBox(
+                xmin=float(row["XMin"]),
+                ymin=float(row["YMin"]),
+                xmax=float(row["XMax"]),
+                ymax=float(row["YMax"]),
+            )
+            class_name = str(decision.canonical_class)
+            size_reason = minimum_size_review_reason(
+                box,
+                class_name=class_name,
+                image_width=int(image_metadata["Width"]),
+                image_height=int(image_metadata["Height"]),
+            )
+            if size_reason is not None:
+                _hold_small_box(
+                    exclusions,
+                    source_id=source_id,
+                    image_id=image_id,
+                    annotation_id=annotation_id,
+                    source_class=source_class,
+                    reason=size_reason,
+                )
+                continue
             annotations_by_image[image_id].append(
                 CanonicalAnnotation(
                     annotation_id=annotation_id,
                     source_class=source_class,
                     class_id=_mapped_class_id(decision),
-                    class_name=str(decision.canonical_class),
-                    box=NormalizedBox(
-                        xmin=float(row["XMin"]),
-                        ymin=float(row["YMin"]),
-                        xmax=float(row["XMax"]),
-                        ymax=float(row["YMax"]),
-                    ),
+                    class_name=class_name,
+                    box=box,
                 )
             )
 
