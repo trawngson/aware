@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/usr/local/libexec/aware-isolated-kernel",
+    "-f",
+    "{connection_file}"
+  ],
+  "display_name": "AWARE Isolated (train)",
+  "language": "python",
+  "metadata": {
+    "debugger": false
+  }
+}

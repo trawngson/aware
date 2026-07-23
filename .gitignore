@@ -24,3 +24,8 @@
 # Local Xcode user state
 **/xcuserdata/
 *.xcuserstate
+
+# VAST-only isolated runtime
+/.venv/
+/.vast/
+/.train-home/
