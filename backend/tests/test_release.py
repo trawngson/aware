@@ -141,6 +141,68 @@ class ReleaseTests(unittest.TestCase):
                 },
             )
 
+    def test_release_records_nonstandard_orientation_zero(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            source = root / "source"
+            source.mkdir()
+            image_file = source / "orientation-zero.png"
+            exif = Image.Exif()
+            exif[274] = 0
+            Image.new("RGB", (20, 30), "green").save(image_file, exif=exif)
+            image = CanonicalImage(
+                image_id="fixture:orientation-zero",
+                source_id="fixture",
+                source_version="v1",
+                relative_path="orientation-zero.png",
+                width=20,
+                height=30,
+                group_id="capture-orientation-zero",
+                annotations=(
+                    CanonicalAnnotation(
+                        "1",
+                        "Clear plastic bottle",
+                        0,
+                        "plastic_bottle",
+                        NormalizedBox(0.1, 0.2, 0.5, 0.8),
+                    ),
+                ),
+            )
+            audit = audit_canonical_images(
+                [image],
+                source_roots={"fixture": source},
+                verify_image_files=True,
+            )
+            destination = root / "release"
+
+            write_yolo_release(
+                [image],
+                {"fixture:orientation-zero": "train"},
+                {"fixture": source},
+                destination,
+                release_id="fixture-orientation-zero-v1",
+                seed=26,
+                audit_report=audit,
+                duplicate_groups={},
+                leakage_violations=(),
+            )
+
+            released = next((destination / "images" / "train").iterdir())
+            self.assertTrue(released.is_symlink())
+            record = json.loads(
+                (destination / "manifests" / "canonical_images.jsonl").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(
+                record["release_image"],
+                {
+                    "mode": "raw_symlink",
+                    "exif_transposed": False,
+                    "source_exif_orientation": 0,
+                },
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

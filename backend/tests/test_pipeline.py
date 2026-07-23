@@ -9,6 +9,7 @@ from src.adapters import adapt_open_images_csv, adapt_taco_coco
 from src.audit import audit_canonical_images
 from src.canonical_data import CanonicalAnnotation, CanonicalImage, NormalizedBox
 from src.dedup import difference_hash, exact_duplicate_groups, perceptual_duplicate_groups
+from src.image_files import materialize_exif_oriented_copy
 from src.mappings import MappingTable, validate_mapping_ledger
 from src.metadata_validation import load_yaml_mapping
 from src.splitting import assign_group_aware_splits, find_leakage
@@ -149,6 +150,50 @@ class AuditTests(unittest.TestCase):
 
 
 class DeduplicationAndSplitTests(unittest.TestCase):
+    def test_orientation_zero_is_preserved_without_derived_copy(self) -> None:
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            source = root / "source.png"
+            destination = root / "derived.png"
+            exif = Image.Exif()
+            exif[274] = 0
+            Image.new("RGB", (8, 12), "green").save(source, exif=exif)
+
+            orientation = materialize_exif_oriented_copy(
+                source,
+                destination,
+                expected_size=(8, 12),
+            )
+
+            self.assertEqual(orientation, 0)
+            self.assertFalse(destination.exists())
+
+    def test_orientation_three_creates_upright_derived_copy(self) -> None:
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            source = root / "source.png"
+            destination = root / "derived.png"
+            image = Image.new("RGB", (3, 2), "black")
+            image.putpixel((2, 1), (255, 0, 0))
+            exif = Image.Exif()
+            exif[274] = 3
+            image.save(source, exif=exif)
+
+            orientation = materialize_exif_oriented_copy(
+                source,
+                destination,
+                expected_size=(3, 2),
+            )
+
+            self.assertEqual(orientation, 3)
+            with Image.open(destination) as derived:
+                self.assertEqual(derived.getexif().get(274, 1), 1)
+                self.assertEqual(derived.getpixel((0, 0)), (255, 0, 0))
+
     def test_perceptual_hash_uses_visual_exif_orientation(self) -> None:
         from PIL import Image
 

@@ -25,12 +25,13 @@ def materialize_exif_oriented_copy(
     destination: str | Path,
     *,
     expected_size: tuple[int, int],
-) -> int | None:
+) -> int:
     """Write a visually oriented derived copy when EXIF requires transposition.
 
     Raw files are never modified. JPEG encoding settings and non-orientation
     EXIF metadata are retained where Pillow supports them. The applied source
-    orientation is returned for release-manifest provenance.
+    orientation is always returned for release-manifest provenance. No output
+    is written when the orientation requires no pixel transposition.
     """
 
     from PIL import Image, ImageOps
@@ -47,7 +48,7 @@ def materialize_exif_oriented_copy(
                 f"expected={expected_size} actual={oriented.size}"
             )
         if orientation not in TRANSPOSE_ORIENTATIONS:
-            return None
+            return orientation
 
         image_format = image.format
         if not image_format:

@@ -13,7 +13,7 @@ import yaml
 from .audit import DatasetAuditReport
 from .canonical_data import CanonicalImage, ExclusionEvent, image_to_dict
 from .dedup import difference_hash, perceptual_duplicate_groups, sha256_file
-from .image_files import materialize_exif_oriented_copy
+from .image_files import TRANSPOSE_ORIENTATIONS, materialize_exif_oriented_copy
 from .metadata_validation import EXPECTED_CLASSES
 from .splitting import LeakageViolation
 
@@ -100,12 +100,12 @@ def write_yolo_release(
             image_link,
             expected_size=(image.width, image.height),
         )
-        if source_orientation is None:
+        if source_orientation not in TRANSPOSE_ORIENTATIONS:
             os.symlink(source_path, image_link)
             release_image = {
                 "mode": "raw_symlink",
                 "exif_transposed": False,
-                "source_exif_orientation": 1,
+                "source_exif_orientation": source_orientation,
             }
         else:
             release_image = {
