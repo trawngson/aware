@@ -7,7 +7,11 @@ from pathlib import Path
 
 from src.adapters import adapt_open_images_csv, adapt_taco_coco
 from src.audit import audit_canonical_images
-from src.box_policy import minimum_size_review_reason, short_side_after_letterbox_resize
+from src.box_policy import (
+    minimum_size_review_reason,
+    normalize_coco_pixel_box,
+    short_side_after_letterbox_resize,
+)
 from src.canonical_data import CanonicalAnnotation, CanonicalImage, NormalizedBox
 from src.dedup import difference_hash, exact_duplicate_groups, perceptual_duplicate_groups
 from src.image_files import materialize_exif_oriented_copy
@@ -181,6 +185,39 @@ class MappingAndAdapterTests(unittest.TestCase):
             )
             or "",
         )
+
+    def test_minor_coco_boundary_drift_is_clipped_with_provenance(self) -> None:
+        result = normalize_coco_pixel_box(
+            x=171.03125,
+            y=-1.3166667,
+            width=518.35625,
+            height=413.4333367,
+            image_width=842,
+            image_height=474,
+        )
+
+        self.assertIsNone(result.review_reason)
+        self.assertEqual(result.box.ymin, 0.0)
+        self.assertIsNotNone(result.adjustment)
+        self.assertEqual(result.adjustment["action"], "clip_to_image_bounds")
+        self.assertAlmostEqual(
+            result.adjustment["retained_area_fraction"],
+            0.996815287,
+        )
+
+    def test_material_boundary_error_is_held_for_review(self) -> None:
+        result = normalize_coco_pixel_box(
+            x=-20,
+            y=10,
+            width=100,
+            height=100,
+            image_width=640,
+            image_height=640,
+        )
+
+        self.assertIsNotNone(result.review_reason)
+        self.assertIn("exceeds safe clipping policy", result.review_reason)
+        self.assertIsNone(result.adjustment)
 
 
 class AuditTests(unittest.TestCase):

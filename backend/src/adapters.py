@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .box_policy import minimum_size_review_reason
+from .box_policy import minimum_size_review_reason, normalize_coco_pixel_box
 from .canonical_data import (
     CanonicalAnnotation,
     CanonicalImage,
@@ -117,12 +117,25 @@ def adapt_taco_coco(
         width = int(image["width"])
         height = int(image["height"])
         x, y, box_width, box_height = (float(value) for value in raw["bbox"])
-        box = NormalizedBox(
-            xmin=x / width,
-            ymin=y / height,
-            xmax=(x + box_width) / width,
-            ymax=(y + box_height) / height,
+        boundary = normalize_coco_pixel_box(
+            x=x,
+            y=y,
+            width=box_width,
+            height=box_height,
+            image_width=width,
+            image_height=height,
         )
+        if boundary.review_reason is not None:
+            _hold_small_box(
+                exclusions,
+                source_id=source_id,
+                image_id=str(image_id),
+                annotation_id=annotation_id,
+                source_class=source_class,
+                reason=boundary.review_reason,
+            )
+            continue
+        box = boundary.box
         class_name = str(decision.canonical_class)
         size_reason = minimum_size_review_reason(
             box,
@@ -147,6 +160,7 @@ def adapt_taco_coco(
                 class_id=_mapped_class_id(decision),
                 class_name=class_name,
                 box=box,
+                box_adjustment=boundary.adjustment,
             )
         )
 

@@ -51,6 +51,7 @@ class CanonicalAnnotation:
     class_id: int
     class_name: str
     box: NormalizedBox
+    box_adjustment: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
