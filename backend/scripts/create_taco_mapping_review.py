@@ -74,6 +74,10 @@ def main() -> int:
         image_root,
         destination,
         target_classes=target_classes,
+        progress=lambda source_class, completed, total: print(
+            f"rendered {completed}/{total}: {source_class}",
+            flush=True,
+        ),
     )
     print(f"review directory: {destination}")
     print(f"safe source classes: {len(rendered)}")

@@ -9,7 +9,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 from .canonical_data import safe_relative_path
 
@@ -101,6 +101,7 @@ def render_review_sheets(
     target_classes: Mapping[str, str] | None = None,
     columns: int = 4,
     tile_size: tuple[int, int] = (360, 300),
+    progress: Callable[[str, int, int], None] | None = None,
 ) -> tuple[Path, ...]:
     """Render one PNG per source class plus an HTML index."""
 
@@ -188,6 +189,8 @@ def render_review_sheets(
         sheet.save(path, format="PNG")
         rendered.append(path)
         index_entries.append((mapping_title, filename, len(samples)))
+        if progress is not None:
+            progress(source_class, len(rendered), len(samples_by_class))
 
     html = [
         "<!doctype html>",
