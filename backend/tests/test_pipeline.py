@@ -65,7 +65,7 @@ class MappingAndAdapterTests(unittest.TestCase):
 
         self.assertTrue(result.ok, result.render("mapping ledger"))
 
-    def test_only_reviewed_taco_safe_mappings_are_approved(self) -> None:
+    def test_reviewed_source_mappings_match_approved_decisions(self) -> None:
         approved_taco = [
             entry
             for entry in self.ledger["mappings"]
@@ -73,11 +73,14 @@ class MappingAndAdapterTests(unittest.TestCase):
             and entry["action"] == "safe_merge"
             and entry["review_status"] == "approved"
         ]
-        open_images_safe = [
-            entry
+        open_images = {
+            entry["source_class"]: entry
             for entry in self.ledger["mappings"]
             if entry["source"] == "open-images-v7-waste-subset"
-            and entry["action"] == "safe_merge"
+        }
+        open_images_safe = [
+            entry
+            for entry in open_images.values() if entry["action"] == "safe_merge"
         ]
         battery = next(
             entry
@@ -87,12 +90,20 @@ class MappingAndAdapterTests(unittest.TestCase):
         )
 
         self.assertEqual(len(approved_taco), 18)
-        self.assertTrue(
-            all(
-                entry["review_status"] == "representative_samples_required"
+        self.assertEqual(
+            {
+                entry["source_class"]: entry["canonical_class"]
                 for entry in open_images_safe
-            )
+            },
+            {"Plastic bag": "plastic_bag", "Tin can": "metal_can"},
         )
+        self.assertTrue(
+            all(entry["review_status"] == "approved" for entry in open_images.values())
+        )
+        self.assertEqual(open_images["Bottle"]["action"], "reject")
+        self.assertEqual(open_images["Box"]["action"], "reject")
+        self.assertIsNone(open_images["Bottle"]["canonical_class"])
+        self.assertIsNone(open_images["Box"]["canonical_class"])
         self.assertEqual(battery["action"], "reject")
         self.assertIsNone(battery["canonical_class"])
 
@@ -104,6 +115,44 @@ class MappingAndAdapterTests(unittest.TestCase):
 
         self.assertFalse(result.ok)
         self.assertIn("required for included", result.render("mapping ledger"))
+
+    def test_open_images_manifest_decisions_match_mapping_ledger(self) -> None:
+        manifest = load_yaml_mapping(PROJECT_ROOT / "source_manifest.yaml")
+        source = next(
+            item
+            for item in manifest["sources"]
+            if item["id"] == "open-images-v7-waste-subset"
+        )
+        ledger_entries = {
+            entry["source_class"]: entry
+            for entry in self.ledger["mappings"]
+            if entry["source"] == "open-images-v7-waste-subset"
+        }
+        included = {
+            entry["source_class"]: entry["canonical_class"]
+            for entry in source["reviewed_source_class_decisions"]["included"]
+        }
+        rejected = {
+            entry["source_class"]
+            for entry in source["reviewed_source_class_decisions"]["rejected"]
+        }
+
+        self.assertEqual(
+            included,
+            {
+                name: entry["canonical_class"]
+                for name, entry in ledger_entries.items()
+                if entry["action"] == "safe_merge"
+            },
+        )
+        self.assertEqual(
+            rejected,
+            {
+                name
+                for name, entry in ledger_entries.items()
+                if entry["action"] == "reject"
+            },
+        )
 
     def test_taco_adapter_preserves_source_label_and_exclusion(self) -> None:
         result = adapt_taco_coco(
@@ -119,7 +168,7 @@ class MappingAndAdapterTests(unittest.TestCase):
         self.assertEqual(len(result.exclusions), 1)
         self.assertEqual(result.exclusions[0].action, "reject")
 
-    def test_open_images_adapter_requires_attribution_and_excludes_ambiguous_label(self) -> None:
+    def test_open_images_adapter_requires_attribution_and_excludes_rejected_label(self) -> None:
         result = adapt_open_images_csv(
             FIXTURES / "open_images" / "boxes.csv",
             FIXTURES / "open_images" / "classes.csv",
@@ -131,7 +180,7 @@ class MappingAndAdapterTests(unittest.TestCase):
         self.assertEqual(result.images[0].annotations[0].class_name, "plastic_bag")
         self.assertEqual(result.images[0].attribution["author"], "Fixture Author")
         self.assertEqual(len(result.exclusions), 1)
-        self.assertEqual(result.exclusions[0].action, "manual_review")
+        self.assertEqual(result.exclusions[0].action, "reject")
 
     def test_training_view_size_policy_holds_tiny_boxes(self) -> None:
         tiny = NormalizedBox(0.1, 0.1, 0.11, 0.11)

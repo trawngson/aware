@@ -100,6 +100,17 @@ sources:
       - Box
       - Plastic bag
       - Tin can
+    reviewed_source_class_decisions:
+      included:
+        - source_class: Plastic bag
+          canonical_class: plastic_bag
+        - source_class: Tin can
+          canonical_class: metal_can
+      rejected:
+        - source_class: Bottle
+          reason: Material is not specific enough to separate glass from plastic.
+        - source_class: Box
+          reason: Material and object form are too broad for cardboard.
     acquisition:
       method: manual_remote_subset
       access_status: public
@@ -116,6 +127,7 @@ sources:
       source: selected_subset_inventory_pending
     limitations:
       - Source labels can be broader than the AWARE object classes and require mapping review.
+      - Only Plastic bag and Tin can are approved for acquisition; Bottle and Box are rejected.
       - Open Images is partially annotated; unlabeled objects are not reliable negatives.
       - Image licenses and attribution metadata must be verified and preserved per selected image.
       - The subset must be deduplicated against TACO and the frozen smartphone test set.

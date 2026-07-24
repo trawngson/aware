@@ -51,27 +51,27 @@ mappings:
   - source: open-images-v7-waste-subset
     source_class: Bottle
     canonical_class: null
-    action: manual_review
-    reason: The source class does not identify glass versus plastic.
-    review_status: unresolved
+    action: reject
+    reason: Approved review showed glass, plastic, medicine, spray, cosmetic, and decorative bottles that cannot map to one AWARE class.
+    review_status: approved
   - source: open-images-v7-waste-subset
     source_class: Box
     canonical_class: null
-    action: manual_review
-    reason: The source class does not guarantee cardboard material.
-    review_status: unresolved
+    action: reject
+    reason: Approved review showed cardboard, wood, plastic, jewelry boxes, luggage, and furniture under the broad source label.
+    review_status: approved
   - source: open-images-v7-waste-subset
     source_class: Plastic bag
     canonical_class: plastic_bag
     action: safe_merge
-    reason: Source name matches the canonical material and object form.
-    review_status: representative_samples_required
+    reason: All available deterministic validation-review examples matched flexible plastic bag form.
+    review_status: approved
   - source: open-images-v7-waste-subset
     source_class: Tin can
     canonical_class: metal_can
     action: safe_merge
-    reason: Tin cans are included in the canonical metal-can definition.
-    review_status: representative_samples_required
+    reason: All deterministic validation-review examples matched the canonical metal-can definition.
+    review_status: approved
   - source: taco-v1.0
     source_class: Aluminium foil
     canonical_class: null
