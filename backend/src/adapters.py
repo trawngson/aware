@@ -80,6 +80,30 @@ def _hold_small_box(
     )
 
 
+def _reject_open_images_attributes(
+    exclusions: list[ExclusionEvent],
+    *,
+    source_id: str,
+    image_id: str,
+    annotation_id: str,
+    source_class: str,
+    attributes: list[str],
+) -> None:
+    exclusions.append(
+        ExclusionEvent(
+            source_id=source_id,
+            image_id=image_id,
+            annotation_id=annotation_id,
+            source_class=source_class,
+            action="reject",
+            reason=(
+                "Open Images box has excluded attribute(s): "
+                + ", ".join(attributes)
+            ),
+        )
+    )
+
+
 def adapt_taco_coco(
     annotation_file: str | Path,
     *,
@@ -219,6 +243,21 @@ def adapt_open_images_csv(
                     decision=decision,
                 )
                 continue
+            excluded_attributes = [
+                field
+                for field in ("IsGroupOf", "IsDepiction", "IsInside")
+                if row.get(field, "0") == "1"
+            ]
+            if excluded_attributes:
+                _reject_open_images_attributes(
+                    exclusions,
+                    source_id=source_id,
+                    image_id=image_id,
+                    annotation_id=annotation_id,
+                    source_class=source_class,
+                    attributes=excluded_attributes,
+                )
+                continue
             if image_id not in metadata:
                 raise ValueError(f"Open Images metadata missing for ImageID {image_id}")
             image_metadata = metadata[image_id]
@@ -228,6 +267,17 @@ def adapt_open_images_csv(
                 xmax=float(row["XMax"]),
                 ymax=float(row["YMax"]),
             )
+            box_errors = box.validation_errors()
+            if box_errors:
+                _hold_small_box(
+                    exclusions,
+                    source_id=source_id,
+                    image_id=image_id,
+                    annotation_id=annotation_id,
+                    source_class=source_class,
+                    reason="invalid Open Images box: " + "; ".join(box_errors),
+                )
+                continue
             class_name = str(decision.canonical_class)
             size_reason = minimum_size_review_reason(
                 box,

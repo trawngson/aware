@@ -179,8 +179,10 @@ class MappingAndAdapterTests(unittest.TestCase):
         self.assertEqual(len(result.images), 1)
         self.assertEqual(result.images[0].annotations[0].class_name, "plastic_bag")
         self.assertEqual(result.images[0].attribution["author"], "Fixture Author")
-        self.assertEqual(len(result.exclusions), 1)
+        self.assertEqual(len(result.exclusions), 2)
         self.assertEqual(result.exclusions[0].action, "reject")
+        self.assertEqual(result.exclusions[1].action, "reject")
+        self.assertIn("IsDepiction", result.exclusions[1].reason)
 
     def test_training_view_size_policy_holds_tiny_boxes(self) -> None:
         tiny = NormalizedBox(0.1, 0.1, 0.11, 0.11)
