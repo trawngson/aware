@@ -143,6 +143,9 @@ def write_selection(root: Path, image_ids: list[str]) -> Path:
         "".join(f"train/{image_id}\n" for image_id in image_ids),
         encoding="utf-8",
     )
+    metadata_hash = hashlib.sha256(metadata.read_bytes()).hexdigest()
+    ids_path = selection / "image-ids.txt"
+    ids_hash = hashlib.sha256(ids_path.read_bytes()).hexdigest()
     (selection / "selection-report.json").write_text(
         json.dumps(
             {
@@ -154,6 +157,10 @@ def write_selection(root: Path, image_ids: list[str]) -> Path:
                 "selected_image_counts_by_class": {
                     "Plastic bag": len(image_ids),
                     "Tin can": len(image_ids),
+                },
+                "output_sha256": {
+                    "selected-source-metadata.csv": metadata_hash,
+                    "image-ids.txt": ids_hash,
                 },
             }
         ),

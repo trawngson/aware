@@ -360,6 +360,21 @@ def _load_selection(
 
     with report_path.open("r", encoding="utf-8") as handle:
         selection_report = json.load(handle)
+    expected_output_hashes = selection_report.get("output_sha256")
+    if not isinstance(expected_output_hashes, dict):
+        raise AcquisitionError("selection report is missing output_sha256")
+    for path in (metadata_path, ids_path):
+        expected_hash = expected_output_hashes.get(path.name)
+        if not isinstance(expected_hash, str):
+            raise AcquisitionError(
+                f"selection report has no hash for {path.name}"
+            )
+        actual_hash = metadata_sha256_file(path)
+        if actual_hash != expected_hash:
+            raise AcquisitionError(
+                f"selection artifact hash mismatch for {path.name}: "
+                f"expected={expected_hash} actual={actual_hash}"
+            )
     expected_count = int(selection_report["selected_unique_image_count"])
     if expected_count != len(selected_ids):
         raise AcquisitionError(
