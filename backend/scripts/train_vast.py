@@ -24,6 +24,7 @@ from src.metadata_validation import (
 from src.project_paths import PathConfigurationError, ProjectPaths, require_path_within
 from src.training_config import APPROVED_MODELS, training_arguments, validate_training_config
 from src.validation import validate_environment
+from src.splitting import missing_split_classes
 
 
 RUN_PATTERN = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
@@ -91,6 +92,19 @@ def _validate_dataset_release(dataset_yaml: Path) -> tuple[str, dict[str, Any]]:
         raise ValueError("dataset split seed must equal the approved seed 26")
     if split.get("leakage_violations") != []:
         raise ValueError("dataset split contains leakage violations")
+    distribution = split.get("distribution")
+    if not isinstance(distribution, dict):
+        raise ValueError("split manifest must record its distribution")
+    coverage_failures = missing_split_classes(
+        distribution,
+        required_splits=("train", "val"),
+        required_classes=EXPECTED_CLASSES,
+    )
+    if coverage_failures:
+        raise ValueError(
+            "dataset split class coverage failed: "
+            + "; ".join(coverage_failures)
+        )
     split_version = split.get("split_version")
     if not isinstance(split_version, str) or not split_version.strip():
         raise ValueError("split manifest must record split_version")

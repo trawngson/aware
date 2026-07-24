@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Sequence
@@ -47,6 +48,7 @@ def audit_canonical_images(
     source_roots: Mapping[str, Path] | None = None,
     required_classes: Sequence[str] | None = None,
     verify_image_files: bool = False,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> DatasetAuditReport:
     """Audit metadata and optional file presence without changing source data."""
 
@@ -55,7 +57,8 @@ def audit_canonical_images(
     class_counts: Counter[str] = Counter()
     seen_image_ids: set[str] = set()
 
-    for image in images:
+    total_images = len(images)
+    for image_number, image in enumerate(images, start=1):
         image_counts[image.source_id] += 1
         if image.image_id in seen_image_ids:
             findings.append(
@@ -147,6 +150,8 @@ def audit_canonical_images(
             class_counts[annotation.class_name] += 1
             for error in annotation.box.validation_errors():
                 findings.append(AuditFinding("error", "invalid_box", image.image_id, error))
+        if progress_callback is not None:
+            progress_callback(image_number, total_images)
 
     for class_name in required_classes or ():
         if class_counts[class_name] == 0:

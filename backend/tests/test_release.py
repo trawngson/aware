@@ -52,6 +52,15 @@ class ReleaseTests(unittest.TestCase):
                 audit_report=audit,
                 duplicate_groups={},
                 leakage_violations=(),
+                split_distribution={
+                    "train": {
+                        "image_count": 1,
+                        "annotation_count": 1,
+                        "annotation_counts_by_class": {
+                            "plastic_bottle": 1,
+                        },
+                    }
+                },
             )
 
             config = yaml.safe_load((destination / "dataset.yaml").read_text())
@@ -59,6 +68,15 @@ class ReleaseTests(unittest.TestCase):
             self.assertTrue(next((destination / "images" / "train").iterdir()).is_symlink())
             label = next((destination / "labels" / "train").iterdir()).read_text()
             self.assertEqual(label, "0 0.30000000 0.50000000 0.40000000 0.60000000\n")
+            split_manifest = json.loads(
+                (destination / "manifests" / "split_manifest.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(
+                split_manifest["distribution"]["train"]["image_count"],
+                1,
+            )
             with self.assertRaises(FileExistsError):
                 write_yolo_release(
                     [image],

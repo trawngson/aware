@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
@@ -115,3 +115,70 @@ def find_leakage(
         for (kind, key), splits in sorted(relations.items())
         if len(splits) > 1
     )
+
+
+def summarize_split_distribution(
+    images: Sequence[CanonicalImage],
+    assignments: Mapping[str, str],
+) -> dict[str, dict[str, object]]:
+    """Return JSON-ready image and annotation counts for every split."""
+
+    image_ids = {image.image_id for image in images}
+    if set(assignments) != image_ids:
+        raise ValueError("split assignments must exactly cover canonical images")
+
+    image_counts: Counter[str] = Counter()
+    annotation_counts: Counter[str] = Counter()
+    images_by_source: dict[str, Counter[str]] = defaultdict(Counter)
+    images_by_class: dict[str, Counter[str]] = defaultdict(Counter)
+    annotations_by_class: dict[str, Counter[str]] = defaultdict(Counter)
+
+    for image in images:
+        split = assignments[image.image_id]
+        image_counts[split] += 1
+        images_by_source[split][image.source_id] += 1
+        classes_in_image = {item.class_name for item in image.annotations}
+        for class_name in classes_in_image:
+            images_by_class[split][class_name] += 1
+        for annotation in image.annotations:
+            annotation_counts[split] += 1
+            annotations_by_class[split][annotation.class_name] += 1
+
+    summary: dict[str, dict[str, object]] = {}
+    for split in sorted(image_counts):
+        summary[split] = {
+            "image_count": image_counts[split],
+            "annotation_count": annotation_counts[split],
+            "image_counts_by_source": dict(
+                sorted(images_by_source[split].items())
+            ),
+            "image_counts_by_class": dict(
+                sorted(images_by_class[split].items())
+            ),
+            "annotation_counts_by_class": dict(
+                sorted(annotations_by_class[split].items())
+            ),
+        }
+    return summary
+
+
+def missing_split_classes(
+    distribution: Mapping[str, Mapping[str, object]],
+    *,
+    required_splits: Sequence[str],
+    required_classes: Sequence[str],
+) -> tuple[str, ...]:
+    """Return readable failures for classes absent from required splits."""
+
+    failures: list[str] = []
+    for split in required_splits:
+        split_summary = distribution.get(split)
+        if split_summary is None:
+            failures.append(f"missing split: {split}")
+            continue
+        raw_counts = split_summary.get("annotation_counts_by_class")
+        counts = raw_counts if isinstance(raw_counts, Mapping) else {}
+        for class_name in required_classes:
+            if not isinstance(counts.get(class_name), int) or counts[class_name] <= 0:
+                failures.append(f"{split} has no annotations for {class_name}")
+    return tuple(failures)

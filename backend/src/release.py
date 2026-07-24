@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 from dataclasses import asdict, replace
+from collections.abc import Callable
 from pathlib import Path
 from typing import Mapping, Sequence
 
@@ -21,9 +22,12 @@ from .splitting import LeakageViolation
 def attach_image_hashes(
     images: Sequence[CanonicalImage],
     source_roots: Mapping[str, Path],
+    *,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> tuple[CanonicalImage, ...]:
     hashed: list[CanonicalImage] = []
-    for image in images:
+    total_images = len(images)
+    for image_number, image in enumerate(images, start=1):
         image_path = source_roots[image.source_id] / image.relative_path
         hashed.append(
             replace(
@@ -32,6 +36,8 @@ def attach_image_hashes(
                 perceptual_hash=difference_hash(image_path),
             )
         )
+        if progress_callback is not None:
+            progress_callback(image_number, total_images)
     return tuple(hashed)
 
 
@@ -39,12 +45,15 @@ def perceptual_groups_for_images(
     images: Sequence[CanonicalImage],
     *,
     maximum_distance: int = 5,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> dict[str, str]:
-    hashes = {
-        image.image_id: image.perceptual_hash
-        for image in images
-        if image.perceptual_hash is not None
-    }
+    hashes: dict[str, str] = {}
+    total_images = len(images)
+    for image_number, image in enumerate(images, start=1):
+        if image.perceptual_hash is not None:
+            hashes[image.image_id] = image.perceptual_hash
+        if progress_callback is not None:
+            progress_callback(image_number, total_images)
     return perceptual_duplicate_groups(hashes, maximum_distance=maximum_distance)
 
 
@@ -68,6 +77,8 @@ def write_yolo_release(
     duplicate_groups: Mapping[str, str],
     leakage_violations: Sequence[LeakageViolation],
     exclusions: Sequence[ExclusionEvent] = (),
+    split_distribution: Mapping[str, object] | None = None,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> Path:
     """Write one new release without modifying immutable raw images."""
 
@@ -90,7 +101,8 @@ def write_yolo_release(
         (output / "labels" / split).mkdir(parents=True)
 
     release_images: list[dict[str, object]] = []
-    for image in sorted(images, key=lambda item: item.image_id):
+    sorted_images = sorted(images, key=lambda item: item.image_id)
+    for image_number, image in enumerate(sorted_images, start=1):
         split = assignments[image.image_id]
         filename = _release_filename(image)
         source_path = (source_roots[image.source_id] / image.relative_path).resolve()
@@ -127,6 +139,8 @@ def write_yolo_release(
         record["release_image"] = release_image
         record["duplicate_group"] = duplicate_groups.get(image.image_id)
         release_images.append(record)
+        if progress_callback is not None:
+            progress_callback(image_number, len(sorted_images))
 
     dataset_yaml = {
         "path": str(output.resolve()),
@@ -146,6 +160,7 @@ def write_yolo_release(
         "assignments": dict(sorted(assignments.items())),
         "perceptual_duplicate_groups": dict(sorted(duplicate_groups.items())),
         "leakage_violations": [asdict(item) for item in leakage_violations],
+        "distribution": dict(split_distribution or {}),
     }
     (manifests / "split_manifest.json").write_text(
         json.dumps(split_manifest, indent=2, sort_keys=True) + "\n",

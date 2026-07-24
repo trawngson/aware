@@ -9,6 +9,7 @@ under PROJECT_OUTPUT_ROOT/datasets and existing releases are never overwritten.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -19,10 +20,23 @@ from src.metadata_validation import EXPECTED_CLASSES, load_yaml_mapping
 from src.mappings import MappingTable
 from src.project_paths import ProjectPaths, require_path_within
 from src.release import attach_image_hashes, perceptual_groups_for_images, write_yolo_release
-from src.splitting import assign_group_aware_splits, find_leakage
+from src.splitting import (
+    assign_group_aware_splits,
+    find_leakage,
+    missing_split_classes,
+    summarize_split_distribution,
+)
 
 
 RELEASE_PATTERN = re.compile(r"^[a-z0-9][a-z0-9._-]*$")
+
+
+def _progress(label: str):
+    def report(current: int, total: int) -> None:
+        if current == 1 or current % 250 == 0 or current == total:
+            print(f"{label}: {current:,}/{total:,}", flush=True)
+
+    return report
 
 
 def parse_args() -> argparse.Namespace:
@@ -78,14 +92,22 @@ def main() -> int:
         source_roots=roots,
         required_classes=EXPECTED_CLASSES,
         verify_image_files=True,
+        progress_callback=_progress("Audited images"),
     )
     print(audit.render())
     print(f"exclusions: TACO={len(taco.exclusions)} OpenImages={len(open_images.exclusions)}")
     if not audit.ok:
         return 2
 
-    hashed_images = attach_image_hashes(images, roots)
-    duplicate_groups = perceptual_groups_for_images(hashed_images)
+    hashed_images = attach_image_hashes(
+        images,
+        roots,
+        progress_callback=_progress("Hashed images"),
+    )
+    duplicate_groups = perceptual_groups_for_images(
+        hashed_images,
+        progress_callback=_progress("Indexed perceptual hashes"),
+    )
     assignments = assign_group_aware_splits(
         hashed_images,
         seed=args.seed,
@@ -95,6 +117,23 @@ def main() -> int:
     if leakage:
         for violation in leakage:
             print(violation)
+        return 2
+    split_distribution = summarize_split_distribution(
+        hashed_images,
+        assignments,
+    )
+    print(
+        "split distribution:\n"
+        + json.dumps(split_distribution, indent=2, sort_keys=True)
+    )
+    coverage_failures = missing_split_classes(
+        split_distribution,
+        required_splits=("train", "val"),
+        required_classes=EXPECTED_CLASSES,
+    )
+    if coverage_failures:
+        for failure in coverage_failures:
+            print(f"split coverage error: {failure}")
         return 2
 
     destination = require_path_within(
@@ -113,6 +152,8 @@ def main() -> int:
         duplicate_groups=duplicate_groups,
         leakage_violations=leakage,
         exclusions=taco.exclusions + open_images.exclusions,
+        split_distribution=split_distribution,
+        progress_callback=_progress("Released images"),
     )
     print(f"release created: {destination}")
     return 0

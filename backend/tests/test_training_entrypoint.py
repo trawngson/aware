@@ -55,6 +55,15 @@ class TrainingEntrypointTests(unittest.TestCase):
                         "split_version": "release-v1",
                         "seed": 26,
                         "leakage_violations": [],
+                        "distribution": {
+                            split: {
+                                "annotation_counts_by_class": {
+                                    class_name: 1
+                                    for class_name in EXPECTED_CLASSES
+                                }
+                            }
+                            for split in ("train", "val")
+                        },
                     }
                 ),
                 encoding="utf-8",
@@ -63,6 +72,63 @@ class TrainingEntrypointTests(unittest.TestCase):
             split_version, _ = _validate_dataset_release(dataset_path)
 
             self.assertEqual(split_version, "release-v1")
+
+    def test_release_missing_a_class_from_validation_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            release = Path(temporary_directory) / "release-v1"
+            (release / "images" / "train").mkdir(parents=True)
+            (release / "images" / "val").mkdir(parents=True)
+            manifests = release / "manifests"
+            manifests.mkdir()
+            dataset = {
+                "path": str(release),
+                "train": "images/train",
+                "val": "images/val",
+                "names": {
+                    index: name
+                    for index, name in enumerate(EXPECTED_CLASSES)
+                },
+            }
+            dataset_path = release / "dataset.yaml"
+            dataset_path.write_text(
+                yaml.safe_dump(dataset),
+                encoding="utf-8",
+            )
+            (manifests / "audit_report.json").write_text(
+                json.dumps({"ok": True}),
+                encoding="utf-8",
+            )
+            (manifests / "split_manifest.json").write_text(
+                json.dumps(
+                    {
+                        "split_version": "release-v1",
+                        "seed": 26,
+                        "leakage_violations": [],
+                        "distribution": {
+                            "train": {
+                                "annotation_counts_by_class": {
+                                    class_name: 1
+                                    for class_name in EXPECTED_CLASSES
+                                }
+                            },
+                            "val": {
+                                "annotation_counts_by_class": {
+                                    class_name: 1
+                                    for class_name in EXPECTED_CLASSES
+                                    if class_name != "styrofoam"
+                                }
+                            },
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(
+                ValueError,
+                "val has no annotations for styrofoam",
+            ):
+                _validate_dataset_release(dataset_path)
 
     def test_dataset_download_action_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

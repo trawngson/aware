@@ -17,7 +17,12 @@ from src.dedup import difference_hash, exact_duplicate_groups, perceptual_duplic
 from src.image_files import materialize_exif_oriented_copy
 from src.mappings import MappingTable, validate_mapping_ledger
 from src.metadata_validation import load_yaml_mapping
-from src.splitting import assign_group_aware_splits, find_leakage
+from src.splitting import (
+    assign_group_aware_splits,
+    find_leakage,
+    missing_split_classes,
+    summarize_split_distribution,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -431,6 +436,36 @@ class DeduplicationAndSplitTests(unittest.TestCase):
 
         self.assertEqual(len(violations), 1)
         self.assertEqual(violations[0].relationship, "exact_hash")
+
+    def test_split_distribution_records_coverage_and_missing_classes(self) -> None:
+        images = [
+            sample_image("train-bottle"),
+            sample_image("val-bottle"),
+        ]
+        assignments = {
+            "train-bottle": "train",
+            "val-bottle": "val",
+        }
+
+        distribution = summarize_split_distribution(images, assignments)
+        failures = missing_split_classes(
+            distribution,
+            required_splits=("train", "val"),
+            required_classes=("plastic_bottle", "styrofoam"),
+        )
+
+        self.assertEqual(distribution["train"]["image_count"], 1)
+        self.assertEqual(
+            distribution["val"]["annotation_counts_by_class"],
+            {"plastic_bottle": 1},
+        )
+        self.assertEqual(
+            failures,
+            (
+                "train has no annotations for styrofoam",
+                "val has no annotations for styrofoam",
+            ),
+        )
 
 
 if __name__ == "__main__":
