@@ -56,7 +56,7 @@ def validate_experiment_record(document: Mapping[str, Any]) -> MetadataValidatio
             "deterministic": True,
             "epochs": 1 if run_kind == "smoke" else 200,
             "patience": 40,
-            "batch": 64,
+            "batch": 16 if run_kind == "smoke" else 64,
             "optimizer": "AdamW",
             "initial_learning_rate": 0.001,
         }

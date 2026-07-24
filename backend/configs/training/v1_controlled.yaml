@@ -34,6 +34,7 @@ training:
 smoke_test:
   epochs: 1
   fraction: 0.02
+  batch: 16
 
 comparison_policy:
   models:
@@ -42,4 +43,3 @@ comparison_policy:
   use_identical_settings: true
   batch_failure_action: lower_batch_for_both_models
   epoch_300_policy: requires_new_approval_after_reviewing_200_epoch_curves
-

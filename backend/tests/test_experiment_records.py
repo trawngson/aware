@@ -76,6 +76,34 @@ class ExperimentRecordTests(unittest.TestCase):
         self.assertFalse(result.ok)
         self.assertIn("training.epochs", result.render("experiment"))
 
+    def test_smoke_record_with_reduced_batch_passes(self) -> None:
+        record = {
+            "schema_version": "1.0",
+            "run_id": "e0-yolo26n-seed26-smoke",
+            "run_kind": "smoke",
+            "status": "planned",
+            "model": "yolo26n.pt",
+            "ontology_version": "aware-ontology-v3",
+            "source_manifest_version": "aware-sources-v3",
+            "split_version": "aware-splits-v1",
+            "code_revision": "0123456789abcdef",
+            "training": {
+                "image_size": 640,
+                "seed": 26,
+                "deterministic": True,
+                "epochs": 1,
+                "patience": 40,
+                "batch": 16,
+                "optimizer": "AdamW",
+                "initial_learning_rate": 0.001,
+                "config_file": "configs/training/v1_controlled.yaml",
+            },
+        }
+
+        result = validate_experiment_record(record)
+
+        self.assertTrue(result.ok, result.render("experiment"))
+
     def test_retired_ontology_version_is_rejected(self) -> None:
         record = {
             "schema_version": "1.0",
@@ -93,7 +121,7 @@ class ExperimentRecordTests(unittest.TestCase):
                 "deterministic": True,
                 "epochs": 1,
                 "patience": 40,
-                "batch": 64,
+                "batch": 16,
                 "optimizer": "AdamW",
                 "initial_learning_rate": 0.001,
                 "config_file": "configs/training/v1_controlled.yaml",

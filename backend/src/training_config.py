@@ -34,6 +34,12 @@ APPROVED_TRAINING_SETTINGS: dict[str, Any] = {
 
 APPROVED_MODELS = ("yolo26n.pt", "yolo26s.pt")
 
+APPROVED_SMOKE_SETTINGS: dict[str, Any] = {
+    "epochs": 1,
+    "fraction": 0.02,
+    "batch": 16,
+}
+
 
 def validate_training_config(document: Mapping[str, Any]) -> MetadataValidationResult:
     """Fail closed if the reviewed controlled recipe has changed."""
@@ -77,10 +83,19 @@ def validate_training_config(document: Mapping[str, Any]) -> MetadataValidationR
     if not isinstance(smoke_test, Mapping):
         issues.append(MetadataIssue("smoke_test", "must be a mapping"))
     else:
-        if smoke_test.get("epochs") != 1:
-            issues.append(MetadataIssue("smoke_test.epochs", "must equal 1"))
-        if smoke_test.get("fraction") != 0.02:
-            issues.append(MetadataIssue("smoke_test.fraction", "must equal 0.02"))
+        unexpected = set(smoke_test) - set(APPROVED_SMOKE_SETTINGS)
+        missing = set(APPROVED_SMOKE_SETTINGS) - set(smoke_test)
+        for field in sorted(unexpected):
+            issues.append(
+                MetadataIssue(f"smoke_test.{field}", "is not an approved setting")
+            )
+        for field in sorted(missing):
+            issues.append(MetadataIssue(f"smoke_test.{field}", "is required"))
+        for field, expected in APPROVED_SMOKE_SETTINGS.items():
+            if field in smoke_test and smoke_test[field] != expected:
+                issues.append(
+                    MetadataIssue(f"smoke_test.{field}", f"must equal {expected!r}")
+                )
 
     policy = document.get("comparison_policy")
     if not isinstance(policy, Mapping):
@@ -111,4 +126,3 @@ def training_arguments(document: Mapping[str, Any], *, smoke: bool = False) -> d
     if smoke:
         arguments.update(document["smoke_test"])
     return arguments
-
