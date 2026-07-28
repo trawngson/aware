@@ -1,0 +1,58 @@
+{
+  "approved_class_mappings": {
+    "Plastic bag": "plastic_bag",
+    "Tin can": "metal_can"
+  },
+  "attribution": {
+    "license_counts": {
+      "https://creativecommons.org/licenses/by/2.0/": 1631
+    },
+    "missing_original_size_count": 0,
+    "rejected_counts": {}
+  },
+  "candidate_box_counts_before_attribution": {
+    "Plastic bag": 895,
+    "Tin can": 2559
+  },
+  "estimated_original_bytes": 2766403573,
+  "estimated_original_gib": 2.576,
+  "excluded_attribute_counts": {
+    "IsDepiction": 243,
+    "IsGroupOf": 281,
+    "IsInside": 2
+  },
+  "invalid_box_counts": {},
+  "output_sha256": {
+    "candidate-boxes-before-attribution.csv": "7e2d5e08a3764308537607ca1a3fe8cc09a3520c8f1fe5b00de2a69a7cb90973",
+    "candidate-source-metadata.csv": "c380b6efe3e3ce80b42ae091073a27e2f94fdfa1347e2701f99a6c281e6b8ada",
+    "image-ids.txt": "f0015e9d8e37131fe4895486187cdb4568e45523acedc6f4a39476c17edc062e",
+    "selected-boxes.csv": "7e2d5e08a3764308537607ca1a3fe8cc09a3520c8f1fe5b00de2a69a7cb90973",
+    "selected-source-metadata.csv": "c380b6efe3e3ce80b42ae091073a27e2f94fdfa1347e2701f99a6c281e6b8ada"
+  },
+  "schema_version": "1.0",
+  "selected_box_counts": {
+    "Plastic bag": 895,
+    "Tin can": 2559
+  },
+  "selected_image_counts_by_class": {
+    "Plastic bag": 470,
+    "Tin can": 1161
+  },
+  "selected_unique_image_count": 1631,
+  "source": "open-images-v7-waste-subset",
+  "source_class_mids": {
+    "Plastic bag": "/m/05gqfk",
+    "Tin can": "/m/02jnhm"
+  },
+  "source_sha256": {
+    "boxes": "dfc9637907a6b105f87e435bac91a5ee9b29af3ff8391168f86c1d63879786b6",
+    "class_descriptions": "1839e0e7e84130ae281f7f67413768601b031581c0c42e7fc17527b8e2a99aa9",
+    "image_metadata": "05f3d68dbbb03728d1a37e51479f4f35c062b871e1a6cae8c4cefbe0e0c80ed0"
+  },
+  "source_urls": {
+    "boxes": "https://storage.googleapis.com/openimages/v6/oidv6-train-annotations-bbox.csv",
+    "class_descriptions": "https://storage.googleapis.com/openimages/v7/oidv7-class-descriptions-boxable.csv",
+    "image_metadata": "https://storage.googleapis.com/openimages/2018_04/train/train-images-boxable-with-rotation.csv"
+  },
+  "split": "train"
+}

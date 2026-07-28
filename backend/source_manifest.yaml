@@ -115,16 +115,16 @@ sources:
       method: manual_remote_subset
       access_status: public
       raw_subdirectory: raw/open-images/v7-waste-subset
-      expected_bytes: null
+      expected_bytes: 2766403573
       checksum: null
     preprocessing: []
     augmentation: []
     mapping_ledger_version: aware-mappings-v3
-    inventory_status: pending_remote_verification
+    inventory_status: raw_files_verified_remote
     counts:
-      images: null
-      annotations: null
-      source: selected_subset_inventory_pending
+      images: 1631
+      annotations: 3454
+      source: remote_selected_subset_audit_2026-07-24
     limitations:
       - Source labels can be broader than the AWARE object classes and require mapping review.
       - Only Plastic bag and Tin can are approved for acquisition; Bottle and Box are rejected.

@@ -35,7 +35,7 @@
 <img src="https://i.postimg.cc/k5ZQ61Bg/Clean-Shot-2026-06-10-at-12-14-23-2x.png" alt="Log" width="200"/>
 </p>
 
-<p>AWARE (AI Waste-sorting and Recycling Enhancement) is a mobile AI application utilizing the YOLO framework to provide real-time, offline waste classification and actionable recycling instructions directly from live video footage. To drive community engagement, the platform features user dashboards equipped with a gamified streak system and an interactive local map showcasing nearby recycling activities. To ensure maximum classification accuracy, the underlying model is trained on a massive 150+ GB dataset pipeline that integrates the open-source TACO and COCO libraries across 50+ distinct waste categories.</p>
+<p>AWARE (AI Waste-sorting and Recycling Enhancement) is a SwiftUI iOS application that uses an on-device Ultralytics YOLO/Core ML detector to identify common household waste and provide recycling guidance. The app includes Home, Scan, and Gallery experiences with sample gamification and community content. The reproducible v1 research pipeline uses a seven-class ontology and approved training data from TACO v1.0 plus a reviewed Open Images V7 subset; COCO is used only through pretrained model weights.</p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -43,8 +43,9 @@
 
 ### Built With
 
-* [![Flutter][Flutter]][Flutter-url]
-* [![Firebase][Firebase]][Firebase-url]
+* SwiftUI
+* Core ML
+* Ultralytics YOLO
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -78,7 +79,7 @@ git clone https://github.com/trawngson/aware.git```)
 (```cd aware```)
 
 **2. Open the Project in Xcode:**
-Open the .xcodeproj file directly from your terminal: (`open AWARE.xcodeproj`)
+Open the `.xcodeproj` file directly from your terminal: (`open awareapp.xcodeproj`)
 
 **3. Configure Dependencie:s**
 Once Xcode opens, it will automatically begin resolving packages via Swift Package Manager (SPM). Wait for the background resolution process to complete before building.
