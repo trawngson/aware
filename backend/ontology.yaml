@@ -9,6 +9,14 @@ revision_reason: >-
   container class mixed plastic, foam, molded fiber, and unclear examples, so
   whole-class merging was rejected. No model or dataset release used the
   superseded numeric IDs.
+errata:
+  - corrected_on: "2026-07-28"
+    scope: foam_drinking_cup_precedence
+    reason: >-
+      The styrofoam examples previously mentioned foam cups even though the
+      approved mapping ledger assigns Foam cup to the material-neutral
+      disposable_cup class. This clarification makes the ontology consistent
+      with that released mapping without changing class IDs or dataset labels.
 task: object_detection
 id_policy:
   contiguous_from_zero: true
@@ -135,12 +143,16 @@ classes:
 
   - id: 6
     name: styrofoam
-    definition: Expanded polystyrene foam packaging, foodware, or identifiable pieces.
+    definition: Expanded polystyrene foam packaging, non-drinking foodware, or identifiable pieces.
     positive:
       - foam protective packaging
-      - foam trays, cups, and takeaway boxes when foam texture is clear
+      - foam trays and takeaway boxes when expanded-polystyrene bead texture is clear
       - broken foam pieces at least 20 pixels on their shortest side after 640 resize
     negative:
       - polyurethane sponge, paper, bubble wrap, and other plastic foam of unclear type
-    ambiguity: Manual review when expanded-polystyrene texture is not visible.
+      - foam drinking cups, which belong to disposable_cup
+    ambiguity: >-
+      Manual review when expanded-polystyrene bead texture is not visible or
+      the object may be another foam type. Drinking-cup form takes precedence
+      and maps to disposable_cup.
     attached_parts: Annotate separable pieces individually; reject unseparable piles.
