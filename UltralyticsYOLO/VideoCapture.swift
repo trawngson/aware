@@ -93,6 +93,11 @@ public class VideoCapture: NSObject, @unchecked Sendable {
     orientation: UIDeviceOrientation
   ) -> Bool {
     captureSession.beginConfiguration()
+    // Every successful beginConfiguration() must be balanced, including simulator-only
+    // failure paths where no virtual camera is available.
+    defer {
+      captureSession.commitConfiguration()
+    }
     captureSession.sessionPreset = sessionPreset
 
     guard let device = bestCaptureDevice(position: position) else {
@@ -180,23 +185,22 @@ public class VideoCapture: NSObject, @unchecked Sendable {
       return false
     }
 
-    captureSession.commitConfiguration()
     return true
   }
 
   func start() {
-    if !captureSession.isRunning {
-      DispatchQueue.global().async { [weak self] in
-        self?.captureSession.startRunning()
-      }
+    // Session configuration and start/stop operations must be serialized. Newer
+    // runtimes enforce this and throw if startRunning overlaps a configuration.
+    cameraQueue.async { [weak self] in
+      guard let self, !self.captureSession.isRunning else { return }
+      self.captureSession.startRunning()
     }
   }
 
   func stop() {
-    if captureSession.isRunning {
-      DispatchQueue.global().async { [weak self] in
-        self?.captureSession.stopRunning()
-      }
+    cameraQueue.async { [weak self] in
+      guard let self, self.captureSession.isRunning else { return }
+      self.captureSession.stopRunning()
     }
   }
 

@@ -5,6 +5,12 @@ import YOLO
 // MARK: - Clean YOLO Camera (hides Ultralytics overlay)
 
 struct CleanYOLOCamera: UIViewRepresentable {
+#if targetEnvironment(simulator)
+    typealias UIViewType = SimulatorVideoYOLOView
+#else
+    typealias UIViewType = YOLOView
+#endif
+
     let modelPathOrName: String
     let task: YOLOTask
     let cameraPosition: AVCaptureDevice.Position
@@ -24,7 +30,23 @@ struct CleanYOLOCamera: UIViewRepresentable {
         var wasActive = true
     }
     
-    func makeUIView(context: Context) -> YOLOView {
+    func makeUIView(context: Context) -> UIViewType {
+#if targetEnvironment(simulator)
+        let videoURL =
+            Bundle.main.url(forResource: "input", withExtension: "MOV")
+            ?? Bundle.main.url(forResource: "input", withExtension: "mov")
+        let view = SimulatorVideoYOLOView(
+            frame: .zero,
+            modelPathOrName: modelPathOrName,
+            task: task,
+            confidenceThreshold: confidenceThreshold,
+            videoURL: videoURL
+        )
+        view.onDetection = onDetection
+        view.onFrameCapture = onFrameCapture
+        view.setActive(isActive)
+        return view
+#else
         let view = YOLOView(frame: .zero, modelPathOrName: modelPathOrName, task: task)
         if cameraPosition == .front {
             view.pendingCameraPosition = .front
@@ -34,9 +56,16 @@ struct CleanYOLOCamera: UIViewRepresentable {
         setOverlayVisibility(in: view, visible: showDebug)
         
         return view
+#endif
     }
     
-    func updateUIView(_ uiView: YOLOView, context: Context) {
+    func updateUIView(_ uiView: UIViewType, context: Context) {
+#if targetEnvironment(simulator)
+        uiView.onDetection = isActive ? onDetection : nil
+        uiView.onFrameCapture = isActive ? onFrameCapture : nil
+        uiView.setConfidenceThreshold(confidenceThreshold)
+        uiView.setActive(isActive)
+#else
         let coordinator = context.coordinator
         
         // Handle camera session pause/resume based on isActive
@@ -76,8 +105,19 @@ struct CleanYOLOCamera: UIViewRepresentable {
         
         // Update visibility based on showDebug
         setOverlayVisibility(in: uiView, visible: showDebug)
+#endif
+    }
+
+    static func dismantleUIView(_ uiView: UIViewType, coordinator: Coordinator) {
+#if targetEnvironment(simulator)
+        uiView.tearDown()
+#else
+        uiView.onDetection = nil
+        uiView.pauseSession()
+#endif
     }
     
+#if !targetEnvironment(simulator)
     private func setOverlayVisibility(in view: YOLOView, visible: Bool) {
         // Show/hide known public properties
         view.labelName.isHidden = !visible
@@ -141,4 +181,5 @@ struct CleanYOLOCamera: UIViewRepresentable {
             setControlsVisibilityRecursively(in: subview, visible: visible)
         }
     }
+#endif
 }

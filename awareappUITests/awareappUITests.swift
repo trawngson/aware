@@ -23,12 +23,21 @@ final class awareappUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testOpeningScanKeepsAppRunning() throws {
         let app = XCUIApplication()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let onboardingButton = app.buttons["Got it!"]
+        if onboardingButton.waitForExistence(timeout: 2) {
+            onboardingButton.tap()
+        }
+
+        app.tabBars.buttons["Scan"].tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Detected Items"].waitForExistence(timeout: 5),
+            "The Scan tab should remain visible after its camera session starts."
+        )
     }
 
     @MainActor
