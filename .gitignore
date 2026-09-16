@@ -29,3 +29,15 @@
 /.venv/
 /.vast/
 /.train-home/
+
+# Local OS metadata
+.DS_Store
+
+# Target-domain test set: media and returned labels stay off the public repo
+/test_set/*.zip
+/test_set/extracted/
+/test_set/session_1_reuploaded/
+/test_set/session_2/
+/test_set/returned_labels/
+/test_set/label_review_*/
+/test_set/__pycache__/

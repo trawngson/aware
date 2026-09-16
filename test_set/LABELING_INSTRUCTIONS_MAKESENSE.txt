@@ -1,0 +1,339 @@
+AWARE SMARTPHONE TEST SET
+BOUNDING-BOX LABELING INSTRUCTIONS — MAKESENSE.AI
+
+Purpose
+-------
+These photographs are the frozen smartphone evaluation set. They must never be
+added to training or validation. The boxes you create are the ground-truth
+answers used to calculate precision, recall, and mAP.
+
+Use only the 119 paths in ACCEPTED_IMAGES_119.txt. Do not label any photograph
+that is absent from that list.
+
+
+PART 1 — DOWNLOAD THE SOURCE FOLDERS
+------------------------------------
+1. Open ACCEPTED_IMAGES_119.txt in Google Drive and keep it open in one browser
+   tab.
+
+2. Open the Session 1 folder from the link at the top of that list.
+
+3. In Google Drive, click the small down arrow beside the folder name, or
+   right-click the Session 1 folder from its parent folder.
+
+4. Click "Download".
+
+5. Wait while Google Drive prepares the ZIP file. Do not close the browser
+   while it says that it is zipping files.
+
+6. Repeat Steps 2–5 for Session 2.
+
+7. Open the computer's Downloads folder and double-click both downloaded ZIP
+   files to unzip them.
+
+8. Do not delete, rename, rotate, crop, resize, recolor, or overwrite any
+   original HEIC file.
+
+
+PART 2 — MAKE SIX SAFE WORKING BATCHES
+--------------------------------------
+MakeSense keeps the current project in the browser. Closing or refreshing the
+page can lose unsaved work. Work in six smaller batches:
+
+    batch_01 = accepted-list numbers 1–20
+    batch_02 = accepted-list numbers 21–40
+    batch_03 = accepted-list numbers 41–60
+    batch_04 = accepted-list numbers 61–80
+    batch_05 = accepted-list numbers 81–100
+    batch_06 = accepted-list numbers 101–119
+
+1. Create a new folder on the computer named "AWARE_test_labeling".
+
+2. Inside it, create six folders named exactly:
+
+       batch_01
+       batch_02
+       batch_03
+       batch_04
+       batch_05
+       batch_06
+
+3. Read each numbered path in ACCEPTED_IMAGES_119.txt.
+
+4. Find that exact filename in the downloaded Session 1 or Session 2 folder.
+
+5. COPY the file into the matching batch folder. Do not move it out of the
+   downloaded session folder.
+
+6. When finished, verify the batch counts:
+
+       batch_01: 20 images
+       batch_02: 20 images
+       batch_03: 20 images
+       batch_04: 20 images
+       batch_05: 20 images
+       batch_06: 19 images
+
+7. Verify the total is exactly 119. If a batch count differs, stop and correct
+   it before labeling.
+
+
+PART 3 — IF THE HEIC IMAGES DO NOT DISPLAY
+------------------------------------------
+First try MakeSense using Safari on a Mac. If every HEIC preview displays
+normally, keep using the original HEIC working copies.
+
+If a preview is blank, black, sideways, or rejected:
+
+1. Close that MakeSense project without labeling it.
+
+2. In Finder, open one batch folder and select every HEIC working copy.
+
+3. Control-click one selected file.
+
+4. Click "Quick Actions", then click "Convert Image".
+
+5. Set "Format" to "JPEG".
+
+6. Set "Image Size" to "Actual Size".
+
+7. Turn on "Preserve Metadata" if that checkbox is shown.
+
+8. Click "Convert to JPEG".
+
+9. Use the resulting JPEG copies in MakeSense. Keep the HEIC working copies.
+   Do not rename either version. The JPG and HEIC must share the same stem,
+   for example IMG_1999.JPG and IMG_1999.HEIC.
+
+10. Use the same image type for all six batches. Do not mix HEIC and JPEG
+    halfway through the job.
+
+
+PART 4 — START A MAKESENSE OBJECT-DETECTION PROJECT
+---------------------------------------------------
+Complete these steps separately for each batch.
+
+1. Open https://www.makesense.ai/ in the browser.
+
+2. Click the "Get Started" button.
+
+3. On the image-selection screen, click "Click here to select them".
+   Alternatively, drag every image from one batch folder onto the area marked
+   "Drop images".
+
+4. In the file window:
+   a. Open the correct batch folder.
+   b. Select all 20 images, or all 19 for batch_06.
+   c. Click "Open".
+
+5. Check that the expected number of image previews appears.
+
+6. Click "Object Detection". Do not click "Image recognition".
+
+7. On the label-creation screen, click the "+" button to add a label.
+
+8. Add the following seven labels in exactly this order. Spelling, underscores,
+   and order must not change:
+
+       0  plastic_bottle
+       1  glass_container
+       2  metal_can
+       3  cardboard
+       4  plastic_bag
+       5  disposable_cup
+       6  styrofoam
+
+9. After typing each label, press Enter or click the visible confirmation
+   checkmark. Then click "+" again for the next label.
+
+10. Re-read the seven labels from top to bottom. If the order is wrong, correct
+    it before continuing. The order determines the YOLO class numbers.
+
+11. Click "Start project".
+
+12. If an AI-assistance screen appears, do not select an automatic model.
+    Click "I'm going on my own".
+
+
+PART 5 — DRAW EACH BOUNDING BOX
+-------------------------------
+1. Select the first image from the thumbnail column on the left.
+
+2. Click the rectangle or "Bounding Box" tool. Do not use Point, Polygon, or
+   Line.
+
+3. Select the correct class name in the label panel on the right.
+
+4. Put the mouse at the top-left edge of the visible object.
+
+5. Hold the left mouse button and drag to the bottom-right edge.
+
+6. Release the mouse button. If MakeSense asks for the class after drawing,
+   click the correct class name.
+
+7. Adjust the box so it is tight around the object's visible pixels:
+   a. Include the whole visible object.
+   b. Do not include large amounts of table, floor, hand, or background.
+   c. Do not guess the hidden part of an occluded object.
+   d. Use a normal horizontal/vertical rectangle; do not rotate it.
+
+8. Find every other qualifying object in the same photograph. Draw a separate
+   box around each separable object.
+
+9. Click the next thumbnail in the left column. You may also use:
+   a. Mac: Option + Right Arrow for the next image.
+   b. Windows/Linux: Control + Right Arrow for the next image.
+
+10. Repeat until every image in the batch has at least one correct box.
+
+11. To remove a wrong box:
+   a. Click the box.
+   b. Press Backspace on Mac or Delete on Windows/Linux.
+   c. Draw the corrected box again.
+
+
+PART 6 — UNIVERSAL BOXING RULES
+-------------------------------
+1. Label every clearly identifiable object belonging to one of the seven
+   classes, not only the object that appears to be the photograph's subject.
+
+2. An object is eligible when at least approximately 25 percent is visible and
+   its class is clear.
+
+3. If less than approximately 25 percent is visible, do not box it.
+
+4. If the material or class is uncertain, do not guess. Record the filename and
+   question for the project lead.
+
+5. Draw one box for each separable object. Do not draw one large box around
+   several bottles, cans, cups, boxes, bags, or foam pieces.
+
+6. Box only visible pixels. Do not estimate the hidden extent behind a hand,
+   another object, or the edge of the photograph.
+
+7. Include an attached bottle cap, jar lid, can pull-tab, cup lid, cardboard
+   flap, or bag handle inside the main object's box.
+
+8. Do not create a separate box for an attached cap, lid, pull-tab, handle, or
+   straw.
+
+9. Do not label loose caps, loose lids, straws, hands, food, liquid, tables,
+   shelves, floors, chairs, or packaging labels.
+
+10. Crushed, dented, torn, or damaged objects are still labeled when their
+    original class remains visually clear.
+
+
+PART 7 — CLASS DECISION GUIDE
+-----------------------------
+0 — plastic_bottle
+    Label a rigid plastic bottle whose neck is narrower than its body.
+    Examples: water bottle, shampoo bottle, detergent bottle.
+    Do not use for jars, tubs, trays, pouches, bags, or loose caps.
+
+1 — glass_container
+    Label a glass bottle or glass jar made to hold household contents.
+    Include an attached cap or lid in the same box.
+    Do not use for drinking glasses, mirrors, light bulbs, or glass shards.
+
+2 — metal_can
+    Label an aluminum or steel food, beverage, or household-product can.
+    Include the attached top, lid, or pull-tab in the same box.
+    Do not use for foil, loose metal lids, trays, pots, or scrap metal.
+
+3 — cardboard
+    Label recognizable corrugated or paperboard boxes and packaging.
+    Include attached flaps in the box.
+    If multiple separate boxes are visible, box each one separately.
+    Do not use for loose paper, books, tissues, or ordinary paper cups.
+
+4 — plastic_bag
+    Label flexible plastic carrier bags, produce bags, pouches, and film bags
+    whose bag form is clear. Include handles and zipper closures.
+    IMG_2196 and IMG_2197 are zipper bags and must be labeled plastic_bag.
+    Do not use for rigid packaging, loose wrappers, fabric bags, or paper bags.
+
+5 — disposable_cup
+    Label a single-use drinking cup made of paper, plastic, or foam.
+    Include an attached lid in the same box.
+    Do not use for reusable mugs, glassware, bowls, tubs, or loose cup lids.
+
+6 — styrofoam
+    Label expanded-polystyrene protective packaging, boxes, trays, or pieces
+    only when the bead-like EPS texture is visually clear.
+    For IMG_2212 through IMG_2221, box the visible EPS box itself. Do not box
+    tape, labels, shelves, or background objects separately.
+    Foam drinking cups belong to disposable_cup, not styrofoam.
+    Do not use for sponge, bubble wrap, or foam of uncertain material.
+
+
+PART 8 — IMPORTANT MULTI-OBJECT EXAMPLES
+----------------------------------------
+1. IMG_2224 contains two separable disposable cups. Draw two
+   disposable_cup boxes.
+
+2. IMG_2225 requires one box around the main disposable cup. Ignore a tiny
+   partial secondary object if less than approximately 25 percent is visible.
+
+3. If a photograph contains several separate cans, draw one metal_can box per
+   can.
+
+4. If a photograph contains several separate bottles, draw one bottle box per
+   bottle.
+
+5. If a plastic bag photograph also clearly shows an eligible cup, bottle, can,
+   cardboard box, glass container, or EPS object, label that secondary object
+   too.
+
+
+PART 9 — CHECK AND EXPORT EACH BATCH
+------------------------------------
+1. Return to the first thumbnail.
+
+2. Click through every image one more time.
+
+3. Confirm:
+   a. Every image has at least one box.
+   b. Every separate eligible object has its own box.
+   c. Every box uses the correct class.
+   d. Boxes are tight and do not cover large background areas.
+   e. No hand, straw, loose cap, loose lid, food, or background has a box.
+
+4. Click "Export labels" in the top-right area.
+
+5. Select "A .zip package containing files in YOLO format".
+
+6. Click "Export".
+
+7. Wait for the ZIP file to appear in the Downloads folder.
+
+8. Rename only the ZIP file:
+
+       batch_01_labels.zip
+       batch_02_labels.zip
+       batch_03_labels.zip
+       batch_04_labels.zip
+       batch_05_labels.zip
+       batch_06_labels.zip
+
+   Do not rename any image or text file inside the ZIP.
+
+9. Confirm the ZIP exists before closing or refreshing MakeSense.
+
+10. Close the current MakeSense project, reopen https://www.makesense.ai/, and
+    repeat Parts 4–9 for the next batch.
+
+
+PART 10 — HANDOFF
+-----------------
+1. Put all six exported ZIP files into one folder named
+   "AWARE_test_labels_return".
+
+2. Add a short text file listing any uncertain filenames and the question for
+   each one. Do not silently guess uncertain labels.
+
+3. Upload that return folder to the project owner.
+
+4. Do not train a model with these images or labels. The project owner will
+   validate every class ID, filename, box coordinate, missing-label condition,
+   and rendered overlay before freezing the test set.
