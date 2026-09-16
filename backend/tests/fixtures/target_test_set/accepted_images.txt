@@ -1,0 +1,11 @@
+AWARE SMARTPHONE TEST SET - ACCEPTED IMAGES (synthetic fixture)
+
+Total accepted images: 3
+Session 1: 2
+Session 2: 1
+
+Only the following files are approved for annotation:
+
+1. /Session 1/IMG_0001.png
+2. /Session 1/IMG_0002.png
+3. /Session 2/IMG_0003.png
