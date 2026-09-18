@@ -41,3 +41,4 @@
 /test_set/returned_labels/
 /test_set/label_review_*/
 /test_set/__pycache__/
+/test_set/frozen_v1/images/

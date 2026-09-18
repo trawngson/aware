@@ -1,0 +1,838 @@
+{
+  "conversion": "macOS ImageIO (CGImageSourceCreateThumbnailAtIndex with transform, full resolution), lossless PNG, HEIF orientation applied",
+  "images": [
+    {
+      "number": 1,
+      "session": 1,
+      "original": "IMG_1999.HEIC",
+      "original_sha256": "50175c375b95b56b2064d5f32868da2539ff73910559e416c9cbf4f387307bf0",
+      "derived": "Session 1/IMG_1999.png"
+    },
+    {
+      "number": 2,
+      "session": 1,
+      "original": "IMG_2005.HEIC",
+      "original_sha256": "74780b05bc78804f019c0c3ef7704fcbe10c27601ed2a4903aa4384a44296f3b",
+      "derived": "Session 1/IMG_2005.png"
+    },
+    {
+      "number": 3,
+      "session": 1,
+      "original": "IMG_2006.HEIC",
+      "original_sha256": "bec185700060d06682d951425be211990a008b207f82c820c0115522082d2627",
+      "derived": "Session 1/IMG_2006.png"
+    },
+    {
+      "number": 4,
+      "session": 1,
+      "original": "IMG_2007.HEIC",
+      "original_sha256": "a314a39393106cb81fa24a84cc4b55fadd840a18fd1ec5fc6a82e80f900a64bc",
+      "derived": "Session 1/IMG_2007.png"
+    },
+    {
+      "number": 5,
+      "session": 1,
+      "original": "IMG_2010.HEIC",
+      "original_sha256": "fba616a60f7047679683264e436fc0ecb2fd32ad724b2886178dd25e284309b4",
+      "derived": "Session 1/IMG_2010.png"
+    },
+    {
+      "number": 6,
+      "session": 1,
+      "original": "IMG_2011.HEIC",
+      "original_sha256": "ab2aaa1a1f43df70f1625c96bc2ea507279b1ecebe844ccf161a7d864603d224",
+      "derived": "Session 1/IMG_2011.png"
+    },
+    {
+      "number": 7,
+      "session": 1,
+      "original": "IMG_2012.HEIC",
+      "original_sha256": "fbd2c2f8132c57625483d56b5063cc42f660916090ac599dea67cf2c9801232b",
+      "derived": "Session 1/IMG_2012.png"
+    },
+    {
+      "number": 8,
+      "session": 1,
+      "original": "IMG_2015.HEIC",
+      "original_sha256": "b26ed9de13f2de0402a0ec0f025472604c74f32811d40060ee19872eebbf40d0",
+      "derived": "Session 1/IMG_2015.png"
+    },
+    {
+      "number": 9,
+      "session": 1,
+      "original": "IMG_2016.HEIC",
+      "original_sha256": "014772cc0ea9bd94a8d5fe11d2979e8a9f9b8c0b676c7377398d002242655a62",
+      "derived": "Session 1/IMG_2016.png"
+    },
+    {
+      "number": 10,
+      "session": 1,
+      "original": "IMG_2017.HEIC",
+      "original_sha256": "1313f6a78d059a4bc5399bc21ce1b958aaacc01022ec35e968c952b9113a34bf",
+      "derived": "Session 1/IMG_2017.png"
+    },
+    {
+      "number": 11,
+      "session": 1,
+      "original": "IMG_2020.HEIC",
+      "original_sha256": "cb525f0cd5cf22e4f20ea59ab3586e26aa901ce944b480a00807a8d67b0e3414",
+      "derived": "Session 1/IMG_2020.png"
+    },
+    {
+      "number": 12,
+      "session": 1,
+      "original": "IMG_2021.HEIC",
+      "original_sha256": "8346ce55d208e3a8f2d75adb29945ed4745c3cd05ea498c407fe1c269e9b3033",
+      "derived": "Session 1/IMG_2021.png"
+    },
+    {
+      "number": 13,
+      "session": 1,
+      "original": "IMG_2022.HEIC",
+      "original_sha256": "9ae61571311c76135e4871127aaaed635eba8636242f8d69329fb8e1fd762007",
+      "derived": "Session 1/IMG_2022.png"
+    },
+    {
+      "number": 14,
+      "session": 1,
+      "original": "IMG_2023.HEIC",
+      "original_sha256": "799e1aa3ecb568f938191b845fda70c45140f0aa615ac3ae478c7e298a5ff3f9",
+      "derived": "Session 1/IMG_2023.png"
+    },
+    {
+      "number": 15,
+      "session": 1,
+      "original": "IMG_2024.HEIC",
+      "original_sha256": "4dac0ee86350d9974ab1a695db3cbfd295b6fd5c6467ba69397a4abbe1019108",
+      "derived": "Session 1/IMG_2024.png"
+    },
+    {
+      "number": 16,
+      "session": 1,
+      "original": "IMG_2025.HEIC",
+      "original_sha256": "0d52edb3479cf465ff676f861263ec8bac9a3bc0c54ec3b42f3069765960d6e3",
+      "derived": "Session 1/IMG_2025.png"
+    },
+    {
+      "number": 17,
+      "session": 1,
+      "original": "IMG_2026.HEIC",
+      "original_sha256": "fff373e1ce65ddf214fecbaa4cf3d33f5d297005e575edfceffd20f64e653cc1",
+      "derived": "Session 1/IMG_2026.png"
+    },
+    {
+      "number": 18,
+      "session": 1,
+      "original": "IMG_2027.HEIC",
+      "original_sha256": "5523b371b744633c80f00aca06bb5baa0652c6bf0ae467becac73195842becb5",
+      "derived": "Session 1/IMG_2027.png"
+    },
+    {
+      "number": 19,
+      "session": 1,
+      "original": "IMG_2028.HEIC",
+      "original_sha256": "83890943ad157c0c427d8afda34b00033b02109e3e1e268ce8226552500a28e4",
+      "derived": "Session 1/IMG_2028.png"
+    },
+    {
+      "number": 20,
+      "session": 1,
+      "original": "IMG_2031.HEIC",
+      "original_sha256": "fdaa7c6adc29034b8c51c6468d8f06913794e3031dd4f2ebc6492a4968a71a6a",
+      "derived": "Session 1/IMG_2031.png"
+    },
+    {
+      "number": 21,
+      "session": 1,
+      "original": "IMG_2032.HEIC",
+      "original_sha256": "30bb36c161dbc97b2e9f682634101d1a1d604a10643516b156a7b7f71dce8533",
+      "derived": "Session 1/IMG_2032.png"
+    },
+    {
+      "number": 22,
+      "session": 1,
+      "original": "IMG_2033.HEIC",
+      "original_sha256": "95e31a84969fe86a55d287d1f4802180a062c03f70abab539c874dcfaf43bae7",
+      "derived": "Session 1/IMG_2033.png"
+    },
+    {
+      "number": 23,
+      "session": 1,
+      "original": "IMG_2034.HEIC",
+      "original_sha256": "7e17efa42c155968e30ff9be6a7ac208fcd8dc0a2562f4fb1fa47f81a5372e2b",
+      "derived": "Session 1/IMG_2034.png"
+    },
+    {
+      "number": 24,
+      "session": 1,
+      "original": "IMG_2035.HEIC",
+      "original_sha256": "b19a5ec5af97687b3f0a9bd2b874ae000b43251c7181682df7e39ff528d968d0",
+      "derived": "Session 1/IMG_2035.png"
+    },
+    {
+      "number": 25,
+      "session": 1,
+      "original": "IMG_2036.HEIC",
+      "original_sha256": "06593e84fbd5b261d14d0c348a0a85cd8be5ac6f1a5480097412bd20beeb85d1",
+      "derived": "Session 1/IMG_2036.png"
+    },
+    {
+      "number": 26,
+      "session": 1,
+      "original": "IMG_2037.HEIC",
+      "original_sha256": "66a8572342ff86946e9fc25610f9030746ea3c3077482ef38cc2aff37cc6d31c",
+      "derived": "Session 1/IMG_2037.png"
+    },
+    {
+      "number": 27,
+      "session": 1,
+      "original": "IMG_2038.HEIC",
+      "original_sha256": "8fafbe572087c682a0065b01baa5010def2fa2573575939dddfd6bca7ac46c70",
+      "derived": "Session 1/IMG_2038.png"
+    },
+    {
+      "number": 28,
+      "session": 1,
+      "original": "IMG_2039.HEIC",
+      "original_sha256": "6a9846441336ebc34eb44399e3d92cadcd29975f4a6e332c98a8e17d8c27935e",
+      "derived": "Session 1/IMG_2039.png"
+    },
+    {
+      "number": 29,
+      "session": 1,
+      "original": "IMG_2040.HEIC",
+      "original_sha256": "a9adc160c6501653dc12bfb20f0ee66c1ba6927cfe882874ed81f77e7c4cc246",
+      "derived": "Session 1/IMG_2040.png"
+    },
+    {
+      "number": 30,
+      "session": 1,
+      "original": "IMG_2041.HEIC",
+      "original_sha256": "689e37df92f73eef3fd542d313313dc710a97d09043d7ef29fca8e1f0eca3347",
+      "derived": "Session 1/IMG_2041.png"
+    },
+    {
+      "number": 31,
+      "session": 1,
+      "original": "IMG_2042.HEIC",
+      "original_sha256": "cb9bcaf1ae7aaeea9eff171e4c4ee5b5ecb4b33940c0d8faa990f69c4954bc86",
+      "derived": "Session 1/IMG_2042.png"
+    },
+    {
+      "number": 32,
+      "session": 1,
+      "original": "IMG_2043.HEIC",
+      "original_sha256": "652ba6282c45f68c62530f27d436449b0a1b9dc524e8a8a963254fe900fc2b5c",
+      "derived": "Session 1/IMG_2043.png"
+    },
+    {
+      "number": 33,
+      "session": 1,
+      "original": "IMG_2044.HEIC",
+      "original_sha256": "72b2dc936c11172fb5c48dddc328755de7f524d7a3e0f91bb2f5695b1255facd",
+      "derived": "Session 1/IMG_2044.png"
+    },
+    {
+      "number": 34,
+      "session": 1,
+      "original": "IMG_2046.HEIC",
+      "original_sha256": "761a2ffd08ec7995170bb4961c906406922dbde15076bb8977bae8110fa4b748",
+      "derived": "Session 1/IMG_2046.png"
+    },
+    {
+      "number": 35,
+      "session": 1,
+      "original": "IMG_2054.HEIC",
+      "original_sha256": "874d83783e72c993d82aa7479a47cb7794cc3cc987ab9a7490c67c4bfe17357d",
+      "derived": "Session 1/IMG_2054.png"
+    },
+    {
+      "number": 36,
+      "session": 1,
+      "original": "IMG_2061.HEIC",
+      "original_sha256": "7f5af3aa4254ec75283054c2c36f34bd1a7c0555474d158892636273f0db3dd3",
+      "derived": "Session 1/IMG_2061.png"
+    },
+    {
+      "number": 37,
+      "session": 1,
+      "original": "IMG_2062.HEIC",
+      "original_sha256": "0afc11dbedfae5a8241b52043af969db50f316d7a4b16333302c15903eb73de7",
+      "derived": "Session 1/IMG_2062.png"
+    },
+    {
+      "number": 38,
+      "session": 1,
+      "original": "IMG_2063.HEIC",
+      "original_sha256": "2e8dad7e1e9fc5bd70de927882ed44cffdab20523823dfa6b6e272d977471b5d",
+      "derived": "Session 1/IMG_2063.png"
+    },
+    {
+      "number": 39,
+      "session": 1,
+      "original": "IMG_2065.HEIC",
+      "original_sha256": "c2f87bce8fef36b785252c0a4aba9048df0dd54d63db2892ce6ce7361caf6cc5",
+      "derived": "Session 1/IMG_2065.png"
+    },
+    {
+      "number": 40,
+      "session": 1,
+      "original": "IMG_2066.HEIC",
+      "original_sha256": "02557c4a72698e6a3281ee95249e443a6848ab3babed915b208a0223fd7d4ec5",
+      "derived": "Session 1/IMG_2066.png"
+    },
+    {
+      "number": 41,
+      "session": 1,
+      "original": "IMG_2067.HEIC",
+      "original_sha256": "2b365165e205234b0d9a434b5587eddca03fc6570b462ea7ffb501604307ba80",
+      "derived": "Session 1/IMG_2067.png"
+    },
+    {
+      "number": 42,
+      "session": 1,
+      "original": "IMG_2068.HEIC",
+      "original_sha256": "b32eefd5d0bf614a8ae0a0779ebef51e84df178b77f1d984bb954f98bb2e9304",
+      "derived": "Session 1/IMG_2068.png"
+    },
+    {
+      "number": 43,
+      "session": 1,
+      "original": "IMG_2069.HEIC",
+      "original_sha256": "12f25b0d6bf1b8f5f451976ef63b9bcab281971c309d26088bb7b9e4a0664ee4",
+      "derived": "Session 1/IMG_2069.png"
+    },
+    {
+      "number": 44,
+      "session": 1,
+      "original": "IMG_2070.HEIC",
+      "original_sha256": "c489356bd10f94c0bfa84b85558af57989126aeac2dcd6ccbe55c8fe67c081a5",
+      "derived": "Session 1/IMG_2070.png"
+    },
+    {
+      "number": 45,
+      "session": 1,
+      "original": "IMG_2071.HEIC",
+      "original_sha256": "6b9af878c4a09cf21571172e7c4fb66c8ce74a2db84544514d1f19e6c31d6102",
+      "derived": "Session 1/IMG_2071.png"
+    },
+    {
+      "number": 46,
+      "session": 1,
+      "original": "IMG_2072.HEIC",
+      "original_sha256": "f1abdc6b9f6d762077ad5e218d836e7c78038200e0b928132fbeea3182578b53",
+      "derived": "Session 1/IMG_2072.png"
+    },
+    {
+      "number": 47,
+      "session": 1,
+      "original": "IMG_2073.HEIC",
+      "original_sha256": "c8031f04169016f65222c4a3ff88bc53645736c14317aa282572d5fbc846186d",
+      "derived": "Session 1/IMG_2073.png"
+    },
+    {
+      "number": 48,
+      "session": 1,
+      "original": "IMG_2074.HEIC",
+      "original_sha256": "be2fdc8e8aad7903342ea6a3f2e1cf9c6fedd0100f7db557690bf121969fb3dc",
+      "derived": "Session 1/IMG_2074.png"
+    },
+    {
+      "number": 49,
+      "session": 1,
+      "original": "IMG_2075.HEIC",
+      "original_sha256": "8238cddd8c3086ea82d6c887d7d3642d5026df004073fb6f288f695989b6b854",
+      "derived": "Session 1/IMG_2075.png"
+    },
+    {
+      "number": 50,
+      "session": 1,
+      "original": "IMG_2076.HEIC",
+      "original_sha256": "4aca07a01cf862213191b0889d61e5ed364c3fec052bcf10c99f1bae24bb9365",
+      "derived": "Session 1/IMG_2076.png"
+    },
+    {
+      "number": 51,
+      "session": 1,
+      "original": "IMG_2077.HEIC",
+      "original_sha256": "5ac3d3d3bd3e0230dcdf7809346172ef7eaa4411f419dc9e2a7d890f9f0e9a45",
+      "derived": "Session 1/IMG_2077.png"
+    },
+    {
+      "number": 52,
+      "session": 1,
+      "original": "IMG_2078.HEIC",
+      "original_sha256": "6c63bfd6772fd62e85babd4e8abe2de4629a6df12fd4954fd931e5db6c934e8e",
+      "derived": "Session 1/IMG_2078.png"
+    },
+    {
+      "number": 53,
+      "session": 1,
+      "original": "IMG_2079.HEIC",
+      "original_sha256": "8c6de41b9707cc6303ac4de6462c9781821296a22bdf03cfa5e5e1b4ec90c6f8",
+      "derived": "Session 1/IMG_2079.png"
+    },
+    {
+      "number": 54,
+      "session": 1,
+      "original": "IMG_2080.HEIC",
+      "original_sha256": "4fcebc9f1432b38e36c77b293d8e5cea1e1673322ec14af70d8af2e0f2da3bb1",
+      "derived": "Session 1/IMG_2080.png"
+    },
+    {
+      "number": 55,
+      "session": 1,
+      "original": "IMG_2081.HEIC",
+      "original_sha256": "1c67317ff002eab78fa5a66ec62dd53000ea28099b1c22d5740058a2647283cf",
+      "derived": "Session 1/IMG_2081.png"
+    },
+    {
+      "number": 56,
+      "session": 1,
+      "original": "IMG_2082.HEIC",
+      "original_sha256": "97a3ca25ad056d4db594bf0679ed1031be6888a8b3a74da2fc61d65c43824a0f",
+      "derived": "Session 1/IMG_2082.png"
+    },
+    {
+      "number": 57,
+      "session": 1,
+      "original": "IMG_2084.HEIC",
+      "original_sha256": "8c495b7cef31b9ccf8beb24cb7e72147b2571801f0ebd5671327c3b730ee59c3",
+      "derived": "Session 1/IMG_2084.png"
+    },
+    {
+      "number": 58,
+      "session": 1,
+      "original": "IMG_2085.HEIC",
+      "original_sha256": "27efe25dbbdec01ada7245c9b014163ca31777fb9da4c76999bd2ce62df333e6",
+      "derived": "Session 1/IMG_2085.png"
+    },
+    {
+      "number": 59,
+      "session": 1,
+      "original": "IMG_2086.HEIC",
+      "original_sha256": "53ebc79bc3047217303d21ea1c82d93c819af50f6694c28818954f2a621bc186",
+      "derived": "Session 1/IMG_2086.png"
+    },
+    {
+      "number": 60,
+      "session": 1,
+      "original": "IMG_2087.HEIC",
+      "original_sha256": "ea9b385f45e5975cb30b97ab9e29f58a6e3e12840f45b73d88a3e91a52517948",
+      "derived": "Session 1/IMG_2087.png"
+    },
+    {
+      "number": 61,
+      "session": 1,
+      "original": "IMG_2089.HEIC",
+      "original_sha256": "0a5c1fea5732ec3950dd53d223a7c2c7ac6468618ce415dde1ce2c026759ce70",
+      "derived": "Session 1/IMG_2089.png"
+    },
+    {
+      "number": 62,
+      "session": 1,
+      "original": "IMG_2090.HEIC",
+      "original_sha256": "2dd7baa54ae1db4fc4228155ba87e66747a14afb6ded7d2deaec2560e0e0b1e2",
+      "derived": "Session 1/IMG_2090.png"
+    },
+    {
+      "number": 63,
+      "session": 1,
+      "original": "IMG_2091.HEIC",
+      "original_sha256": "93f241566571490cc6de42d26c89c78cb6e32f4927e217cbadf2d4800fbf4630",
+      "derived": "Session 1/IMG_2091.png"
+    },
+    {
+      "number": 64,
+      "session": 1,
+      "original": "IMG_2092.HEIC",
+      "original_sha256": "c20f21c739a86da056fda343256ace6518e3422a8492ca1cd2ed127252bf042f",
+      "derived": "Session 1/IMG_2092.png"
+    },
+    {
+      "number": 65,
+      "session": 1,
+      "original": "IMG_2093.HEIC",
+      "original_sha256": "b26a19642b0d25fc2e1cedd7cd55c93393546a086ac2ac23de2f6b6f587626ae",
+      "derived": "Session 1/IMG_2093.png"
+    },
+    {
+      "number": 66,
+      "session": 1,
+      "original": "IMG_2094.HEIC",
+      "original_sha256": "4baadd670d53753e1930120928a97918f531c43ed35d38128e071080a9e2c7b1",
+      "derived": "Session 1/IMG_2094.png"
+    },
+    {
+      "number": 67,
+      "session": 1,
+      "original": "IMG_2098.HEIC",
+      "original_sha256": "04c7df642f26baba3f9067904748e33673c46e7cf18d75fc80f27ae8d2c627d2",
+      "derived": "Session 1/IMG_2098.png"
+    },
+    {
+      "number": 68,
+      "session": 1,
+      "original": "IMG_2099.HEIC",
+      "original_sha256": "3c851f8862bebfb6dfadd0232fdb11f9751c01e44efa0531ac4817c33dedab21",
+      "derived": "Session 1/IMG_2099.png"
+    },
+    {
+      "number": 69,
+      "session": 1,
+      "original": "IMG_2100.HEIC",
+      "original_sha256": "5be46c6046bfa07f37147b740365669044f1260762e37e6684331fc131d95224",
+      "derived": "Session 1/IMG_2100.png"
+    },
+    {
+      "number": 70,
+      "session": 1,
+      "original": "IMG_2101.HEIC",
+      "original_sha256": "b3754c1107b862c5cd416b67a242ce826f7e5994cb053f9279273b0c3bd9bce5",
+      "derived": "Session 1/IMG_2101.png"
+    },
+    {
+      "number": 71,
+      "session": 1,
+      "original": "IMG_2102.HEIC",
+      "original_sha256": "f0d9d598fdddbdabb22218bc1dcc56dfa5041594dfafbebb10ffbaa03a3c9fc0",
+      "derived": "Session 1/IMG_2102.png"
+    },
+    {
+      "number": 72,
+      "session": 1,
+      "original": "IMG_2103.HEIC",
+      "original_sha256": "eddf4e8850ee2f660f463eef062c5dda87def25b4ef205168cdf3bb379466328",
+      "derived": "Session 1/IMG_2103.png"
+    },
+    {
+      "number": 73,
+      "session": 1,
+      "original": "IMG_2104.HEIC",
+      "original_sha256": "d277fa4a90a518b0f7c3f52dded8737db1399435a0a8bb98cd4ddfe637aa823d",
+      "derived": "Session 1/IMG_2104.png"
+    },
+    {
+      "number": 74,
+      "session": 1,
+      "original": "IMG_2105.HEIC",
+      "original_sha256": "a715b2447042450953249cc177167bbbc45b2d28b4d10ecaa03ab671b747b90b",
+      "derived": "Session 1/IMG_2105.png"
+    },
+    {
+      "number": 75,
+      "session": 1,
+      "original": "IMG_2106.HEIC",
+      "original_sha256": "96925a3f148bcfcb5a71e90c1c8a53c51c8090fc65c84a26bc0589b21c2f771d",
+      "derived": "Session 1/IMG_2106.png"
+    },
+    {
+      "number": 76,
+      "session": 1,
+      "original": "IMG_2107.HEIC",
+      "original_sha256": "ea0323a8e985250bd6d72b6c1847c98c57dfa91781eae7f679018d32dd5453c8",
+      "derived": "Session 1/IMG_2107.png"
+    },
+    {
+      "number": 77,
+      "session": 1,
+      "original": "IMG_2108.HEIC",
+      "original_sha256": "3c349a58c1ec015b7f12082e7a90b97484f095e84ef252a99156f881c6f4b002",
+      "derived": "Session 1/IMG_2108.png"
+    },
+    {
+      "number": 78,
+      "session": 1,
+      "original": "IMG_2109.HEIC",
+      "original_sha256": "b60c2e56385ee3404d9680d6451a79d8bfa4f66be03d1b05d6b3c1438c9fce0e",
+      "derived": "Session 1/IMG_2109.png"
+    },
+    {
+      "number": 79,
+      "session": 1,
+      "original": "IMG_2110.HEIC",
+      "original_sha256": "3a7a6e44c2b5830e0171dd4876ed85cc991fd67fa4b96620af5c273275762f3b",
+      "derived": "Session 1/IMG_2110.png"
+    },
+    {
+      "number": 80,
+      "session": 1,
+      "original": "IMG_2111.HEIC",
+      "original_sha256": "b2045d43c83d48f7345b77520a1f0ac0bb79d9819d9d2e3590f9656522899fd8",
+      "derived": "Session 1/IMG_2111.png"
+    },
+    {
+      "number": 81,
+      "session": 1,
+      "original": "IMG_2112.HEIC",
+      "original_sha256": "334511a132357f9d7e83bb2a7f6b84c5ed8445bbe1c0a7e4f7c8445cb076a32f",
+      "derived": "Session 1/IMG_2112.png"
+    },
+    {
+      "number": 82,
+      "session": 1,
+      "original": "IMG_2113.HEIC",
+      "original_sha256": "5e915b3a43c1f4ea3c70a17fe700dda004a5e2639d8230af24e27c05160ff90c",
+      "derived": "Session 1/IMG_2113.png"
+    },
+    {
+      "number": 83,
+      "session": 1,
+      "original": "IMG_2114.HEIC",
+      "original_sha256": "97ac03ce04fe6a3862629c89fc136e983dc2543917e5711f37dc289bf445bf49",
+      "derived": "Session 1/IMG_2114.png"
+    },
+    {
+      "number": 84,
+      "session": 1,
+      "original": "IMG_2115.HEIC",
+      "original_sha256": "6b4bedf7d7a3e7f0f03f71afbf5dd5efe88135d234fb7a23a2ca893535c18815",
+      "derived": "Session 1/IMG_2115.png"
+    },
+    {
+      "number": 85,
+      "session": 1,
+      "original": "IMG_2116.HEIC",
+      "original_sha256": "7ecf2a5932ff2caaeb9d2be192a028af6530c07d46d734e23022bbc2b6faf792",
+      "derived": "Session 1/IMG_2116.png"
+    },
+    {
+      "number": 86,
+      "session": 1,
+      "original": "IMG_2117.HEIC",
+      "original_sha256": "962bca86f108cb0656a60e43ca5e3712d962a09d0d3ff9f68f57a933b3ee248b",
+      "derived": "Session 1/IMG_2117.png"
+    },
+    {
+      "number": 87,
+      "session": 1,
+      "original": "IMG_2120.HEIC",
+      "original_sha256": "3340092f93ae200686073fb2148a66dc933ee608a5a4e38dafe58659750ba06e",
+      "derived": "Session 1/IMG_2120.png"
+    },
+    {
+      "number": 88,
+      "session": 1,
+      "original": "IMG_2121.HEIC",
+      "original_sha256": "79b65d268389c9788492b0b384a440600337126909ed5474ef441a3c8ade8573",
+      "derived": "Session 1/IMG_2121.png"
+    },
+    {
+      "number": 89,
+      "session": 1,
+      "original": "IMG_2122.HEIC",
+      "original_sha256": "a6e731d958ab72f220db302648811134c6d4287185215c944f71fc2b904f29d4",
+      "derived": "Session 1/IMG_2122.png"
+    },
+    {
+      "number": 90,
+      "session": 2,
+      "original": "IMG_2185.HEIC",
+      "original_sha256": "4a76eed11b2b998626669aece17d6d888608a860d28633a768aeb3a1e3877065",
+      "derived": "Session 2/IMG_2185.png"
+    },
+    {
+      "number": 91,
+      "session": 2,
+      "original": "IMG_2186.HEIC",
+      "original_sha256": "9301db4004fe5deef8ea85ffcb570e602e1fd5f67fce23b987f92f9a2afe2355",
+      "derived": "Session 2/IMG_2186.png"
+    },
+    {
+      "number": 92,
+      "session": 2,
+      "original": "IMG_2187.HEIC",
+      "original_sha256": "9c5ba97201bba561fa693ba82b3092f973d38860adb76d1f7f476b0298806af5",
+      "derived": "Session 2/IMG_2187.png"
+    },
+    {
+      "number": 93,
+      "session": 2,
+      "original": "IMG_2188.HEIC",
+      "original_sha256": "c4e8f88c0fd9230c642d68408e9527a6e4ef6cbaae7bb81deae6481f339b687a",
+      "derived": "Session 2/IMG_2188.png"
+    },
+    {
+      "number": 94,
+      "session": 2,
+      "original": "IMG_2191.HEIC",
+      "original_sha256": "4c6d827cb1ecef5cfe4912a7ccf353f77da0537897686794372e73bf1214a5a1",
+      "derived": "Session 2/IMG_2191.png"
+    },
+    {
+      "number": 95,
+      "session": 2,
+      "original": "IMG_2192.HEIC",
+      "original_sha256": "874271a12c533517c62e84ba32c677d0c6fa6382b484ba0cfe336cf713d1e2ed",
+      "derived": "Session 2/IMG_2192.png"
+    },
+    {
+      "number": 96,
+      "session": 2,
+      "original": "IMG_2193.HEIC",
+      "original_sha256": "d6ffbc9fbd181346086965171dd79d0bff0e2a91e1dc55f8733545828be9eb07",
+      "derived": "Session 2/IMG_2193.png"
+    },
+    {
+      "number": 97,
+      "session": 2,
+      "original": "IMG_2194.HEIC",
+      "original_sha256": "dbfeea3d0a09ec8e7beba63d9ce2db384d7a66dd1006cfd1db9373510fdca86e",
+      "derived": "Session 2/IMG_2194.png"
+    },
+    {
+      "number": 98,
+      "session": 2,
+      "original": "IMG_2195.HEIC",
+      "original_sha256": "36b59f926c983e52e0512e7f3febcd96cc935b198444dcc5365aa5cf04eb022d",
+      "derived": "Session 2/IMG_2195.png"
+    },
+    {
+      "number": 99,
+      "session": 2,
+      "original": "IMG_2196.HEIC",
+      "original_sha256": "5616709e8271a43bb5b1c62b0d0351bcc32fcd20f1879fa84c8b7a9465f9c0b8",
+      "derived": "Session 2/IMG_2196.png"
+    },
+    {
+      "number": 100,
+      "session": 2,
+      "original": "IMG_2197.HEIC",
+      "original_sha256": "ba309feb30f039b9c4e27489a799bb21f145ba937805bb2a29cb9c045598dc3c",
+      "derived": "Session 2/IMG_2197.png"
+    },
+    {
+      "number": 101,
+      "session": 2,
+      "original": "IMG_2200.HEIC",
+      "original_sha256": "61912a2fef1b9f5906814fc5f3271549b8c2f2b1f800f0333d86df2985fa6ae5",
+      "derived": "Session 2/IMG_2200.png"
+    },
+    {
+      "number": 102,
+      "session": 2,
+      "original": "IMG_2201.HEIC",
+      "original_sha256": "1a15644f2f2bae12f01909936846a68fffbdcc2a72e9fc989ecbc2e26b584afd",
+      "derived": "Session 2/IMG_2201.png"
+    },
+    {
+      "number": 103,
+      "session": 2,
+      "original": "IMG_2202.HEIC",
+      "original_sha256": "a1a143f458f3ac4facda3cedd89aaeb2f691e525fd9816375a89a1a4cb14702f",
+      "derived": "Session 2/IMG_2202.png"
+    },
+    {
+      "number": 104,
+      "session": 2,
+      "original": "IMG_2203.HEIC",
+      "original_sha256": "dfccbfe60e63d0b7a93c8a023da160ea7b2c6fbcf2efafc8c0f5a0d71569d3ae",
+      "derived": "Session 2/IMG_2203.png"
+    },
+    {
+      "number": 105,
+      "session": 2,
+      "original": "IMG_2204.HEIC",
+      "original_sha256": "13614d4651751d94b55a84e58f53986a39d5a5e8123acdc69ca004860f62b05d",
+      "derived": "Session 2/IMG_2204.png"
+    },
+    {
+      "number": 106,
+      "session": 2,
+      "original": "IMG_2205.HEIC",
+      "original_sha256": "9a354c22fef6d57efff396510fc6418dc87379f7c48a5a15aecb2fb3cfccbd45",
+      "derived": "Session 2/IMG_2205.png"
+    },
+    {
+      "number": 107,
+      "session": 2,
+      "original": "IMG_2206.HEIC",
+      "original_sha256": "c8ae1782a0f3f03bfef0730561cf298608e2f675ee61bdf3ac1861ff7cc09eb7",
+      "derived": "Session 2/IMG_2206.png"
+    },
+    {
+      "number": 108,
+      "session": 2,
+      "original": "IMG_2212.HEIC",
+      "original_sha256": "c8fbb61f957d1ad1a4b18416db75aa0d8ede2802a84dee8d39dcd89b86e6b77e",
+      "derived": "Session 2/IMG_2212.png"
+    },
+    {
+      "number": 109,
+      "session": 2,
+      "original": "IMG_2213.HEIC",
+      "original_sha256": "ca859f4773e5bfd3fa8b7f941466391139044ebdeefb83982aa0809b2318d5d7",
+      "derived": "Session 2/IMG_2213.png"
+    },
+    {
+      "number": 110,
+      "session": 2,
+      "original": "IMG_2214.HEIC",
+      "original_sha256": "e93e4a97b1415e1da85f571231ad48ba7e2e50bdfb9de52b60993da1e162bfb8",
+      "derived": "Session 2/IMG_2214.png"
+    },
+    {
+      "number": 111,
+      "session": 2,
+      "original": "IMG_2215.HEIC",
+      "original_sha256": "8ceeb5747f018f259805898c53d7a55f67c5b67a18893f681ebb9523c67e28cd",
+      "derived": "Session 2/IMG_2215.png"
+    },
+    {
+      "number": 112,
+      "session": 2,
+      "original": "IMG_2216.HEIC",
+      "original_sha256": "f233dfb7d387b0f469b07649e25d0fcfb596efbe9d33681783babe3f5d70ac4f",
+      "derived": "Session 2/IMG_2216.png"
+    },
+    {
+      "number": 113,
+      "session": 2,
+      "original": "IMG_2217.HEIC",
+      "original_sha256": "8faee17673deb65c29b9c819f8690bb953a9c276ff395b42c07976c2ec68e9cb",
+      "derived": "Session 2/IMG_2217.png"
+    },
+    {
+      "number": 114,
+      "session": 2,
+      "original": "IMG_2218.HEIC",
+      "original_sha256": "658001b550d3aa1db72a8a8962211b5cee57fb598a2b721ef9c3f5b9900296d2",
+      "derived": "Session 2/IMG_2218.png"
+    },
+    {
+      "number": 115,
+      "session": 2,
+      "original": "IMG_2219.HEIC",
+      "original_sha256": "d04b722059dd4ea4a327b23c59fd4099c4d8fb9b2494a660b7a888eec23db202",
+      "derived": "Session 2/IMG_2219.png"
+    },
+    {
+      "number": 116,
+      "session": 2,
+      "original": "IMG_2220.HEIC",
+      "original_sha256": "1e80fc7c362fe7426d8115832e64407ce65fdf851b5ab6dac8553660d2311a22",
+      "derived": "Session 2/IMG_2220.png"
+    },
+    {
+      "number": 117,
+      "session": 2,
+      "original": "IMG_2221.HEIC",
+      "original_sha256": "afe5501c5995b83cb156f5e67db286b75ec7b55404dcb7a99475c84e9a6b6c0a",
+      "derived": "Session 2/IMG_2221.png"
+    },
+    {
+      "number": 118,
+      "session": 2,
+      "original": "IMG_2224.HEIC",
+      "original_sha256": "5ced4759cb24d7e8d49fcfe2b71fb8d542dcf52d4e57bd0d3f8437dde6f12b9b",
+      "derived": "Session 2/IMG_2224.png"
+    },
+    {
+      "number": 119,
+      "session": 2,
+      "original": "IMG_2225.HEIC",
+      "original_sha256": "4c55cfd71fa9c257f8ec7882c9f45fddd0ca38c1343472c020b18a96c702fdf8",
+      "derived": "Session 2/IMG_2225.png"
+    }
+  ]
+}

@@ -1,0 +1,2661 @@
+{
+  "accepted_list": {
+    "accepted_image_count": 119,
+    "expected_image_count": 119,
+    "relative_path": "frozen_v1/ACCEPTED_IMAGES_119_png.txt",
+    "sha256": "dec93bb936e4710662cfc616b4a017a0638c4db0d21787e7ee9f91616efc9893"
+  },
+  "audit": {
+    "annotation_counts_by_class": {
+      "cardboard": 29,
+      "disposable_cup": 18,
+      "glass_container": 26,
+      "metal_can": 14,
+      "plastic_bag": 16,
+      "plastic_bottle": 26,
+      "styrofoam": 10
+    },
+    "findings": [],
+    "image_counts_by_source": {
+      "aware-smartphone-test-v1": 119
+    },
+    "ok": true
+  },
+  "class_order_to_canonical_id": {
+    "cardboard": 3,
+    "disposable_cup": 5,
+    "glass_container": 1,
+    "metal_can": 2,
+    "plastic_bag": 4,
+    "plastic_bottle": 0,
+    "styrofoam": 6
+  },
+  "counts": {
+    "boxes": 139,
+    "boxes_by_canonical_class": {
+      "cardboard": 29,
+      "disposable_cup": 18,
+      "glass_container": 26,
+      "metal_can": 14,
+      "plastic_bag": 16,
+      "plastic_bottle": 26,
+      "styrofoam": 10
+    },
+    "images": 119,
+    "images_by_capture_session": {
+      "session-1": 89,
+      "session-2": 30
+    }
+  },
+  "exclusions": [],
+  "frozen_on": "2026-09-18",
+  "images": [
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_1999#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.750737,
+          "width": 0.73943,
+          "x_center": 0.46460199999999996,
+          "y_center": 0.422566
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_1999",
+      "relative_path": "frozen_v1/images/Session 1/IMG_1999.png",
+      "sha256": "00916c5ab8d198f45a2959ef4bed67be7ec5e315f304427d6140c384534052b0",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2005#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.38790600000000003,
+          "width": 0.35201600000000005,
+          "x_center": 0.544248,
+          "y_center": 0.493363
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2005",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2005.png",
+      "sha256": "ee3f04a95b30ac1778d51a682e37e1a4af32733772e8d62516ff5b5076234d80",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2006#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.597345,
+          "width": 0.40511299999999995,
+          "x_center": 0.464602,
+          "y_center": 0.43879100000000004
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2006",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2006.png",
+      "sha256": "78b31fb2ad026772f604cc01891af438e8b13a0a89a3c720ff58fecce108ba61",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2007#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.715339,
+          "width": 0.38544700000000004,
+          "x_center": 0.490167,
+          "y_center": 0.503687
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2007",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2007.png",
+      "sha256": "46b38f62ea7da4559f5f587fd7e0a318c76e5c4484fb074c174b298f62fb921a",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2010#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.591445,
+          "width": 0.5919370000000002,
+          "x_center": 0.49115,
+          "y_center": 0.478614
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2010",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2010.png",
+      "sha256": "5e2499d795f5b5b40404e8cabb44586f9aee11e19e30d89df8d5cb15deb6378d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2011#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.510324,
+          "width": 0.574238,
+          "x_center": 0.582596,
+          "y_center": 0.44247800000000004
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2011",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2011.png",
+      "sha256": "031493a3bbb3d518bed0bdb2634255689df5ba7594891098d0ddc1096dbb8b33",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2012#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.46017700000000006,
+          "width": 0.623402,
+          "x_center": 0.487217,
+          "y_center": 0.558997
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2012",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2012.png",
+      "sha256": "f3d8d593aa3f803245a1c4dc775c52176d9d5280ff44eae846d6412037f948fe",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2015#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.389381,
+          "width": 0.4110130000000001,
+          "x_center": 0.475418,
+          "y_center": 0.50295
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2015",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2015.png",
+      "sha256": "8a4913c0cf05e9ca81106d85cb395e3e787ec1c3085fd52e8a8f04dcfdc04b41",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2016#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.522124,
+          "width": 0.5054079999999999,
+          "x_center": 0.526549,
+          "y_center": 0.573746
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2016",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2016.png",
+      "sha256": "62a958a168972c8d57871b0dfa9d9adea7ba91a41289eb688fd0bfa34488da52",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2017#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.29203500000000004,
+          "width": 0.38544699999999993,
+          "x_center": 0.472468,
+          "y_center": 0.513274
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2017",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2017.png",
+      "sha256": "ce30b24e12b8e4295c7e1acbbaf43fd6a59d6e670b506043ac9ef5c7d61796cc",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2020#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.8141590000000001,
+          "width": 0.80236,
+          "x_center": 0.462635,
+          "y_center": 0.532448
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2020",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2020.png",
+      "sha256": "a5af6d1899233d3784f2a15fdb4058b508f5f89a22910e4ba1d9b7eb1d5001e5",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2021#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.26696200000000003,
+          "width": 0.7413959999999999,
+          "x_center": 0.609145,
+          "y_center": 0.449115
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2021",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2021.png",
+      "sha256": "090b577aae9a2b08d21267c0017479e22709d73ea8af5f6914a0974341e76836",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2022#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.6578170000000001,
+          "width": 0.621436,
+          "x_center": 0.486234,
+          "y_center": 0.535398
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2022",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2022.png",
+      "sha256": "b6bed3611379ef1b31aeb26e4a8c446d16939aebdf659190a478d561b81beec1",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2023#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.606195,
+          "width": 0.5467060000000001,
+          "x_center": 0.588496,
+          "y_center": 0.514012
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2023",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2023.png",
+      "sha256": "d755799645e1ca45f9df37fac1c27d21cd37efb3311434929e7f5994586b601c",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2024#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.8982299999999999,
+          "width": 0.99115,
+          "x_center": 0.501967,
+          "y_center": 0.544985
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2024",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2024.png",
+      "sha256": "cfed3131655cca3e51700bb5c058cf3f095a7b7e122096826ad756ceb9f71b9f",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2025#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.7979350000000001,
+          "width": 0.993608,
+          "x_center": 0.503196,
+          "y_center": 0.598083
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2025",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2025.png",
+      "sha256": "574ce1ef9f0a0d3ab3721714cc462673df18399d4f4e8de6fbeebce2381552be",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2026#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.29350999999999994,
+          "width": 0.47787599999999997,
+          "x_center": 0.441986,
+          "y_center": 0.54941
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2026",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2026.png",
+      "sha256": "aa5a00c8b6253d7b8dcfa6197cbd14f36e2655862c8c45d1ed7c4fdd001c1ca6",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2027#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.3584069999999999,
+          "width": 0.574238,
+          "x_center": 0.517699,
+          "y_center": 0.570059
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2027",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2027.png",
+      "sha256": "a6eb0fcaaa2712d9443e24e16b8ef2fdf63429b71af320959a63d5d110e2b9bf",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2028#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.47640099999999996,
+          "width": 0.412979,
+          "x_center": 0.543265,
+          "y_center": 0.463864
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2028",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2028.png",
+      "sha256": "7deff4c645ebde433b67d2d8939a11540cbf01ff5b81e542d89df7635d4778f5",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2031#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.8200590000000001,
+          "width": 0.6627340000000002,
+          "x_center": 0.581613,
+          "y_center": 0.480826
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2031",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2031.png",
+      "sha256": "d2820183f15b23ce69f4e7b2cd4e9be5adeb41cf3f57f54d37e4026d3ac6a771",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2032#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.5339229999999999,
+          "width": 0.5958700000000001,
+          "x_center": 0.49115,
+          "y_center": 0.682891
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2032",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2032.png",
+      "sha256": "ee153ce0d7bad9611992a6c250f7b60b4923a76d442a9dc1cc2de99305272093",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2033#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.727139,
+          "width": 0.8220259999999999,
+          "x_center": 0.427237,
+          "y_center": 0.37684400000000007
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2033#2",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.256637,
+          "width": 0.13618400000000008,
+          "x_center": 0.931908,
+          "y_center": 0.612094
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2033",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2033.png",
+      "sha256": "e40891477bd2de2e59c77340cba6328e9b15636ed08df466bce81b1d963ffcde",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2034#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.5988199999999999,
+          "width": 0.7099310000000001,
+          "x_center": 0.398722,
+          "y_center": 0.619469
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2034",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2034.png",
+      "sha256": "923414f4c06a06b7ab177e987e84e68e6e27b44a5f0c6456e87d91065fa5f2b8",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2035#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.513274,
+          "width": 0.28318599999999994,
+          "x_center": 0.590462,
+          "y_center": 0.553097
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2035",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2035.png",
+      "sha256": "1990bd43b4a50848a1cf6ae98dd241d8c706d562ee6d50ae7e3476374a259b96",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2036#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.249263,
+          "width": 0.39527999999999996,
+          "x_center": 0.483284,
+          "y_center": 0.54941
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2036",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2036.png",
+      "sha256": "8aa7c8ad1a542f7780500bba07b0b05d09ce53674284b3c71fafd4675c067b8a",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2037#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.532448,
+          "width": 0.45821,
+          "x_center": 0.512783,
+          "y_center": 0.596608
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2037#2",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.12389399999999995,
+          "width": 0.25172100000000003,
+          "x_center": 0.466568,
+          "y_center": 0.408555
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2037",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2037.png",
+      "sha256": "8b28c9fd88615146b5134738f767dd6661477b0d83c7d64fd6c9379c350a586f",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2038#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.21828900000000007,
+          "width": 0.198623,
+          "x_center": 0.294494,
+          "y_center": 0.368732
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2038#2",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.241888,
+          "width": 0.30285199999999995,
+          "x_center": 0.641593,
+          "y_center": 0.451327
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2038#3",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.324484,
+          "width": 0.47590999999999994,
+          "x_center": 0.480334,
+          "y_center": 0.728614
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2038",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2038.png",
+      "sha256": "4311d0ffd1dc21ae469327490ebde029bdc99c2fa0a9d3fe84977dc93ff2a162",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2039#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.554572,
+          "width": 0.41494600000000004,
+          "x_center": 0.459685,
+          "y_center": 0.466077
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2039#2",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.171091,
+          "width": 0.20649000000000006,
+          "x_center": 0.500983,
+          "y_center": 0.29941
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2039",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2039.png",
+      "sha256": "6a4a72833dd395694402cf78d11c2b6b31247e9934a79baa8d3ffffbddaeebf4",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2040#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.654867,
+          "width": 0.357915,
+          "x_center": 0.460669,
+          "y_center": 0.368732
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2040",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2040.png",
+      "sha256": "cf0ece88c0e83b32a6f19d5d2ef14f95a39ebce10b681970b611c6ea43d95b9d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2041#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.718289,
+          "width": 0.613569,
+          "x_center": 0.4764010000000001,
+          "y_center": 0.43731600000000004
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2041",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2041.png",
+      "sha256": "1667f4161a183ca8315042382a0622e08464bb17b77cab62777cfb991ed1fd39",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2042#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.522124,
+          "width": 0.6096360000000001,
+          "x_center": 0.57473,
+          "y_center": 0.480826
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2042",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2042.png",
+      "sha256": "182ce958c4b452c06f92d8fb92c5aa553f8c86058443d0d12b816ca43d7e4f77",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2043#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.40413000000000004,
+          "width": 0.525074,
+          "x_center": 0.40658799999999995,
+          "y_center": 0.60767
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2043",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2043.png",
+      "sha256": "2ad92a9b394c6c9454e4709fba7009272a2235880415f24fb71a4778d9c22f26",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2044#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.356932,
+          "width": 0.4247790000000001,
+          "x_center": 0.40167200000000003,
+          "y_center": 0.585546
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2044",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2044.png",
+      "sha256": "925b9e1c4e41f3ba4be8cc638e1c083220316f8a60e8781ed275aadc321ec3b5",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2046#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.7448379999999999,
+          "width": 0.489676,
+          "x_center": 0.457719,
+          "y_center": 0.580383
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2046#2",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.171091,
+          "width": 0.318584,
+          "x_center": 0.454769,
+          "y_center": 0.306785
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2046",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2046.png",
+      "sha256": "5655437349a6242dea695037495ec905f047fb90fb385374749e39e181857124",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2054#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.786136,
+          "width": 0.978069,
+          "x_center": 0.494554,
+          "y_center": 0.536136
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4029,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2054",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2054.png",
+      "sha256": "4281c1f06fa6d6bef8f189e3b46745e3d24c9672c2be5e2601c0754f628aceee",
+      "width": 2728
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2061#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.70649,
+          "width": 0.758524,
+          "x_center": 0.535889,
+          "y_center": 0.481563
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 2503,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2061",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2061.png",
+      "sha256": "79e4a6be7d8330bb91d55983dc3525d646aad3606ad815886ef44b67917fdcdf",
+      "width": 1903
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2062#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.587021,
+          "width": 0.717797,
+          "x_center": 0.49115,
+          "y_center": 0.533923
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2062",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2062.png",
+      "sha256": "9f1d4c49656d018f2d8fd092eb9e12fa489965dc587f1dc2bb196ade4d5b5466",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2063#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.510324,
+          "width": 0.833825,
+          "x_center": 0.517699,
+          "y_center": 0.47197600000000006
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2063",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2063.png",
+      "sha256": "ed52d452f53d782076d458c3a655272976779af805aebaaf801c817e4a42467a",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2065#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.7905599999999999,
+          "width": 0.694199,
+          "x_center": 0.47935099999999997,
+          "y_center": 0.436578
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2065",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2065.png",
+      "sha256": "c8557c728ca5f1f2cbba5ecbfab8b729588dbc1711c49782fe82db79524229e5",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2066#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.5442480000000001,
+          "width": 0.759095,
+          "x_center": 0.464602,
+          "y_center": 0.314897
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2066",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2066.png",
+      "sha256": "05dc33830b1e5cd28548c49b8c26260acd75571ea2c6983bc3baf46bb3ae4979",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2067#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.43934400000000007,
+          "width": 0.539891,
+          "x_center": 0.442077,
+          "y_center": 0.381967
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2067",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2067.png",
+      "sha256": "710e4f0556c14995ef87c1b775b32706e5570b88c7ff5ee83b2dea1c92f4db09",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2068#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.39508199999999993,
+          "width": 0.48743200000000003,
+          "x_center": 0.512022,
+          "y_center": 0.522131
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2068",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2068.png",
+      "sha256": "8728f8f5268090aa4dc6af901f74992e4ca1d04a278556009e54ed9dca7b205e",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2069#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.4081969999999999,
+          "width": 0.5508200000000001,
+          "x_center": 0.532787,
+          "y_center": 0.431967
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2069",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2069.png",
+      "sha256": "9be5f18428b6a12de4d996183ef7cc230ee3812474fb008477a5d101dd4ff20a",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2070#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.39180299999999996,
+          "width": 0.29945400000000005,
+          "x_center": 0.645355,
+          "y_center": 0.50082
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2070",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2070.png",
+      "sha256": "7523f1b12a0f6a4f723d38739db58a4c8ff2b5d6609c176198d20149b1b7e4bf",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2071#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.442623,
+          "width": 0.43715800000000005,
+          "x_center": 0.368852,
+          "y_center": 0.537705
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2071",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2071.png",
+      "sha256": "928d573776d06e92ead7cb8a8ad3bd32290aef3f27d36681fed3570ff2f53784",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2072#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.636066,
+          "width": 0.581421,
+          "x_center": 0.484699,
+          "y_center": 0.554098
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2072",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2072.png",
+      "sha256": "cdccad9d22b984db45e7287e4cdb02149b24d8930de054f854e35969862dc695",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2073#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.46065599999999995,
+          "width": 0.622951,
+          "x_center": 0.487978,
+          "y_center": 0.579508
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2073",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2073.png",
+      "sha256": "24991d54ef87c9a37614d30bf5cdc10f861790b9b43716efd082639509b686fb",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2074#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.46721299999999993,
+          "width": 0.743169,
+          "x_center": 0.44754099999999997,
+          "y_center": 0.533607
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2074",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2074.png",
+      "sha256": "ba3b901dc64ac8aace20d1bc5dbb131ccfabba6f99b9c6971a56da1e84d5f5ce",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2075#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.41311500000000007,
+          "width": 0.504918,
+          "x_center": 0.31967199999999996,
+          "y_center": 0.555738
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2075",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2075.png",
+      "sha256": "2e876dfe5c996ffe7dfa7a251025d53873164f9655989d3bb6ff40e2057e8dbb",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2076#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.46885200000000005,
+          "width": 0.808743,
+          "x_center": 0.40819700000000003,
+          "y_center": 0.572131
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2076",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2076.png",
+      "sha256": "6f0627540e6957f7605b052a0fc757173baf87ebb2254892697521e469039864",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2077#1",
+          "canonical_class_id": 2,
+          "canonical_class_name": "metal_can",
+          "exported_class": "makesense_class_2",
+          "height": 0.49672099999999997,
+          "width": 0.688525,
+          "x_center": 0.542623,
+          "y_center": 0.622131
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2077",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2077.png",
+      "sha256": "a86a4efacdbe929170cf27aa96599a8c2923af7eafcc1e829b382ca05f25745d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2078#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.42459,
+          "width": 0.692896,
+          "x_center": 0.555738,
+          "y_center": 0.477869
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2078",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2078.png",
+      "sha256": "6c7f8c4860936131f6d217cfd69252f7ca3722e9925a0b4255b30aded67da163",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2079#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.39836099999999997,
+          "width": 0.6120220000000001,
+          "x_center": 0.462842,
+          "y_center": 0.52377
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2079",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2079.png",
+      "sha256": "76755d25c8046420c06d7c566636c297b8e357af3cbcb5791a9133d8f4173b1d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2080#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.4000000000000001,
+          "width": 0.686339,
+          "x_center": 0.4256829999999999,
+          "y_center": 0.480328
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2080",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2080.png",
+      "sha256": "1fde64386a707303c84d253f3275b5847ad320348f8c7e32ecc0c311e836de06",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2081#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.437705,
+          "width": 0.612022,
+          "x_center": 0.410383,
+          "y_center": 0.568033
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2081",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2081.png",
+      "sha256": "cde0d11a67374fc211ac6aa9cdc92095628d1377510ea35577fc505efe51fab0",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2082#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.540984,
+          "width": 0.6120220000000001,
+          "x_center": 0.434426,
+          "y_center": 0.401639
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2082",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2082.png",
+      "sha256": "afba3f0b01c26a13e933ad079029aaa16d976f9b69bf8c6e39f6bf5ec07de275",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2084#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.4229510000000001,
+          "width": 0.46776000000000006,
+          "x_center": 0.493443,
+          "y_center": 0.35082
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2084",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2084.png",
+      "sha256": "0021eb6741968f19d02ed8072eaf7aa832db93ab4ccc9410baed3175e927f0e4",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2085#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.554098,
+          "width": 0.413115,
+          "x_center": 0.442077,
+          "y_center": 0.491803
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2085",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2085.png",
+      "sha256": "ce1b95ceb3f06c00ea7d31b555a3edbe1db0ee535a181ff0b60e4bf806f8df3d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2086#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.5213110000000001,
+          "width": 0.22950800000000005,
+          "x_center": 0.553552,
+          "y_center": 0.52459
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2086",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2086.png",
+      "sha256": "b7c2e1c42c7952d9bfa79d306fa9494abcce6774d79a9df3355fca0e71d0a469",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2087#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.7163930000000001,
+          "width": 0.46994499999999995,
+          "x_center": 0.477049,
+          "y_center": 0.528689
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2087",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2087.png",
+      "sha256": "144624fdc62f7f18d01682c538e1c3039302fbefd959b2a2fda44c3b80a6a662",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2089#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.59292,
+          "width": 0.584071,
+          "x_center": 0.518682,
+          "y_center": 0.457227
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2089",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2089.png",
+      "sha256": "0f4e12615582a6e21cd3af4d982c2965b2c512c5e3555e1ce8684cadd7da1554",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2090#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.418879,
+          "width": 0.44641100000000006,
+          "x_center": 0.534415,
+          "y_center": 0.482301
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2090",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2090.png",
+      "sha256": "f995f900137a4716b69646843e3986248d2441a019f3475c033331450a11692d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2091#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.412617,
+          "width": 0.501279,
+          "x_center": 0.494885,
+          "y_center": 0.438619
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 3024,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2091",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2091.png",
+      "sha256": "aa99658ee684df3b9b874be4ca9176537eb2a9653282a0dd1541c6a2fd82efdc",
+      "width": 4032
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2092#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.615044,
+          "width": 0.43461200000000005,
+          "x_center": 0.41838700000000006,
+          "y_center": 0.44764
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2092",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2092.png",
+      "sha256": "63893f34d5b4e038b8415394bab28560d7a90732db12ace28ea790c6534ee5ba",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2093#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.486726,
+          "width": 0.971976,
+          "x_center": 0.514012,
+          "y_center": 0.249263
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2093",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2093.png",
+      "sha256": "91587971728cd9e3400f88e5e7e0e1fec1df7c726cf7282301152cfd5c150e65",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2094#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.4764010000000001,
+          "width": 0.619469,
+          "x_center": 0.343658,
+          "y_center": 0.671829
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2094#2",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.337758,
+          "width": 0.5408060000000001,
+          "x_center": 0.520649,
+          "y_center": 0.22492599999999996
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2094",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2094.png",
+      "sha256": "b93ac90e60466546fd9a7d92cc571a6ad2dc7852bdbe0bb8f671cf0c1071c00c",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2098#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.6769910000000001,
+          "width": 0.39921300000000004,
+          "x_center": 0.441986,
+          "y_center": 0.44174
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2098",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2098.png",
+      "sha256": "9f874bce26458a6807e6cbc838746a830f132d41565d429c6d7515e1ce571fbb",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2099#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.4380530000000001,
+          "width": 0.5014750000000001,
+          "x_center": 0.532448,
+          "y_center": 0.4019170000000001
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2099",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2099.png",
+      "sha256": "b6923893c85a5a5b6586160836a8a376978c547973d212418c6ac789d66d2774",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2100#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.35545699999999997,
+          "width": 0.41691199999999995,
+          "x_center": 0.511799,
+          "y_center": 0.477139
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2100",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2100.png",
+      "sha256": "9e7c871e9dcd244a13f6cf1ac672fd45cbb8b5034a17953e17b37bfb74c07acb",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2101#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.15339199999999997,
+          "width": 0.25172100000000003,
+          "x_center": 0.521632,
+          "y_center": 0.359882
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2101",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2101.png",
+      "sha256": "fd3ed0a19014c486ce2e21655f7495f53ad81e9ca0a3f931c34288dcd4c8bb9e",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2102#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.6991149999999999,
+          "width": 0.336283,
+          "x_center": 0.261062,
+          "y_center": 0.415929
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2102",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2102.png",
+      "sha256": "2d7a79df2af7dd0fdb58b9f049d1ee3ce1ee872b2151435cba8b312c5e1d65ad",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2103#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.541298,
+          "width": 0.4090460000000001,
+          "x_center": 0.48033400000000004,
+          "y_center": 0.472714
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2103",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2103.png",
+      "sha256": "18e8d433df955379aa61af9a355ed27efa53a017d96504693e67282ec81a0e48",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2104#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.28815,
+          "width": 0.7122760000000001,
+          "x_center": 0.418798,
+          "y_center": 0.308184
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2104#2",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.1994879999999999,
+          "width": 0.47442499999999993,
+          "x_center": 0.393223,
+          "y_center": 0.688406
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 3024,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2104",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2104.png",
+      "sha256": "abea1a40678762184fa3d55a4159fc4319f6ecd4978246fae00a0c5c060c7c39",
+      "width": 4032
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2105#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.317136,
+          "width": 0.780051,
+          "x_center": 0.42711,
+          "y_center": 0.199915
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2105#2",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.422847,
+          "width": 0.5025580000000001,
+          "x_center": 0.388107,
+          "y_center": 0.725064
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 3024,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2105",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2105.png",
+      "sha256": "fbb5aadc90f03e4a67ec038349a1936598a79654d4d937ac5c7858e38cddb2aa",
+      "width": 4032
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2106#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.418879,
+          "width": 0.328417,
+          "x_center": 0.217797,
+          "y_center": 0.480826
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2106#2",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.59882,
+          "width": 0.5275319999999999,
+          "x_center": 0.736234,
+          "y_center": 0.460177
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2106",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2106.png",
+      "sha256": "fbf0ed55d1d359fa0d6689c54a34ce36c5300fa65d2be17df4301e5505cdc0db",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2107#1",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.44395299999999993,
+          "width": 0.5447389999999999,
+          "x_center": 0.343658,
+          "y_center": 0.373894
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2107#2",
+          "canonical_class_id": 1,
+          "canonical_class_name": "glass_container",
+          "exported_class": "makesense_class_1",
+          "height": 0.6283190000000001,
+          "width": 0.473943,
+          "x_center": 0.681908,
+          "y_center": 0.554572
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2107",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2107.png",
+      "sha256": "7435990affafc1d4448e266d5c86576ebb38833ce6579d5b3418b09f66a6425c",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2108#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.522124,
+          "width": 0.9975419999999999,
+          "x_center": 0.501229,
+          "y_center": 0.29498499999999994
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2108",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2108.png",
+      "sha256": "b62341ce0b0530c731f7a817760ea3e48433d6c312197fe97e98f5ca71f5971f",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2109#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.19911499999999993,
+          "width": 0.3618489999999999,
+          "x_center": 0.545231,
+          "y_center": 0.721976
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2109",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2109.png",
+      "sha256": "82b7b404b735f2c3c91a3c182d248b70f517bda21767b0cd221f86e20804835d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2110#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.20059000000000005,
+          "width": 0.36184900000000003,
+          "x_center": 0.547198,
+          "y_center": 0.70354
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2110",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2110.png",
+      "sha256": "2737f28e1b00c0da8f12393c060447f5d7f723164b3388edaa6943a9eb0a528a",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2111#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.833333,
+          "width": 0.40314700000000003,
+          "x_center": 0.483284,
+          "y_center": 0.466814
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2111",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2111.png",
+      "sha256": "b0773558d69bae954836a656890e5db37c476653ef41907fcd3907d5846ac06d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2112#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.851032,
+          "width": 0.48770899999999995,
+          "x_center": 0.617994,
+          "y_center": 0.512537
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2112",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2112.png",
+      "sha256": "5910b72f6cd7a64fbee16ede0d155b128fb4df9c5927d83db925bdf814cff7a3",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2113#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.5,
+          "width": 0.42674499999999993,
+          "x_center": 0.347591,
+          "y_center": 0.485988
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2113",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2113.png",
+      "sha256": "e8584660b23dbc852cf63ca4ef1e6b0d8b34419a197bc90850f9d4d591e32ec6",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2114#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.55925,
+          "width": 0.6189259999999999,
+          "x_center": 0.397698,
+          "y_center": 0.474425
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 3024,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2114",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2114.png",
+      "sha256": "66c8a5ae842828fbf9daf9d8f9aebe0851af7cc3954d9c47e0fb2f4325b4438e",
+      "width": 4032
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2115#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.6427960000000001,
+          "width": 0.433504,
+          "x_center": 0.427749,
+          "y_center": 0.424126
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 3024,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2115",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2115.png",
+      "sha256": "c1ea3f315aeedf740c0cfeaa8ddaa2e1605c09358924b4593915676312e90e2a",
+      "width": 4032
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2116#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.5825960000000001,
+          "width": 0.45821000000000006,
+          "x_center": 0.39085500000000006,
+          "y_center": 0.503687
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2116",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2116.png",
+      "sha256": "61625b0cbcd1166c4d5163799175fbeb977732edeb0e825d5d37ceba167d1f45",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2117#1",
+          "canonical_class_id": 0,
+          "canonical_class_name": "plastic_bottle",
+          "exported_class": "makesense_class_0",
+          "height": 0.632743,
+          "width": 0.39134700000000006,
+          "x_center": 0.457719,
+          "y_center": 0.45354000000000005
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2117",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2117.png",
+      "sha256": "e30f846fe4f530840a3fcf78cc29f4b9a8aa1e3e456305847f41dadc359faebe",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2120#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.21091399999999996,
+          "width": 0.26745300000000005,
+          "x_center": 0.419371,
+          "y_center": 0.220501
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2120#2",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.246313,
+          "width": 0.31071800000000005,
+          "x_center": 0.537365,
+          "y_center": 0.808997
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2120",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2120.png",
+      "sha256": "0eca9df21737229747f6f4ae5cdc84554e2f65e507142695293e57dec6ec6405",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2121#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.258112,
+          "width": 0.336283,
+          "x_center": 0.24729600000000002,
+          "y_center": 0.25
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2121#2",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.29203500000000004,
+          "width": 0.39331399999999994,
+          "x_center": 0.682891,
+          "y_center": 0.648968
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2121",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2121.png",
+      "sha256": "f870e2fbeea4a293ea75c635ce540216201a265a0018da39d65a927c7bae5ed3",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2122#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.12831899999999996,
+          "width": 0.13372699999999998,
+          "x_center": 0.157817,
+          "y_center": 0.397493
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2122#2",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.15044199999999996,
+          "width": 0.14749300000000004,
+          "x_center": 0.518682,
+          "y_center": 0.510324
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-1:IMG_2122#3",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.14454299999999998,
+          "width": 0.1474930000000001,
+          "x_center": 0.764503,
+          "y_center": 0.460177
+        }
+      ],
+      "capture_session": "session-1",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-1:IMG_2122",
+      "relative_path": "frozen_v1/images/Session 1/IMG_2122.png",
+      "sha256": "7861de80252eda82ff5c8d3918066ffb7915e32756b34f98ebb8063c1dd3463a",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2185#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.435103,
+          "width": 0.8613569999999999,
+          "x_center": 0.460669,
+          "y_center": 0.509587
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2185",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2185.png",
+      "sha256": "1498c4340b274c49d48ce067455a6ffc7059154c701ccf2b54cbce1a64b7977c",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2186#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.424779,
+          "width": 0.839725,
+          "x_center": 0.48918400000000006,
+          "y_center": 0.489676
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2186",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2186.png",
+      "sha256": "e11472dfca40a359be3d5c31ed55bfa3e732c8ecf46fa1dc6a670a7f1464fabf",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2187#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.4941,
+          "width": 0.609636,
+          "x_center": 0.446903,
+          "y_center": 0.75295
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2187#2",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.4955749999999999,
+          "width": 0.2261550000000001,
+          "x_center": 0.874631,
+          "y_center": 0.752212
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2187",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2187.png",
+      "sha256": "a6a35fe5c50bf315ad03e19aa53a477a90775ae2402741bb4b475dd310f91366",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2188#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.39675499999999997,
+          "width": 0.967552,
+          "x_center": 0.509833,
+          "y_center": 0.797198
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2188#2",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.49115000000000003,
+          "width": 0.9105209999999999,
+          "x_center": 0.524582,
+          "y_center": 0.4741890000000001
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2188",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2188.png",
+      "sha256": "d1d8290dec90fe43463e71a51e421dbc2400f4a613a1043a235054b7f359e99d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2191#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.355457,
+          "width": 0.4641100000000001,
+          "x_center": 0.46460200000000007,
+          "y_center": 0.457965
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2191",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2191.png",
+      "sha256": "d90f591c26df173524f80c8dc22619eba332873eac9ea04b234f30256b8be216",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2192#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.436578,
+          "width": 0.5211409999999999,
+          "x_center": 0.544248,
+          "y_center": 0.455752
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2192",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2192.png",
+      "sha256": "146e585ea64637733e8b2ea79660b2ad80e3d9959d0c127431d02367b1c83583",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2193#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.718289,
+          "width": 0.6509339999999999,
+          "x_center": 0.512783,
+          "y_center": 0.4830380000000001
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2193",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2193.png",
+      "sha256": "249a9d30c02316df4b533fd400b8aa4291d24467cca690f07bd4bd4860f1845b",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2194#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.7826090000000001,
+          "width": 0.8746800000000001,
+          "x_center": 0.493606,
+          "y_center": 0.516198
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 3024,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2194",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2194.png",
+      "sha256": "d0bfa0e6ce4e883d99b5eefde4e69e76263a3bb709a52f37365770cd2517be7a",
+      "width": 4032
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2195#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.681416,
+          "width": 0.6588,
+          "x_center": 0.463618,
+          "y_center": 0.340708
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2195",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2195.png",
+      "sha256": "9007bd24afaad0f30fff5ad638e85a2939afcd0099b988457d46e35d3b27dbfb",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2196#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.25811200000000006,
+          "width": 0.7354970000000001,
+          "x_center": 0.460669,
+          "y_center": 0.539086
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2196",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2196.png",
+      "sha256": "35f7442452aec508d9295f6396f13586e43e2ec3ea18388d4d447515a95dc8ef",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2197#1",
+          "canonical_class_id": 4,
+          "canonical_class_name": "plastic_bag",
+          "exported_class": "makesense_class_4",
+          "height": 0.31563399999999997,
+          "width": 0.747296,
+          "x_center": 0.454769,
+          "y_center": 0.59587
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2197",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2197.png",
+      "sha256": "f498db9236c06a3c412582d8e1f5a04bf7244609af86d01184d256be66899f38",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2200#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.532448,
+          "width": 0.788594,
+          "x_center": 0.50295,
+          "y_center": 0.55826
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2200",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2200.png",
+      "sha256": "e60465068051024bce60e261ad75612a723eb5ef429b0fd560e361756bb2c6fa",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2201#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.6607670000000001,
+          "width": 0.993608,
+          "x_center": 0.503196,
+          "y_center": 0.59292
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2201",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2201.png",
+      "sha256": "380a37b0dadde699a5fa86817d072a518460d43892401a874ab5db0e21cc2854",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2202#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.6926680000000001,
+          "width": 0.9194370000000001,
+          "x_center": 0.480179,
+          "y_center": 0.653666
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 3024,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2202",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2202.png",
+      "sha256": "1b9a84d92d06dbebe3122332be45801fd0c2be2548ee9f24fc495b90aae5898c",
+      "width": 4032
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2203#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.6224190000000001,
+          "width": 0.6863319999999999,
+          "x_center": 0.475418,
+          "y_center": 0.541298
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2203",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2203.png",
+      "sha256": "722d48900f0a2d1c5d1e5dd3a099eee39e22ace801c9ad055f9abad485012bf2",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2204#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.480826,
+          "width": 0.613569,
+          "x_center": 0.427237,
+          "y_center": 0.542773
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2204",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2204.png",
+      "sha256": "72c65380b18bcaedf0108abc577a60e377d1ade0908b5659ce2cd07acbd2c78b",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2205#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.45722700000000005,
+          "width": 0.529007,
+          "x_center": 0.270895,
+          "y_center": 0.762537
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2205#2",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.632743,
+          "width": 0.613569,
+          "x_center": 0.629794,
+          "y_center": 0.680678
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2205",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2205.png",
+      "sha256": "7505cb42369e886312a4ad734f7630353658cfc2583924d5d56bded6249e491d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2206#1",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.600295,
+          "width": 0.509341,
+          "x_center": 0.261062,
+          "y_center": 0.692478
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2206#2",
+          "canonical_class_id": 3,
+          "canonical_class_name": "cardboard",
+          "exported_class": "makesense_class_3",
+          "height": 0.609145,
+          "width": 0.652901,
+          "x_center": 0.667158,
+          "y_center": 0.589233
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2206",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2206.png",
+      "sha256": "b25e21ed00576a0a167f0e0c9aff080afc815b24fdfeeb568f0e720dca254c44",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2212#1",
+          "canonical_class_id": 6,
+          "canonical_class_name": "styrofoam",
+          "exported_class": "makesense_class_6",
+          "height": 0.45132700000000003,
+          "width": 0.7551619999999999,
+          "x_center": 0.5,
+          "y_center": 0.492625
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2212",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2212.png",
+      "sha256": "34a13d667a524e2c75a538a726639094afb8a9cc53abcc8e30ffbcde78d22da7",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2213#1",
+          "canonical_class_id": 6,
+          "canonical_class_name": "styrofoam",
+          "exported_class": "makesense_class_6",
+          "height": 0.432153,
+          "width": 0.7689279999999998,
+          "x_center": 0.552114,
+          "y_center": 0.490413
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2213",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2213.png",
+      "sha256": "fe33b30f46c4d09fe66375a42dc0ea2bbc8d69798a44ba5ea81454b205eecc31",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2214#1",
+          "canonical_class_id": 6,
+          "canonical_class_name": "styrofoam",
+          "exported_class": "makesense_class_6",
+          "height": 0.5958700000000001,
+          "width": 0.9891839999999998,
+          "x_center": 0.500983,
+          "y_center": 0.318584
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2214",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2214.png",
+      "sha256": "eef5522a57284a7f476b97c8216e3373ed83872edbaff82ae3ce9ab243bc019b",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2215#1",
+          "canonical_class_id": 6,
+          "canonical_class_name": "styrofoam",
+          "exported_class": "makesense_class_6",
+          "height": 0.8259589999999999,
+          "width": 0.7669620000000001,
+          "x_center": 0.612094,
+          "y_center": 0.414454
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2215",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2215.png",
+      "sha256": "b8461a80f2a1046cfa1fa76b70a77e078406d3a83e3adc16bb58563ba3e17564",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2216#1",
+          "canonical_class_id": 6,
+          "canonical_class_name": "styrofoam",
+          "exported_class": "makesense_class_6",
+          "height": 0.733163,
+          "width": 0.8516620000000001,
+          "x_center": 0.503836,
+          "y_center": 0.411338
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 3024,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2216",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2216.png",
+      "sha256": "7d080e124077277243bff06e71e9f4dac73b7fbc26c02e0e7b7e96d20298c3c1",
+      "width": 4032
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2217#1",
+          "canonical_class_id": 6,
+          "canonical_class_name": "styrofoam",
+          "exported_class": "makesense_class_6",
+          "height": 0.7314579999999999,
+          "width": 0.849105,
+          "x_center": 0.485934,
+          "y_center": 0.419011
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 3024,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2217",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2217.png",
+      "sha256": "c3150863be5d2b2d31e008245642954c06f4acdff819b57f147bd13f54d7f078",
+      "width": 4032
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2218#1",
+          "canonical_class_id": 6,
+          "canonical_class_name": "styrofoam",
+          "exported_class": "makesense_class_6",
+          "height": 0.558997,
+          "width": 0.99115,
+          "x_center": 0.5,
+          "y_center": 0.431416
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2218",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2218.png",
+      "sha256": "88ee87a1bcaac06aebc9679c7c3b907e6f6b14547347519d9aaa8978d3fe9507",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2219#1",
+          "canonical_class_id": 6,
+          "canonical_class_name": "styrofoam",
+          "exported_class": "makesense_class_6",
+          "height": 0.676991,
+          "width": 0.890855,
+          "x_center": 0.522616,
+          "y_center": 0.390118
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2219",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2219.png",
+      "sha256": "c69714c9335c983dd8f32ee89b28df515541031742b88a39f1f94a39c40513db",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2220#1",
+          "canonical_class_id": 6,
+          "canonical_class_name": "styrofoam",
+          "exported_class": "makesense_class_6",
+          "height": 0.634218,
+          "width": 0.8711899999999999,
+          "x_center": 0.49705,
+          "y_center": 0.38348100000000007
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2220",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2220.png",
+      "sha256": "b6725c9097fc60e4d8bb14e49641f7ac3fcf4e5673feb0451b0bc5914da60762",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2221#1",
+          "canonical_class_id": 6,
+          "canonical_class_name": "styrofoam",
+          "exported_class": "makesense_class_6",
+          "height": 0.813299,
+          "width": 0.7186699999999999,
+          "x_center": 0.482097,
+          "y_center": 0.40878099999999995
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 3024,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2221",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2221.png",
+      "sha256": "253ee7f6ef8c2f8c3e810e1f26bc578e7d1c5f76aec3c186c21e11a6852f76e4",
+      "width": 4032
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2224#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.37463100000000005,
+          "width": 0.373648,
+          "x_center": 0.281711,
+          "y_center": 0.477876
+        },
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2224#2",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.35103199999999996,
+          "width": 0.36578200000000005,
+          "x_center": 0.665192,
+          "y_center": 0.47787599999999997
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2224",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2224.png",
+      "sha256": "c6362f74502b4b087b357078db5afe2b1b123705d993e8e9dd7e6fe589e1238d",
+      "width": 3024
+    },
+    {
+      "boxes": [
+        {
+          "annotation_id": "aware-smartphone-test-v1:session-2:IMG_2225#1",
+          "canonical_class_id": 5,
+          "canonical_class_name": "disposable_cup",
+          "exported_class": "makesense_class_5",
+          "height": 0.747788,
+          "width": 0.786627,
+          "x_center": 0.543265,
+          "y_center": 0.468289
+        }
+      ],
+      "capture_session": "session-2",
+      "height": 4032,
+      "image_id": "aware-smartphone-test-v1:session-2:IMG_2225",
+      "relative_path": "frozen_v1/images/Session 2/IMG_2225.png",
+      "sha256": "707c46c039d9c2545cfa872bd59b375e5ebd85036712c77bdd83869200b428ac",
+      "width": 3024
+    }
+  ],
+  "include_in_evaluation": true,
+  "include_in_training": false,
+  "manifest_checksum": "106ed724e29a8253edf387162e91e2e5285bf8f705dcf8e364286a2e0a8e8ebb",
+  "manifest_id": "aware-target-test-v1",
+  "ontology_class_names": [
+    "plastic_bottle",
+    "glass_container",
+    "metal_can",
+    "cardboard",
+    "plastic_bag",
+    "disposable_cup",
+    "styrofoam"
+  ],
+  "ontology_version": "aware-ontology-v3",
+  "recorded_class_order": [
+    "plastic_bottle",
+    "glass_container",
+    "metal_can",
+    "cardboard",
+    "plastic_bag",
+    "disposable_cup",
+    "styrofoam"
+  ],
+  "role": "target_test",
+  "schema_version": "1.0",
+  "source_id": "aware-smartphone-test-v1",
+  "source_version": "v1"
+}

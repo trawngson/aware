@@ -179,8 +179,9 @@ The boxes below refer to running and reviewing the audit on the full VAST data.
 Deterministic group-aware split code and leakage tests are complete locally.
 The boxes below refer to the real dataset and frozen smartphone test set.
 
-- [ ] Collect or select a target-domain test set before choosing the final model.
-- [ ] Keep the target test set frozen and untouched during model development.
+- [x] Collect or select a target-domain test set before choosing the final model.
+- [x] Freeze the target test set: `records/target-test-set-v1/` (119 images,
+  139 boxes, frozen 2026-09-18). Keep it untouched during model development.
 - [x] Split training and validation data by source groups and duplicate
   relationships where those relationships exist.
 - [x] Run exact and perceptual duplicate checks before the split.
@@ -268,22 +269,25 @@ The boxes below refer to the real dataset and frozen smartphone test set.
 
 ## Immediate next action
 
-The approved next action is to bring the target-domain smartphone test set into
-the validated pipeline and freeze it. Its labels have been returned and reworked
-by the labeling teammate. Today that test set exists only as `test_set/` at the
-repository root with a standalone review script; `backend/src/` has no test-set
-module, `splitting.py` models only `train` and `val`, and `source_manifest.yaml`
-carries no record for it. Until a frozen, checksummed test manifest exists, the
-Phase 9 and Phase 10 requirement to keep the target test set identical across
-experiments is not enforceable.
+Two independent tracks run in parallel.
 
-UNRESOLVED CONTRADICTION — needs a supervisor decision before any VAST work:
-an earlier revision of this section named "staged download and checksum
-verification of official TACO v1.0" as the next action, but Phase 5 records the
-full VAST conversion as complete (release `aware-v1-sevenclass-seed26`) and
-Phase 8 records the one-epoch smoke run as passed. Both cannot be true. Confirm
-the real state of TACO on VAST and correct whichever section is wrong. Do not
-start a download or a training run on the basis of this paragraph.
+**Training (VAST, unblocked).** TACO v1.0 was acquired from the authors' GitHub
+tag `1.0` after the Zenodo transfer was stopped (`VAST_RUNBOOK.md` Gate 2), and
+release `aware-v1-sevenclass-seed26` (TACO plus the Open Images subset) and the
+batch-16 smoke run have both passed. The next action is the read-only
+`scripts.validate_environment` preflight, then full YOLO26n, then full YOLO26s,
+with the shared vLLM service paused. Batch 64 has not run since `/dev/shm` was
+raised to 8 GB; if it fails, lowering it for both models is already approved.
+Training does not depend on the target test set.
+
+**Target test set (frozen 2026-09-18).** Manifest
+`records/target-test-set-v1/target_test_manifest.json` pins 119 lossless PNGs
+derived from the original HEICs (orientation applied; original hashes in
+`test_set/frozen_v1/heic_provenance.json`) and 139 boxes in ontology class
+order. The single-object `styrofoam` class is an accepted, documented
+limitation. A visual review of `glass_container`, `metal_can`, `cardboard`, and
+`plastic_bag` is still running; any error it finds is fixed through a new
+manifest version with an errata record, never by editing this one.
 
 Full training remains on VAST. The unidentified legacy merge remains preserved
 but excluded.
