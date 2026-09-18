@@ -180,8 +180,9 @@ Deterministic group-aware split code and leakage tests are complete locally.
 The boxes below refer to the real dataset and frozen smartphone test set.
 
 - [x] Collect or select a target-domain test set before choosing the final model.
-- [x] Freeze the target test set: `records/target-test-set-v1/` (119 images,
-  139 boxes, frozen 2026-09-18). Keep it untouched during model development.
+- [x] Freeze the target test set: `records/target-test-set-v2/` (113 images,
+  139 boxes, frozen 2026-09-18; supersedes v1, see its `CHANGES.md`). Keep it
+  untouched during model development.
 - [x] Split training and validation data by source groups and duplicate
   relationships where those relationships exist.
 - [x] Run exact and perceptual duplicate checks before the split.
@@ -280,14 +281,13 @@ with the shared vLLM service paused. Batch 64 has not run since `/dev/shm` was
 raised to 8 GB; if it fails, lowering it for both models is already approved.
 Training does not depend on the target test set.
 
-**Target test set (frozen 2026-09-18).** Manifest
-`records/target-test-set-v1/target_test_manifest.json` pins 119 lossless PNGs
+**Target test set (frozen 2026-09-18).** Use v2:
+`records/target-test-set-v2/target_test_manifest.json` pins 113 lossless PNGs
 derived from the original HEICs (orientation applied; original hashes in
 `test_set/frozen_v1/heic_provenance.json`) and 139 boxes in ontology class
-order. The single-object `styrofoam` class is an accepted, documented
-limitation. A visual review of `glass_container`, `metal_can`, `cardboard`, and
-`plastic_bag` is still running; any error it finds is fixed through a new
-manifest version with an errata record, never by editing this one.
+order. v2 replaced v1 after a second visual review, before any evaluation. No
+further changes are allowed once a model has been evaluated on it. The
+single-object `styrofoam` class is an accepted limitation.
 
 Full training remains on VAST. The unidentified legacy merge remains preserved
 but excluded.
