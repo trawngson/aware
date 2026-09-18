@@ -1,5 +1,5 @@
 {
-  "conversion": "macOS ImageIO (CGImageSourceCreateThumbnailAtIndex with transform, full resolution), lossless PNG, HEIF orientation applied",
+  "conversion": "test_set/frozen_v1/heic2png.swift (build: swiftc -O heic2png.swift -o heic2png; run: heic2png <src.HEIC> <dst.png>). macOS ImageIO CGImageSourceCreateThumbnailAtIndex with transform at full resolution; lossless PNG with HEIF orientation applied.",
   "images": [
     {
       "number": 1,
@@ -834,5 +834,6 @@
       "original_sha256": "4c55cfd71fa9c257f8ec7882c9f45fddd0ca38c1343472c020b18a96c702fdf8",
       "derived": "Session 2/IMG_2225.png"
     }
-  ]
+  ],
+  "warning": "Do not regenerate with \"sips -s format png\": it ignores the HEIF orientation and left 107 of 119 images sideways relative to the labels. Rebuilt PNGs must match the SHA-256 values pinned in backend/records/target-test-set-v1/target_test_manifest.json."
 }
