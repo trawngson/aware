@@ -198,11 +198,17 @@ The boxes below refer to the real dataset and frozen smartphone test set.
 - [x] Run the local tests, metadata validation, and `python -m scripts.validate_environment` locally.
 - [x] Approve and freeze the VAST recipe: 200 epochs, patience 40, batch 64, AdamW, seed 26, deterministic mode, 640 x 640, one A100.
 - [x] Pass the one-epoch, 2% VAST smoke run before starting either full run.
-- [ ] Train YOLO26n on all approved training sources from pretrained weights.
-- [ ] Train YOLO26s on all approved training sources from pretrained weights.
+- [x] Train YOLO26n on all approved training sources from pretrained weights
+  (`e1b-yolo26n-aware-v1-seed26`, best epoch 131, validation mAP50 0.409; see
+  `PAPER_NOTES.md`).
+- [x] Train YOLO26s on all approved training sources from pretrained weights
+  (`e2-yolo26s-aware-v1-seed26`, best epoch 168 of 200, validation mAP50
+  0.423).
+- [x] Select the final model before test-set evaluation: YOLO26n
+  (`records/model-selection-v1.yaml`, 2026-09-19).
 - [ ] Keep image size, seed, class order, evaluation code, and major settings fixed.
-- [ ] Record the code commit, source manifest version, split version, environment, command, and output location for every run.
-- [ ] Start with the standard training recipe before tuning many hyperparameters.
+- [x] Record the code commit, source manifest version, split version, environment, command, and output location for every run.
+- [x] Start with the standard training recipe before tuning many hyperparameters.
 - [ ] Stop and repair the dataset if validation reveals label or path problems.
 
 **Deliverable:** reproducible baseline runs with saved metrics and configuration metadata.

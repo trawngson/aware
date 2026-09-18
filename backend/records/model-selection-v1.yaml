@@ -1,0 +1,40 @@
+schema_version: "1.0"
+record: model-selection-v1
+decided_on: "2026-09-19"
+decided_by: project supervisor
+decision: yolo26n
+selected_run: e1b-yolo26n-aware-v1-seed26
+selected_checkpoint: best.pt (epoch 131)
+
+timing: >-
+  Decided after both controlled runs finished and before either model was
+  evaluated on the frozen smartphone test set (records/target-test-set-v2).
+  Test-set results cannot have influenced this choice.
+
+candidates:
+  - run: e1b-yolo26n-aware-v1-seed26
+    best_epoch: 131
+    stopped_at_epoch: 171
+    validation: {precision: 0.628, recall: 0.397, map50: 0.409, map50_95: 0.336}
+    training_seconds: 1671.017
+    a100_inference_ms_per_image: 0.4
+  - run: e2-yolo26s-aware-v1-seed26
+    best_epoch: 168
+    stopped_at_epoch: 200
+    validation: {precision: 0.557, recall: 0.391, map50: 0.423, map50_95: 0.341}
+    training_seconds: 2354.706
+    a100_inference_ms_per_image: 0.9
+
+rationale: >-
+  Validation accuracy is effectively tied (mAP50 difference 0.014 on 448
+  images, smaller than a single rare class can swing the average). YOLO26n is
+  the smaller, faster model, which suits an on-device app where latency,
+  memory, and battery matter.
+
+follow_up:
+  - Evaluate both models exactly once on test set v2 with identical settings.
+    YOLO26s is evaluated only for the comparison table, not to change the
+    selection.
+  - The selected model must still meet the approved phone limits (Core ML at
+    most 25 MB, at least 10 FPS on iPhone XR). If it does not, report that and
+    make a new recorded decision; do not switch silently.
