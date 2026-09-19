@@ -65,7 +65,7 @@ enum DisposalGroup: String {
     var destination: String {
         switch self {
         case .recyclable:
-            String(localized: "Keep it separate from food and other waste. Give or sell it to a scrap collector (ve chai, đồng nát) or a recycling collection point. Separated recyclables are not charged a collection fee.")
+            String(localized: "Keep it separate from food and other waste, then give or sell it to a scrap collector (ve chai, đồng nát).")
         case .foodWaste:
             String(localized: "Put it in the green food-waste bag.")
         case .other:
@@ -195,10 +195,13 @@ enum RecyclingPolicy {
         PolicyResult(
             label: nil,
             state: .unsupported,
-            displayName: String(localized: "Unrecognized item"),
+            displayName: String(localized: "Not sure what this is"),
             group: nil,
-            summary: String(localized: "AWARE does not have sorting guidance for this item yet."),
-            steps: [String(localized: "Check with your neighbourhood waste collection team or your ward (phường/xã) for how to sort this item.")],
+            summary: String(localized: "We couldn't identify this item."),
+            steps: [
+                String(localized: "Try scanning it again, a little closer and in good light."),
+                String(localized: "Still unsure? Put it in other waste so it doesn't end up mixed into recyclables."),
+            ],
             notes: [],
             confirmation: nil,
             rewardPoints: 0,
@@ -213,7 +216,7 @@ enum RecyclingPolicy {
         case .plasticBottle:
             return Entry(
                 group: .recyclable,
-                summary: String(localized: "Plastic bottles are recyclable plastic waste in Hanoi's sorting rules."),
+                summary: String(localized: "Plastic bottles are recyclable."),
                 steps: [
                     String(localized: "Pour out any liquid left inside."),
                     String(localized: "Quickly rinse bottles that held milk, juice, or sweet drinks so they do not smell or attract insects."),
@@ -229,7 +232,7 @@ enum RecyclingPolicy {
         case .glassContainer:
             return Entry(
                 group: .recyclable,
-                summary: String(localized: "Glass bottles and jars are recyclable glass waste in Hanoi's sorting rules."),
+                summary: String(localized: "Glass bottles and jars are recyclable."),
                 steps: [
                     String(localized: "Take off the lid. Metal lids go with metal recyclables; plastic lids go with plastic recyclables."),
                     String(localized: "Empty the bottle or jar and rinse off food or drink."),
@@ -244,7 +247,7 @@ enum RecyclingPolicy {
         case .metalCan:
             return Entry(
                 group: .recyclable,
-                summary: String(localized: "Metal cans are recyclable metal waste in Hanoi's sorting rules. Scrap collectors buy aluminium drink cans."),
+                summary: String(localized: "Metal cans are recyclable, and scrap collectors will even buy aluminium drink cans."),
                 steps: [
                     String(localized: "Empty the can completely and rinse it quickly."),
                     String(localized: "Leave the ring pull attached."),
@@ -259,7 +262,7 @@ enum RecyclingPolicy {
         case .cardboard:
             return Entry(
                 group: nil,
-                summary: String(localized: "Clean cardboard is recyclable paper waste. Greasy, wet, or food-stained cardboard is not."),
+                summary: String(localized: "Clean cardboard is recyclable. Greasy, wet, or food-stained cardboard isn't."),
                 steps: [],
                 notes: [
                     String(localized: "Milk and juice cartons are lined with plastic and foil. Rinse and flatten them, and ask your collector whether they accept them."),
@@ -294,7 +297,7 @@ enum RecyclingPolicy {
         case .plasticBag:
             return Entry(
                 group: .other,
-                summary: String(localized: "Plastic bags are not on the recyclable list in Vietnam's household sorting guidance, so they go in other waste."),
+                summary: String(localized: "Plastic bags can't be recycled here, so they go in other waste."),
                 steps: [
                     String(localized: "Reuse the bag while it is still intact, for example as a bin liner for other waste."),
                     String(localized: "When you throw it away, shake out any food or liquid."),
@@ -309,7 +312,7 @@ enum RecyclingPolicy {
         case .disposableCup:
             return Entry(
                 group: nil,
-                summary: String(localized: "Paper and hard plastic cups are recyclable. Foam cups are not."),
+                summary: String(localized: "Paper and hard plastic cups are recyclable. Foam cups aren't."),
                 steps: [],
                 notes: [
                     String(localized: "Straws, sealing films, and plastic spoons are not recyclable; put them in other waste."),
@@ -352,7 +355,7 @@ enum RecyclingPolicy {
         case .styrofoam:
             return Entry(
                 group: .other,
-                summary: String(localized: "Styrofoam is not on the recyclable list in Vietnam's household sorting guidance, so it goes in other waste."),
+                summary: String(localized: "Styrofoam can't be recycled here, so it goes in other waste."),
                 steps: [
                     String(localized: "Scrape food scraps from foam boxes or trays into the green food-waste bag."),
                     String(localized: "Break large foam blocks into smaller pieces so they fit in the bag."),

@@ -1,13 +1,13 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "AWARE does not have sorting guidance for this item yet.": {
+    "AWARE's sorting tips follow Hanoi's household waste sorting rules, which split waste into three groups, plus hazardous items kept apart.": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "AWARE chưa có hướng dẫn phân loại cho vật này."
+            "value": "Mẹo phân loại của AWARE dựa theo quy định phân loại rác sinh hoạt của Hà Nội: rác được chia thành ba nhóm, còn chất thải nguy hại được để riêng."
           }
         }
       }
@@ -89,24 +89,13 @@
         }
       }
     },
-    "Check with your neighbourhood waste collection team or your ward (phường/xã) for how to sort this item.": {
+    "Clean cardboard is recyclable. Greasy, wet, or food-stained cardboard isn't.": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hãy hỏi tổ thu gom rác ở khu dân cư hoặc phường/xã nơi bạn sống về cách phân loại vật này."
-          }
-        }
-      }
-    },
-    "Clean cardboard is recyclable paper waste. Greasy, wet, or food-stained cardboard is not.": {
-      "extractionState": "manual",
-      "localizations": {
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bìa các-tông sạch là chất thải giấy có thể tái chế. Bìa dính dầu mỡ, bị ướt hoặc dính thức ăn thì không."
+            "value": "Bìa các-tông sạch có thể tái chế. Bìa dính dầu mỡ, bị ướt hoặc dính thức ăn thì không."
           }
         }
       }
@@ -265,13 +254,24 @@
         }
       }
     },
-    "Glass bottles and jars are recyclable glass waste in Hanoi's sorting rules.": {
+    "Glass bottles and jars are recyclable.": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Theo quy định phân loại rác của Hà Nội, chai, lọ thủy tinh là chất thải thủy tinh có thể tái chế."
+            "value": "Chai, lọ thủy tinh có thể tái chế."
+          }
+        }
+      }
+    },
+    "Guidance version %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phiên bản hướng dẫn %@"
           }
         }
       }
@@ -386,13 +386,13 @@
         }
       }
     },
-    "Keep it separate from food and other waste. Give or sell it to a scrap collector (ve chai, đồng nát) or a recycling collection point. Separated recyclables are not charged a collection fee.": {
+    "Keep it separate from food and other waste, then give or sell it to a scrap collector (ve chai, đồng nát).": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Để riêng, không lẫn với chất thải thực phẩm và chất thải khác. Cho hoặc bán cho người thu mua phế liệu (ve chai, đồng nát) hoặc điểm thu gom tái chế. Rác tái chế đã được phân loại riêng không phải trả phí thu gom."
+            "value": "Để riêng với chất thải thực phẩm và chất thải khác, rồi cho hoặc bán cho người thu mua ve chai, đồng nát."
           }
         }
       }
@@ -441,13 +441,13 @@
         }
       }
     },
-    "Metal cans are recyclable metal waste in Hanoi's sorting rules. Scrap collectors buy aluminium drink cans.": {
+    "Metal cans are recyclable, and scrap collectors will even buy aluminium drink cans.": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Theo quy định phân loại rác của Hà Nội, lon kim loại là chất thải kim loại có thể tái chế. Người thu mua phế liệu có mua lon nhôm đựng đồ uống."
+            "value": "Lon kim loại có thể tái chế, người thu mua ve chai còn mua lại lon nhôm đựng đồ uống."
           }
         }
       }
@@ -463,6 +463,17 @@
         }
       }
     },
+    "More": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm"
+          }
+        }
+      }
+    },
     "No, greasy, wet, or food-stained": {
       "extractionState": "manual",
       "localizations": {
@@ -470,6 +481,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Không, dính dầu mỡ, bị ướt hoặc dính thức ăn"
+          }
+        }
+      }
+    },
+    "Not sure what this is": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa rõ đây là gì"
           }
         }
       }
@@ -496,7 +518,7 @@
         }
       }
     },
-    "Paper and hard plastic cups are recyclable. Foam cups are not.": {
+    "Paper and hard plastic cups are recyclable. Foam cups aren't.": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
@@ -529,13 +551,13 @@
         }
       }
     },
-    "Plastic bags are not on the recyclable list in Vietnam's household sorting guidance, so they go in other waste.": {
+    "Plastic bags can't be recycled here, so they go in other waste.": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Túi ni-lông không có trong danh sách rác tái chế của hướng dẫn phân loại rác sinh hoạt tại Việt Nam, nên được bỏ vào chất thải khác."
+            "value": "Túi ni-lông không tái chế được, nên bỏ vào chất thải khác."
           }
         }
       }
@@ -551,24 +573,13 @@
         }
       }
     },
-    "Plastic bottles are recyclable plastic waste in Hanoi's sorting rules.": {
+    "Plastic bottles are recyclable.": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Theo quy định phân loại rác của Hà Nội, chai nhựa là chất thải nhựa có thể tái chế."
-          }
-        }
-      }
-    },
-    "Policy %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chính sách %@"
+            "value": "Chai nhựa có thể tái chế."
           }
         }
       }
@@ -661,6 +672,17 @@
         }
       }
     },
+    "Recycling guidance": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hướng dẫn phân loại rác"
+          }
+        }
+      }
+    },
     "Remove plastic tape, plastic windows, and foam inserts. Foam goes in other waste.": {
       "extractionState": "manual",
       "localizations": {
@@ -716,6 +738,28 @@
         }
       }
     },
+    "See recycling ideas": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xem ý tưởng tái chế"
+          }
+        }
+      }
+    },
+    "Sources": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nguồn"
+          }
+        }
+      }
+    },
     "Spray cans and cans that held paint, pesticide, or oil are hazardous waste, not recyclables.": {
       "extractionState": "manual",
       "localizations": {
@@ -760,6 +804,17 @@
         }
       }
     },
+    "Still unsure? Put it in other waste so it doesn't end up mixed into recyclables.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vẫn chưa chắc? Hãy bỏ vào chất thải khác để không lẫn vào rác tái chế."
+          }
+        }
+      }
+    },
     "Straws, sealing films, and plastic spoons are not recyclable; put them in other waste.": {
       "extractionState": "manual",
       "localizations": {
@@ -782,13 +837,13 @@
         }
       }
     },
-    "Styrofoam is not on the recyclable list in Vietnam's household sorting guidance, so it goes in other waste.": {
+    "Styrofoam can't be recycled here, so it goes in other waste.": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Xốp không có trong danh sách rác tái chế của hướng dẫn phân loại rác sinh hoạt tại Việt Nam, nên được bỏ vào chất thải khác."
+            "value": "Xốp không tái chế được, nên bỏ vào chất thải khác."
           }
         }
       }
@@ -859,13 +914,35 @@
         }
       }
     },
-    "Unrecognized item": {
+    "Try scanning it again, a little closer and in good light.": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vật chưa nhận diện được"
+            "value": "Thử quét lại gần hơn một chút và ở nơi đủ sáng."
+          }
+        }
+      }
+    },
+    "Want to give it a second life? See our recycling ideas below.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muốn cho nó một cuộc đời mới? Xem các ý tưởng tái chế của chúng mình bên dưới nhé."
+          }
+        }
+      }
+    },
+    "We couldn't identify this item.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AWARE chưa nhận ra được vật này."
           }
         }
       }

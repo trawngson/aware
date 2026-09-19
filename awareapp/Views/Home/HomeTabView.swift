@@ -11,7 +11,10 @@ struct HomeTabView: View {
                 backgroundView
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
-                        welcomeHeader
+                        NavigationLink(destination: UserOptionsView()) {
+                            welcomeHeader
+                        }
+                        .buttonStyle(.plain)
                         statsGrid
                         Divider().padding(.horizontal)
                     }

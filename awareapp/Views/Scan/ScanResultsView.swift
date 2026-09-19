@@ -98,9 +98,11 @@ struct ScanResultsView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            addToGalleryButton(policy)
+            if policy.state != .confirmationRequired {
+                recyclingIdeasSection
+            }
 
-            sourceFooter(policy)
+            addToGalleryButton(policy)
         }
         .padding(.horizontal, 24)
         .padding(.top, 24)
@@ -161,16 +163,26 @@ struct ScanResultsView: View {
             .fixedSize(horizontal: false, vertical: true)
     }
 
-    private func sourceFooter(_ policy: PolicyResult) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(policy.jurisdiction)
-                .font(.caption.weight(.semibold))
-            Text(policy.policySource)
-            Text("Policy \(policy.policyVersion)")
+    private var recyclingIdeasSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Want to give it a second life? See our recycling ideas below.")
+                .font(.subheadline)
+                .fixedSize(horizontal: false, vertical: true)
+            Button(action: openRecyclingIdeas) {
+                Label("See recycling ideas", systemImage: "lightbulb.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .foregroundStyle(.green)
+                    .background(Color.green.opacity(0.12))
+                    .clipShape(Capsule())
+            }
         }
-        .font(.caption2)
-        .foregroundStyle(.secondary)
-        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func openRecyclingIdeas() {
+        onDismiss()
+        NavigationManager.shared.switchToGallery()
     }
 
     // MARK: - Gallery and reward
