@@ -194,7 +194,7 @@ struct ScanTabView: View {
             // Check for stable high-confidence detection
             if let topDetection = detections.first,
                topDetection.confidence >= autoConfirmThreshold,
-               topDetection.label.contains("bottle") {
+               CanonicalLabel(modelLabel: topDetection.label) != nil {
                 
                 // Same item as before - timer is already running
                 if stableDetectionLabel == topDetection.label {

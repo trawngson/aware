@@ -1,0 +1,908 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "AWARE does not have sorting guidance for this item yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AWARE chưa có hướng dẫn phân loại cho vật này."
+          }
+        }
+      }
+    },
+    "Add to Gallery": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm vào Gallery"
+          }
+        }
+      }
+    },
+    "Answer the question above first": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy trả lời câu hỏi phía trên trước"
+          }
+        }
+      }
+    },
+    "Bottles that held pesticides, strong chemicals, or motor oil are hazardous waste, not recyclables.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chai từng đựng thuốc bảo vệ thực vật, hóa chất mạnh hoặc dầu nhớt là chất thải nguy hại, không phải rác tái chế."
+          }
+        }
+      }
+    },
+    "Break large foam blocks into smaller pieces so they fit in the bag.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bẻ các khối xốp lớn thành miếng nhỏ để vừa túi rác."
+          }
+        }
+      }
+    },
+    "Cardboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bìa các-tông"
+          }
+        }
+      }
+    },
+    "Carrying a reusable shopping bag avoids plastic bags altogether.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mang theo túi đi chợ dùng nhiều lần để không phải dùng túi ni-lông."
+          }
+        }
+      }
+    },
+    "Change answer": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đổi câu trả lời"
+          }
+        }
+      }
+    },
+    "Check with your neighbourhood waste collection team or your ward (phường/xã) for how to sort this item.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy hỏi tổ thu gom rác ở khu dân cư hoặc phường/xã nơi bạn sống về cách phân loại vật này."
+          }
+        }
+      }
+    },
+    "Clean cardboard is recyclable paper waste. Greasy, wet, or food-stained cardboard is not.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bìa các-tông sạch là chất thải giấy có thể tái chế. Bìa dính dầu mỡ, bị ướt hoặc dính thức ăn thì không."
+          }
+        }
+      }
+    },
+    "Clean foam boxes are useful for storage. Choosing paper or reusable containers for takeaway avoids foam waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hộp xốp sạch có thể dùng để đựng đồ. Chọn hộp giấy hoặc hộp dùng nhiều lần khi mua đồ mang về sẽ tránh được rác xốp."
+          }
+        }
+      }
+    },
+    "Disposable cup": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cốc dùng một lần"
+          }
+        }
+      }
+    },
+    "Do not put plastic bags in with recyclables. They get tangled in sorting and lower the value of the whole bag.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không bỏ túi ni-lông lẫn vào rác tái chế. Túi dễ bị vướng khi phân loại và làm giảm giá trị của cả túi rác tái chế."
+          }
+        }
+      }
+    },
+    "Drink or pour out what is left and rinse the cup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uống hết hoặc đổ phần còn lại rồi tráng cốc."
+          }
+        }
+      }
+    },
+    "Empty the bottle or jar and rinse off food or drink.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đổ hết đồ bên trong chai, lọ và tráng sạch thức ăn hoặc đồ uống còn sót lại."
+          }
+        }
+      }
+    },
+    "Empty the can completely and rinse it quickly.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đổ hết đồ bên trong và tráng nhanh lon."
+          }
+        }
+      }
+    },
+    "Empty the cup and put any drink or food left in the green food-waste bag.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đổ hết cốc; đồ uống hoặc thức ăn còn lại bỏ vào túi màu xanh đựng chất thải thực phẩm."
+          }
+        }
+      }
+    },
+    "Empty the cup. Tapioca pearls, jelly, and ice go in the green food-waste bag.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đổ hết cốc. Trân châu, thạch và đá bỏ vào túi màu xanh đựng chất thải thực phẩm."
+          }
+        }
+      }
+    },
+    "Flatten the box and stack or tie flat boxes together.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gấp dẹt hộp, xếp chồng hoặc buộc các hộp đã gấp dẹt lại với nhau."
+          }
+        }
+      }
+    },
+    "Foam": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xốp"
+          }
+        }
+      }
+    },
+    "Food waste": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chất thải thực phẩm"
+          }
+        }
+      }
+    },
+    "For food tins, push the sharp lid inside the tin so nobody gets cut.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Với hộp thiếc đựng thực phẩm, ấn nắp sắc vào bên trong hộp để không ai bị cứa tay."
+          }
+        }
+      }
+    },
+    "For soap or shampoo pump bottles, unscrew the pump. The bottle is recyclable; the pump has a metal spring and goes in other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Với chai xà phòng hoặc dầu gội có vòi bơm, hãy vặn tháo vòi bơm. Chai có thể tái chế; vòi bơm có lò xo kim loại nên bỏ vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Glass bottle or jar": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chai, lọ thủy tinh"
+          }
+        }
+      }
+    },
+    "Glass bottles and jars are recyclable glass waste in Hanoi's sorting rules.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theo quy định phân loại rác của Hà Nội, chai, lọ thủy tinh là chất thải thủy tinh có thể tái chế."
+          }
+        }
+      }
+    },
+    "Hanoi People's Committee Decision No. 87 (from 8 January 2026); Law on Environmental Protection 2020, Article 75; MONRE guidance 9368/BTNMT-KSONMT (2 November 2023).": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quyết định số 87 của UBND thành phố Hà Nội (áp dụng từ ngày 8/1/2026); Luật Bảo vệ môi trường 2020, Điều 75; Công văn hướng dẫn 9368/BTNMT-KSONMT của Bộ Tài nguyên và Môi trường (ngày 2/11/2023)."
+          }
+        }
+      }
+    },
+    "Hanoi, Vietnam": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hà Nội, Việt Nam"
+          }
+        }
+      }
+    },
+    "Hard plastic": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhựa cứng"
+          }
+        }
+      }
+    },
+    "Hazardous waste": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chất thải nguy hại"
+          }
+        }
+      }
+    },
+    "How to sort it": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cách phân loại"
+          }
+        }
+      }
+    },
+    "I just scanned and sorted: %@ 🌱♻️": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mình vừa quét và phân loại: %@ 🌱♻️"
+          }
+        }
+      }
+    },
+    "If it is already broken, wrap the pieces in paper or cardboard and write \"broken glass\" on it to protect collectors.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nếu đã vỡ, hãy gói các mảnh trong giấy hoặc bìa các-tông và ghi \"thủy tinh vỡ\" bên ngoài để người thu gom không bị thương."
+          }
+        }
+      }
+    },
+    "Is the cardboard clean and dry?": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bìa các-tông có sạch và khô không?"
+          }
+        }
+      }
+    },
+    "Keep it apart from all other waste in a sealed, leak-proof container and hand it over at a hazardous-waste collection point.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để riêng với mọi loại rác khác trong vật chứa kín, không rò rỉ và giao cho điểm thu gom chất thải nguy hại."
+          }
+        }
+      }
+    },
+    "Keep it dry and out of the rain. Wet cardboard cannot be recycled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giữ khô ráo, tránh mưa. Bìa các-tông bị ướt không thể tái chế."
+          }
+        }
+      }
+    },
+    "Keep it separate from food and other waste. Give or sell it to a scrap collector (ve chai, đồng nát) or a recycling collection point. Separated recyclables are not charged a collection fee.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để riêng, không lẫn với chất thải thực phẩm và chất thải khác. Cho hoặc bán cho người thu mua phế liệu (ve chai, đồng nát) hoặc điểm thu gom tái chế. Rác tái chế đã được phân loại riêng không phải trả phí thu gom."
+          }
+        }
+      }
+    },
+    "Keep it whole. Do not break glass on purpose.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giữ nguyên vẹn, không cố ý đập vỡ thủy tinh."
+          }
+        }
+      }
+    },
+    "Leave the ring pull attached.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để nguyên khoen kéo trên lon."
+          }
+        }
+      }
+    },
+    "Light bulbs are hazardous waste. Mirrors, window glass, and ceramics are not bottles or jars; ask your collector before recycling them.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bóng đèn là chất thải nguy hại. Gương, kính cửa sổ và đồ gốm sứ không phải chai lọ; hãy hỏi người thu gom trước khi đem tái chế."
+          }
+        }
+      }
+    },
+    "Metal can": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lon kim loại"
+          }
+        }
+      }
+    },
+    "Metal cans are recyclable metal waste in Hanoi's sorting rules. Scrap collectors buy aluminium drink cans.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theo quy định phân loại rác của Hà Nội, lon kim loại là chất thải kim loại có thể tái chế. Người thu mua phế liệu có mua lon nhôm đựng đồ uống."
+          }
+        }
+      }
+    },
+    "Milk and juice cartons are lined with plastic and foil. Rinse and flatten them, and ask your collector whether they accept them.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hộp sữa và hộp nước ép có lớp lót nhựa và nhôm. Hãy tráng sạch, ép dẹt và hỏi người thu gom xem họ có nhận không."
+          }
+        }
+      }
+    },
+    "No, greasy, wet, or food-stained": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không, dính dầu mỡ, bị ướt hoặc dính thức ăn"
+          }
+        }
+      }
+    },
+    "Other waste": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chất thải khác"
+          }
+        }
+      }
+    },
+    "Paper": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giấy"
+          }
+        }
+      }
+    },
+    "Paper and hard plastic cups are recyclable. Foam cups are not.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cốc giấy và cốc nhựa cứng có thể tái chế. Cốc xốp thì không."
+          }
+        }
+      }
+    },
+    "Peel off the sealing film and remove the straw; both go in other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bóc màng dán miệng cốc và bỏ ống hút ra; cả hai đều bỏ vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Plastic bag": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Túi ni-lông"
+          }
+        }
+      }
+    },
+    "Plastic bags are not on the recyclable list in Vietnam's household sorting guidance, so they go in other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Túi ni-lông không có trong danh sách rác tái chế của hướng dẫn phân loại rác sinh hoạt tại Việt Nam, nên được bỏ vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Plastic bottle": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chai nhựa"
+          }
+        }
+      }
+    },
+    "Plastic bottles are recyclable plastic waste in Hanoi's sorting rules.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theo quy định phân loại rác của Hà Nội, chai nhựa là chất thải nhựa có thể tái chế."
+          }
+        }
+      }
+    },
+    "Policy %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chính sách %@"
+          }
+        }
+      }
+    },
+    "Pour out any liquid left inside.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đổ hết phần nước còn lại bên trong."
+          }
+        }
+      }
+    },
+    "Put it in the green food-waste bag.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ vào túi màu xanh đựng chất thải thực phẩm."
+          }
+        }
+      }
+    },
+    "Put it in the grey bag for other household waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ vào túi màu xám đựng chất thải sinh hoạt khác."
+          }
+        }
+      }
+    },
+    "Put the foam cup in other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ cốc xốp vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Put the foam in other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ xốp vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Put the greasy or wet cardboard in other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ phần bìa dính dầu mỡ hoặc bị ướt vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Quickly rinse bottles that held milk, juice, or sweet drinks so they do not smell or attract insects.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tráng qua những chai từng đựng sữa, nước ép hoặc đồ uống ngọt để không bốc mùi hay thu hút côn trùng."
+          }
+        }
+      }
+    },
+    "Recyclable": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Có thể tái chế"
+          }
+        }
+      }
+    },
+    "Remove plastic tape, plastic windows, and foam inserts. Foam goes in other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gỡ băng dính nhựa, ô nhựa trong suốt và miếng xốp chèn. Xốp bỏ vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Reuse the bag while it is still intact, for example as a bin liner for other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tái sử dụng túi khi còn nguyên vẹn, ví dụ làm túi lót thùng đựng chất thải khác."
+          }
+        }
+      }
+    },
+    "Rinse the cup and stack it with other clean plastic cups.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tráng cốc và xếp chồng cùng các cốc nhựa sạch khác."
+          }
+        }
+      }
+    },
+    "Scrape food scraps from foam boxes or trays into the green food-waste bag.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gạt thức ăn thừa trên hộp hoặc khay xốp vào túi màu xanh đựng chất thải thực phẩm."
+          }
+        }
+      }
+    },
+    "Scrape food scraps into the green food-waste bag.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gạt thức ăn thừa vào túi màu xanh đựng chất thải thực phẩm."
+          }
+        }
+      }
+    },
+    "Spray cans and cans that held paint, pesticide, or oil are hazardous waste, not recyclables.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bình xịt và lon từng đựng sơn, thuốc bảo vệ thực vật hoặc dầu là chất thải nguy hại, không phải rác tái chế."
+          }
+        }
+      }
+    },
+    "Squash aluminium drink cans flat.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ép dẹt lon nhôm đựng đồ uống."
+          }
+        }
+      }
+    },
+    "Squash the bottle flat to save space.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ép dẹt chai để tiết kiệm chỗ."
+          }
+        }
+      }
+    },
+    "Stack clean paper cups together to save space.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xếp chồng các cốc giấy sạch để tiết kiệm chỗ."
+          }
+        }
+      }
+    },
+    "Straws, sealing films, and plastic spoons are not recyclable; put them in other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ống hút, màng dán miệng cốc và thìa nhựa không tái chế được; hãy bỏ vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Styrofoam": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xốp"
+          }
+        }
+      }
+    },
+    "Styrofoam is not on the recyclable list in Vietnam's household sorting guidance, so it goes in other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xốp không có trong danh sách rác tái chế của hướng dẫn phân loại rác sinh hoạt tại Việt Nam, nên được bỏ vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Take everything out of the box.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lấy hết đồ bên trong hộp ra."
+          }
+        }
+      }
+    },
+    "Take off the cap. Keep it: caps are plastic too and go in the same recyclables bag.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tháo nắp chai và giữ lại: nắp cũng là nhựa, bỏ chung vào túi rác tái chế."
+          }
+        }
+      }
+    },
+    "Take off the lid. Metal lids go with metal recyclables; plastic lids go with plastic recyclables.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tháo nắp. Nắp kim loại bỏ chung với rác kim loại tái chế; nắp nhựa bỏ chung với rác nhựa tái chế."
+          }
+        }
+      }
+    },
+    "Take off the plastic lid and recycle it with plastics. Put the straw in other waste.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tháo nắp nhựa và bỏ vào rác nhựa tái chế. Ống hút bỏ vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Tear off any clean, dry parts and recycle those separately.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xé riêng những phần còn sạch và khô để tái chế."
+          }
+        }
+      }
+    },
+    "Tie several bags together into one bundle so they do not blow away.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buộc nhiều túi lại thành một bó để túi không bị gió thổi bay."
+          }
+        }
+      }
+    },
+    "Unrecognized item": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vật chưa nhận diện được"
+          }
+        }
+      }
+    },
+    "What is the cup made of?": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cốc được làm bằng chất liệu gì?"
+          }
+        }
+      }
+    },
+    "When you throw it away, shake out any food or liquid.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khi vứt bỏ, hãy giũ sạch thức ăn hoặc chất lỏng còn bên trong."
+          }
+        }
+      }
+    },
+    "Yes, clean and dry": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Có, sạch và khô"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
