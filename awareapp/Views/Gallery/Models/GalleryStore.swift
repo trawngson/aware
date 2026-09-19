@@ -52,7 +52,7 @@ class GalleryStore: ObservableObject {
         let newPost = GalleryPost(
             userName: "You",
             time: "Just now",
-            content: "I just scanned and recycled a \(itemName)! 🌱♻️",
+            content: String(localized: "I just scanned and sorted: \(itemName) 🌱♻️"),
             likes: 0,
             comments: 0,
             saved: 0,

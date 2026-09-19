@@ -1,0 +1,35 @@
+schema_version: "1.0"
+record: app-model-release-v1
+released_on: "2026-09-19"
+app_bundle_path: aware.mlpackage
+model_version: aware-v1-yolo26n-fp16
+source_run: e1b-yolo26n-aware-v1-seed26 (best.pt, epoch 131)
+selection: records/model-selection-v1.yaml
+parity: records/coreml-parity-v1.yaml (FP16 accepted 2026-09-19)
+format: {container: Core ML mlpackage (mlprogram), precision: FP16, input: "640x640 image", embedded_nms: false}
+package_bytes: 5007007
+file_sha256:
+  Data/com.apple.CoreML/model.mlmodel: e8db8a8916b6ced3d90bd8966e5942786064c4469767be353a7829c43a0be943
+  Data/com.apple.CoreML/weights/weight.bin: 98fbacf551af351429b5e3bf58d5918e84aba9664e1897f3e0d7db6dc783ac50
+ontology_version: aware-ontology-v3
+labels_in_class_order: [plastic_bottle, glass_container, metal_can, cardboard, plastic_bag, disposable_cup, styrofoam]
+policy_mapping:
+  version: hanoi-2026.1
+  implementation: awareapp/Views/Scan/Models/RecyclingPolicy.swift (explicit canonical-label table; no substring matching)
+  jurisdiction: Hanoi, Vietnam
+  sources:
+    - Hanoi People's Committee Decision No. 87 (collection may be refused for unsorted waste from 2026-01-08)
+    - Law on Environmental Protection 2020, Article 75
+    - MONRE Official Letter 9368/BTNMT-KSONMT (2023-11-02), item-level guidance
+  languages: [en, vi]
+app_decision_gate:
+  display_threshold: 0.4
+  auto_confirm_threshold: 0.75
+  stable_duration_seconds: 1.0
+  auto_confirm_labels: all seven canonical labels (previously bottle-only)
+reward:
+  implementation: awareapp/Views/Scan/Models/RewardLedger.swift
+  points: {recyclable: 20, other: 10}
+  rule: at most once per scan event; none before a required confirmation
+replaces: stock 80-class COCO demo model (commit c7fb422); the earlier 13-class model stays at record_2026-07-26.mlpackage
+pending: iPhone XR measurements and the YOLO26n-vs-YOLO26s app decision (records/target-test-evaluations-v2.yaml)
