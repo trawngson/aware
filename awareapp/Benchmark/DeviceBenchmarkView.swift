@@ -25,6 +25,12 @@ struct DeviceBenchmarkView: View {
             .navigationTitle(Text(verbatim: "Device benchmark"))
             .navigationBarTitleDisplayMode(.inline)
         }
+        // Auto-lock stays off for the whole benchmark session, so the phone
+        // can't lock during the unplugged wait, the run, or the AirDrop.
+        .onAppear {
+            UIApplication.shared.isIdleTimerDisabled = true
+            recorder.holdScreenBrightness()
+        }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { refresh += 1 }
         }
@@ -81,7 +87,7 @@ struct DeviceBenchmarkView: View {
             } header: {
                 Text(verbatim: "Checks")
             } footer: {
-                Text(verbatim: "The run lasts 10 minutes 10 seconds (10 s warm-up, then 10 measured minutes). Screen brightness is set to 50% and auto-lock is paused until it ends. Don't touch the phone or switch apps; leaving the app ends the run.")
+                Text(verbatim: "The run lasts 10 minutes 10 seconds (10 s warm-up, then 10 measured minutes). The screen stays on at 50% brightness while this app is open. Don't touch the phone or switch apps; leaving the app ends the run.")
             }
 
             Section {
@@ -89,9 +95,10 @@ struct DeviceBenchmarkView: View {
                     recorder.requestCameraIfNeeded()
                     recorder.start()
                 } label: {
-                    Text(verbatim: "Start the run").frame(maxWidth: .infinity).bold()
+                    Text(verbatim: recorder.isStarting ? "Starting…" : "Start the run")
+                        .frame(maxWidth: .infinity).bold()
                 }
-                .disabled(!ready && !needsCameraPrompt(checks))
+                .disabled(recorder.isStarting || (!ready && !needsCameraPrompt(checks)))
             }
         }
         .id(refresh)
@@ -133,6 +140,7 @@ struct DeviceBenchmarkView: View {
                     format: "%.0f MB · thermal %@ · battery %d%%",
                     live.memoryMB, live.thermal, live.batteryPercent
                 ))
+                Text(verbatim: String(format: "Items detected in %.0f%% of frames", live.detectionPercent))
                 Button(role: .destructive) {
                     recorder.stop(reason: "operator_stopped")
                 } label: {
