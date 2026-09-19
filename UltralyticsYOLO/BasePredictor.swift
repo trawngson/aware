@@ -75,6 +75,11 @@ public class BasePredictor: Predictor, @unchecked Sendable {
   /// Flag indicating whether the predictor is currently processing an update.
   public var isUpdating: Bool = false
 
+  /// Called on the camera queue after every frame with the raw (unsmoothed)
+  /// start time and duration of that frame's inference, in seconds.
+  /// The device benchmark uses it because `t2` and `t4` are smoothed.
+  var onRawInferenceTime: ((_ start: CFTimeInterval, _ duration: CFTimeInterval) -> Void)?
+
   /// Required initializer for creating predictor instances.
   ///
   /// This empty initializer is required for the factory pattern used in the `create` method.
@@ -254,6 +259,7 @@ public class BasePredictor: Predictor, @unchecked Sendable {
         print(error)
       }
       t1 = CACurrentMediaTime() - t0  // inference dt
+      onRawInferenceTime?(t0, t1)
 
       currentBuffer = nil
     }

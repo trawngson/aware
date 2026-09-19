@@ -15,7 +15,7 @@ tree unless the user explicitly asks for a separate change there.
 - Never include or run `sudo` commands. Do not change server services,
   firewalls, sudo configuration, SSH configuration, or exposed ports.
 - Never execute remote commands or delete remote files. Remote notebook cells
-  are reviewed and started manually by the developer in VS Code only.
+  are reviewed and started manually by the developer in Jupyter in Chrome only.
 - Do not download or synchronize datasets, checkpoints, model weights, or
   generated training outputs to the Mac.
 

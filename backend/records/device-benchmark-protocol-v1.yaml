@@ -1,0 +1,88 @@
+schema_version: "1.0"
+record: device-benchmark-protocol-v1
+# The checker scores runs only once this says "approved". Settings, limits, and
+# definitions are fixed before the first run; any change is a new protocol version.
+status: approved
+proposed_on: "2026-09-19"
+approved_on: "2026-09-19"
+basis: >-
+  SPECIFICATION.md 5.1.1 (provisional iPhone XR limits, approved 2026-07-22)
+  and 13 (mobile acceptance testing).
+benchmark_id: aware-device-benchmark-v1
+harness: >-
+  awareapp/Benchmark, launched by the shared "awareapp Benchmark" scheme
+  (Release build, no debugger, -AWAREDeviceBenchmark). It runs the Scan tab's
+  camera component (CleanYOLOCamera and the local UltralyticsYOLO YOLOView)
+  and records the raw duration of every frame's inference.
+checker: scripts/check_device_benchmark.py
+gate_device: {name: iPhone XR, machine: "iPhone11,8", os_major: 18}
+# Only the iPhone XR is measured; the iPad was dropped on 2026-09-19.
+
+models:
+  - model_version: aware-v1-yolo26n-fp16
+    run_order: 1
+    package_bytes: 5007007
+    weight_sha256: 98fbacf551af351429b5e3bf58d5918e84aba9664e1897f3e0d7db6dc783ac50
+  - model_version: aware-v1-yolo26s-fp16
+    run_order: 2
+    package_bytes: 19190273
+    weight_sha256: 8e96a708498f339be5509ab4aa2df5401bc9f23e352c62f118d2b83cf9eb9b01
+
+run:
+  duration_seconds: 610
+  warmup_seconds: 10
+  window_seconds: 60
+  sample_interval_seconds: 1
+  max_sample_gap_seconds: 5
+  screen_brightness: 0.5
+  confidence_threshold: 0.4
+  session_preset: photo
+  camera_position: back
+  min_start_battery: 0.5
+  runs_per_model: 1
+  cooldown_minutes: 30
+
+limits:
+  package_bytes_max: 26214400        # 25 MiB
+  sustained_fps_min: 10
+  p95_latency_ms_max: 100
+  peak_memory_bytes_max: 524288000   # 500 MiB
+  thermal_state_max: fair            # serious or critical fails
+  latency_degradation_max: 0.25
+  battery_drop_points_max: 5
+
+definitions:
+  latency: >-
+    Raw wall-clock time of one frame's Vision request in BasePredictor.predict:
+    image scaling, Core ML inference on all compute units, and box decoding.
+    Not the smoothed value the YOLO package displays.
+  measured_frames: >-
+    Frames that start at or after warmup_seconds and before duration_seconds
+    (ten 60-second windows).
+  sustained_fps: Lowest frame count in any of the ten windows, divided by 60.
+  p95_latency: Nearest-rank 95th percentile over all measured frames.
+  latency_degradation: >-
+    Highest median latency among windows 2-10, divided by the median latency
+    of window 1, minus 1.
+  peak_memory: >-
+    Largest phys_footprint (the value the system memory limit uses) in any
+    1-second sample of the whole run, warm-up included.
+  thermal: Highest ProcessInfo thermal state in any sample or change event.
+  battery_drop: >-
+    First sample's battery level minus the last sample's, in percentage
+    points, with the reporting resolution recorded.
+  package_size: Bytes of the .mlpackage identified by its weight SHA-256.
+
+validity:
+  - Run status is completed, the build is Release, and the model's weight hash is listed above.
+  - Settings in the file match the run settings above.
+  - Every sample is unplugged, Low Power Mode off, and screen brightness 0.5.
+  - The device is the iPhone XR on iOS 18.
+  - The first sample is thermally nominal with at least 50% battery.
+  - No gap between samples exceeds max_sample_gap_seconds, and the app never left the foreground or resigned active.
+
+rules:
+  - Every run file is kept and checked, including stopped, interrupted, and failed runs.
+  - A run is repeated only when the checker reports INVALID; the invalid run stays in the results record with its reasons.
+  - A FAIL is recorded as a FAIL. Limits and definitions do not change after the first run except through a new, explicitly approved protocol version.
+  - YOLO26n runs first, then YOLO26s, in one session on the same scene, each starting after at least cooldown_minutes of rest with the phone thermally nominal.

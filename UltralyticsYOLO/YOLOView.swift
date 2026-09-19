@@ -82,6 +82,12 @@ public class YOLOView: UIView, VideoCaptureDelegate {
   }
 
   public var onDetection: ((YOLOResult) -> Void)?
+
+  /// Raw per-frame inference timing (start, duration in seconds), called on
+  /// the camera queue. Survives model loading, which finishes asynchronously.
+  var onRawInferenceTime: ((_ start: CFTimeInterval, _ duration: CFTimeInterval) -> Void)? {
+    didSet { (videoCapture.predictor as? BasePredictor)?.onRawInferenceTime = onRawInferenceTime }
+  }
   private var videoCapture: VideoCapture
   private var busy = false
   var task = YOLOTask.detect
@@ -227,6 +233,7 @@ public class YOLOView: UIView, VideoCaptureDelegate {
     let handleSuccess: @Sendable (Predictor) -> Void = { [weak self] predictor in
       Task { @MainActor in
         guard let self = self else { return }
+        (predictor as? BasePredictor)?.onRawInferenceTime = self.onRawInferenceTime
         self.videoCapture.predictor = predictor
         self.activityIndicator.stopAnimating()
         self.labelName.text = processString(self.modelName)
