@@ -64,7 +64,7 @@ def main() -> int:
         model.export(
             format="coreml",
             imgsz=640,
-            quantize=16,
+            half=True,
             nms=False,
             batch=1,
         )
