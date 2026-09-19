@@ -11,7 +11,11 @@ import SwiftUI
 struct awareappApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if DeviceBenchmarkSettings.isRequested {
+                DeviceBenchmarkView()
+            } else {
+                ContentView()
+            }
         }
     }
 }

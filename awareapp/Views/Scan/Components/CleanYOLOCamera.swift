@@ -19,7 +19,9 @@ struct CleanYOLOCamera: UIViewRepresentable {
     var isActive: Bool = true
     let onDetection: ((YOLOResult) -> Void)?
     var onFrameCapture: ((UIImage) -> Void)?
-    
+    /// Raw per-frame inference timing for the device benchmark (camera queue).
+    var onRawInferenceTime: ((_ start: CFTimeInterval, _ duration: CFTimeInterval) -> Void)?
+
     func makeCoordinator() -> Coordinator {
         Coordinator()
     }
@@ -48,6 +50,7 @@ struct CleanYOLOCamera: UIViewRepresentable {
         return view
 #else
         let view = YOLOView(frame: .zero, modelPathOrName: modelPathOrName, task: task)
+        view.onRawInferenceTime = onRawInferenceTime
         if cameraPosition == .front {
             view.pendingCameraPosition = .front
         }
