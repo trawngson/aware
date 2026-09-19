@@ -32,4 +32,10 @@ reward:
   points: {recyclable: 20, other: 10}
   rule: at most once per scan event; none before a required confirmation
 replaces: stock 80-class COCO demo model (commit c7fb422); the earlier 13-class model stays at record_2026-07-26.mlpackage
-pending: iPhone XR measurements and the YOLO26n-vs-YOLO26s app decision (records/target-test-evaluations-v2.yaml)
+app_decision:
+  decided_on: "2026-09-19"
+  decision: YOLO26n (aware-v1-yolo26n-fp16) ships in the app, matching the paper's model.
+  basis: >-
+    User decision. YOLO26s was not measured on a device; the planned
+    YOLO26n-vs-YOLO26s iPhone XR comparison was dropped.
+  device_benchmark: records/device-benchmark-protocol-v1.yaml (YOLO26n only)

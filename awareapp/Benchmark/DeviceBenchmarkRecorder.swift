@@ -17,6 +17,7 @@ enum DeviceBenchmarkSettings {
     static let durationSeconds: Double = 610
     static let sampleIntervalSeconds: Double = 1
     static let screenBrightness: CGFloat = 0.5
+    static let brightnessSettleSeconds: Double = 1.5
     static let minimumStartBattery: Float = 0.5
     /// Same camera settings as the Scan tab.
     static let confidenceThreshold: Double = 0.4
@@ -276,10 +277,12 @@ final class DeviceBenchmarkRecorder: ObservableObject {
         var memoryMB: Double = 0
         var thermal = "nominal"
         var batteryPercent = 0
+        var detectionPercent: Double = 0
     }
 
     @Published private(set) var phase: Phase = .setup
     @Published private(set) var live = LiveStats()
+    @Published private(set) var isStarting = false
     @Published private(set) var model: DeviceBenchmarkRecord.Model?
     @Published private(set) var modelError: String?
     @Published var batteryHealthText = ""
@@ -297,7 +300,6 @@ final class DeviceBenchmarkRecorder: ObservableObject {
     private var resultsWithDetection = 0
     private var ticker: Timer?
     private var observers: [NSObjectProtocol] = []
-    private var savedBrightness: CGFloat?
 
     init() {
         UIDevice.current.isBatteryMonitoringEnabled = true
@@ -355,8 +357,25 @@ final class DeviceBenchmarkRecorder: ObservableObject {
 
     // MARK: Run
 
+    /// Holds the screen at the benchmark brightness for the whole session.
+    func holdScreenBrightness() {
+        currentScreen?.brightness = DeviceBenchmarkSettings.screenBrightness
+    }
+
+    /// Sets the brightness, then starts the run once iOS has applied it, so the
+    /// first sample doesn't read the previous brightness.
     func start() {
-        guard phase == .setup, checks().allSatisfy(\.passed) else { return }
+        guard phase == .setup, !isStarting, checks().allSatisfy(\.passed) else { return }
+        isStarting = true
+        holdScreenBrightness()
+        DispatchQueue.main.asyncAfter(deadline: .now() + DeviceBenchmarkSettings.brightnessSettleSeconds) {
+            self.isStarting = false
+            guard self.phase == .setup, self.checks().allSatisfy(\.passed) else { return }
+            self.beginRun()
+        }
+    }
+
+    private func beginRun() {
         runID = UUID()
         startedAt = Date()
         origin = CACurrentMediaTime()
@@ -365,12 +384,6 @@ final class DeviceBenchmarkRecorder: ObservableObject {
         results = 0
         resultsWithDetection = 0
         frameLog.begin(at: origin)
-
-        UIApplication.shared.isIdleTimerDisabled = true
-        if let screen = currentScreen {
-            savedBrightness = screen.brightness
-            screen.brightness = DeviceBenchmarkSettings.screenBrightness
-        }
         observe()
         phase = .running
         sample()
@@ -431,7 +444,8 @@ final class DeviceBenchmarkRecorder: ObservableObject {
             recentMedianMs: recent.isEmpty ? 0 : recent[recent.count / 2],
             memoryMB: Double(footprint ?? 0) / 1_048_576,
             thermal: DeviceBenchmarkProbe.thermalStateName(thermal),
-            batteryPercent: Int((device.batteryLevel * 100).rounded())
+            batteryPercent: Int((device.batteryLevel * 100).rounded()),
+            detectionPercent: results > 0 ? Double(resultsWithDetection) / Double(results) * 100 : 0
         )
     }
 
@@ -477,10 +491,6 @@ final class DeviceBenchmarkRecorder: ObservableObject {
         ticker = nil
         observers.forEach { NotificationCenter.default.removeObserver($0) }
         observers = []
-        UIApplication.shared.isIdleTimerDisabled = false
-        if let savedBrightness, let screen = currentScreen {
-            screen.brightness = savedBrightness
-        }
 
         guard let model, let batteryHealth else {
             phase = .failed("Model identity or battery health missing")

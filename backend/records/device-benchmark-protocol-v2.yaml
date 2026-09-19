@@ -1,13 +1,26 @@
 schema_version: "1.0"
-record: device-benchmark-protocol-v1
-# The checker scores runs only once this says "approved". Settings, limits, and
-# definitions are fixed before the first run; any change is a new protocol version.
+record: device-benchmark-protocol-v2
 status: approved
-proposed_on: "2026-09-19"
 approved_on: "2026-09-19"
+supersedes: records/device-benchmark-protocol-v1.yaml
+revision:
+  decided_by: user (project supervisor), 2026-09-19
+  change: >-
+    thermal_state_max goes from fair to serious: a run fails only if iOS
+    reports the critical thermal state. Every other setting, limit, and
+    definition is identical to v1.
+  reason: >-
+    The app is used for short scans (about 20 seconds), and throttling is
+    already caught directly by the sustained-FPS and latency-degradation
+    gates. iOS "serious" means the system has started managing heat; only
+    "critical" risks the app being stopped.
+  disclosure: >-
+    Made after YOLO26n run 2 failed the v1 thermal gate (serious at 225 s)
+    while passing every other gate. The v1 verdicts stand as recorded in
+    records/device-benchmark-results-v1.yaml.
 basis: >-
-  SPECIFICATION.md 5.1.1 (provisional iPhone XR limits, approved 2026-07-22)
-  and 13 (mobile acceptance testing).
+  SPECIFICATION.md 5.1.1 (provisional iPhone XR limits, approved 2026-07-22,
+  thermal limit revised 2026-09-19) and 13 (mobile acceptance testing).
 benchmark_id: aware-device-benchmark-v1
 harness: >-
   awareapp/Benchmark, launched by the shared "awareapp Benchmark" scheme
@@ -47,7 +60,7 @@ limits:
   sustained_fps_min: 10
   p95_latency_ms_max: 100
   peak_memory_bytes_max: 524288000   # 500 MiB
-  thermal_state_max: fair            # serious or critical fails
+  thermal_state_max: serious         # only critical fails (v1: fair)
   latency_degradation_max: 0.25
   battery_drop_points_max: 5
 
@@ -67,7 +80,9 @@ definitions:
   peak_memory: >-
     Largest phys_footprint (the value the system memory limit uses) in any
     1-second sample of the whole run, warm-up included.
-  thermal: Highest ProcessInfo thermal state in any sample or change event.
+  thermal: >-
+    Highest ProcessInfo thermal state in any sample or change event; the run
+    fails only on critical.
   battery_drop: >-
     First sample's battery level minus the last sample's, in percentage
     points, with the reporting resolution recorded.
@@ -81,17 +96,8 @@ validity:
   - The first sample is thermally nominal with at least 50% battery.
   - No gap between samples exceeds max_sample_gap_seconds, and the app never left the foreground or resigned active.
 
-amendments:
-  - date: "2026-09-19"
-    change: >-
-      The user chose YOLO26n for the app without a device comparison, so the
-      YOLO26s run is not performed. Settings, limits, and definitions are
-      unchanged. Run 1 (YOLO26n) was INVALID: its first sample read the
-      previous screen brightness before iOS applied 50%, a harness bug fixed
-      before the repeat.
-
 rules:
   - Every run file is kept and checked, including stopped, interrupted, and failed runs.
   - A run is repeated only when the checker reports INVALID; the invalid run stays in the results record with its reasons.
   - A FAIL is recorded as a FAIL. Limits and definitions do not change after the first run except through a new, explicitly approved protocol version.
-  - YOLO26n runs first, then YOLO26s, in one session on the same scene, each starting after at least cooldown_minutes of rest with the phone thermally nominal.
+  - Each run starts after at least cooldown_minutes of rest with the phone thermally nominal. Only YOLO26n is measured (the app model; decided 2026-09-19).
