@@ -229,7 +229,8 @@ The boxes below refer to the real dataset and frozen smartphone test set.
 
 - [x] Report mAP, precision, recall, and per-class AP (frozen test set v2:
   `records/target-test-evaluations-v2.yaml`).
-- [ ] Inspect false positives and false negatives by class.
+- [x] Inspect false positives and false negatives by class (YOLO26n confusion
+  matrix on test set v2; see `records/target-test-evaluations-v2.yaml`).
 - [ ] Evaluate difficult conditions such as clutter, low light, occlusion, distance, and unusual viewpoints.
 - [ ] Measure confidence calibration or define a conservative confidence threshold.
 - [ ] Add an abstain/“please try again” behavior for uncertain predictions.
@@ -240,7 +241,8 @@ The boxes below refer to the real dataset and frozen smartphone test set.
 
 ## Phase 11 — Export and validate on mobile
 
-- [ ] Export the selected PyTorch model to Core ML.
+- [ ] Export the selected PyTorch model to Core ML. Export YOLO26s too: the app
+  model is chosen after both are measured on the iPhone (decided 2026-09-19).
 - [ ] Test the exported model on a fixed image set against the server-side model.
 - [ ] Verify class order, labels, confidence values, coordinates, and box filtering.
 - [ ] Test FP16 first.

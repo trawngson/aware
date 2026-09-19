@@ -46,3 +46,23 @@ observations:
   - metal_can, plastic_bag, and glass_container scored at or above their validation mAP50. cardboard collapsed (validation 0.401, test 0.024 for YOLO26n); test cardboard is large, clean product and shipping boxes, unlike TACO's small torn pieces.
   - plastic_bottle dropped as predicted (most test bottles are pump dispensers). styrofoam is near zero; its test class is one physical object (documented limitation).
   - YOLO26s was more accurate on both validation and test and made fewer confident wrong top-1 answers at 0.25 (18 vs 31). The pre-registered selection (YOLO26n) is unchanged by these results.
+
+error_analysis_yolo26n:
+  source: server_outputs/evaluations/t1-yolo26n-test-v2/confusion_matrix_normalized.png (Ultralytics defaults, confidence 0.25, IoU 0.45; columns = true class)
+  correct_rate_by_true_class: {plastic_bottle: 0.10, glass_container: 0.00, metal_can: 0.71, cardboard: 0.24, plastic_bag: 0.69, disposable_cup: 0.22, styrofoam: 0.00}
+  missed_as_background: {plastic_bottle: 0.14, glass_container: 0.22, metal_can: 0.00, cardboard: 0.48, plastic_bag: 0.19, disposable_cup: 0.17, styrofoam: 0.70}
+  main_confusions:
+    - disposable_cup predicted as metal_can 0.39 (more often than as disposable_cup, 0.22)
+    - plastic_bottle predicted as disposable_cup 0.31
+    - plastic_bottle, glass_container predicted as metal_can 0.17 each
+  false_positives_by_predicted_class: {metal_can: 0.22, cardboard: 0.23, disposable_cup: 0.19, plastic_bottle: 0.17, plastic_bag: 0.09, glass_container: 0.06, styrofoam: 0.04}
+  interpretation: >-
+    Cylindrical objects drift to metal_can, the majority training class (about
+    60% of boxes), which is a direct symptom of class imbalance. cardboard and
+    styrofoam fail mainly by not being detected at all rather than by being
+    mislabeled. Per-class test counts are small (10 to 29 boxes).
+
+app_model_decision: >-
+  2026-09-19: the paper keeps YOLO26n as selected before testing. The model
+  shipped in the app will be revisited after both YOLO26n and YOLO26s are
+  measured on the iPhone, and that decision will be recorded separately.
