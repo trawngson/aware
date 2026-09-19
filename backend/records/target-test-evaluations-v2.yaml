@@ -66,3 +66,6 @@ app_model_decision: >-
   2026-09-19: the paper keeps YOLO26n as selected before testing. The model
   shipped in the app will be revisited after both YOLO26n and YOLO26s are
   measured on the iPhone, and that decision will be recorded separately.
+  Update (same day): the user chose YOLO26n for the app without a device
+  comparison; YOLO26s was never measured on the iPhone. See
+  records/app-model-release-v1.yaml and records/device-benchmark-results-v1.yaml.
