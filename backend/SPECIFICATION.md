@@ -120,6 +120,11 @@ silently accepted or hidden by changing the test procedure.
 
 **Decision status:** Approved as provisional limits on 2026-07-22. Phase 1 is
 complete.
+**Revision 2026-09-19:** the thermal limit now fails only on the **critical**
+state (was: serious or critical), by the user's decision after the YOLO26n
+iPhone XR run reached serious at about 3 min 45 s while passing every other
+limit (records/device-benchmark-protocol-v2.yaml,
+records/device-benchmark-results-v1.yaml).
 
 ### 5.2 First-release object classes
 

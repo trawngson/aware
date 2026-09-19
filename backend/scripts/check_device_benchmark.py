@@ -2,10 +2,11 @@
 
 The run file comes from the app's benchmark mode (the "awareapp Benchmark"
 scheme) and is copied into PROJECT_OUTPUT_ROOT/device_benchmarks/. The result is
-written next to it as <run>.check.json and is never overwritten.
+written next to it as <run>.<protocol record>.check.json and is never
+overwritten. Runs checked before v2 have results named <run>.check.json.
 
 Usage (from backend/):
-  python3 -m scripts.check_device_benchmark device_benchmarks/<run>.json
+  python3 -m scripts.check_device_benchmark device_benchmarks/<run>.json [--protocol records/...yaml]
 """
 
 from __future__ import annotations
@@ -21,26 +22,29 @@ from src.metadata_validation import load_yaml_mapping
 from src.project_paths import ProjectPaths, require_path_within
 
 
-PROTOCOL = Path("records") / "device-benchmark-protocol-v1.yaml"
+PROTOCOL = Path("records") / "device-benchmark-protocol-v2.yaml"
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("run", help="run file, relative to PROJECT_OUTPUT_ROOT")
+    parser.add_argument("--protocol", default=str(PROTOCOL), help="protocol record, relative to backend/")
     args = parser.parse_args()
 
     paths = ProjectPaths.from_environment()
-    protocol = load_yaml_mapping(paths.project_root / PROTOCOL)
+    protocol_path = require_path_within(paths.project_root / args.protocol, paths.project_root / "records")
+    protocol = load_yaml_mapping(protocol_path)
     if protocol.get("status") != "approved":
-        raise SystemExit(f"{PROTOCOL} is {protocol.get('status')!r}; runs are scored only after it is approved")
+        raise SystemExit(f"{args.protocol} is {protocol.get('status')!r}; runs are scored only after it is approved")
 
     run_path = require_path_within(args.run, paths.output_root)
-    result_path = run_path.with_name(run_path.stem + ".check.json")
+    result_path = run_path.with_name(f"{run_path.stem}.{protocol['record']}.check.json")
     if result_path.exists():
         raise SystemExit(f"refusing to overwrite {result_path}")
 
     run = json.loads(run_path.read_text(encoding="utf-8"))
     report = evaluate_run(run, protocol)
+    print(f"protocol: {protocol['record']}")
     print(f"run: {run_path.name} ({run.get('run_id')})")
     print(f"device: {run.get('device', {}).get('machine')} iOS {run.get('device', {}).get('system_version')}")
     print(report.render())

@@ -1,0 +1,78 @@
+schema_version: "1.0"
+record: device-benchmark-results-v1
+protocols:
+  - records/device-benchmark-protocol-v1.yaml (approved 2026-09-19; thermal fails at serious)
+  - records/device-benchmark-protocol-v2.yaml (2026-09-19; thermal fails only at critical; revised after run 2)
+checker: scripts/check_device_benchmark.py
+model: aware-v1-yolo26n-fp16 (weight SHA-256 98fbacf551af…, package 5,007,007 bytes)
+device: {name: iPhone XR, machine: "iPhone11,8", os: iOS 18.7.10}
+raw_files: >-
+  Kept locally in PROJECT_OUTPUT_ROOT/device_benchmarks/ (not in git), each
+  with its .check.json result. Identified below by SHA-256.
+
+runs:
+  - run: 1
+    run_id: 2394EBCF-3018-44E1-AF74-B77C8C88AD1C
+    started_at: "2026-09-19T11:43:58Z"
+    file: aware-bench-98fbacf5-2026-09-19T114358Z-completed.json
+    file_sha256: 247f394264c07a8e7e1cc91d8ba001805fe0e570cb1522c883d8bbd3bf1265af
+    verdict: INVALID
+    reason: >-
+      The first sample (t = 0.004 s) read the previous screen brightness (0.7)
+      because iOS had not yet applied 50%; the other 611 samples read 0.5. A
+      harness bug, fixed before run 2 (the run now starts 1.5 s after setting
+      the brightness, and the benchmark screen holds 50% throughout).
+    observed_not_scored: >-
+      The phone was likely charging until about two minutes before the start
+      (battery 100%). Thermal state reached fair at 64 s and serious at 249 s;
+      iOS then held the camera at 15 FPS for minutes 7-10 and median latency
+      rose from about 25 ms to 31 ms. The scene had no target items
+      (detections in 0.4% of frames).
+
+  - run: 2
+    run_id: 13E2380D-5F2B-4CF5-B74D-DBF1C3C32B77
+    started_at: "2026-09-19T12:35:21Z"
+    file: aware-bench-98fbacf5-2026-09-19T123521Z-completed.json
+    file_sha256: 516bbe7b7f924bd3152cc5a749f65ccf304d012a6f0aa7069df4a442221470f9
+    conditions: >-
+      Unplugged and rested about 40 minutes after run 1, thermally nominal
+      at start, battery 90%, screen 50%, items in view (detections in 88.7%
+      of frames). Battery health 100% (Settings > Battery Health); the app's
+      battery-health field holds 92, the battery level typed by mistake. The
+      raw file is left unchanged.
+    verdict_v1: FAIL
+    failed_gates_v1: [thermal_state]
+    verdict_v2: PASS
+    check_files:
+      v1: aware-bench-98fbacf5-2026-09-19T123521Z-completed.check.json
+      v2: aware-bench-98fbacf5-2026-09-19T123521Z-completed.device-benchmark-protocol-v2.check.json
+    gates:
+      package_size: {value: 5007007, limit: "<= 26214400", pass: true}
+      sustained_fps: {value: 21.58, limit: ">= 10", pass: true}
+      p95_latency_ms: {value: 30.52, limit: "<= 100", pass: true}
+      peak_memory_bytes: {value: 81839184, limit: "<= 524288000", pass: true}
+      thermal_state: {value: serious, limit_v1: "<= fair", pass_v1: false, limit_v2: "<= serious", pass_v2: true}
+      latency_degradation: {value: 0.0922, limit: "<= 0.25", pass: true}
+      battery_drop_points: {value: 5, limit: "<= 5", pass: true, resolution_points: 5}
+    metrics:
+      latency_ms: {p50: 24.98, p95: 30.52, p99: 32.21, max: 66.79}
+      mean_fps_measured: 24.03
+      window_fps: [21.77, 21.7, 25.68, 26.75, 25.65, 25.87, 24.8, 24.07, 22.43, 21.58]
+      window_median_latency_ms: [24.9, 24.9, 22.01, 22.06, 24.96, 25.08, 25.39, 26.36, 27.2, 24.99]
+      peak_memory_mib: 78.0
+      thermal_timeline: {fair_at_s: 95.4, serious_at_s: 225.4}
+      first_frame_s: 2.6
+      battery_percent: {start: 90, end: 85}
+
+summary: >-
+  On the iPhone XR, YOLO26n meets the size, speed, memory, latency-drift, and
+  battery limits with wide margins (p95 30.5 ms against 100 ms; 78 MiB
+  against 500 MiB; at least 21.6 FPS in every minute). Continuous scanning
+  reaches iOS thermal state "serious" after about 3 minutes 45 seconds, so
+  the run FAILS protocol v1, whose thermal gate fails at serious. The user
+  then revised the thermal gate to fail only at critical (protocol v2),
+  because the app is used for short scans and throttling is already gated by
+  FPS and latency drift, which held (worst minute 21.6 FPS, drift 9%). Under
+  v2 the run PASSES. The phone stayed nominal for the first 95 seconds, and
+  the first frame arrived 2.6 s after the camera opened. The app ships
+  YOLO26n by the user's decision (records/app-model-release-v1.yaml).

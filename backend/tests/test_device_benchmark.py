@@ -212,5 +212,25 @@ class DeviceBenchmarkTests(unittest.TestCase):
         self.assertEqual(run, before)
 
 
+class ProtocolV2Tests(unittest.TestCase):
+    V2 = load_yaml_mapping(PROJECT_ROOT / "records" / "device-benchmark-protocol-v2.yaml")
+
+    def test_v2_changes_only_the_thermal_limit(self) -> None:
+        self.assertEqual(self.V2["status"], "approved")
+        for section in ("run", "models", "gate_device", "validity", "benchmark_id"):
+            self.assertEqual(self.V2[section], PROTOCOL[section], section)
+        changed = {k for k in PROTOCOL["limits"] if PROTOCOL["limits"][k] != self.V2["limits"][k]}
+        self.assertEqual(changed, {"thermal_state_max"})
+        self.assertEqual(self.V2["limits"]["thermal_state_max"], "serious")
+
+    def test_serious_passes_and_critical_fails_under_v2(self) -> None:
+        serious = synthetic_run(events=[{"t": 225.0, "kind": "thermal_state", "detail": "serious"}])
+        critical = synthetic_run(events=[{"t": 400.0, "kind": "thermal_state", "detail": "critical"}])
+
+        self.assertEqual(evaluate_run(serious, PROTOCOL).verdict, "FAIL")
+        self.assertEqual(evaluate_run(serious, self.V2).verdict, "PASS")
+        self.assertEqual(evaluate_run(critical, self.V2).verdict, "FAIL")
+
+
 if __name__ == "__main__":
     unittest.main()
