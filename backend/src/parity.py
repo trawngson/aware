@@ -102,3 +102,80 @@ def compare_predictions(
                 )
             )
     return ParityReport(tuple(issues))
+
+
+def _at_least(
+    predictions: Mapping[str, Sequence[Prediction]], minimum: float
+) -> dict[str, list[Prediction]]:
+    return {
+        image_id: [item for item in items if item.confidence >= minimum]
+        for image_id, items in predictions.items()
+    }
+
+
+def compare_with_confidence_band(
+    server: Mapping[str, Sequence[Prediction]],
+    coreml: Mapping[str, Sequence[Prediction]],
+    *,
+    threshold: float = 0.25,
+    band: float = 0.05,
+    confidence_tolerance: float = 0.05,
+    minimum_box_iou: float = 0.95,
+) -> ParityReport:
+    """Compare detections without penalizing ones that straddle the threshold.
+
+    FP16 rounding can move a detection scored near ``threshold`` to the other
+    side of it. A detection counts as missing (or extra) only when one side
+    reports it at ``threshold + band`` or higher and the other side has no
+    matching detection even at ``threshold - band``. Box and confidence
+    agreement are checked for every clearly present server detection.
+    """
+
+    strict, loose = threshold + band, threshold - band
+    forward = compare_predictions(
+        _at_least(server, strict),
+        _at_least(coreml, loose),
+        confidence_tolerance=confidence_tolerance,
+        minimum_box_iou=minimum_box_iou,
+    )
+    backward = compare_predictions(
+        _at_least(coreml, strict),
+        _at_least(server, loose),
+        confidence_tolerance=confidence_tolerance,
+        minimum_box_iou=minimum_box_iou,
+    )
+    issues = [
+        item
+        for item in forward.issues
+        if item.code in {"image_set_mismatch", "missing_detection", "box_mismatch", "confidence_mismatch"}
+    ]
+    issues.extend(
+        ParityIssue(item.image_id, "extra_detection", item.detail)
+        for item in backward.issues
+        if item.code == "missing_detection"
+    )
+    return ParityReport(tuple(issues))
+
+
+def predictions_to_json(predictions: Mapping[str, Sequence[Prediction]]) -> dict[str, list[dict]]:
+    return {
+        image_id: [
+            {
+                "class_id": item.class_id,
+                "confidence": round(float(item.confidence), 6),
+                "xyxyn": [round(float(value), 6) for value in (item.box.xmin, item.box.ymin, item.box.xmax, item.box.ymax)],
+            }
+            for item in items
+        ]
+        for image_id, items in sorted(predictions.items())
+    }
+
+
+def predictions_from_json(document: Mapping[str, Sequence[Mapping]]) -> dict[str, list[Prediction]]:
+    return {
+        image_id: [
+            Prediction(int(item["class_id"]), float(item["confidence"]), NormalizedBox(*map(float, item["xyxyn"])))
+            for item in items
+        ]
+        for image_id, items in document.items()
+    }
