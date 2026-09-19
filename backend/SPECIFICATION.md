@@ -95,6 +95,7 @@ The confirmed physical test matrix is:
 The deployment target is therefore **iPhone XR or newer within the app's supported iOS range**, with iPad support evaluated separately on the A16 iPad. Performance acceptance must pass on the iPhone XR. Results from the iPadOS 27 beta must be labeled as beta-OS results and reported separately so beta-specific behavior does not obscure the stable iOS 18 measurement.
 
 **Decision status:** Approved by the user on 2026-07-19; both physical devices are available for eventual testing.
+**Update 2026-09-19:** the user dropped the iPad from device testing. Only the iPhone XR is measured (records/device-benchmark-protocol-v1.yaml).
 
 #### 5.1.1 Provisional iPhone XR mobile limits
 
