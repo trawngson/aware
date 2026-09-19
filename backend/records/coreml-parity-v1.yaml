@@ -35,3 +35,11 @@ status: >-
   Geometry and detection sets agree fully; confidence differs beyond the preset
   0.05 tolerance for a minority of mid-confidence detections. Acceptance is a
   pending supervisor decision.
+export_flag_correction: >-
+  Commit e3d04c3 replaced quantize=16 with half=True in scripts/export_coreml.py,
+  claiming quantize was not a valid Ultralytics argument. That claim was checked
+  against Ultralytics 8.4.19 and is wrong for 8.4.103, the version that ran the
+  export: there, quantize=16 is the current argument and half=True is a
+  deprecated alias forwarded to quantize=16. Both produce the same FP16
+  package; the 5,007,007-byte YOLO26n package matches FP16 weights (FP32 would
+  be about twice the size). The script is left as it ran.
