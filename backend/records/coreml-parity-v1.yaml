@@ -33,8 +33,18 @@ results:
     decisions_changed_at_app_auto_confirm_0_75: 3
 status: >-
   Geometry and detection sets agree fully; confidence differs beyond the preset
-  0.05 tolerance for a minority of mid-confidence detections. Acceptance is a
-  pending supervisor decision.
+  0.05 tolerance for a minority of mid-confidence detections.
+decision:
+  decided_on: "2026-09-19"
+  decided_by: project supervisor
+  outcome: accept FP16 packages for the app; no FP32 export
+  rationale: >-
+    Detections and boxes match fully, median confidence difference is 0.01 to
+    0.014, and only one YOLO26n auto-confirm (0.75) decision changed. An FP32
+    Core ML model cannot run on the Neural Engine (coremltools typed-execution
+    guide), so it would move inference to the GPU or CPU at higher power. The
+    deviation from the preset 0.05 tolerance is reported, not reclassified as
+    a pass.
 export_flag_correction: >-
   Commit e3d04c3 replaced quantize=16 with half=True in scripts/export_coreml.py,
   claiming quantize was not a valid Ultralytics argument. That claim was checked

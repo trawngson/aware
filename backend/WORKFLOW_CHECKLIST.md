@@ -241,11 +241,13 @@ The boxes below refer to the real dataset and frozen smartphone test set.
 
 ## Phase 11 — Export and validate on mobile
 
-- [ ] Export the selected PyTorch model to Core ML. Export YOLO26s too: the app
-  model is chosen after both are measured on the iPhone (decided 2026-09-19).
-- [ ] Test the exported model on a fixed image set against the server-side model.
+- [x] Export the selected PyTorch model to Core ML (YOLO26n 4.8 MB and
+  YOLO26s 19 MB FP16 packages; the app model is chosen after both are measured
+  on the iPhone).
+- [x] Test the exported model on a fixed image set against the server-side model
+  (`records/coreml-parity-v1.yaml`).
 - [ ] Verify class order, labels, confidence values, coordinates, and box filtering.
-- [ ] Test FP16 first.
+- [x] Test FP16 first (accepted 2026-09-19; FP32 not exported).
 - [ ] Test INT8 only if the accuracy change is acceptable.
 - [ ] Measure model size, latency, memory, and thermal behavior on a physical iPhone.
 - [ ] Replace broad substring-based Swift label matching with an explicit label-to-policy table.
