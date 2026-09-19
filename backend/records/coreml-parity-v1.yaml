@@ -1,0 +1,37 @@
+schema_version: "1.0"
+record: coreml-parity-v1
+checked_on: "2026-09-19"
+method: >-
+  PyTorch reference predictions of the exact exported checkpoint (VAST A100,
+  FP32) compared with the FP16 Core ML package run on macOS through the same
+  Ultralytics preprocessing (square 640 letterbox, conf >= 0.2), on the 113
+  frozen test-set v2 images verified by SHA-256. Comparison:
+  src/parity.py compare_with_confidence_band (threshold 0.25, band 0.05,
+  confidence tolerance 0.05, box IoU >= 0.95).
+environment:
+  server: {torch: 2.13.0+cu126, ultralytics: 8.4.103}
+  export: {torch: 2.13.0+cpu, coremltools: "9.0", ultralytics: 8.4.103, note: "coremltools warns torch 2.13 is untested (newest tested 2.7)"}
+  mac: {python: 3.12.4, torch: 2.13.0, coremltools: "9.0", ultralytics: 8.4.103}
+results:
+  - model_version: aware-v1-yolo26n-fp16
+    package_bytes: 5007007
+    verdict_at_preset_tolerance: FAIL
+    missing_or_extra_detections: 0
+    box_mismatches: 0
+    confidence_mismatches_over_0_05: 7
+    matched_detections: 82
+    confidence_abs_delta: {median: 0.0136, max: 0.1324, within_0_05: 0.84, within_0_10: 0.94}
+    decisions_changed_at_app_auto_confirm_0_75: 1 (0.752 server vs 0.746 Core ML)
+  - model_version: aware-v1-yolo26s-fp16
+    package_bytes: 19190273
+    verdict_at_preset_tolerance: FAIL
+    missing_or_extra_detections: 0
+    box_mismatches: 0
+    confidence_mismatches_over_0_05: 3
+    matched_detections: 68
+    confidence_abs_delta: {median: 0.0101, max: 0.1552, within_0_05: 0.96}
+    decisions_changed_at_app_auto_confirm_0_75: 3
+status: >-
+  Geometry and detection sets agree fully; confidence differs beyond the preset
+  0.05 tolerance for a minority of mid-confidence detections. Acceptance is a
+  pending supervisor decision.
