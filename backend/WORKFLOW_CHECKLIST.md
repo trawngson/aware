@@ -227,7 +227,8 @@ The boxes below refer to the real dataset and frozen smartphone test set.
 
 ## Phase 10 — Analyze errors and choose behavior
 
-- [ ] Report mAP, precision, recall, and per-class AP.
+- [x] Report mAP, precision, recall, and per-class AP (frozen test set v2:
+  `records/target-test-evaluations-v2.yaml`).
 - [ ] Inspect false positives and false negatives by class.
 - [ ] Evaluate difficult conditions such as clutter, low light, occlusion, distance, and unusual viewpoints.
 - [ ] Measure confidence calibration or define a conservative confidence threshold.

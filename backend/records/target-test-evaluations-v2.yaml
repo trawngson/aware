@@ -1,0 +1,48 @@
+schema_version: "1.0"
+record: target-test-evaluations-v2
+evaluated_on: "2026-09-19"
+test_set: aware-target-test-v2 (records/target-test-set-v2, 113 images, 139 boxes)
+evaluator: scripts/evaluate_target_test.py (commit 415bf81)
+settings: {imgsz: 640, conf: 0.001, iou: 0.7, batch: 16}
+environment: {python: 3.12.3, torch: 2.13.0+cu126, ultralytics: 8.4.103, gpu: NVIDIA A100-SXM4-80GB}
+rule: >-
+  Each checkpoint is evaluated exactly once. YOLO26n was selected in
+  records/model-selection-v1.yaml before either evaluation below ran.
+
+evaluations:
+  - eval_id: t1-yolo26n-test-v2
+    run: e1b-yolo26n-aware-v1-seed26
+    selected: true
+    overall: {precision: 0.427, recall: 0.284, map50: 0.300, map50_95: 0.230}
+    per_class_map50:
+      plastic_bottle: 0.191
+      glass_container: 0.315
+      metal_can: 0.715
+      cardboard: 0.024
+      plastic_bag: 0.566
+      disposable_cup: 0.253
+      styrofoam: 0.035
+    top1:
+      - {confidence: 0.25, correct: 32, wrong: 31, abstained: 50}
+      - {confidence: 0.75, correct: 19, wrong: 11, abstained: 83}
+  - eval_id: t2-yolo26s-test-v2
+    run: e2-yolo26s-aware-v1-seed26
+    selected: false
+    overall: {precision: 0.491, recall: 0.336, map50: 0.330, map50_95: 0.266}
+    per_class_map50:
+      plastic_bottle: 0.165
+      glass_container: 0.339
+      metal_can: 0.706
+      cardboard: 0.113
+      plastic_bag: 0.642
+      disposable_cup: 0.346
+      styrofoam: 0.000
+    top1:
+      - {confidence: 0.25, correct: 34, wrong: 18, abstained: 61}
+      - {confidence: 0.75, correct: 17, wrong: 9, abstained: 87}
+
+observations:
+  - Test mAP50 is below validation for both models (0.300 vs 0.409 and 0.330 vs 0.423), consistent with the outdoor-litter to indoor-household domain shift.
+  - metal_can, plastic_bag, and glass_container scored at or above their validation mAP50. cardboard collapsed (validation 0.401, test 0.024 for YOLO26n); test cardboard is large, clean product and shipping boxes, unlike TACO's small torn pieces.
+  - plastic_bottle dropped as predicted (most test bottles are pump dispensers). styrofoam is near zero; its test class is one physical object (documented limitation).
+  - YOLO26s was more accurate on both validation and test and made fewer confident wrong top-1 answers at 0.25 (18 vs 31). The pre-registered selection (YOLO26n) is unchanged by these results.
