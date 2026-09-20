@@ -1,0 +1,203 @@
+schema_version: "1.0"
+record: impact-factors-v1
+created_on: "2026-09-20"
+status: proposed
+ontology_version: aware-ontology-v3
+
+purpose: >-
+  Researched CO2-equivalent factors for the seven canonical classes, so that any
+  "emissions saved" figure the app shows can cite a calculation method instead
+  of a demo constant. No code consumes this record yet: the Home CO2 card and
+  CO2InsightsView still display hard-coded sample data. Adopting these values in
+  the app is a separate supervisor decision.
+
+metric:
+  name: avoided_ghg_recycling_vs_landfill
+  formula: "avoided_kg_co2e = (landfilling_factor - recycling_factor) * item_mass_kg"
+  rationale: >-
+    The app's surface is "CO2 Emissions Saved", which is the emissions avoided by
+    recycling an item instead of landfilling it. This is not the item's embodied
+    carbon; embodied figures are recorded separately below for contrast.
+  precondition: >-
+    The metric assumes the item actually reaches recycling. Detection alone does
+    not establish that, so a displayed total is an upper bound on user effect.
+
+basis:
+  source: EPA WARM v16 (December 2023)
+  units: MTCO2E per short ton of material generated
+  sign_convention: negative values denote net GHG reductions
+  short_ton_kg: 907.18474
+
+material_factors:
+  aluminum_cans:        {recycling: -9.13, landfilling: 0.02, avoided: 9.15, kg_co2e_per_kg: 10.09, exhibit: "2-7"}
+  steel_cans:           {recycling: -1.83, landfilling: 0.02, avoided: 1.85, kg_co2e_per_kg: 2.04, exhibit: "2-7"}
+  corrugated_containers: {recycling: -3.14, landfilling: 0.18, avoided: 3.32, kg_co2e_per_kg: 3.66, exhibit: "3-7"}
+  pet:                  {recycling: -1.04, landfilling: 0.02, avoided: 1.06, kg_co2e_per_kg: 1.17, exhibit: "5-3"}
+  hdpe:                 {recycling: -0.76, landfilling: 0.02, avoided: 0.78, kg_co2e_per_kg: 0.86, exhibit: "5-3"}
+  mixed_plastics:       {recycling: -0.93, landfilling: 0.02, avoided: 0.95, kg_co2e_per_kg: 1.05, exhibit: "5-3"}
+  glass:                {recycling: -0.28, landfilling: 0.02, avoided: 0.30, kg_co2e_per_kg: 0.33, exhibit: "1-4"}
+  ldpe:
+    recycling: null
+    landfilling: 0.02
+    note: >-
+      WARM publishes no LDPE recycling factor. EPA states this is a life-cycle
+      inventory data gap, not an indication that LDPE is not recycled.
+  polystyrene:
+    recycling: null
+    landfilling: 0.02
+    source_reduction: -2.50
+    note: >-
+      WARM publishes no PS recycling factor (same data gap). The source-reduction
+      factor answers a different question (not producing the item at all) and
+      must not be presented as a recycling saving.
+
+classes:
+  - class: plastic_bottle
+    id: 0
+    status: determined
+    material: pet
+    item_mass_g: 10.0
+    item_mass_range_g: [9.9, 12.7]
+    item_mass_basis: 500 mL PET water bottle after two decades of lightweighting
+    avoided_g_co2e: 12
+    avoided_range_g_co2e: [12, 15]
+    cross_check: >-
+      Gironi and Piemonte (2010), via the NIH life-cycle review, give 11.4 g
+      CO2e prevented per 500 mL bottle recycled, within 3% of the 11.7 g this
+      record derives from WARM.
+    embodied_g_co2e: 80-90 (cradle-to-gate, resin plus fabrication)
+
+  - class: metal_can
+    id: 2
+    status: determined_for_aluminium_only
+    material: aluminum_cans
+    item_mass_g: 12.99
+    item_mass_basis: >-
+      Average metallic weight of a North American beverage can (average size
+      13.6 oz), Aluminum Association 2021 can LCA.
+    avoided_g_co2e: 131
+    avoided_range_g_co2e: [102, 131]
+    cross_check: >-
+      The same LCA's sensitivity analysis gives -1.02 kg CO2e per 1,000 cans per
+      percentage point of end-of-life recycling rate, i.e. 102 g per can moving
+      from 0% to 100% recycling. 102-131 g is the defensible band.
+    embodied_g_co2e: 77.1 (cradle-to-gate at 73% recycled content); 96.8 cradle-to-grave
+    caveat: >-
+      The class also admits steel food tins (2.04 kg CO2e/kg). No citable average
+      mass for steel food cans was found, so the per-item figure is aluminium
+      only and the detector cannot distinguish the two.
+
+  - class: plastic_bag
+    id: 4
+    status: determined_with_caveat
+    material: hdpe
+    item_mass_g: 8.12
+    item_mass_basis: >-
+      Conventional lightweight HDPE supermarket carrier bag, UK Environment
+      Agency 2011, Table 3.1.
+    avoided_g_co2e: 7
+    embodied_g_co2e: 19.2
+    embodied_basis: >-
+      Environment Agency 2011, Table 5.1: 1.578 kg CO2 eq per functional unit
+      (483 items of shopping in one month) divided by a reference flow of 82.14
+      bags. The 1.578 kg figure is widely misquoted as a per-bag value.
+    caveat: >-
+      WARM's HDPE factor is derived from rigid blow-moulded containers, not film,
+      and WARM has no LDPE film factor at all. Weakest of the three per-item
+      values.
+
+  - class: glass_container
+    id: 1
+    status: per_kg_only
+    material: glass
+    kg_co2e_per_kg: 0.33
+    per_item_omitted_because: >-
+      The class spans bottles and jars from roughly 200 g (beer bottle) to 500 g
+      (wine bottle), a 2.5x spread, which is 66-165 g CO2e per item. No single
+      per-item value is defensible without a mass estimate.
+
+  - class: cardboard
+    id: 3
+    status: per_kg_only
+    material: corrugated_containers
+    kg_co2e_per_kg: 3.66
+    per_item_omitted_because: >-
+      Corrugated packaging runs from roughly 200 g to over 1 kg, a 5x spread
+      (730 g to 3.7 kg CO2e per item).
+    note: >-
+      Second-highest per-kg value of the seven classes. Worth revisiting if a
+      size estimate can ever be derived from the bounding box.
+
+  - class: disposable_cup
+    id: 5
+    status: omitted
+    omitted_because: >-
+      The class is deliberately material-neutral (paper, plastic, foam). Van der
+      Harst and Potting (2013), comparing ten disposable-cup LCAs, found a 20x
+      ratio between the highest and lowest published climate-change value for
+      paper cups alone, and no cup material consistently better than another.
+      WARM has no factor for PE-coated paper cups or for PS.
+
+  - class: styrofoam
+    id: 6
+    status: omitted
+    omitted_because: >-
+      WARM publishes no PS recycling factor, and expanded-polystyrene item mass
+      varies by more than an order of magnitude across trays, blocks, and
+      clamshells. Both halves of the calculation are unavailable.
+
+caveats:
+  - >-
+    WARM is US-average: grid mix, transport distances, and recycling practice.
+    The values are not transferable to Hanoi or to the EU without restating the
+    basis, which matters because the app's policy layer is Hanoi-specific
+    (records/app-model-release-v1.yaml, policy_mapping.version hanoi-2026.1).
+  - >-
+    Avoided emissions and embodied carbon are different metrics and must not be
+    mixed in one displayed total.
+  - >-
+    Three of seven classes carry a per-item value, two carry a per-kg factor
+    only, and two carry nothing. A per-scan CO2 display covering all seven
+    classes cannot currently be sourced.
+
+sources:
+  - title: WARM Version 16, Containers, Packaging and Non-Durable Goods Materials
+    publisher: US EPA
+    year: 2023
+    url: https://www.epa.gov/system/files/documents/2023-12/warm_containers_packaging_and_non-durable_goods_materials_v16_dec.pdf
+    used_for: Exhibits 1-4 (glass), 2-7 (metals), 3-7 (paper), 5-3 (plastics)
+    accessed: "2026-09-20"
+  - title: Frequent Questions about the Waste Reduction Model
+    publisher: US EPA
+    url: https://www.epa.gov/waste-reduction-model/frequent-questions-about-waste-reduction-model
+    used_for: LDPE and PS recycling factors are LCI data gaps
+    accessed: "2026-09-20"
+  - title: Life Cycle Assessment of the Aluminum Beverage Can (full report)
+    publisher: The Aluminum Association (study by Sphera)
+    year: 2021
+    url: https://www.aluminum.org/sites/default/files/2021-10/2021AluminumCanLCAReportFullVersion.pdf
+    used_for: 12.99 g per can; 77.1 and 96.8 kg CO2e per 1,000 cans; recycling-rate sensitivity
+    accessed: "2026-09-20"
+  - title: Life Cycle Assessment of Supermarket Carrier Bags
+    publisher: UK Environment Agency (SC030148)
+    year: 2011
+    url: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/291023/scho0711buan-e-e.pdf
+    used_for: Table 3.1 (8.12 g bag, 82.14 reference flow); Table 5.1 (1.578 kg CO2 eq)
+    accessed: "2026-09-20"
+  - title: Life Cycle Environmental Impact of PET Water Bottles
+    publisher: US National Institutes of Health, Environmental Management System
+    url: https://nems.nih.gov/Documents/PETWaterBottlesEnvironmentalImpact.pdf
+    used_for: 0.0114 kg CO2e prevented per 500 mL bottle recycled, citing Gironi and Piemonte (2010)
+    accessed: "2026-09-20"
+  - title: A critical comparison of ten disposable cup LCAs
+    publisher: van der Harst and Potting, Environmental Impact Assessment Review 43, 86-96
+    year: 2013
+    url: https://www.sciencedirect.com/science/article/abs/pii/S0195925513000747
+    used_for: 20x spread across paper-cup LCAs; no material consistently better
+    accessed: "2026-09-20"
+  - title: Single-use beverage cups and their alternatives
+    publisher: UNEP Life Cycle Initiative
+    year: 2021
+    url: https://www.lifecycleinitiative.org/wp-content/uploads/2021/02/UNEP_-LCA-Beverage-Cups-Report_Web.pdf
+    used_for: approximately 10 g CO2e per cup best case; wide variation across cup types
+    accessed: "2026-09-20"
