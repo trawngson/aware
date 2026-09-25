@@ -67,17 +67,14 @@ jobs:
           xcrun simctl list runtimes
           echo "CACHE_DIR=$RUNNER_TEMP/xcode-cache" >> "$GITHUB_ENV"
 
-      # Swift packages and Xcode's content-addressed compilation cache. Checkout
-      # gives every file a new modification time, so DerivedData itself would
-      # not be reused; the compilation cache is keyed by content instead.
-      - name: Restore build cache
+      # Downloaded Swift packages, saved again only when Package.resolved changes.
+      # (Xcode's compilation cache was tried: it saved about as much build time as
+      # uploading it cost, and Xcode 27 logs spurious errors with it.)
+      - name: Restore Swift packages
         uses: actions/cache@v6
         with:
           path: ${{ env.CACHE_DIR }}
-          key: xcode27-build-${{ hashFiles('awareapp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ github.sha }}
-          restore-keys: |
-            xcode27-build-${{ hashFiles('awareapp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-
-            xcode27-build-
+          key: xcode27-spm-${{ hashFiles('awareapp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
       - name: Build and capture screens
         run: .github/scripts/ios-render-check.sh "$RUNNER_TEMP/render"

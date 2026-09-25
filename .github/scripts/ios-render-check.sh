@@ -9,8 +9,8 @@
 #        RENDER_STEPS  steps for the UI test, e.g. "tap:Recycling Map | shot:map";
 #                      empty runs the full tour (see RenderCheckUITests)
 #        RECORD_VIDEO  1 to also record <appearance>.mp4
-#        CACHE_DIR     keeps Swift packages and Xcode's compilation cache here,
-#                      so a later run (or CI with this directory cached) builds faster
+#        CACHE_DIR     keeps downloaded Swift packages here, so later runs (or CI
+#                      with this directory cached) skip fetching them
 #
 # Output: <output-dir>/<appearance>/NN-name.png and <output-dir>/<appearance>.xcresult
 # (plus <appearance>.mp4 when recording). The simulator it creates is deleted on exit.
@@ -28,13 +28,10 @@ mkdir -p "$OUT"
 OUT=$(cd "$OUT" && pwd)
 DERIVED=$(mktemp -d)/DerivedData
 
-BUILD_SETTINGS=(CODE_SIGNING_ALLOWED=NO)
 PACKAGE_FLAGS=()
 if [ -n "${CACHE_DIR:-}" ]; then
     mkdir -p "$CACHE_DIR"
-    CACHE_DIR=$(cd "$CACHE_DIR" && pwd)
-    PACKAGE_FLAGS=(-clonedSourcePackagesDirPath "$CACHE_DIR/SourcePackages")
-    BUILD_SETTINGS+=(COMPILATION_CACHE_ENABLE_CACHING=YES "COMPILATION_CACHE_CAS_PATH=$CACHE_DIR/CompilationCache")
+    PACKAGE_FLAGS=(-clonedSourcePackagesDirPath "$(cd "$CACHE_DIR" && pwd)/SourcePackages")
 fi
 
 RUNTIME=$(xcrun simctl list runtimes -j | python3 -c '
@@ -53,19 +50,25 @@ fi
 UDID=$(xcrun simctl create "AWARE render check" "$DEVICE" "$RUNTIME")
 trap 'xcrun simctl shutdown "$UDID" >/dev/null 2>&1 || true; xcrun simctl delete "$UDID" >/dev/null 2>&1 || true' EXIT
 echo "== Simulator: $DEVICE, iOS $IOS_VERSION ($UDID)"
-xcrun simctl boot "$UDID"
-xcrun simctl bootstatus "$UDID" -b >/dev/null
-# A fixed status bar keeps screenshots comparable between runs.
-xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100 --wifiBars 3
+# A new simulator's first boot takes minutes on CI, so it boots while the app builds.
+( xcrun simctl boot "$UDID" && xcrun simctl bootstatus "$UDID" -b >/dev/null ) &
+booting=$!
 
 DESTINATION="platform=iOS Simulator,id=$UDID"
 
 echo "== Building (Xcode: $(xcodebuild -version | awk 'NR == 1'))"
 start=$SECONDS
+# ${a[@]+"${a[@]}"}: macOS's bash 3.2 treats an empty array as unset under set -u.
 xcodebuild build-for-testing -project awareapp.xcodeproj -scheme awareapp \
-    -destination "$DESTINATION" -derivedDataPath "$DERIVED" "${PACKAGE_FLAGS[@]}" \
-    "${BUILD_SETTINGS[@]}" -quiet
+    -destination "$DESTINATION" -derivedDataPath "$DERIVED" ${PACKAGE_FLAGS[@]+"${PACKAGE_FLAGS[@]}"} \
+    CODE_SIGNING_ALLOWED=NO -quiet
 echo "   built in $((SECONDS - start))s"
+
+start=$SECONDS
+wait "$booting"
+echo "   simulator ready $((SECONDS - start))s after the build"
+# A fixed status bar keeps screenshots comparable between runs.
+xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100 --wifiBars 3
 
 echo "== Steps: ${RENDER_STEPS:-full tour}"
 status=0
