@@ -1,262 +1,94 @@
+import Charts
 import SwiftUI
 
 struct CO2InsightsView: View {
-    @State private var selectedPeriod: TimePeriod = .week
-    
-    enum TimePeriod: String, CaseIterable {
-        case week = "Week"
-        case month = "Month"
+    @State private var period: InsightPeriod = .week
+
+    private var savingsData: [DataPoint] {
+        period == .week ? SampleData.co2Weekly : SampleData.co2Monthly
     }
-    
+
+    private let impact: [(icon: String, tint: Color, value: Int, label: LocalizedStringKey)] = [
+        ("tree.fill", Theme.green, 24, "Trees equivalent"),
+        ("car.fill", Theme.blue, 3_200, "km not driven"),
+        ("drop.fill", Theme.cyan, 8_400, "Liters water"),
+        ("bolt.fill", Theme.gold, 520, "kWh energy"),
+    ]
+
     var body: some View {
-        ZStack {
-            backgroundView
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    // Hero stat
-                    heroSection
-                    
-                    // Period selector
-                    periodPicker
-                    
-                    // Bar chart
-                    chartSection
-                    
-                    // Impact visualization
-                    impactSection
-                    
-                    // Stats grid
-                    statsSection
-                    
-                    // Environmental facts
-                    factsSection
+        ScrollView {
+            VStack(spacing: 16) {
+                InsightHeroCard(systemImage: "cloud.fill", title: "CO₂ emissions saved", value: 1_250, unit: "kg",
+                                trendIcon: "arrow.down.right", trend: "−9% emissions vs. average")
+                PeriodPicker(period: $period)
+                savingsCard
+                InsightSection(title: "Environmental impact") {
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                        ForEach(impact, id: \.icon) { item in
+                            VStack(spacing: 6) {
+                                Image(systemName: item.icon).font(.system(size: 26)).foregroundStyle(item.tint)
+                                Text(AwareFormat.grouped(item.value))
+                                    .font(.system(size: 20, weight: .bold))
+                                    .tracking(-0.4)
+                                    .foregroundStyle(Theme.ink)
+                                Text(item.label)
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(Theme.ink.opacity(0.6))
+                                    .multilineTextAlignment(.center)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 16)
+                            .glass(.card, cornerRadius: 20)
+                            .accessibilityElement(children: .combine)
+                        }
+                    }
                 }
-                .padding()
-            }
-            .scrollContentBackground(.hidden)
-        }
-        .navigationTitle("CO₂ Saved")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-    }
-    
-    // MARK: - Sections
-    
-    private var heroSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: "carbon.monoxide.cloud.fill")
-                    .font(.title2)
-                    .foregroundStyle(.red)
-                Text("CO₂ Emissions Saved")
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-            }
-            
-            HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Text("1,250")
-                    .font(.system(size: 56, weight: .bold, design: .rounded))
-                Text("kg")
-                    .font(.title)
-                    .foregroundStyle(.secondary)
-            }
-            
-            HStack(spacing: 4) {
-                Image(systemName: "arrow.down.right")
-                    .font(.subheadline.weight(.semibold))
-                Text("-9% emissions vs. average")
-                    .font(.subheadline.weight(.medium))
-            }
-            .foregroundStyle(.green)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(.ultraThinMaterial)
-        )
-    }
-    
-    private var periodPicker: some View {
-        Picker("Period", selection: $selectedPeriod) {
-            ForEach(TimePeriod.allCases, id: \.self) { period in
-                Text(period.rawValue).tag(period)
-            }
-        }
-        .pickerStyle(.segmented)
-    }
-    
-    private var chartSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Daily Savings")
-                .font(.headline)
-            
-            BarChartView(
-                data: selectedPeriod == .week ? SampleData.co2Weekly : SampleData.co2Monthly,
-                accentColor: .red
-            )
-            .id(selectedPeriod)
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(.ultraThinMaterial)
-        )
-    }
-    
-    private var impactSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Environmental Impact")
-                .font(.headline)
-            
-            HStack(spacing: 16) {
-                ImpactCard(
-                    icon: "tree.fill",
-                    value: "24",
-                    label: "Trees Equivalent",
-                    color: .green
-                )
-                
-                ImpactCard(
-                    icon: "car.fill",
-                    value: "3,200",
-                    label: "km Not Driven",
-                    color: .blue
-                )
-            }
-            
-            HStack(spacing: 16) {
-                ImpactCard(
-                    icon: "drop.fill",
-                    value: "8,400",
-                    label: "Liters Water",
-                    color: .cyan
-                )
-                
-                ImpactCard(
-                    icon: "bolt.fill",
-                    value: "520",
-                    label: "kWh Energy",
-                    color: .yellow
-                )
-            }
-        }
-    }
-    
-    private var statsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Statistics")
-                .font(.headline)
-            
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ForEach(SampleData.co2Stats) { stat in
-                    StatCardView(stat: stat)
+                InsightSection(title: "Statistics") {
+                    StatGrid(stats: SampleData.co2Stats)
+                }
+                InsightSection(title: "Did you know?") {
+                    VStack(spacing: 10) {
+                        InsightTipRow(systemImage: "globe.asia.australia.fill", tint: Theme.blue,
+                                      text: "The average person produces about 4 tons of CO₂ per year. You've offset 31% of that.")
+                        InsightTipRow(systemImage: "leaf.fill", tint: Theme.green,
+                                      text: "One tree absorbs about 22kg of CO₂ per year — your savings equal 57 trees working for a year.")
+                    }
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 6)
+            .padding(.bottom, 20)
         }
+        .scrollIndicators(.hidden)
+        .background {
+            ForestBackdrop(blurFrom: 0.22, blurTo: 0.4,
+                           scrim: ForestBackdrop.scrim(dark: 0.52, darkEnd: 0.18, mistStart: 0.36, mistMid: 0.54))
+        }
+        .forestNavigationBar("CO₂ Saved")
     }
-    
-    private var factsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Did You Know?")
-                .font(.headline)
-            
-            VStack(spacing: 12) {
-                FactCard(
-                    emoji: "🌍",
-                    fact: "The average person produces about 4 tons of CO₂ per year. You've offset 31% of that!"
-                )
-                
-                FactCard(
-                    emoji: "🌱",
-                    fact: "One tree absorbs approximately 22kg of CO₂ per year. Your savings equal 57 trees working for a year!"
-                )
+
+    private var savingsCard: some View {
+        let peak = savingsData.max { $0.value < $1.value }
+        return VStack(alignment: .leading, spacing: 10) {
+            Text("Daily savings").font(.system(size: 16, weight: .semibold)).foregroundStyle(Theme.ink)
+            Chart(savingsData) { point in
+                BarMark(x: .value("Period", point.label), y: .value("CO₂", point.value), width: .ratio(0.78))
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    .foregroundStyle(point.id == peak?.id
+                                     ? LinearGradient(colors: [Theme.green, Theme.green.opacity(0.7)], startPoint: .top, endPoint: .bottom)
+                                     : LinearGradient(colors: [Theme.greenBright, Theme.greenBright.opacity(0.62)], startPoint: .top, endPoint: .bottom))
             }
-        }
-    }
-    
-    private var backgroundView: some View {
-        ZStack(alignment: .top) {
-            Color(uiColor: .systemGroupedBackground)
-                .ignoresSafeArea()
-            LinearGradient(
-                stops: [
-                    .init(color: Color.red.opacity(0.25), location: 0.0),
-                    .init(color: Color.red.opacity(0.1), location: 0.2),
-                    .init(color: Color.red.opacity(0.0), location: 0.4)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-        }
-    }
-}
-
-// MARK: - Impact Card
-
-struct ImpactCard: View {
-    let icon: String
-    let value: String
-    let label: String
-    let color: Color
-    
-    @State private var appeared = false
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title)
-                .foregroundStyle(color)
-                .symbolEffect(.bounce, value: appeared)
-            
-            Text(value)
-                .font(.title3.weight(.bold))
-            
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.ultraThinMaterial)
-        )
-        .scaleEffect(appeared ? 1 : 0.8)
-        .opacity(appeared ? 1 : 0)
-        .onAppear {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.7).delay(0.1)) {
-                appeared = true
+            .chartYAxis(.hidden)
+            .chartXAxis {
+                AxisMarks { _ in
+                    AxisValueLabel().font(.system(size: 11)).foregroundStyle(Theme.ink.opacity(0.55))
+                }
             }
+            .frame(height: 160)
         }
-    }
-}
-
-// MARK: - Fact Card
-
-struct FactCard: View {
-    let emoji: String
-    let fact: String
-    
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Text(emoji)
-                .font(.title)
-            
-            Text(fact)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            
-            Spacer()
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(.ultraThinMaterial)
-        )
+        .padding(16)
+        .glass(.card)
     }
 }
 
@@ -264,4 +96,5 @@ struct FactCard: View {
     NavigationStack {
         CO2InsightsView()
     }
+    .preferredColorScheme(.dark)
 }

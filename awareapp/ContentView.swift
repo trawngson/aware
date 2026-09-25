@@ -18,18 +18,27 @@ struct ContentView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
     var body: some View {
+        // Screens open on the dark forest (or the camera), so their content and
+        // navigation bars use the dark appearance. The tab bar sits outside that
+        // and follows the device's Light/Dark setting, like a stock tab bar; only
+        // the always-light map switches the whole window to light.
         TabView(selection: $navigationManager.selectedTab) {
             HomeTabView()
+                .environment(\.colorScheme, .dark)
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(AppTab.home)
             ScanTabView(isTabActive: navigationManager.selectedTab == .scan)
+                .environment(\.colorScheme, .dark)
                 .tabItem { Label("Scan", systemImage: "camera.fill") }
                 .tag(AppTab.scan)
             GalleryTabView()
+                .environment(\.colorScheme, .dark)
                 .tabItem { Label("Gallery", systemImage: "photo.fill") }
                 .tag(AppTab.gallery)
         }
-        .sheet(isPresented: Binding(
+        .tint(Theme.green)
+        .preferredColorScheme(navigationManager.usesLightChrome ? .light : nil)
+        .fullScreenCover(isPresented: Binding(
             get: { !hasSeenOnboarding },
             set: { hasSeenOnboarding = !$0 }
         )) {

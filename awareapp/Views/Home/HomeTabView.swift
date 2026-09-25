@@ -1,287 +1,121 @@
 import SwiftUI
 
-// thêm asset
-
 struct HomeTabView: View {
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @ObservedObject private var ledger = RewardLedger.shared
+    @ObservedObject private var navigationManager = NavigationManager.shared
+    @GestureState private var isTouchingGlassHeader = false
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                backgroundView
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
+            ScrollView {
+                VStack(spacing: 14) {
+                    if #available(iOS 26, *) {
+                        // Liquid Glass systems: the system glass button swells and stretches toward
+                        // the finger. It adds its own 12 × 7 pt inset, so the header pads less here.
                         NavigationLink(destination: UserOptionsView()) {
-                            welcomeHeader
+                            welcomeHeader(horizontalPadding: 2, verticalPadding: 5)
                         }
-                        .buttonStyle(.plain)
-                        statsGrid
-                        Divider().padding(.horizontal)
-                    }
-                    .padding()
-                }
-                .scrollContentBackground(.hidden)
-            }
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-
-    private var welcomeHeader: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(
-                spacing: 12
-            ) {
-                ZStack {
-                    Circle()
-                        .fill(Color.pink.opacity(0.25))
-                        .frame(width: 80, height: 80)
-
-                    Image("PlaceholderAvatar")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 70, height: 70)
-                        .clipShape(Circle())
-                }
-                VStack(alignment: .leading) {
-                    Text("Welcome back")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                    HStack() {
-                        Text("Truong Son")
-                            .font(.largeTitle.weight(.bold))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                        HStack(spacing: 3) {
-                            Text("1,400")
-                                .foregroundStyle(.secondary)
-                            Image(systemName: "leaf.fill").foregroundStyle(.secondary)
+                        .buttonStyle(.glass)
+                        .buttonBorderShape(.roundedRectangle(radius: 26))
+                        // A drag that starts on the glass stretches it instead of scrolling the page.
+                        .simultaneousGesture(DragGesture(minimumDistance: 0)
+                            .updating($isTouchingGlassHeader) { _, touching, _ in touching = true })
+                    } else {
+                        // Before Liquid Glass: a plain translucent bar, no stretching.
+                        NavigationLink(destination: UserOptionsView()) {
+                            welcomeHeader(horizontalPadding: 14, verticalPadding: 12)
+                                .glass(.frosted, cornerRadius: 26)
                         }
-                        Image(systemName: "chevron.forward").imageScale(.large).foregroundStyle(.secondary)
+                        .buttonStyle(PressableStyle())
                     }
+
+                    HStack(spacing: 10) {
+                        NavigationLink(destination: WasteInsightsView()) {
+                            SavedStatCard(systemImage: "trash.fill", title: "Waste Saved", tint: Theme.green,
+                                          value: 6_700, unit: "g", trendUp: true, trend: "12% today")
+                        }
+                        NavigationLink(destination: CO2InsightsView()) {
+                            SavedStatCard(systemImage: "cloud.fill", title: "CO₂ Saved", tint: Theme.teal,
+                                          value: 1_250, unit: "kg", trendUp: false, trend: "9% today")
+                        }
+                    }
+                    .buttonStyle(PressableStyle())
+
+                    MonthlyGoalCard()
+
+                    NavigationLink(destination: RecyclingMapView()) {
+                        RecyclingMapCard()
+                    }
+                    .buttonStyle(PressableStyle())
+
+                    NavigationLink(destination: LeaderboardView()) {
+                        LeaderboardPreviewCard()
+                    }
+                    .buttonStyle(PressableStyle())
+
+                    WeeklyStreakCard()
+
+                    NavigationLink(destination: WasteInsightsView()) {
+                        ItemsScannedCard()
+                    }
+                    .buttonStyle(PressableStyle())
+
+                    RecentActivityCard()
+
+                    CommunityImpactCard()
+
+                    NavigationLink(destination: WasteInsightsView()) {
+                        WeeklyComparisonCard()
+                    }
+                    .buttonStyle(PressableStyle())
                 }
-            };
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 24)
+            }
+            .scrollIndicators(.hidden)
+            .scrollDisabled(isTouchingGlassHeader)
+            .overlay(alignment: .top) {
+                // Keeps the status bar readable when light cards scroll under it.
+                LinearGradient(colors: [Theme.forestShade.opacity(0.55), Theme.forestShade.opacity(0)],
+                               startPoint: .top, endPoint: .bottom)
+                    .frame(height: 12)
+                    .ignoresSafeArea(edges: .top)
+                    .allowsHitTesting(false)
+            }
+            .background { ForestBackdrop() }
+            .toolbar(.hidden, for: .navigationBar)
         }
+        .tint(navigationManager.chromeTint)
     }
 
-    private var statsGrid: some View {
-        LazyVGrid(
-            columns: gridColumns,
-            alignment: .leading,
-            spacing: 12
-        ) {
-            NavigationLink(destination: WasteInsightsView()) {
-                wasteCard
-            }
-            .buttonStyle(.plain)
-            
-            NavigationLink(destination: CO2InsightsView()) {
-                co2Card
-            }
-            .buttonStyle(.plain)
-            
-            recyclingGoalCard
-            
-            NavigationLink(destination: LeaderboardView()) {
-                recycleLeaderboardCard
-            }
-            .buttonStyle(.plain)
-            
-            // New cards
-            WeeklyStreakCard()
-            
-            ItemsScannedCard()
-            
-            RecentActivityCard()
-            
-            CommunityImpactCard()
-            
-            EnvironmentalFactCard()
-            
-            WeeklyComparisonCard()
-        }
-    }
-
-    private var wasteCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: "trash.fill")
-                    .foregroundStyle(.green)
-                Text("Total Waste Saved")
-                    .font(.headline)
-                    .foregroundStyle(.green)
-                Spacer()
-                Text("Today").foregroundStyle(.secondary)
-                Image(systemName: "chevron.right").foregroundStyle(.secondary)
+    private func welcomeHeader(horizontalPadding: CGFloat, verticalPadding: CGFloat) -> some View {
+        HStack(spacing: 13) {
+            MemberAvatar(member: Community.me, size: 58, borderColor: .white.opacity(0.7), borderWidth: 1.5)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Welcome back")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.85))
+                Text(Community.me.shortName)
+                    .font(.system(size: 26, weight: .bold))
+                    .tracking(-0.8)
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
             Spacer(minLength: 0)
-            HStack {
-                Text("6,700g")
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                HStack(spacing: 2) {
-                    Image(systemName: "chevron.up.2")
-                        .imageScale(.small)
-                        .foregroundStyle(.secondary)
-                    Text("12%")
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-            }
+            LeafAmount(value: Community.me.points + ledger.totalPoints, size: 15, weight: .semibold,
+                       color: .white, leafColor: Theme.mint)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(Capsule().fill(.white.opacity(0.2)))
+                .overlay(Capsule().strokeBorder(.white.opacity(0.3), lineWidth: 0.5))
+                .contentTransition(.numericText())
         }
-        .padding()
-        .frame(maxWidth: .infinity, minHeight: 140, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.thickMaterial)
-        )
-    }
-    
-    private var co2Card: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: "carbon.monoxide.cloud.fill")
-                    .foregroundStyle(.red)
-                Text("CO₂ Saved")
-                    .font(.headline)
-                    .foregroundStyle(.red)
-                Spacer()
-                Text("Today").foregroundStyle(.secondary)
-                Image(systemName: "chevron.right").foregroundStyle(.secondary)
-            }
-            Spacer(minLength: 0)
-            HStack {
-                Text("1,250kg")
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                HStack(spacing: 2) {
-                    Image(systemName: "chevron.down.2")
-                        .imageScale(.small)
-                        .foregroundStyle(.secondary)
-                    Text("9%")
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-            }
-        }
-        .padding()
-        .frame(maxWidth: .infinity, minHeight: 140, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.thickMaterial)
-        )
-    }
-
-    private var recycleLeaderboardCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: "arrow.up.circle.fill")
-                    .foregroundStyle(.blue)
-                Text("Recycle Leaderboard")
-                    .font(.headline)
-                    .foregroundStyle(.blue)
-                Spacer()
-                Text("This Month").foregroundStyle(.secondary)
-                Image(systemName: "chevron.right").foregroundStyle(.secondary)
-            }
-            Spacer(minLength: 0)
-            HStack {
-                Text("1")
-                    .fontWeight(.semibold)
-                Text("Dieu Linh")
-                    .foregroundStyle(.primary)
-                Spacer()
-                HStack(spacing: 3) {
-                    Text("20,000")
-                        .foregroundStyle(.secondary)
-                    Image(systemName: "leaf.fill").foregroundStyle(.secondary)
-                }
-            }
-            HStack {
-                Text("2")
-                    .fontWeight(.semibold)
-                Text("Ha Chi")
-                    .foregroundStyle(.primary)
-                Spacer()
-                HStack(spacing: 3) {
-                    Text("15,000")
-                        .foregroundStyle(.secondary)
-                    Image(systemName: "leaf.fill").foregroundStyle(.secondary)
-                }
-            }
-            HStack {
-                Text("3")
-                    .fontWeight(.semibold)
-                Text("Truong Son")
-                    .foregroundStyle(.primary)
-                Spacer()
-                HStack(spacing: 3) {
-                    Text("1,400")
-                        .foregroundStyle(.secondary)
-                    Image(systemName: "leaf.fill").foregroundStyle(.secondary)
-                }
-            }
-        }
-        .padding()
-        .frame(maxWidth: .infinity, minHeight: 140, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.thickMaterial)
-        )
-    }
-    
-    private var recyclingGoalCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: "flag.fill")
-                    .foregroundStyle(.cyan)
-                Text("Goal")
-                    .font(.headline)
-                    .foregroundStyle(.cyan)
-                Spacer()
-                Text("March").foregroundStyle(.secondary)
-                Image(systemName: "chevron.right").foregroundStyle(.secondary)
-            }
-            Spacer(minLength: 0)
-            HStack {
-                HStack(spacing: 3) {
-                    Text("2,000").font(.title).fontWeight(.semibold)
-                    Image(systemName: "leaf.fill")
-                }
-                Text("to go").font(.title).foregroundStyle(.secondary)
-                Spacer()
-            }
-            ProgressView(value: 0.7, )
-        }
-        .padding()
-        .frame(maxWidth: .infinity, minHeight: 140, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.thickMaterial)
-        )
-    }
-
-    private var gridColumns: [GridItem] {
-        let columnCount = horizontalSizeClass == .compact ? 1 : 2
-        return Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .leading), count: columnCount)
-    }
-
-    private var backgroundView: some View {
-        ZStack(alignment: .top) {
-            Color(uiColor: .systemGroupedBackground)
-                .ignoresSafeArea()
-            LinearGradient(
-                stops: [
-                    .init(color: Color.green.opacity(0.35), location: 0.0),
-                    .init(color: Color.green.opacity(0.2), location: 0.15),
-                    .init(color: Color.green.opacity(0.0), location: 0.3)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-        }
+        .padding(.horizontal, horizontalPadding)
+        .padding(.vertical, verticalPadding)
+        .accessibilityElement(children: .combine)
+        .accessibilityHint("Opens More")
     }
 }
 
