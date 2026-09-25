@@ -118,7 +118,10 @@ final class RenderCheckUITests: XCTestCase {
     @MainActor
     private func launch(_ app: XCUIApplication, showingOnboarding: Bool) {
         if app.state != .notRunning { app.terminate() }
-        app.launchArguments = ["-hasSeenOnboarding", showingOnboarding ? "NO" : "YES"]
+        // A fresh simulator takes its region from the host (CI runners are
+        // en_US), so pin it for screenshots that compare across machines.
+        app.launchArguments = ["-hasSeenOnboarding", showingOnboarding ? "NO" : "YES",
+                               "-AppleLanguages", "(en-VN)", "-AppleLocale", "en_VN"]
         app.launch()
         let ready = showingOnboarding ? app.buttons["Got it!"] : app.tabBars.buttons["Home"]
         XCTAssertTrue(ready.waitForExistence(timeout: 10), "App did not finish launching")
