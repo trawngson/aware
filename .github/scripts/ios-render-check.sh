@@ -50,8 +50,8 @@ fi
 UDID=$(xcrun simctl create "AWARE render check" "$DEVICE" "$RUNTIME")
 trap 'xcrun simctl shutdown "$UDID" >/dev/null 2>&1 || true; xcrun simctl delete "$UDID" >/dev/null 2>&1 || true' EXIT
 echo "== Simulator: $DEVICE, iOS $IOS_VERSION ($UDID)"
-# Booting in parallel with the build was tried; on the CI runner both compete
-# for the few CPU cores and the job took about a minute longer.
+# Booting in parallel with the build was tried: the build ran about three times
+# slower and the job was no faster (xcode-27 runner times vary by minutes).
 start=$SECONDS
 xcrun simctl boot "$UDID"
 xcrun simctl bootstatus "$UDID" -b >/dev/null
