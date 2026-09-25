@@ -60,7 +60,7 @@ xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --ba
 
 DESTINATION="platform=iOS Simulator,id=$UDID"
 
-echo "== Building (Xcode: $(xcodebuild -version | head -1))"
+echo "== Building (Xcode: $(xcodebuild -version | awk 'NR == 1'))"
 start=$SECONDS
 xcodebuild build-for-testing -project awareapp.xcodeproj -scheme awareapp \
     -destination "$DESTINATION" -derivedDataPath "$DERIVED" "${PACKAGE_FLAGS[@]}" \
