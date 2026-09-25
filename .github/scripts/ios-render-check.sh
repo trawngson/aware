@@ -50,9 +50,14 @@ fi
 UDID=$(xcrun simctl create "AWARE render check" "$DEVICE" "$RUNTIME")
 trap 'xcrun simctl shutdown "$UDID" >/dev/null 2>&1 || true; xcrun simctl delete "$UDID" >/dev/null 2>&1 || true' EXIT
 echo "== Simulator: $DEVICE, iOS $IOS_VERSION ($UDID)"
-# A new simulator's first boot takes minutes on CI, so it boots while the app builds.
-( xcrun simctl boot "$UDID" && xcrun simctl bootstatus "$UDID" -b >/dev/null ) &
-booting=$!
+# Booting in parallel with the build was tried; on the CI runner both compete
+# for the few CPU cores and the job took about a minute longer.
+start=$SECONDS
+xcrun simctl boot "$UDID"
+xcrun simctl bootstatus "$UDID" -b >/dev/null
+echo "   booted in $((SECONDS - start))s"
+# A fixed status bar keeps screenshots comparable between runs.
+xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100 --wifiBars 3
 
 DESTINATION="platform=iOS Simulator,id=$UDID"
 
@@ -63,12 +68,6 @@ xcodebuild build-for-testing -project awareapp.xcodeproj -scheme awareapp \
     -destination "$DESTINATION" -derivedDataPath "$DERIVED" ${PACKAGE_FLAGS[@]+"${PACKAGE_FLAGS[@]}"} \
     CODE_SIGNING_ALLOWED=NO -quiet
 echo "   built in $((SECONDS - start))s"
-
-start=$SECONDS
-wait "$booting"
-echo "   simulator ready $((SECONDS - start))s after the build"
-# A fixed status bar keeps screenshots comparable between runs.
-xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100 --wifiBars 3
 
 echo "== Steps: ${RENDER_STEPS:-full tour}"
 status=0

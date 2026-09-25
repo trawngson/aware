@@ -69,13 +69,16 @@ jobs:
 
       # Downloaded Swift packages, saved again only when Package.resolved changes.
       # (Xcode's compilation cache was tried: it saved about as much build time as
-      # uploading it cost, and Xcode 27 logs spurious errors with it.)
+      # uploading its 233 MB cost.)
       - name: Restore Swift packages
         uses: actions/cache@v6
         with:
           path: ${{ env.CACHE_DIR }}
           key: xcode27-spm-${{ hashFiles('awareapp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
+      # Xcode 27 prints "error: the following command failed with exit code 0 but
+      # produced no further output" for some compile tasks that only have
+      # warnings. The build still succeeds; the script fails on real errors.
       - name: Build and capture screens
         run: .github/scripts/ios-render-check.sh "$RUNNER_TEMP/render"
 
