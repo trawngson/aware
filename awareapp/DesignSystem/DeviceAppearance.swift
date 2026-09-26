@@ -18,6 +18,10 @@ extension EnvironmentValues {
 /// On iOS 26+ the tab bar takes its Light/Dark style from the scroll view under
 /// it, so the scroll view itself gets the device's setting, while its content
 /// keeps the appearance around it (dark on the forest screens).
+///
+/// Built with the iOS 26 SDK, the bar instead takes the content's (dark) style
+/// through the bottom scroll edge effect whenever content scrolls under it, so
+/// that effect is hidden and the bar follows the device there too.
 struct TabScrollView<Content: View>: View {
     private let content: Content
     @Environment(\.colorScheme) private var colorScheme
@@ -32,6 +36,18 @@ struct TabScrollView<Content: View>: View {
             content
                 .environment(\.colorScheme, colorScheme)
         }
+        .hidingBottomScrollEdgeEffect()
         .environment(\.colorScheme, deviceColorScheme ?? colorScheme)
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func hidingBottomScrollEdgeEffect() -> some View {
+        if #available(iOS 26, *) {
+            scrollEdgeEffectHidden(true, for: .bottom)
+        } else {
+            self
+        }
     }
 }
