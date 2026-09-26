@@ -510,6 +510,15 @@ runs seed data) and `pages.yml` (the policies from `docs/` and the admin page
 on one GitHub Pages site). Neither was run: GitHub offers "Run workflow"
 only for workflows on `main`.
 
+**2026-09-26 18:46 UTC, phase 11 (owner guide) done.** Supabase checks
+[36262706690](https://github.com/trawngson/aware/actions/runs/36262706690) and
+iOS render check [36262708639](https://github.com/trawngson/aware/actions/runs/36262708639),
+both success. With the same app code as phase 10, light Home is back to
+0.00%, so phase 10's 2.68% was the Home map card's tiles loading at a
+different moment. 17 of 20 screens are pixel-identical to
+`liquid-glass-redesign`; the rest are the scan video, map tiles and the
+keyboard bar on New Post, which differ on every run.
+
 ### Decisions made during the run
 
 1. **Other waste earns 10 points, not 0.** The plan says "20 points for a
@@ -646,3 +655,128 @@ only for workflows on `main`.
 38. **`send-push` runs every minute from Supabase Cron**, with the
     service-role key kept in Supabase Vault (README step 8). Pushes can take
     up to a minute.
+
+### Final report
+
+_Written at 18:50 UTC. All eleven phases are pushed, and each was green in
+CI before the next began; the last phase's runs: Supabase checks
+[36262706690](https://github.com/trawngson/aware/actions/runs/36262706690) and
+iOS render check [36262708639](https://github.com/trawngson/aware/actions/runs/36262708639).
+The commit that adds this report changes only this file._
+
+#### What works
+
+Verified in CI (Supabase checks and iOS render check) and, where noted,
+locally against a local Supabase stack:
+
+- **Database** (`supabase/migrations`, 6 migrations): profiles for every
+  sign-up (guests get "Recycler 1234"), server-side points through
+  `award_scan()` only (versioned rules, once per scan event, daily cap by
+  Vietnam day, `scanned_at` clamped to 7 days), leaderboards (this month and
+  all time, banned users out), community stats, the Gallery (posts, replies,
+  likes, saves, reports, blocks, counts by triggers, auto-hide at 3 reports,
+  EN/VI word filter, bans, community terms), photo storage (images only, 5 MB,
+  own folder), map functions with database-side rounding to ~500 m, admin
+  tools, announcements, device tokens and the notification outbox. Row-level
+  security is on for every table, and a test fails if a new table lacks it.
+  13 pgTAP files, 202 tests.
+- **Edge Functions**: `send-push` (APNs via an ES256 token, per-token sandbox
+  or production, dead tokens dropped, retries, service role only, skips
+  cleanly without secrets) and `delete-account` (photos first, then the user,
+  which cascades). 15 Deno tests with a fake APNs, in CI; `delete-account` also
+  run locally against local Supabase.
+- **Admin page** (`admin/`): sign-in for admins only (enforced by the
+  database), counts, samples switch, daily cap, report threshold, report
+  queue, post moderation, bans, announcements. 7 Playwright tests in CI.
+- **App**, with no backend configured (the committed state): builds, passes
+  its unit tests, and the render tour's 20 screenshots match
+  `liquid-glass-redesign` pixel for pixel except where every run differs (the
+  scan video, map tiles, the keyboard bar). No permission prompt, sign-in or
+  terms sheet appears on the tour.
+- **App, with a backend** (compiled in CI; the backend layer also compiled and
+  tested on Linux against local Supabase, 16 tests): guest sign-in without
+  UI, offline-first scan store and sync, real Home stats, leaderboard, Gallery
+  with photos, likes, saves, replies, reports, blocks, deletes and community
+  terms, the map with real posts and opt-in location, notifications and
+  reminders behind the existing switch, and More → Account (name, Sign in
+  with Apple, delete account).
+- **Privacy and docs**: `PrivacyInfo.xcprivacy`, the location and photo-library
+  usage descriptions (with Vietnamese in `InfoPlist.xcstrings`), Vietnamese
+  for every string in the catalog, and draft privacy policy and community
+  terms (EN and VI) in `docs/`.
+- **Owner guide**: `supabase/README.md`, plus the manual `supabase-deploy.yml`
+  and `pages.yml` workflows.
+
+#### Checked against section 7
+
+- Both checks green on the last phase's commit (links above); every earlier
+  phase was green before the next started.
+- RLS on every table, enforced by the `rls` pgTAP guard; the tests cover
+  other users' private rows (read and write), guests never being admins, and
+  banned users not posting or liking (replies use the same check).
+- With no backend, the screenshots match `liquid-glass-redesign` (above).
+- No secrets: the PR diff was scanned for keys and tokens; config files are
+  committed empty. No assistant names or trailers in any commit (checked
+  before every push) or in the PR (its description footer was removed at
+  17:12). Nothing changed in `backend/`, `records/`, `test_set/`, the Core
+  ML model, `UltralyticsYOLO/`, `PAPER.md`, `awareapp/Benchmark/` or the
+  signing settings; the deployment target is still iOS 18.4.
+
+#### Built but not tested
+
+- **Sign in with Apple and push delivery through APNs.** Both need the paid
+  Apple Developer Program and a capability in the Xcode project, which this
+  run didn't add (rule 5). The code paths fail quietly until then. The server
+  side of push is unit-tested with a fake APNs only; nothing ever called
+  Apple.
+- **The SwiftUI screens with a backend** never ran in a simulator: the render
+  tour deliberately runs without one. The backend layer they call is tested
+  on Linux against local Supabase, and the screens compile in CI.
+- **The hosted project**: nothing was deployed. `supabase-deploy.yml` and
+  `pages.yml` can only be started once they are on `main`, and the Supabase
+  Cron job for `send-push` is a step in the guide.
+
+#### Decisions made during the run
+
+See "Decisions made during the run" above (38 items). The ones most worth a
+look: 1 (other waste earns 10 points, as in the app), 8 (Home switches to
+real numbers after the first scan), 15 (photos are public by URL), 26 (the
+Notifications switch's default), 31 (no Apple capabilities yet) and 32
+(switching to an existing Apple account).
+
+#### The owner's next steps
+
+1. Review [PR #10](https://github.com/trawngson/aware/pull/10) and merge it
+   into `liquid-glass-redesign`, then into `main` when ready.
+2. Follow `supabase/README.md` Parts A–C: create the Singapore project, turn
+   on anonymous sign-ins and manual linking, add the three GitHub secrets, run
+   **Supabase deploy**, make your admin account, schedule `send-push`, fill in
+   `BackendConfig.plist` and `admin/config.js`, publish with **Publish web
+   pages**.
+3. Try the app with the backend on a real phone: scan, post with a photo,
+   reply from a second phone, report, block, turn notifications on, delete the
+   account.
+4. After joining the Apple Developer Program: Part D (Sign in with Apple,
+   push).
+5. Review the drafts in `docs/`, decide the age question (below), and decide
+   whether the Notifications switch should default to off (decision 26).
+
+#### Risks
+
+- **Unlabeled sample content (App Review 2.3 and 5.x).** The sample people,
+  posts and map spots are mixed in with real content without a label, as
+  decided. A reviewer could see them as fake activity or misleading content.
+  Turning **Show the sample people, posts and map spots** off on the admin
+  page before submitting (or labelling them) removes the risk. Without a
+  backend the samples always show, so a build without one is all samples.
+- **No minimum age.** Vietnam's personal data rules (Decree 13/2023/ND-CP)
+  require a parent's or guardian's consent to process the personal data of
+  children under 16. The app asks no age and collects none.
+- **The Ultralytics licence is still unresolved.** `backend/WORKFLOW_CHECKLIST.md`
+  still has "Resolve Ultralytics and dataset licensing before public or
+  commercial distribution" open. The app ships the `UltralyticsYOLO` code and
+  a YOLO model; Ultralytics publishes these under AGPL-3.0, with a paid
+  Enterprise licence as the alternative. This run didn't touch either.
+- Smaller ones: guest sign-ups have only Supabase's rate limit, no CAPTCHA;
+  the word filter is basic, so moderation still needs a person checking
+  reports daily; photos of hidden posts stay reachable by URL until removed.
