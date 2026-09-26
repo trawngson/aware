@@ -50,7 +50,11 @@ struct ContentView: View {
         .task { AppSession.shared.start() }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
-                Task { await AppSession.shared.refresh() }
+                Task {
+                    await AppSession.shared.refresh()
+                    // Reminders and push registration, only if the user allowed them.
+                    await NotificationManager.shared.refresh()
+                }
             }
         }
         // Gallery results (thanks for reporting, offline, not allowed), from any tab.

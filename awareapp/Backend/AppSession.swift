@@ -120,6 +120,8 @@ final class AppSession: ObservableObject {
                 }
                 isOnline = true
                 await LeaderboardStore.shared.refresh()
+                // A push token that arrived before sign-in goes up now.
+                await NotificationManager.shared.uploadToken()
             } catch BackendError.unreachable {
                 isOnline = false
             } catch {

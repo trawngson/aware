@@ -3,7 +3,9 @@ name: Supabase checks
 # Starts a throwaway local Supabase stack (Docker) on a Linux runner, applies
 # every migration in supabase/migrations, runs the pgTAP tests in
 # supabase/tests, then tests the admin page (admin/) against that stack with
-# Playwright. Nothing here touches the hosted project, so it needs no secrets.
+# Playwright. A second job type-checks and unit-tests the Edge Functions in
+# supabase/functions with Deno. Nothing here touches the hosted project, so it
+# needs no secrets.
 # Run it by hand with:
 #   gh workflow run supabase-checks.yml --ref <branch>
 
@@ -66,3 +68,19 @@ jobs:
             docker logs --tail 200 "$c" 2>&1
             echo "::endgroup::"
           done
+
+  functions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: supabase/functions
+    steps:
+      - uses: actions/checkout@v7
+
+      # Deno from npm, pinned, so no extra action is needed.
+      - name: Type-check the Edge Functions
+        run: npx --yes deno@2.9.6 check send-push/index.ts delete-account/index.ts
+
+      - name: Test the Edge Functions
+        run: npx --yes deno@2.9.6 test --allow-env

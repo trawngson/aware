@@ -11,7 +11,8 @@ import SwiftUI
 struct UserOptionsView: View {
     @ObservedObject private var ledger = RewardLedger.shared
     @ObservedObject private var session = AppSession.shared
-    @AppStorage("notificationsEnabled") private var notificationsEnabled = true
+    @AppStorage(NotificationManager.enabledKey) private var notificationsEnabled = true
+    @State private var isNotificationPermissionOff = false
     @Environment(\.openURL) private var openURL
 
     private var languageName: String {
@@ -67,6 +68,19 @@ struct UserOptionsView: View {
                     row("Notifications", systemImage: "bell.fill", tint: Theme.orangeDeep)
                 }
                 .tint(Theme.greenBright)
+                .onChange(of: notificationsEnabled) { _, isOn in
+                    Task {
+                        guard isOn else {
+                            await NotificationManager.shared.disable()
+                            return
+                        }
+                        // Asks for permission the first time; turns back off if declined.
+                        if !(await NotificationManager.shared.enable()) {
+                            notificationsEnabled = false
+                            isNotificationPermissionOff = true
+                        }
+                    }
+                }
                 Button {
                     if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
                 } label: {
@@ -111,6 +125,14 @@ struct UserOptionsView: View {
                            scrim: ForestBackdrop.scrim(dark: 0.5, darkEnd: 0.15, mistStart: 0.32, mistMid: 0.5))
         }
         .forestNavigationBar("More")
+        .alert("Notifications are off", isPresented: $isNotificationPermissionOff) {
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+            }
+            Button("Not now", role: .cancel) {}
+        } message: {
+            Text("To get reminders and replies, allow notifications for AWARE in Settings.")
+        }
     }
 
     private var profileCard: some View {

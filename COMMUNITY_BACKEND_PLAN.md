@@ -399,6 +399,39 @@ pinned by `package-lock.json`): setup screen, non-admin refused, settings
 saved, report queue, hide/remove, ban/unban, announcement, and a script-in-a-
 post test. All 7 pass locally.
 
+**2026-09-26 17:33 UTC, phase 7 (admin page) done.** Supabase checks
+[36258644318](https://github.com/trawngson/aware/actions/runs/36258644318)
+(pgTAP, then all 7 Playwright tests, with supabase-js loaded from jsDelivr
+and its integrity hash checked) and iOS render check
+[36258646834](https://github.com/trawngson/aware/actions/runs/36258646834),
+both success; 17 of 20 screens pixel-identical to the base branch (the rest:
+scan video, map tiles, keyboard bar).
+
+**2026-09-26 17:35 UTC, phase 8 (notifications) pushed.** Migration
+`20260926210000_notifications.sql`: `device_tokens` (each user sees and
+removes only their own; `register_device()` moves a token to whoever signs
+in on that phone), and a `notification_outbox` with no client access at all,
+filled by triggers on replies, likes (one pending per post) and
+announcements, skipping your own actions and people you blocked. pgTAP
+`notifications` (14 tests). Edge Function `send-push` drains the outbox
+through APNs with an ES256 token made from the `APNS_*` secrets, per-token
+sandbox or production host, drops tokens Apple says are dead, retries
+failures up to 5 times, only answers the service role, and skips cleanly
+(reporting the queue length) when the secrets are missing. Its logic is in
+plain functions with Deno tests using a fake APNs (`supabase/functions/**/
+*_test.ts`); the Supabase checks workflow gains a job that type-checks and
+runs them. `delete-account` is also here (used in phase 9), with its own
+tests. In the app: `NotificationManager` behind the existing switch in
+More. Turning it on asks for permission (turned back off, with an alert
+offering Settings, if declined); with permission it schedules the streak and
+weekly goal reminders and, with a backend, registers for push and uploads
+the token (after sign-in if it arrives earlier). Turning it off cancels the
+reminders and removes the token from the server. An app delegate receives
+the token and shows notifications while the app is open; tapping a reply,
+like or announcement opens the Gallery. Checked locally: pgTAP (202 tests),
+Deno (15 tests), and the Linux harness registering, moving and removing a
+token against local Supabase.
+
 ### Decisions made during the run
 
 1. **Other waste earns 10 points, not 0.** The plan says "20 points for a
@@ -489,3 +522,25 @@ post test. All 7 pass locally.
     can't reach jsDelivr, so locally the tests serve the same pinned version
     from `node_modules` (`SUPABASE_JS_PATH`); CI loads it from the CDN with
     the integrity hash, like the real page.
+26. **The Notifications switch stays on by default, and permission is asked
+    only when the user turns it on.** Changing its default would change the
+    More screen, and asking at launch is against the plan. The catch: on a
+    fresh install the switch shows on, but nothing is scheduled or registered
+    until the user turns it off and on again. The owner
+    may prefer the switch off by default; that is a one-word change in
+    `UserOptionsView` and `NotificationManager`, and changes the More screen.
+27. **Push tokens carry their APNs environment.** Debug builds (run from
+    Xcode) register as `sandbox`, release builds as `production`, and
+    `send-push` picks Apple's server per token, so one project serves both.
+28. **Reminders are local only**: a streak reminder at 19:00 on days without
+    a scan yet, and a weekly goal nudge on Sundays at 18:00 (phone's time).
+    They are rescheduled each time the app opens.
+29. **One pending like notification per post**, so a popular post doesn't buzz
+    its author for every like; nothing is sent to someone who blocked the
+    actor, or for your own replies and likes.
+30. **Deno comes from npm in CI** (`npx deno@2.9.6`), pinned, instead of a
+    separate setup action.
+31. **No Push Notifications or Sign in with Apple capability in the Xcode
+    project.** Both need the paid Apple Developer Program, and adding them now
+    would break signing with the free team (rule 5). The code is in place and
+    fails quietly until the owner adds them (`supabase/README.md`, Part D).
