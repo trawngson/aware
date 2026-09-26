@@ -113,6 +113,14 @@ struct GoalProgressBar: View {
 // MARK: - Recycling map
 
 struct RecyclingMapCard: View {
+    @ObservedObject private var session = AppSession.shared
+    @ObservedObject private var mapStore = MapStore.shared
+
+    private var nearbyCount: Int {
+        (session.showSamples ? RecyclingMapData.nearbyCount(for: nil, from: mapStore.origin) : 0)
+            + mapStore.nearbyCount(for: nil)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             CardHeader(systemImage: "mappin", title: "Recycling Map", caption: "Near you")
@@ -126,7 +134,7 @@ struct RecyclingMapCard: View {
                             .overlay(Circle().strokeBorder(.white, lineWidth: 1.5))
                     }
                 }
-                Text("\(RecyclingMapData.nearbyCount(for: nil)) items recycled within 2 km")
+                Text("\(nearbyCount) items recycled within 2 km")
                     .font(.system(size: 13))
                     .foregroundStyle(Theme.ink.opacity(0.62))
             }

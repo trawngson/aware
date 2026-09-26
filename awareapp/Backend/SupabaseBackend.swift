@@ -151,6 +151,19 @@ final class SupabaseBackend: CommunityBackend, @unchecked Sendable {
         }
     }
 
+    func fetchPost(_ id: UUID) async throws -> RemotePost? {
+        _ = try await ensureSession()
+        return try await run {
+            let rows: [RemotePost] = try await client.from("posts")
+                .select(RemotePost.columns)
+                .eq("id", value: id)
+                .limit(1)
+                .execute()
+                .value
+            return rows.first
+        }
+    }
+
     private struct PostRef: Decodable {
         let postID: UUID
         enum CodingKeys: String, CodingKey { case postID = "post_id" }
@@ -342,6 +355,65 @@ final class SupabaseBackend: CommunityBackend, @unchecked Sendable {
         try? client.storage.from(Self.imageBucket).getPublicURL(path: path)
     }
 
+    // MARK: - Notifications
+
+    private struct DeviceParams: Encodable {
+        let token: String
+        let environment: String
+        enum CodingKeys: String, CodingKey {
+            case token = "p_token"
+            case environment = "p_environment"
+        }
+    }
+
+    func registerDevice(token: String, sandbox: Bool) async throws {
+        _ = try await ensureSession()
+        try await run {
+            try await client.rpc("register_device",
+                                 params: DeviceParams(token: token, environment: sandbox ? "sandbox" : "production"))
+                .execute()
+        }
+    }
+
+    func unregisterDevice(token: String) async throws {
+        _ = try await ensureSession()
+        try await run {
+            try await client.from("device_tokens").delete().eq("token", value: token.lowercased()).execute()
+        }
+    }
+
+    // MARK: - Account
+
+    var isGuest: Bool { client.auth.currentUser?.isAnonymous ?? true }
+
+    func linkApple(idToken: String, nonce: String) async throws {
+        _ = try await ensureSession()
+        do {
+            _ = try await client.auth.linkIdentityWithIdToken(
+                credentials: OpenIDConnectCredentials(provider: .apple, idToken: idToken, nonce: nonce))
+        } catch let error as AuthError where error.errorCode == .identityAlreadyExists {
+            throw BackendError.identityInUse
+        } catch {
+            throw Self.map(error)
+        }
+    }
+
+    func signInWithApple(idToken: String, nonce: String) async throws {
+        try await run {
+            _ = try await client.auth.signInWithIdToken(
+                credentials: OpenIDConnectCredentials(provider: .apple, idToken: idToken, nonce: nonce))
+        }
+    }
+
+    func deleteAccount() async throws {
+        _ = try await ensureSession()
+        try await run { () async throws -> Void in
+            try await client.functions.invoke("delete-account", options: FunctionInvokeOptions(method: .post))
+        }
+        // The server session is gone with the user; forget it here too.
+        try? await client.auth.signOut(scope: .local)
+    }
+
     // MARK: - Map
 
     private struct MapParams: Encodable {
@@ -438,6 +510,12 @@ final class SupabaseBackend: CommunityBackend, @unchecked Sendable {
             return .server(error.message)
         }
         if let error = error as? AuthError { return .server(error.localizedDescription) }
+        if let error = error as? FunctionsError {
+            if case .httpError(let code, _) = error, (400..<500).contains(code), code != 408, code != 429 {
+                return .rejected(error.localizedDescription)
+            }
+            return .server(error.localizedDescription)
+        }
         if let error = error as? HTTPError {
             let status = error.response.statusCode
             return (400..<500).contains(status) && status != 408 && status != 429

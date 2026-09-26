@@ -2,12 +2,13 @@ import CoreLocation
 import MapKit
 
 /// A shared recycling project pinned on the map. Each one links to its
-/// Gallery post.
+/// Gallery post. Sample spots use an asset photo, real ones a stored photo.
 struct MapSpot: Identifiable, Equatable {
     let postID: UUID
     let title: String
     let author: CommunityMember
-    let imageName: String
+    let imageName: String?
+    var imageURL: URL? = nil
     let coordinate: CLLocationCoordinate2D
     let tag: MaterialTag?
     let age: String
@@ -30,8 +31,9 @@ struct MapCluster: Identifiable {
     }
 }
 
-/// Demo data around Hoan Kiem Lake, Hanoi. The app does not ask for location
-/// access, so "you" are a fixed point and all distances are measured from it.
+/// Demo data around Hoan Kiem Lake, Hanoi. Unless the user shares their
+/// location (only possible with a backend), "you" are a fixed point by the
+/// lake and all distances are measured from it.
 enum RecyclingMapData {
     static let userLocation = CLLocationCoordinate2D(latitude: 21.0287, longitude: 105.8524)
 
@@ -84,21 +86,25 @@ enum RecyclingMapData {
         return spots.filter { $0.tag == filter }
     }
 
-    /// Items recycled within `nearbyRadiusMeters` of the user.
-    static func nearbyCount(for filter: MaterialTag?) -> Int {
-        let inRange = { (coordinate: CLLocationCoordinate2D) in distance(to: coordinate) <= nearbyRadiusMeters }
+    /// Sample items recycled within `nearbyRadiusMeters` of `origin`.
+    static func nearbyCount(for filter: MaterialTag?, from origin: CLLocationCoordinate2D = userLocation) -> Int {
+        let inRange = { (coordinate: CLLocationCoordinate2D) in
+            distance(to: coordinate, from: origin) <= nearbyRadiusMeters
+        }
         return spots(for: filter).filter { inRange($0.coordinate) }.count
             + clusters.filter { inRange($0.coordinate) }.map { $0.count(for: filter) }.reduce(0, +)
     }
 
-    static func distance(to coordinate: CLLocationCoordinate2D) -> CLLocationDistance {
-        CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
+    static func distance(to coordinate: CLLocationCoordinate2D,
+                         from origin: CLLocationCoordinate2D = userLocation) -> CLLocationDistance {
+        CLLocation(latitude: origin.latitude, longitude: origin.longitude)
             .distance(from: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude))
     }
 
     /// "400 m" / "1.2 km", rounded the way people say it.
-    static func distanceText(to coordinate: CLLocationCoordinate2D) -> String {
-        let meters = distance(to: coordinate)
+    static func distanceText(to coordinate: CLLocationCoordinate2D,
+                             from origin: CLLocationCoordinate2D = userLocation) -> String {
+        let meters = distance(to: coordinate, from: origin)
         let rounded = meters < 1_000 ? (meters / 50).rounded() * 50 : (meters / 100).rounded() * 100
         return Measurement(value: rounded, unit: UnitLength.meters)
             .formatted(.measurement(width: .abbreviated, usage: .road))

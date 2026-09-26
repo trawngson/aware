@@ -1,3 +1,4 @@
+import CoreLocation
 import SwiftUI
 
 /// A composer draft started from a scan result ("Add to Gallery").
@@ -61,6 +62,8 @@ class GalleryStore: ObservableObject {
     @Published private(set) var remotePosts: [RemotePost] = []
     /// Full reply threads loaded for real posts.
     @Published private(set) var remoteReplies: [UUID: [RemoteReply]] = [:]
+    /// Real posts opened from the map that aren't in the feed.
+    @Published private(set) var openedPosts: [UUID: RemotePost] = [:]
     @Published var likedPostIDs: Set<UUID> = []
     @Published var likeCounts: [UUID: Int] = [:]
     @Published var savedPostIDs: Set<UUID> = []
@@ -110,7 +113,7 @@ class GalleryStore: ObservableObject {
 
     /// A post that may show (not reported or blocked on this phone).
     func post(id: UUID) -> GalleryPost? {
-        if let remote = remotePosts.first(where: { $0.id == id }) {
+        if let remote = remotePosts.first(where: { $0.id == id }) ?? openedPosts[id] {
             let post = galleryPost(remote)
             return isVisible(post) ? post : nil
         }
@@ -118,7 +121,7 @@ class GalleryStore: ObservableObject {
     }
 
     func isRemote(_ id: UUID) -> Bool {
-        remotePosts.contains { $0.id == id }
+        remotePosts.contains { $0.id == id } || openedPosts[id] != nil
     }
 
     /// True for the user's own posts and replies.
@@ -209,6 +212,16 @@ class GalleryStore: ObservableObject {
         }
     }
 
+    /// Loads a real post that isn't in the feed (opened from the map).
+    func loadPost(_ id: UUID) async {
+        guard session.isBackendConfigured, post(id: id) == nil else { return }
+        if let post = try? await backend.fetchPost(id) {
+            openedPosts[id] = post
+            likeCounts[id] = post.likeCount
+            savedCounts[id] = post.saveCount
+        }
+    }
+
     /// Loads every reply of a real post.
     func loadReplies(for postID: UUID) async {
         guard isRemote(postID) else { return }
@@ -250,7 +263,8 @@ class GalleryStore: ObservableObject {
     /// Creates a post by the current user from the composer. With a backend it
     /// is uploaded (photo first). Returns why it failed, or nil. The community
     /// terms must already be accepted.
-    func publish(content: String, image: UIImage?, tag: MaterialTag?) async -> GalleryMessage? {
+    func publish(content: String, image: UIImage?, tag: MaterialTag?,
+                 location: CLLocationCoordinate2D? = nil) async -> GalleryMessage? {
         guard session.isBackendConfigured else {
             addPost(GalleryPost(author: Community.current, time: String(localized: "Just now"),
                                 content: content, tag: tag, attachmentImage: image))
@@ -261,12 +275,17 @@ class GalleryStore: ObservableObject {
             if let image, let jpeg = ImageUpload.jpeg(from: image) {
                 imagePath = try await backend.uploadImage(jpeg)
             }
+            // The database rounds the location to about 500 m.
             let post = try await backend.createPost(PostDraft(title: nil, body: content, material: tag?.rawValue,
-                                                              imagePath: imagePath))
+                                                              imagePath: imagePath, latitude: location?.latitude,
+                                                              longitude: location?.longitude))
             remotePosts.insert(post, at: 0)
             likeCounts[post.id] = 0
             savedCounts[post.id] = 0
             saveCache()
+            if location != nil {
+                Task { await MapStore.shared.refresh() }
+            }
             return nil
         } catch {
             return .failure(error)

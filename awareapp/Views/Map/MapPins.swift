@@ -11,9 +11,7 @@ struct PhotoPin: View {
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 0) {
-                Image(spot.imageName)
-                    .resizable()
-                    .scaledToFill()
+                SpotPhoto(spot: spot)
                     .frame(width: width, height: imageHeight)
                     .clipped()
                 if showsAuthor {
@@ -52,6 +50,25 @@ struct PhotoPin: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(spot.title), \(spot.author.name)"))
         .accessibilityAddTraits(.isButton)
+    }
+}
+
+/// A spot's photo: the sample's asset, or the real post's stored photo.
+struct SpotPhoto: View {
+    let spot: MapSpot
+
+    var body: some View {
+        if let name = spot.imageName {
+            Image(name).resizable().scaledToFill()
+        } else if let url = spot.imageURL {
+            RemotePhoto(url: url)
+        } else {
+            ZStack {
+                Theme.green.opacity(0.15)
+                Image(systemName: spot.tag == nil ? "leaf.fill" : "arrow.3.trianglepath")
+                    .foregroundStyle(Theme.green)
+            }
+        }
     }
 }
 

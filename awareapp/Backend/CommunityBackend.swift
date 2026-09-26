@@ -11,6 +11,8 @@ enum BackendError: Error, Equatable {
     case contentNotAllowed
     /// Anything else the server reported. Try again later.
     case server(String)
+    /// This Apple ID already belongs to another AWARE account.
+    case identityInUse
 }
 
 /// Everything the app asks of the community backend. `SupabaseBackend` talks
@@ -42,6 +44,8 @@ protocol CommunityBackend: AnyObject, Sendable {
     /// Visible posts, newest first, each with its first two replies.
     func fetchFeed(before: Date?, limit: Int) async throws -> [RemotePost]
     func fetchReplies(postID: UUID) async throws -> [RemoteReply]
+    /// One visible post, or nil (opened from the map).
+    func fetchPost(_ id: UUID) async throws -> RemotePost?
     /// The posts the user liked and saved.
     func fetchMyReactions() async throws -> (liked: Set<UUID>, saved: Set<UUID>)
     func setLiked(_ liked: Bool, postID: UUID) async throws
@@ -61,6 +65,23 @@ protocol CommunityBackend: AnyObject, Sendable {
     func fetchBlockedUsers() async throws -> [PostAuthor]
     /// Where a stored photo can be downloaded.
     func imageURL(for path: String) -> URL?
+
+    // Account
+    /// True while the account is a guest (no Apple ID linked yet).
+    var isGuest: Bool { get }
+    /// Links an Apple ID to the signed-in guest account, keeping everything in
+    /// it. Fails with `identityInUse` when the Apple ID has its own account.
+    func linkApple(idToken: String, nonce: String) async throws
+    /// Signs in to the account that already uses this Apple ID.
+    func signInWithApple(idToken: String, nonce: String) async throws
+    /// Deletes the account and everything in it on the server, then forgets
+    /// the session on this phone.
+    func deleteAccount() async throws
+
+    // Notifications
+    /// Registers this phone's APNs token (hex) for the user.
+    func registerDevice(token: String, sandbox: Bool) async throws
+    func unregisterDevice(token: String) async throws
 
     // Map
     /// Visible posts with a location inside `bounds`, newest first.
@@ -87,6 +108,7 @@ final class NoBackend: CommunityBackend {
     func fetchCommunityStats() async throws -> CommunityStats { throw BackendError.notConfigured }
     func fetchFeed(before: Date?, limit: Int) async throws -> [RemotePost] { throw BackendError.notConfigured }
     func fetchReplies(postID: UUID) async throws -> [RemoteReply] { throw BackendError.notConfigured }
+    func fetchPost(_ id: UUID) async throws -> RemotePost? { throw BackendError.notConfigured }
     func fetchMyReactions() async throws -> (liked: Set<UUID>, saved: Set<UUID>) { throw BackendError.notConfigured }
     func setLiked(_ liked: Bool, postID: UUID) async throws { throw BackendError.notConfigured }
     func setSaved(_ saved: Bool, postID: UUID) async throws { throw BackendError.notConfigured }
@@ -103,6 +125,12 @@ final class NoBackend: CommunityBackend {
     func unblock(_ userID: UUID) async throws { throw BackendError.notConfigured }
     func fetchBlockedUsers() async throws -> [PostAuthor] { throw BackendError.notConfigured }
     func imageURL(for path: String) -> URL? { nil }
+    var isGuest: Bool { true }
+    func linkApple(idToken: String, nonce: String) async throws { throw BackendError.notConfigured }
+    func signInWithApple(idToken: String, nonce: String) async throws { throw BackendError.notConfigured }
+    func deleteAccount() async throws { throw BackendError.notConfigured }
+    func registerDevice(token: String, sandbox: Bool) async throws { throw BackendError.notConfigured }
+    func unregisterDevice(token: String) async throws { throw BackendError.notConfigured }
     func fetchMapPosts(in bounds: MapBounds, material: String?) async throws -> [MapPost] {
         throw BackendError.notConfigured
     }

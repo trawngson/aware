@@ -69,6 +69,40 @@
         }
       }
     },
+    "%lld items recycled within 2 km": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld items recycled within 2 km"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld món được tái chế trong vòng 2 km"
+          }
+        }
+      }
+    },
+    "%lld nearby": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld nearby"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld gần đây"
+          }
+        }
+      }
+    },
     "+%lld this week": {
       "extractionState": "manual",
       "localizations": {
@@ -104,6 +138,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Thêm vào Gallery"
+          }
+        }
+      }
+    },
+    "Adds your area, about 500 m wide, so the post shows on the map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds your area, about 500 m wide, so the post shows on the map"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm khu vực của bạn (rộng khoảng 500 m) để bài đăng hiện trên bản đồ"
           }
         }
       }
@@ -705,6 +756,23 @@
         }
       }
     },
+    "How's your month going?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How's your month going?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tháng này của bạn thế nào?"
+          }
+        }
+      }
+    },
     "I agree": {
       "extractionState": "manual",
       "localizations": {
@@ -952,6 +1020,23 @@
         }
       }
     },
+    "Keep your streak going 🔥": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep your streak going 🔥"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giữ chuỗi ngày của bạn nhé 🔥"
+          }
+        }
+      }
+    },
     "Latest": {
       "extractionState": "manual",
       "localizations": {
@@ -1021,6 +1106,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bóng đèn là chất thải nguy hại. Gương, kính cửa sổ và đồ gốm sứ không phải chai lọ; hãy hỏi người thu gom trước khi đem tái chế."
+          }
+        }
+      }
+    },
+    "Location": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vị trí"
+          }
+        }
+      }
+    },
+    "Location is off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location is off"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vị trí đang tắt"
           }
         }
       }
@@ -1125,6 +1244,23 @@
         }
       }
     },
+    "Notifications are off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifications are off"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thông báo đang tắt"
+          }
+        }
+      }
+    },
     "OK": {
       "extractionState": "manual",
       "localizations": {
@@ -1138,6 +1274,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "OK"
+          }
+        }
+      }
+    },
+    "On the map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On the map"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trên bản đồ"
           }
         }
       }
@@ -1172,6 +1325,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chỉ chia sẻ ảnh do bạn chụp, và không bao giờ đăng thông tin cá nhân của người khác."
+          }
+        }
+      }
+    },
+    "Open Settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở Cài đặt"
           }
         }
       }
@@ -1510,6 +1680,23 @@
         }
       }
     },
+    "Removes the location": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the location"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ vị trí"
+          }
+        }
+      }
+    },
     "Report Post": {
       "extractionState": "manual",
       "localizations": {
@@ -1562,6 +1749,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tráng cốc và xếp chồng cùng các cốc nhựa sạch khác."
+          }
+        }
+      }
+    },
+    "Scan one thing today to make it %lld days in a row.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan one thing today to make it %lld days in a row."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hôm nay quét một món để đạt %lld ngày liên tiếp."
+          }
+        }
+      }
+    },
+    "Scan one thing today to start a recycling streak.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan one thing today to start a recycling streak."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hôm nay quét một món để bắt đầu chuỗi ngày tái chế."
           }
         }
       }
@@ -1629,6 +1850,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chia sẻ"
+          }
+        }
+      }
+    },
+    "Show projects near me": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show projects near me"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xem dự án gần tôi"
           }
         }
       }
@@ -1968,6 +2206,57 @@
         }
       }
     },
+    "To get reminders and replies, allow notifications for AWARE in Settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To get reminders and replies, allow notifications for AWARE in Settings."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để nhận lời nhắc và phản hồi, hãy cho phép AWARE gửi thông báo trong Cài đặt."
+          }
+        }
+      }
+    },
+    "To put a post on the map, allow AWARE to use your location in Settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To put a post on the map, allow AWARE to use your location in Settings."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để đưa bài đăng lên bản đồ, hãy cho phép AWARE dùng vị trí trong Cài đặt."
+          }
+        }
+      }
+    },
+    "To see projects near you, allow AWARE to use your location in Settings. The map works without it too.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To see projects near you, allow AWARE to use your location in Settings. The map works without it too."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để xem các dự án gần bạn, hãy cho phép AWARE dùng vị trí trong Cài đặt. Bản đồ vẫn dùng được khi không bật vị trí."
+          }
+        }
+      }
+    },
     "Try scanning it again, a little closer and in good light.": {
       "extractionState": "manual",
       "localizations": {
@@ -2102,6 +2391,23 @@
         }
       }
     },
+    "You reached this month's goal. Nice work!": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You reached this month's goal. Nice work!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đã đạt mục tiêu tháng này. Làm tốt lắm!"
+          }
+        }
+      }
+    },
     "You won't see their posts or replies anymore. You can unblock them in More.": {
       "extractionState": "manual",
       "localizations": {
@@ -2115,6 +2421,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bạn sẽ không thấy bài đăng và bình luận của họ nữa. Bạn có thể bỏ chặn trong mục Thêm."
+          }
+        }
+      }
+    },
+    "You're %lld leaves away from this month's goal.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're %lld leaves away from this month's goal."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn còn %lld lá nữa là đạt mục tiêu tháng này."
           }
         }
       }

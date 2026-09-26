@@ -1,18 +1,34 @@
 import MapKit
 import SwiftUI
 
-/// Full-screen map of recycling projects shared near the user (demo data).
+/// Full-screen map of recycling projects shared near the user: real posts
+/// with a location and, while samples are on, the sample spots and clusters.
 struct RecyclingMapView: View {
     @State private var position: MapCameraPosition = .region(RecyclingMapData.region)
     @State private var filter: MaterialTag?
     @State private var selectedSpotID: UUID? = RecyclingMapData.spots.first?.id
+    @State private var isLocationOff = false
     @Environment(\.deviceColorScheme) private var deviceColorScheme
+    @Environment(\.openURL) private var openURL
+    @ObservedObject private var session = AppSession.shared
+    @ObservedObject private var mapStore = MapStore.shared
 
     /// The map is light, except in Dark mode, where it follows the device so
     /// the tab bar over it (which takes its style from the map) stays dark.
     private var mapIsLight: Bool { deviceColorScheme != .dark }
 
-    private var visibleSpots: [MapSpot] { RecyclingMapData.spots(for: filter) }
+    private func spots(for filter: MaterialTag?) -> [MapSpot] {
+        mapStore.spots(for: filter) + (session.showSamples ? RecyclingMapData.spots(for: filter) : [])
+    }
+
+    private var visibleSpots: [MapSpot] { spots(for: filter) }
+
+    private var clusters: [MapCluster] { session.showSamples ? RecyclingMapData.clusters : [] }
+
+    private var nearbyCount: Int {
+        (session.showSamples ? RecyclingMapData.nearbyCount(for: filter, from: mapStore.origin) : 0)
+            + mapStore.nearbyCount(for: filter)
+    }
 
     private var selectedSpot: MapSpot? {
         visibleSpots.first { $0.id == selectedSpotID }
@@ -20,7 +36,7 @@ struct RecyclingMapView: View {
 
     var body: some View {
         Map(position: $position) {
-            ForEach(RecyclingMapData.clusters) { cluster in
+            ForEach(clusters) { cluster in
                 let count = cluster.count(for: filter)
                 if count > 0 {
                     Annotation("", coordinate: cluster.coordinate) {
@@ -31,7 +47,7 @@ struct RecyclingMapView: View {
                 }
             }
 
-            Annotation("", coordinate: RecyclingMapData.userLocation) {
+            Annotation("", coordinate: mapStore.origin) {
                 UserLocationDot()
             }
             .annotationTitles(.hidden)
@@ -81,8 +97,19 @@ struct RecyclingMapView: View {
         .onChange(of: mapIsLight) { _, isLight in NavigationManager.shared.usesLightChrome = isLight }
         .onDisappear { NavigationManager.shared.usesLightChrome = false }
         .toolbar {
+            // Finding the user needs location permission, asked for only
+            // when they tap this. Offered only with a backend.
+            if mapStore.isAvailable {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: locate) {
+                        Image(systemName: mapStore.usesDeviceLocation ? "location.fill" : "location")
+                    }
+                    .tint(mapIsLight ? Theme.green : Theme.mint)
+                    .accessibilityLabel("Show projects near me")
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
-                Text("\(RecyclingMapData.nearbyCount(for: filter)) nearby")
+                Text("\(nearbyCount) nearby")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(mapIsLight ? Theme.green : Theme.mint)
                     .contentTransition(.numericText())
@@ -91,6 +118,31 @@ struct RecyclingMapView: View {
         }
         .animation(.snappy, value: filter)
         .animation(.snappy, value: selectedSpotID)
+        .task {
+            await mapStore.refresh()
+            if selectedSpot == nil { selectedSpotID = visibleSpots.first?.id }
+        }
+        .alert("Location is off", isPresented: $isLocationOff) {
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+            }
+            Button("Not now", role: .cancel) {}
+        } message: {
+            Text("To see projects near you, allow AWARE to use your location in Settings. The map works without it too.")
+        }
+    }
+
+    private func locate() {
+        Task {
+            if await mapStore.locateMe() {
+                withAnimation(.smooth(duration: 0.6)) {
+                    position = .region(MKCoordinateRegion(center: mapStore.origin,
+                                                          span: RecyclingMapData.region.span))
+                }
+            } else if LocationProvider.shared.isDenied {
+                isLocationOff = true
+            }
+        }
     }
 
     // MARK: - Filters
@@ -122,10 +174,10 @@ struct RecyclingMapView: View {
         let isSelected = filter == tag
         return Button {
             filter = tag
-            if let current = selectedSpotID, !RecyclingMapData.spots(for: tag).contains(where: { $0.id == current }) {
-                selectedSpotID = RecyclingMapData.spots(for: tag).first?.id
+            if let current = selectedSpotID, !spots(for: tag).contains(where: { $0.id == current }) {
+                selectedSpotID = spots(for: tag).first?.id
             } else if selectedSpotID == nil {
-                selectedSpotID = RecyclingMapData.spots(for: tag).first?.id
+                selectedSpotID = spots(for: tag).first?.id
             }
         } label: {
             Text(title)
@@ -153,9 +205,7 @@ struct RecyclingMapView: View {
             PostThreadView(postID: spot.postID)
         } label: {
             HStack(spacing: 12) {
-                Image(spot.imageName)
-                    .resizable()
-                    .scaledToFill()
+                SpotPhoto(spot: spot)
                     .frame(width: 56, height: 56)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 VStack(alignment: .leading, spacing: 3) {
@@ -164,20 +214,22 @@ struct RecyclingMapView: View {
                         .foregroundStyle(Theme.ink)
                     HStack(spacing: 5) {
                         MemberAvatar(member: spot.author, size: 16)
-                        Text("\(spot.author.name) · \(RecyclingMapData.distanceText(to: spot.coordinate)) · \(spot.age)")
+                        Text("\(spot.author.name) · \(RecyclingMapData.distanceText(to: spot.coordinate, from: mapStore.origin)) · \(spot.age)")
                             .font(.system(size: 12))
                             .foregroundStyle(Theme.ink.opacity(0.62))
                             .lineLimit(1)
                     }
                 }
                 Spacer(minLength: 0)
-                Text("+\(spot.points)")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Capsule().fill(Theme.activeGradient))
-                    .shadow(color: Theme.greenDeep.opacity(0.3), radius: 5, y: 4)
+                if spot.points > 0 {
+                    Text("+\(spot.points)")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Capsule().fill(Theme.activeGradient))
+                        .shadow(color: Theme.greenDeep.opacity(0.3), radius: 5, y: 4)
+                }
             }
             .padding(12)
             .glass(GlassStyle(top: 0.76, bottom: 0.58, border: 0.8, highlight: 0.92, material: .ultraThinMaterial,
@@ -214,21 +266,28 @@ struct RecyclingMapView: View {
 
 /// Small, non-interactive map for the Home card.
 struct MiniRecyclingMap: View {
+    @ObservedObject private var session = AppSession.shared
+    @ObservedObject private var mapStore = MapStore.shared
+
+    private var spots: [MapSpot] {
+        Array((mapStore.spots(for: nil) + (session.showSamples ? RecyclingMapData.spots : [])).prefix(2))
+    }
+
     var body: some View {
         Map(initialPosition: .region(RecyclingMapData.miniRegion), interactionModes: []) {
-            ForEach(RecyclingMapData.spots.prefix(2)) { spot in
+            ForEach(spots) { spot in
                 Annotation("", coordinate: spot.coordinate) {
                     PhotoPin(spot: spot, width: 44, imageHeight: 34, showsAuthor: false)
                 }
                 .annotationTitles(.hidden)
             }
-            if let cluster = RecyclingMapData.clusters.first {
+            if session.showSamples, let cluster = RecyclingMapData.clusters.first {
                 Annotation("", coordinate: cluster.coordinate) {
                     ClusterBubble(count: cluster.count(for: nil), size: 22)
                 }
                 .annotationTitles(.hidden)
             }
-            Annotation("", coordinate: RecyclingMapData.userLocation) {
+            Annotation("", coordinate: mapStore.origin) {
                 UserLocationDot(size: 14)
             }
             .annotationTitles(.hidden)

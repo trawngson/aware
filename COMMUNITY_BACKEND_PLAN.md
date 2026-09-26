@@ -342,6 +342,32 @@ guidelines and Blocked people (only with a backend). The Linux harness runs
 the whole flow against local Supabase (terms, upload, like, save, reply,
 word filter, report, block, delete with photos).
 
+**2026-09-26 17:05 UTC, phase 5 (Gallery) done.** Supabase checks
+[36256497510](https://github.com/trawngson/aware/actions/runs/36256497510) and
+iOS render check [36256500839](https://github.com/trawngson/aware/actions/runs/36256500839),
+both success (unit tests included). Compared with `liquid-glass-redesign` (run
+36248867850): 16 of 20 screens pixel-identical; the rest are the scan video,
+map tiles and the keyboard area on New Post, as in phase 4.
+
+**2026-09-26 17:10 UTC, phase 6 (map) pushed.** Migration
+`20260926190000_map.sql`: posts get an optional latitude/longitude that a
+trigger rounds to a 0.005° grid (about 500 m) whatever the client sends,
+`map_posts(bounds, material)` (visible located posts in a region, blocked
+authors left out) and `nearby_count(point, radius, material)`. pgTAP `map`
+(13 tests). In the app: `MapStore` fetches real posts around the user (or Hoan
+Kiem Lake) and the nearby counts; the map shows them with their photos next to
+the sample spots, and the sample clusters only while samples show. A "locate
+me" button (only with a backend) asks for While Using location the first time
+it is tapped; if location is off, an alert explains and the map keeps working
+from Hoan Kiem Lake. The composer gets an "On the map" chip (only with a
+backend, off by default) that attaches the rounded location. Tapping a real
+spot opens its post. Home's map card shows the real nearby count.
+`NSLocationWhenInUseUsageDescription` is added to the build settings. The
+backend layer also carries the calls that phases 8 and 9 use (device tokens,
+Apple sign-in, account deletion), unused until then. Checked locally: pgTAP
+with the migrations up to this one (179 tests) and the Linux harness (14
+tests, including a live map test).
+
 ### Decisions made during the run
 
 1. **Other waste earns 10 points, not 0.** The plan says "20 points for a

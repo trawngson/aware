@@ -25,7 +25,10 @@ struct PostThreadView: View {
         }
         .background { ForestBackdrop.feed }
         .forestNavigationBar("Post")
-        .task { await store.loadReplies(for: postID) }
+        .task {
+            await store.loadPost(postID)
+            await store.loadReplies(for: postID)
+        }
         // Deleted, or its author blocked: go back to the feed.
         .onChange(of: store.post(id: postID) == nil) { _, isGone in
             if isGone { dismiss() }
