@@ -6,6 +6,11 @@ struct RecyclingMapView: View {
     @State private var position: MapCameraPosition = .region(RecyclingMapData.region)
     @State private var filter: MaterialTag?
     @State private var selectedSpotID: UUID? = RecyclingMapData.spots.first?.id
+    @Environment(\.deviceColorScheme) private var deviceColorScheme
+
+    /// The map is light, except in Dark mode, where it follows the device so
+    /// the tab bar over it (which takes its style from the map) stays dark.
+    private var mapIsLight: Bool { deviceColorScheme != .dark }
 
     private var visibleSpots: [MapSpot] { RecyclingMapData.spots(for: filter) }
 
@@ -44,12 +49,13 @@ struct RecyclingMapView: View {
             MapCompass()
             MapScaleView()
         }
-        .environment(\.colorScheme, .light)
+        .environment(\.colorScheme, mapIsLight ? .light : .dark)
         .overlay(alignment: .top) {
             // Keeps the navigation bar and chips readable over busy map tiles.
+            let shade = mapIsLight ? Color(hex: 0xF8FAF7) : Theme.forestShade
             LinearGradient(
-                stops: [.init(color: Color(hex: 0xF8FAF7, opacity: 0.74), location: 0),
-                        .init(color: Color(hex: 0xF8FAF7, opacity: 0), location: 1)],
+                stops: [.init(color: shade.opacity(mapIsLight ? 0.74 : 0.6), location: 0),
+                        .init(color: shade.opacity(0), location: 1)],
                 startPoint: .top, endPoint: .bottom
             )
             .frame(height: 170)
@@ -65,15 +71,16 @@ struct RecyclingMapView: View {
         }
         .navigationTitle("Recycling Map")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarColorScheme(.light, for: .navigationBar)
+        .toolbarColorScheme(mapIsLight ? .light : .dark, for: .navigationBar)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .onAppear { NavigationManager.shared.usesLightChrome = true }
+        .onAppear { NavigationManager.shared.usesLightChrome = mapIsLight }
+        .onChange(of: mapIsLight) { _, isLight in NavigationManager.shared.usesLightChrome = isLight }
         .onDisappear { NavigationManager.shared.usesLightChrome = false }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Text("\(RecyclingMapData.nearbyCount(for: filter)) nearby")
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Theme.green)
+                    .foregroundStyle(mapIsLight ? Theme.green : Theme.mint)
                     .contentTransition(.numericText())
                     .fixedSize()
             }
