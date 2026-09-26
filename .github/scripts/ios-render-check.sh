@@ -5,6 +5,9 @@
 # Usage: .github/scripts/ios-render-check.sh <output-dir>
 # Env:   IOS_VERSION   simulator runtime version (default 27.0)
 #        DEVICE        simulator device type (default "iPhone 18 Pro")
+#        SIMULATOR     "new" (default) creates a simulator and deletes it on exit;
+#                      "existing" uses this machine's simulator named DEVICE on that
+#                      runtime (a booted one first), creating one only if none exists
 #        APPEARANCES   "light dark" (default), "light" or "dark"
 #        RENDER_STEPS  steps for the UI test, e.g. "tap:Recycling Map | shot:map";
 #                      empty runs the full tour (see RenderCheckUITests)
@@ -13,7 +16,9 @@
 #                      with this directory cached) skip fetching them
 #
 # Output: <output-dir>/<appearance>/NN-name.png and <output-dir>/<appearance>.xcresult
-# (plus <appearance>.mp4 when recording). The simulator it creates is deleted on exit.
+# (plus <appearance>.mp4 when recording). An existing simulator gets its status
+# bar and appearance back and is shut down again if the script booted it; the
+# app and test runner stay installed on it.
 set -euo pipefail
 
 OUT=${1:?usage: ios-render-check.sh <output-dir>}
@@ -22,6 +27,7 @@ DEVICE=${DEVICE:-iPhone 18 Pro}
 APPEARANCES=${APPEARANCES:-light dark}
 RENDER_STEPS=${RENDER_STEPS:-}
 RECORD_VIDEO=${RECORD_VIDEO:-}
+SIMULATOR=${SIMULATOR:-new}
 
 cd "$(dirname "$0")/../.."
 mkdir -p "$OUT"
@@ -47,17 +53,60 @@ if [ -z "$RUNTIME" ]; then
     exit 1
 fi
 
-UDID=$(xcrun simctl create "AWARE render check" "$DEVICE" "$RUNTIME")
-trap 'xcrun simctl shutdown "$UDID" >/dev/null 2>&1 || true; xcrun simctl delete "$UDID" >/dev/null 2>&1 || true' EXIT
-echo "== Simulator: $DEVICE, iOS $IOS_VERSION ($UDID)"
+UDID=
+STATE_BEFORE=
+if [ "$SIMULATOR" = existing ]; then
+    # A booted one first: it skips the boot entirely.
+    read -r UDID STATE_BEFORE < <(xcrun simctl list devices -j available | python3 -c '
+import json, sys
+runtime, name = sys.argv[1:]
+devices = [d for d in json.load(sys.stdin)["devices"].get(runtime, []) if d["name"] == name]
+devices.sort(key=lambda d: d["state"] != "Booted")
+if devices:
+    print(devices[0]["udid"], devices[0]["state"])
+' "$RUNTIME" "$DEVICE") || true
+    if [ -z "$UDID" ]; then
+        echo "== No \"$DEVICE\" simulator on iOS $IOS_VERSION, so creating one. Simulators there:"
+        xcrun simctl list devices "iOS $IOS_VERSION" available
+    fi
+elif [ "$SIMULATOR" != new ]; then
+    echo "SIMULATOR must be new or existing, not $SIMULATOR" >&2
+    exit 1
+fi
+
+APPEARANCE_BEFORE=
+if [ -n "$UDID" ]; then
+    echo "== Simulator: $DEVICE, iOS $IOS_VERSION ($UDID, existing, $STATE_BEFORE)"
+    cleanup() {
+        xcrun simctl status_bar "$UDID" clear >/dev/null 2>&1 || true
+        if [ -n "$APPEARANCE_BEFORE" ]; then
+            xcrun simctl ui "$UDID" appearance "$APPEARANCE_BEFORE" >/dev/null 2>&1 || true
+        fi
+        if [ "$STATE_BEFORE" != Booted ]; then
+            xcrun simctl shutdown "$UDID" >/dev/null 2>&1 || true
+        fi
+    }
+else
+    UDID=$(xcrun simctl create "AWARE render check" "$DEVICE" "$RUNTIME")
+    echo "== Simulator: $DEVICE, iOS $IOS_VERSION ($UDID, new)"
+    cleanup() {
+        xcrun simctl shutdown "$UDID" >/dev/null 2>&1 || true
+        xcrun simctl delete "$UDID" >/dev/null 2>&1 || true
+    }
+fi
+trap cleanup EXIT
 # Booting in parallel with the build was tried: the build ran about three times
 # slower and the job was no faster (xcode-27 runner times vary by minutes).
 start=$SECONDS
-xcrun simctl boot "$UDID"
 xcrun simctl bootstatus "$UDID" -b >/dev/null
 echo "   booted in $((SECONDS - start))s"
+if [ -n "$STATE_BEFORE" ]; then
+    APPEARANCE_BEFORE=$(xcrun simctl ui "$UDID" appearance 2>/dev/null || true)
+fi
 # A fixed status bar keeps screenshots comparable between runs.
+start=$SECONDS
 xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100 --wifiBars 3
+echo "   status bar set in $((SECONDS - start))s"
 
 DESTINATION="platform=iOS Simulator,id=$UDID"
 
