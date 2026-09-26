@@ -2,10 +2,13 @@ import SwiftUI
 
 struct HomeTabView: View {
     @ObservedObject private var ledger = RewardLedger.shared
+    @ObservedObject private var session = AppSession.shared
     @ObservedObject private var navigationManager = NavigationManager.shared
     @GestureState private var isTouchingGlassHeader = false
 
     var body: some View {
+        // The user's own numbers, or nil while the sample numbers show.
+        let stats = MyStats.current
         NavigationStack {
             TabScrollView {
                 VStack(spacing: 14) {
@@ -31,17 +34,27 @@ struct HomeTabView: View {
 
                     HStack(spacing: 10) {
                         NavigationLink(destination: WasteInsightsView()) {
-                            SavedStatCard(systemImage: "trash.fill", title: "Waste Saved", tint: Theme.green,
-                                          value: 6_700, unit: "g", trendUp: true, trend: "12% today")
+                            if let stats {
+                                SavedStatCard(systemImage: "trash.fill", title: "Waste Saved", tint: Theme.green,
+                                              grams: stats.wasteGrams, todayGrams: stats.today.wasteGrams)
+                            } else {
+                                SavedStatCard(systemImage: "trash.fill", title: "Waste Saved", tint: Theme.green,
+                                              value: 6_700, unit: "g", trendUp: true, trend: "12% today")
+                            }
                         }
                         NavigationLink(destination: CO2InsightsView()) {
-                            SavedStatCard(systemImage: "cloud.fill", title: "CO₂ Saved", tint: Theme.teal,
-                                          value: 1_250, unit: "kg", trendUp: false, trend: "9% today")
+                            if let stats {
+                                SavedStatCard(systemImage: "cloud.fill", title: "CO₂ Saved", tint: Theme.teal,
+                                              grams: stats.co2Grams, todayGrams: stats.today.co2Grams)
+                            } else {
+                                SavedStatCard(systemImage: "cloud.fill", title: "CO₂ Saved", tint: Theme.teal,
+                                              value: 1_250, unit: "kg", trendUp: false, trend: "9% today")
+                            }
                         }
                     }
                     .buttonStyle(PressableStyle())
 
-                    MonthlyGoalCard()
+                    MonthlyGoalCard(stats: stats)
 
                     NavigationLink(destination: RecyclingMapView()) {
                         RecyclingMapCard()
@@ -53,19 +66,19 @@ struct HomeTabView: View {
                     }
                     .buttonStyle(PressableStyle())
 
-                    WeeklyStreakCard()
+                    WeeklyStreakCard(stats: stats)
 
                     NavigationLink(destination: WasteInsightsView()) {
-                        ItemsScannedCard()
+                        ItemsScannedCard(stats: stats)
                     }
                     .buttonStyle(PressableStyle())
 
-                    RecentActivityCard()
+                    RecentActivityCard(stats: stats)
 
-                    CommunityImpactCard()
+                    CommunityImpactCard(stats: stats)
 
                     NavigationLink(destination: WasteInsightsView()) {
-                        WeeklyComparisonCard()
+                        WeeklyComparisonCard(stats: stats)
                     }
                     .buttonStyle(PressableStyle())
                 }
@@ -91,12 +104,12 @@ struct HomeTabView: View {
 
     private func welcomeHeader(horizontalPadding: CGFloat, verticalPadding: CGFloat) -> some View {
         HStack(spacing: 13) {
-            MemberAvatar(member: Community.me, size: 58, borderColor: .white.opacity(0.7), borderWidth: 1.5)
+            MemberAvatar(member: Community.current, size: 58, borderColor: .white.opacity(0.7), borderWidth: 1.5)
             VStack(alignment: .leading, spacing: 3) {
                 Text("Welcome back")
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.white.opacity(0.85))
-                Text(Community.me.shortName)
+                Text(Community.current.shortName)
                     .font(.system(size: 26, weight: .bold))
                     .tracking(-0.8)
                     .foregroundStyle(.white)
@@ -104,7 +117,7 @@ struct HomeTabView: View {
                     .minimumScaleFactor(0.8)
             }
             Spacer(minLength: 0)
-            LeafAmount(value: Community.me.points + ledger.totalPoints, size: 15, weight: .semibold,
+            LeafAmount(value: Community.myPoints, size: 15, weight: .semibold,
                        color: .white, leafColor: Theme.mint)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)

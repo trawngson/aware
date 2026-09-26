@@ -1,0 +1,13 @@
+{
+  "name": "aware-admin-tests",
+  "private": true,
+  "description": "Playwright tests for the AWARE admin page, run against a local Supabase stack.",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@supabase/supabase-js": "2.117.2"
+  }
+}

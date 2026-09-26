@@ -1,4 +1,5 @@
 import AudioToolbox
+import CoreLocation
 import PhotosUI
 import SwiftUI
 
@@ -6,15 +7,29 @@ import SwiftUI
 struct NewPostView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var store = GalleryStore.shared
+    @ObservedObject private var session = AppSession.shared
 
-    @State private var text = ""
+    @State private var text: String
     @State private var image: UIImage?
     @State private var photoItem: PhotosPickerItem?
     @State private var tag: MaterialTag?
+    @State private var isPosting = false
+    @State private var isShowingTerms = false
+    /// The user's location for the map, only if they tap "Location".
+    @State private var location: CLLocationCoordinate2D?
+    @State private var isLocating = false
+    @State private var isLocationOff = false
+    @State private var failure: GalleryMessage?
     @FocusState private var isEditorFocused: Bool
 
+    /// `initialText` and `initialImage` prefill the composer (from a scan result).
+    init(initialText: String = "", initialImage: UIImage? = nil) {
+        _text = State(initialValue: initialText)
+        _image = State(initialValue: initialImage)
+    }
+
     private var canPost: Bool {
-        !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || image != nil
+        !isPosting && (!text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || image != nil)
     }
 
     private var hasSteps: Bool {
@@ -60,12 +75,30 @@ struct NewPostView: View {
                         .tint(Theme.ink.opacity(0.7))
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Post", action: post)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .tint(Theme.green)
-                        .disabled(!canPost)
+                    if isPosting {
+                        ProgressView()
+                    } else {
+                        Button("Post", action: post)
+                            .buttonStyle(.borderedProminent)
+                            .buttonBorderShape(.capsule)
+                            .tint(Theme.green)
+                            .disabled(!canPost)
+                    }
                 }
+            }
+            .sheet(isPresented: $isShowingTerms) {
+                CommunityTermsSheet(onAgree: post)
+            }
+            .alert(failure?.title ?? "", isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } }),
+                   presenting: failure) { _ in
+                Button("OK") {}
+            } message: { failure in
+                Text(failure.text)
+            }
+            .alert("Location is off", isPresented: $isLocationOff) {
+                Button("OK") {}
+            } message: {
+                Text("To put a post on the map, allow AWARE to use your location in Settings.")
             }
         }
         .tint(Theme.green)
@@ -176,6 +209,24 @@ struct NewPostView: View {
                 Button(action: addSteps) {
                     chipLabel("Steps", systemImage: "list.number", tint: Theme.ink.opacity(0.72))
                 }
+                // Putting a post on the map needs a backend (and the user's say-so).
+                if session.isBackendConfigured {
+                    Button(action: toggleLocation) {
+                        if isLocating {
+                            ProgressView()
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 9)
+                                .glassCapsule(.chrome)
+                        } else if location != nil {
+                            chipLabel("On the map", systemImage: "mappin.circle.fill", tint: Theme.green)
+                        } else {
+                            chipLabel("Location", systemImage: "mappin.and.ellipse", tint: Theme.ink.opacity(0.72))
+                        }
+                    }
+                    .accessibilityHint(location == nil
+                                       ? Text("Adds your area, about 500 m wide, so the post shows on the map")
+                                       : Text("Removes the location"))
+                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
@@ -205,13 +256,43 @@ struct NewPostView: View {
         isEditorFocused = true
     }
 
+    /// Adds or removes the user's area. The permission prompt appears only here.
+    private func toggleLocation() {
+        if location != nil {
+            withAnimation(.snappy) { location = nil }
+            return
+        }
+        isLocating = true
+        Task {
+            let found = await LocationProvider.shared.requestLocation()
+            isLocating = false
+            if let found {
+                withAnimation(.snappy) { location = found }
+            } else if LocationProvider.shared.isDenied {
+                isLocationOff = true
+            }
+        }
+    }
+
     private func post() {
         guard canPost else { return }
-        AudioServicesPlaySystemSound(1004) // "Sent" sound
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-            store.addPost(content: text.trimmingCharacters(in: .whitespacesAndNewlines), image: image, tag: tag)
+        // Posts are public, so the community terms come first.
+        if session.isBackendConfigured && !session.hasAcceptedTerms {
+            isShowingTerms = true
+            return
         }
-        dismiss()
+        isPosting = true
+        Task {
+            let failure = await store.publish(content: text.trimmingCharacters(in: .whitespacesAndNewlines),
+                                              image: image, tag: tag, location: location)
+            isPosting = false
+            if let failure {
+                self.failure = failure
+                return
+            }
+            AudioServicesPlaySystemSound(1004) // "Sent" sound
+            dismiss()
+        }
     }
 }
 

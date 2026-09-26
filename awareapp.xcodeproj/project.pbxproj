@@ -12,6 +12,7 @@
 		F2A505E02F906BD80030B234 /* YOLO in Frameworks */ = {isa = PBXBuildFile; productRef = F2A505DF2F906BD80030B234 /* YOLO */; };
 		F26D10022FA0000100000002 /* input.MOV in Resources */ = {isa = PBXBuildFile; fileRef = F26D10012FA0000100000001 /* input.MOV */; };
 		F2E334FD2F470FFB0066A9B2 /* Expandable in Frameworks */ = {isa = PBXBuildFile; productRef = F2E334FC2F470FFB0066A9B2 /* Expandable */; };
+		F2C8A1012FB0000100000003 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = F2C8A1012FB0000100000002 /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 				F23BD04B2F8F651A00B44D11 /* OnboardingKit in Frameworks */,
 				F2A505E02F906BD80030B234 /* YOLO in Frameworks */,
 				F2E334FD2F470FFB0066A9B2 /* Expandable in Frameworks */,
+				F2C8A1012FB0000100000003 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +139,7 @@
 				F2E334FC2F470FFB0066A9B2 /* Expandable */,
 				F23BD04A2F8F651A00B44D11 /* OnboardingKit */,
 				F2A505DF2F906BD80030B234 /* YOLO */,
+				F2C8A1012FB0000100000002 /* Supabase */,
 			);
 			productName = awareapp;
 			productReference = F28AA3EC2F42F9C900B1F978 /* awareapp.app */;
@@ -225,6 +228,7 @@
 				F2E334FB2F470FFB0066A9B2 /* XCRemoteSwiftPackageReference "Expandable" */,
 				F23BD0492F8F651A00B44D11 /* XCRemoteSwiftPackageReference "OnboardingKit" */,
 				F2A505DE2F906BD80030B234 /* XCRemoteSwiftPackageReference "yolo-ios-app" */,
+				F2C8A1012FB0000100000001 /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F28AA3ED2F42F9C900B1F978 /* Products */;
@@ -436,6 +440,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = AWARE;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCameraUsageDescription = "scan and identify waste";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "show recycling projects near you and, only when you choose, put your post on the map (rounded to about 500 m)";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "save the scan photos you choose to your photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -467,6 +473,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = AWARE;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCameraUsageDescription = "scan and identify waste";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "show recycling projects near you and, only when you choose, put your post on the map (rounded to about 500 m)";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "save the scan photos you choose to your photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -623,6 +631,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		F2C8A1012FB0000100000001 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.55.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -640,6 +656,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F2E334FB2F470FFB0066A9B2 /* XCRemoteSwiftPackageReference "Expandable" */;
 			productName = Expandable;
+		};
+		F2C8A1012FB0000100000002 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2C8A1012FB0000100000001 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

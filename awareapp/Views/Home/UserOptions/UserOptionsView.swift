@@ -10,7 +10,9 @@ import SwiftUI
 /// "More": profile summary, guidance, preferences and about.
 struct UserOptionsView: View {
     @ObservedObject private var ledger = RewardLedger.shared
-    @AppStorage("notificationsEnabled") private var notificationsEnabled = true
+    @ObservedObject private var session = AppSession.shared
+    @AppStorage(NotificationManager.enabledKey) private var notificationsEnabled = true
+    @State private var isNotificationPermissionOff = false
     @Environment(\.openURL) private var openURL
 
     private var languageName: String {
@@ -24,6 +26,25 @@ struct UserOptionsView: View {
                 profileCard
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
+            }
+
+            // Only with a backend: without one there is no account.
+            if session.isBackendConfigured {
+                Section {
+                    NavigationLink {
+                        AccountView()
+                    } label: {
+                        HStack {
+                            row("Account", systemImage: "person.crop.circle.fill", tint: Theme.blue)
+                            Spacer()
+                            (session.isGuest ? Text("Guest") : Text("Apple ID"))
+                                .foregroundStyle(Theme.ink.opacity(0.5))
+                        }
+                    }
+                } header: {
+                    sectionHeader("Account")
+                }
+                .listRowBackground(Color.white.opacity(0.74))
             }
 
             Section {
@@ -42,11 +63,43 @@ struct UserOptionsView: View {
             }
             .listRowBackground(Color.white.opacity(0.74))
 
+            // Only with a backend: without one there is no community to moderate.
+            if session.isBackendConfigured {
+                Section {
+                    NavigationLink {
+                        CommunityGuidelinesView()
+                    } label: {
+                        row("Community guidelines", systemImage: "person.2.fill", tint: Theme.green)
+                    }
+                    NavigationLink {
+                        BlockedPeopleView()
+                    } label: {
+                        row("Blocked people", systemImage: "hand.raised.fill", tint: Theme.slate)
+                    }
+                } header: {
+                    sectionHeader("Community")
+                }
+                .listRowBackground(Color.white.opacity(0.74))
+            }
+
             Section {
                 Toggle(isOn: $notificationsEnabled) {
                     row("Notifications", systemImage: "bell.fill", tint: Theme.orangeDeep)
                 }
                 .tint(Theme.greenBright)
+                .onChange(of: notificationsEnabled) { _, isOn in
+                    Task {
+                        guard isOn else {
+                            await NotificationManager.shared.disable()
+                            return
+                        }
+                        // Asks for permission the first time; turns back off if declined.
+                        if !(await NotificationManager.shared.enable()) {
+                            notificationsEnabled = false
+                            isNotificationPermissionOff = true
+                        }
+                    }
+                }
                 Button {
                     if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
                 } label: {
@@ -91,13 +144,21 @@ struct UserOptionsView: View {
                            scrim: ForestBackdrop.scrim(dark: 0.5, darkEnd: 0.15, mistStart: 0.32, mistMid: 0.5))
         }
         .forestNavigationBar("More")
+        .alert("Notifications are off", isPresented: $isNotificationPermissionOff) {
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+            }
+            Button("Not now", role: .cancel) {}
+        } message: {
+            Text("To get reminders and replies, allow notifications for AWARE in Settings.")
+        }
     }
 
     private var profileCard: some View {
         HStack(spacing: 14) {
-            MemberAvatar(member: Community.me, size: 56, borderColor: .white.opacity(0.7), borderWidth: 1.5)
+            MemberAvatar(member: Community.current, size: 56, borderColor: .white.opacity(0.7), borderWidth: 1.5)
             VStack(alignment: .leading, spacing: 2) {
-                Text(Community.me.shortName)
+                Text(Community.current.shortName)
                     .font(.system(size: 20, weight: .bold))
                     .tracking(-0.5)
                     .foregroundStyle(.white)

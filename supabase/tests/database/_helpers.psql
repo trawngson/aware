@@ -1,0 +1,68 @@
+-- Shared test helpers, included with \ir from each test file after `begin;`.
+-- Everything here is created inside that file's transaction and rolled back
+-- with it, so nothing is left in the database.
+
+create schema if not exists tests;
+grant usage on schema tests to anon, authenticated;
+
+-- Creates an auth user (a guest when anonymous) and returns its id. The
+-- sign-up trigger gives it a profile.
+create or replace function tests.create_user(p_email text, p_anonymous boolean default false)
+returns uuid
+language plpgsql
+as $$
+declare
+  v_id uuid := gen_random_uuid();
+begin
+  insert into auth.users (id, instance_id, aud, role, email, is_anonymous,
+                          raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+  values (v_id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated',
+          case when p_anonymous then null else p_email end, p_anonymous,
+          '{}'::jsonb, '{}'::jsonb, now(), now());
+  return v_id;
+end;
+$$;
+
+-- Makes an existing user an admin (as the database owner would).
+create or replace function tests.make_admin(p_user uuid)
+returns void
+language sql
+as $$
+  update public.profiles set role = 'admin' where id = p_user;
+$$;
+
+-- Runs the rest of the transaction as this user, the way PostgREST does.
+create or replace function tests.act_as(p_user uuid, p_anonymous boolean default false)
+returns void
+language plpgsql
+as $$
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_user, 'role', 'authenticated', 'is_anonymous', p_anonymous)::text, true);
+  perform set_config('role', 'authenticated', true);
+end;
+$$;
+
+-- Runs as a caller with no session (the anon key only).
+create or replace function tests.act_as_anon()
+returns void
+language plpgsql
+as $$
+begin
+  perform set_config('request.jwt.claims', json_build_object('role', 'anon')::text, true);
+  perform set_config('role', 'anon', true);
+end;
+$$;
+
+-- Back to the database owner.
+create or replace function tests.act_as_owner()
+returns void
+language plpgsql
+as $$
+begin
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('role', 'postgres', true);
+end;
+$$;
+
+grant execute on all functions in schema tests to anon, authenticated;

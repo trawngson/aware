@@ -120,8 +120,10 @@ final class RenderCheckUITests: XCTestCase {
         if app.state != .notRunning { app.terminate() }
         // A fresh simulator takes its region from the host (CI runners are
         // en_US), so pin it for screenshots that compare across machines.
+        // The tour always runs without a backend, even once one is configured.
         app.launchArguments = ["-hasSeenOnboarding", showingOnboarding ? "NO" : "YES",
-                               "-AppleLanguages", "(en-VN)", "-AppleLocale", "en_VN"]
+                               "-AppleLanguages", "(en-VN)", "-AppleLocale", "en_VN",
+                               "-AWAREBackendDisabled", "YES"]
         app.launch()
         let ready = showingOnboarding ? app.buttons["Got it!"] : app.tabBars.buttons["Home"]
         XCTAssertTrue(ready.waitForExistence(timeout: 10), "App did not finish launching")

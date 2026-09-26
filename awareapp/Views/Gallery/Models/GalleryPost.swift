@@ -40,9 +40,17 @@ struct GalleryPost: Identifiable, Equatable {
     var replies: [GalleryReply]
     let attachmentAssetName: String?
     let attachmentImage: UIImage?  // For user-uploaded images
+    /// A photo stored on the backend.
+    let attachmentURL: URL?
+    /// The post as the backend sent it; nil for samples and posts made without a backend.
+    let remote: RemotePost?
 
-    var comments: Int { replies.count }
-    var hasAttachment: Bool { attachmentAssetName != nil || attachmentImage != nil }
+    /// Reply count from the database for real posts (the feed only carries the
+    /// first replies), otherwise the replies here.
+    var comments: Int { remote?.replyCount ?? replies.count }
+    var hasAttachment: Bool { attachmentAssetName != nil || attachmentImage != nil || attachmentURL != nil }
+    /// Hidden after reports until an admin looks; only its author sees it.
+    var isHiddenForReview: Bool { remote?.hiddenAt != nil }
 
     init(
         id: UUID = UUID(),
@@ -57,7 +65,9 @@ struct GalleryPost: Identifiable, Equatable {
         tag: MaterialTag? = nil,
         replies: [GalleryReply] = [],
         attachmentAssetName: String? = nil,
-        attachmentImage: UIImage? = nil
+        attachmentImage: UIImage? = nil,
+        attachmentURL: URL? = nil,
+        remote: RemotePost? = nil
     ) {
         self.id = id
         self.author = author
@@ -72,6 +82,8 @@ struct GalleryPost: Identifiable, Equatable {
         self.replies = replies
         self.attachmentAssetName = attachmentAssetName
         self.attachmentImage = attachmentImage
+        self.attachmentURL = attachmentURL
+        self.remote = remote
     }
 
     // Custom Equatable implementation (UIImage is not Equatable)
@@ -80,7 +92,9 @@ struct GalleryPost: Identifiable, Equatable {
         lhs.content == rhs.content &&
         lhs.replies == rhs.replies &&
         lhs.attachmentAssetName == rhs.attachmentAssetName &&
-        lhs.attachmentImage === rhs.attachmentImage
+        lhs.attachmentImage === rhs.attachmentImage &&
+        lhs.attachmentURL == rhs.attachmentURL &&
+        lhs.remote == rhs.remote
     }
 
     /// Stable IDs so the recycling map can link to the sample posts.

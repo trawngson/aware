@@ -15,9 +15,11 @@ enum AppTab: Int {
 
 struct ContentView: View {
     @ObservedObject private var navigationManager = NavigationManager.shared
+    @ObservedObject private var messages = MessageCenter.shared
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     /// The device's Light/Dark setting; the tabs below override it for their content.
     @Environment(\.colorScheme) private var deviceColorScheme
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         // Screens open on the dark forest (or the camera), so their content and
@@ -44,6 +46,25 @@ struct ContentView: View {
         }
         .tint(Theme.green)
         .environment(\.deviceColorScheme, deviceColorScheme)
+        // Signs in as a guest and syncs, only when a backend is configured.
+        .task { AppSession.shared.start() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                Task {
+                    await AppSession.shared.refresh()
+                    // Reminders and push registration, only if the user allowed them.
+                    await NotificationManager.shared.refresh()
+                }
+            }
+        }
+        // Gallery results (thanks for reporting, offline, not allowed), from any tab.
+        .alert(messages.message?.title ?? "",
+               isPresented: Binding(get: { messages.message != nil }, set: { if !$0 { messages.message = nil } }),
+               presenting: messages.message) { _ in
+            Button("OK") {}
+        } message: { message in
+            Text(message.text)
+        }
         .fullScreenCover(isPresented: Binding(
             get: { !hasSeenOnboarding },
             set: { hasSeenOnboarding = !$0 }

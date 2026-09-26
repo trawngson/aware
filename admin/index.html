@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>AWARE admin</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"
+          integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok"
+          crossorigin="anonymous"></script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>AWARE admin</h1>
+    <div id="account" hidden>
+      <span id="account-email"></span>
+      <button type="button" id="sign-out">Sign out</button>
+    </div>
+  </header>
+
+  <main>
+    <p id="notice" role="status" hidden></p>
+
+    <section id="not-configured" hidden>
+      <h2>Not set up yet</h2>
+      <p>Fill in <code>config.js</code> with the Supabase project URL and its anon key.
+        See <code>supabase/README.md</code>.</p>
+    </section>
+
+    <section id="sign-in" hidden>
+      <h2>Sign in</h2>
+      <p>Only admin accounts can use this page. The database checks every action.</p>
+      <form id="sign-in-form">
+        <label>Email <input type="email" name="email" autocomplete="username" required></label>
+        <label>Password <input type="password" name="password" autocomplete="current-password" required></label>
+        <button type="submit">Sign in</button>
+      </form>
+    </section>
+
+    <div id="dashboard" hidden>
+      <section>
+        <h2>Overview</h2>
+        <dl id="counts" class="counts"></dl>
+      </section>
+
+      <section>
+        <h2>Settings</h2>
+        <form id="settings-form" class="settings">
+          <label class="switch">
+            <input type="checkbox" name="show_samples" data-testid="show-samples">
+            Show the sample people, posts and map spots in the app
+          </label>
+          <label>Most points per person per day (Vietnam time)
+            <input type="number" name="daily_point_cap" min="0" max="100000" required data-testid="daily-cap">
+          </label>
+          <label>Reports that hide a post or reply until reviewed
+            <input type="number" name="report_threshold" min="1" max="1000" required data-testid="report-threshold">
+          </label>
+          <button type="submit">Save settings</button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Reports</h2>
+        <p class="hint">Open reports, most reported first. "Remove" deletes the photo too.</p>
+        <div id="reports" data-testid="reports"></div>
+      </section>
+
+      <section>
+        <h2>Latest posts</h2>
+        <div id="posts" data-testid="posts"></div>
+      </section>
+
+      <section>
+        <h2>People</h2>
+        <form id="user-search" class="inline">
+          <label>Find by name <input type="search" name="query" data-testid="user-query"></label>
+          <button type="submit">Search</button>
+        </form>
+        <div id="user-results" data-testid="user-results"></div>
+        <h3>Banned</h3>
+        <div id="banned" data-testid="banned"></div>
+      </section>
+
+      <section>
+        <h2>Announcements</h2>
+        <p class="hint">Sent to everyone as a notification (once push notifications are set up).</p>
+        <form id="announce-form" class="settings">
+          <label>Title <input type="text" name="title" maxlength="80" required data-testid="announce-title"></label>
+          <label>Message <textarea name="body" maxlength="300" rows="3" required data-testid="announce-body"></textarea></label>
+          <button type="submit">Send announcement</button>
+        </form>
+        <ul id="announcements" data-testid="announcements"></ul>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

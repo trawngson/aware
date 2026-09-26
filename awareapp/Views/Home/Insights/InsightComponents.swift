@@ -1,13 +1,40 @@
 import SwiftUI
 
+/// The hero card's week-over-week line for the user's own numbers.
+enum InsightTrend {
+    static func weekly(current: Double, previous: Double) -> (icon: String, text: Text) {
+        guard let change = PersonalStats.percentChange(from: previous, to: current) else {
+            return ("sparkles", Text("Keep scanning to see your trend"))
+        }
+        let signed = change >= 0 ? "+\(change)%" : "\(change)%"
+        return (change >= 0 ? "arrow.up.right" : "arrow.down.right", Text("\(signed) from last week"))
+    }
+}
+
 /// Big glass summary at the top of an insights screen.
 struct InsightHeroCard: View {
     let systemImage: String
     let title: LocalizedStringKey
-    let value: Int
+    let valueText: String
     let unit: String
     let trendIcon: String
-    let trend: LocalizedStringKey
+    let trend: Text
+
+    init(systemImage: String, title: LocalizedStringKey, value: Int, unit: String, trendIcon: String,
+         trend: LocalizedStringKey) {
+        self.init(systemImage: systemImage, title: title, valueText: AwareFormat.grouped(value), unit: unit,
+                  trendIcon: trendIcon, trend: Text(trend))
+    }
+
+    init(systemImage: String, title: LocalizedStringKey, valueText: String, unit: String, trendIcon: String,
+         trend: Text) {
+        self.systemImage = systemImage
+        self.title = title
+        self.valueText = valueText
+        self.unit = unit
+        self.trendIcon = trendIcon
+        self.trend = trend
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -20,11 +47,15 @@ struct InsightHeroCard: View {
             .foregroundStyle(.white.opacity(0.85))
 
             HStack(alignment: .firstTextBaseline, spacing: 5) {
-                Text(AwareFormat.grouped(value)).displayNumber(58, color: .white)
+                Text(valueText).displayNumber(58, color: .white)
                 Text(unit).font(.system(size: 22, weight: .medium)).foregroundStyle(.white.opacity(0.72))
             }
 
-            Label(trend, systemImage: trendIcon)
+            Label {
+                trend
+            } icon: {
+                Image(systemName: trendIcon)
+            }
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(Theme.mint)
         }
@@ -100,7 +131,18 @@ struct InsightTipRow: View {
     let systemImage: String
     let tint: Color
     var title: LocalizedStringKey? = nil
-    let text: LocalizedStringKey
+    let text: Text
+
+    init(systemImage: String, tint: Color, title: LocalizedStringKey? = nil, text: LocalizedStringKey) {
+        self.init(systemImage: systemImage, tint: tint, title: title, text: Text(text))
+    }
+
+    init(systemImage: String, tint: Color, title: LocalizedStringKey? = nil, text: Text) {
+        self.systemImage = systemImage
+        self.tint = tint
+        self.title = title
+        self.text = text
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -113,7 +155,7 @@ struct InsightTipRow: View {
                 if let title {
                     Text(title).font(.system(size: 15, weight: .semibold)).foregroundStyle(Theme.ink)
                 }
-                Text(text)
+                text
                     .font(.system(size: 13))
                     .lineSpacing(2)
                     .foregroundStyle(Theme.ink.opacity(title == nil ? 0.68 : 0.62))

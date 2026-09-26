@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  The community backend. Leave both values empty to run the app without one.
+  SupabaseURL:     the project URL, e.g. https://abcdefghijklmnop.supabase.co
+  SupabaseAnonKey: the project's anon (publishable) key. It is public by design.
+  Never put the service-role (secret) key here: this file ships inside the app.
+  See supabase/README.md.
+-->
+<plist version="1.0">
+<dict>
+	<key>SupabaseURL</key>
+	<string></string>
+	<key>SupabaseAnonKey</key>
+	<string></string>
+</dict>
+</plist>

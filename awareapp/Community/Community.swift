@@ -19,8 +19,8 @@ struct CommunityMember: Identifiable, Equatable {
 }
 
 /// Hard-coded demo people shared by Home, the leaderboard, the Gallery and
-/// the map, so the same person shows the same points everywhere. There are no
-/// accounts or backend sync.
+/// the map, so the same person shows the same points everywhere. They show
+/// while samples are on (always, without a backend), mixed in with real people.
 enum Community {
     static let me = CommunityMember(
         id: "me", name: "Truong Son Nguyen", shortName: "Truong Son", points: 24_100,
@@ -61,21 +61,48 @@ enum Community {
 
     static let others = [dieuLinh, haChi, anthony, max, minhKhoi, thuHa, quangDuy, baoNgoc]
 
-    /// Demo points plus anything earned from scans in this session.
+    /// The person using the app: their own profile with a backend, the demo's
+    /// "Truong Son" without one.
     @MainActor
-    static var myPoints: Int { me.points + RewardLedger.shared.totalPoints }
+    static var current: CommunityMember { AppSession.shared.currentMember }
 
-    /// Everyone this month, highest first, with the current user's live total.
+    /// The user's points from their own scans, or the demo's points while the
+    /// sample numbers show (see `MyStats`).
     @MainActor
-    static var ranking: [(member: CommunityMember, points: Int)] {
-        ([(me, myPoints)] + others.map { ($0, $0.points) })
-            .sorted { $0.1 > $1.1 }
-            .map { (member: $0.0, points: $0.1) }
+    static var myPoints: Int { MyStats.current?.points ?? me.points }
+
+    /// The user's points for a leaderboard period: their own this month (or
+    /// all time), or the demo's points while the sample numbers show.
+    @MainActor
+    static func periodPoints(for period: LeaderboardPeriod) -> Int {
+        guard let stats = MyStats.current else { return me.points }
+        return period == .month ? stats.thisMonth.points : stats.points
     }
+
+    /// Everyone on the leaderboard, highest first: the user with their live
+    /// total, real people from the backend and, while samples are on, the
+    /// sample people.
+    @MainActor
+    static func standings(for period: LeaderboardPeriod) -> [(member: CommunityMember, points: Int)] {
+        let user = current
+        var entries = [(member: user, points: periodPoints(for: period))]
+        if AppSession.shared.showSamples {
+            entries += others.map { (member: $0, points: $0.points) }
+        }
+        entries += LeaderboardStore.shared.rows(for: period)
+            .filter { !$0.isMe && $0.userID.uuidString.lowercased() != user.id }
+            .map { (member: CommunityMember(row: $0), points: $0.points) }
+        return entries.sorted { $0.points > $1.points }
+    }
+
+    /// This month's standings.
+    @MainActor
+    static var ranking: [(member: CommunityMember, points: Int)] { standings(for: .month) }
 
     @MainActor
     static var myRank: Int {
-        (ranking.firstIndex { $0.member.id == me.id } ?? 0) + 1
+        let myID = current.id
+        return (ranking.firstIndex { $0.member.id == myID } ?? 0) + 1
     }
 }
 

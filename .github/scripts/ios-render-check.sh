@@ -1,6 +1,6 @@
 #!/bin/bash
-# Builds the app for an iOS simulator, runs RenderCheckUITests once per
-# appearance, and collects the screenshots.
+# Builds the app for an iOS simulator, runs the unit tests (full tour only),
+# runs RenderCheckUITests once per appearance, and collects the screenshots.
 #
 # Usage: .github/scripts/ios-render-check.sh <output-dir>
 # Env:   IOS_VERSION   simulator runtime version (default 27.0)
@@ -16,7 +16,7 @@
 #                      with this directory cached) skip fetching them
 #
 # Output: <output-dir>/<appearance>/NN-name.png and <output-dir>/<appearance>.xcresult
-# (plus <appearance>.mp4 when recording). An existing simulator gets its status
+# (plus <appearance>.mp4 when recording, and unit-tests.xcresult for a full tour). An existing simulator gets its status
 # bar and appearance back and is shut down again if the script booted it; the
 # app and test runner stay installed on it.
 set -euo pipefail
@@ -118,8 +118,22 @@ xcodebuild build-for-testing -project awareapp.xcodeproj -scheme awareapp \
     CODE_SIGNING_ALLOWED=NO -quiet
 echo "   built in $((SECONDS - start))s"
 
-echo "== Steps: ${RENDER_STEPS:-full tour}"
 status=0
+# The unit tests (awareappTests) run once, with the full tour only.
+if [ -z "$RENDER_STEPS" ]; then
+    echo "== Unit tests"
+    start=$SECONDS
+    if ! xcodebuild test-without-building -project awareapp.xcodeproj -scheme awareapp \
+        -destination "$DESTINATION" -derivedDataPath "$DERIVED" \
+        -only-testing:awareappTests -parallel-testing-enabled NO \
+        -resultBundlePath "$OUT/unit-tests.xcresult" -quiet; then
+        echo "!! Unit tests failed; see $OUT/unit-tests.xcresult" >&2
+        status=1
+    fi
+    echo "   ran in $((SECONDS - start))s"
+fi
+
+echo "== Steps: ${RENDER_STEPS:-full tour}"
 for appearance in $APPEARANCES; do
     echo "== Capturing in $appearance appearance"
     xcrun simctl ui "$UDID" appearance "$appearance"

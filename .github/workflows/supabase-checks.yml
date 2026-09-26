@@ -1,0 +1,86 @@
+name: Supabase checks
+
+# Starts a throwaway local Supabase stack (Docker) on a Linux runner, applies
+# every migration in supabase/migrations, runs the pgTAP tests in
+# supabase/tests, then tests the admin page (admin/) against that stack with
+# Playwright. A second job type-checks and unit-tests the Edge Functions in
+# supabase/functions with Deno. Nothing here touches the hosted project, so it
+# needs no secrets.
+# Run it by hand with:
+#   gh workflow run supabase-checks.yml --ref <branch>
+
+on:
+  push:
+    paths:
+      - "supabase/**"
+      - "admin/**"
+      - ".github/workflows/supabase-checks.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: supabase-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: supabase/setup-cli@v3
+        with:
+          version: 2.118.0
+
+      - name: Start Supabase and apply migrations
+        # Studio, image resizing, the mail catcher and the log pipeline aren't
+        # needed for tests, and skipping them saves a few minutes.
+        run: supabase start -x studio,imgproxy,mailpit,logflare,vector,supavisor,postgres-meta
+
+      - name: Run database tests (pgTAP)
+        run: supabase test db
+
+      # The admin page against the same local stack. The keys come from
+      # `supabase status` and only exist on this runner.
+      - name: Install the admin page's test tools
+        working-directory: admin/tests
+        run: |
+          node --version
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Test the admin page (Playwright)
+        working-directory: admin/tests
+        run: |
+          eval "$(supabase status -o env)"
+          export SUPABASE_URL="$API_URL" SUPABASE_ANON_KEY="$ANON_KEY" SUPABASE_SERVICE_ROLE_KEY="$SERVICE_ROLE_KEY"
+          npx playwright test
+
+      - name: Show container logs
+        if: failure()
+        run: |
+          docker ps -a
+          for c in $(docker ps -a --format '{{.Names}}' | grep '^supabase_'); do
+            echo "::group::$c"
+            docker logs --tail 200 "$c" 2>&1
+            echo "::endgroup::"
+          done
+
+  functions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: supabase/functions
+    steps:
+      - uses: actions/checkout@v7
+
+      # Deno from npm, pinned, so no extra action is needed.
+      - name: Type-check the Edge Functions
+        run: npx --yes deno@2.9.6 check send-push/index.ts delete-account/index.ts
+
+      - name: Test the Edge Functions
+        run: npx --yes deno@2.9.6 test --allow-env

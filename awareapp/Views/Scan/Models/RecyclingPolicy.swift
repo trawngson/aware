@@ -100,6 +100,8 @@ struct PolicyResult: Equatable {
     let label: CanonicalLabel?
     let state: PolicyState
     let displayName: String
+    /// The user's answer to the confirmation question, once given.
+    let choiceID: String?
     /// Nil while a confirmation is still needed or when the label is unsupported.
     let group: DisposalGroup?
     let summary: String
@@ -159,7 +161,8 @@ enum RecyclingPolicy {
         guard let choiceID, let choice = confirmation.choices.first(where: { $0.id == choiceID }) else {
             return result(label, entry, state: .confirmationRequired, group: nil, steps: [])
         }
-        return result(label, entry, state: .guidanceAvailable, group: choice.group, steps: choice.steps)
+        return result(label, entry, state: .guidanceAvailable, group: choice.group, steps: choice.steps,
+                      choiceID: choice.id)
     }
 
     private struct Entry {
@@ -175,12 +178,14 @@ enum RecyclingPolicy {
         _ entry: Entry,
         state: PolicyState,
         group: DisposalGroup?,
-        steps: [String]
+        steps: [String],
+        choiceID: String? = nil
     ) -> PolicyResult {
         PolicyResult(
             label: label,
             state: state,
             displayName: label.displayName,
+            choiceID: choiceID,
             group: group,
             summary: entry.summary,
             steps: steps,
@@ -198,6 +203,7 @@ enum RecyclingPolicy {
             label: nil,
             state: .unsupported,
             displayName: String(localized: "Not sure what this is"),
+            choiceID: nil,
             group: nil,
             summary: String(localized: "We couldn't identify this item."),
             steps: [
