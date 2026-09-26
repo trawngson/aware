@@ -21,15 +21,11 @@ struct ContentView: View {
 
     var body: some View {
         // Screens open on the dark forest (or the camera), so their content and
-        // navigation bars use the dark appearance. On iOS 27 the tab bar takes
-        // its appearance from the screen under it: dark over the forest, light
-        // over the always-light map, in either device setting.
+        // navigation bars use the dark appearance. The tab bar sits outside that
+        // and follows the device's Light/Dark setting (see `tabBarFollowsDevice`).
         TabView(selection: $navigationManager.selectedTab) {
             HomeTabView()
                 .environment(\.colorScheme, .dark)
-                // In Dark mode the tab bar stays dark over the map too.
-                .toolbarColorScheme(navigationManager.usesLightChrome && deviceColorScheme == .dark ? .dark : nil,
-                                    for: .tabBar)
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(AppTab.home)
             ScanTabView(isTabActive: navigationManager.selectedTab == .scan)
@@ -42,6 +38,7 @@ struct ContentView: View {
                 .tag(AppTab.gallery)
         }
         .tint(Theme.green)
+        .tabBarFollowsDevice(deviceColorScheme)
         .fullScreenCover(isPresented: Binding(
             get: { !hasSeenOnboarding },
             set: { hasSeenOnboarding = !$0 }
