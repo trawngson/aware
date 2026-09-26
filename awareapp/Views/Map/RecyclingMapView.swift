@@ -63,9 +63,13 @@ struct RecyclingMapView: View {
             .allowsHitTesting(false)
         }
         .safeAreaInset(edge: .top) { filterChips }
-        .safeAreaInset(edge: .bottom) {
+        .overlay(alignment: .bottom) {
+            // Over the map instead of in its safe area, so Apple's Maps logo and
+            // Legal link (which must stay visible) sit in the strip left under
+            // the card, next to the tab bar, rather than above the card.
             if let spot = selectedSpot {
                 selectedCard(spot)
+                    .padding(.bottom, 26)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
