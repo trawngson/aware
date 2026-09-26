@@ -273,8 +273,9 @@ most once), `is_admin()` (never true for guests or banned users) and
 `leaderboard(period, limit)` for `month` (Vietnam time) and `all`, top N plus
 the caller's rank, banned users left out. RLS is on for every table. pgTAP:
 `profiles`, `rewards`, `settings`, `leaderboard` and an `rls` guard that fails
-if any public table lacks RLS or the anon role can write anywhere (88 tests,
-passing locally).
+if any public table lacks RLS or the anon role can write anywhere (88 tests).
+CI: Supabase checks [36252982560](https://github.com/trawngson/aware/actions/runs/36252982560),
+success.
 
 ### Decisions made during the run
 
