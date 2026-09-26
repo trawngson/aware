@@ -1,0 +1,51 @@
+name: Supabase checks
+
+# Starts a throwaway local Supabase stack (Docker) on a Linux runner, applies
+# every migration in supabase/migrations, and runs the pgTAP tests in
+# supabase/tests. Nothing here touches the hosted project, so it needs no
+# secrets. Run it by hand with:
+#   gh workflow run supabase-checks.yml --ref <branch>
+
+on:
+  push:
+    paths:
+      - "supabase/**"
+      - "admin/**"
+      - ".github/workflows/supabase-checks.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: supabase-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: supabase/setup-cli@v3
+        with:
+          version: 2.118.0
+
+      - name: Start Supabase and apply migrations
+        # Studio, image resizing, the mail catcher and the log pipeline aren't
+        # needed for tests, and skipping them saves a few minutes.
+        run: supabase start -x studio,imgproxy,mailpit,logflare,vector,supavisor,postgres-meta
+
+      - name: Run database tests (pgTAP)
+        run: supabase test db
+
+      - name: Show container logs
+        if: failure()
+        run: |
+          docker ps -a
+          for c in $(docker ps -a --format '{{.Names}}' | grep '^supabase_'); do
+            echo "::group::$c"
+            docker logs --tail 200 "$c" 2>&1
+            echo "::endgroup::"
+          done
