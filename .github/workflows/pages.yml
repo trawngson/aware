@@ -1,0 +1,55 @@
+name: Publish web pages
+
+# Publishes the admin page (admin/) and the privacy policy and community terms
+# (docs/) on GitHub Pages. Runs only when started by hand, which GitHub offers
+# once this file is on main. Before the first run, set Settings → Pages →
+# Source to "GitHub Actions" and fill in admin/config.js (supabase/README.md).
+#
+# After it runs:
+#   https://<owner>.github.io/<repo>/                       the policies
+#   https://<owner>.github.io/<repo>/privacy-policy.html
+#   https://<owner>.github.io/<repo>/admin/                 the admin page
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/configure-pages@v5
+
+      # Turns the Markdown in docs/ into web pages.
+      - uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./docs
+          destination: ./_site
+
+      # The admin page as it is, without its tests.
+      - name: Add the admin page
+        run: |
+          sudo mkdir -p _site/admin
+          sudo cp admin/index.html admin/app.js admin/style.css admin/config.js _site/admin/
+
+      - uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

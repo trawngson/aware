@@ -483,6 +483,33 @@ branch apart from the usual scan video, map tiles and keyboard bar.
   the owner has to decide (contact, age policy, review times), and an index
   page for GitHub Pages.
 
+**2026-09-26 18:30 UTC, phase 10 (privacy and polish) done.** iOS render check
+[36261740314](https://github.com/trawngson/aware/actions/runs/36261740314),
+success: the build accepted the privacy manifest and `InfoPlist.xcstrings`,
+and the unit tests pass. (Supabase checks don't run for this commit: it
+touches nothing under `supabase/` or `admin/`.) One new difference: light
+Home changed 2.68%, in a bar-shaped patch in the middle of the screen, while
+dark Home stayed identical. A string catalog entry would change both
+appearances, so this looks like a chart captured mid-animation; the next
+run, with the same app code, is the check.
+
+**2026-09-26 18:32 UTC, phase 11 (owner guide) pushed.**
+`supabase/README.md` walks the owner through 18 numbered steps, each with
+what they should see when it worked: Part A creates the Singapore project,
+turns on anonymous sign-ins and manual linking, makes an access token, adds
+the three GitHub secrets, deploys, creates the admin account and schedules
+`send-push` with Supabase Cron (key kept in Vault); Part B fills in
+`BackendConfig.plist` and tries the app; Part C fills in, tries and
+publishes the admin page and moderates; Part D is the Apple steps (Sign in
+with Apple capability and provider, APNs key and secrets); Part E is the App
+Store privacy answers and the drafts in `docs/`. It ends with local
+development commands and a troubleshooting table. Two manual-only workflows
+come with it: `supabase-deploy.yml` (link, `db push`, deploy both functions,
+set the APNs secrets when present; it checks the secrets first and never
+runs seed data) and `pages.yml` (the policies from `docs/` and the admin page
+on one GitHub Pages site). Neither was run: GitHub offers "Run workflow"
+only for workflows on `main`.
+
 ### Decisions made during the run
 
 1. **Other waste earns 10 points, not 0.** The plan says "20 points for a
@@ -612,3 +639,10 @@ branch apart from the usual scan video, map tiles and keyboard bar.
     backend stores: user ID, name, photos, other user content, coarse
     location, product interaction (scans) and device ID (push token), all
     linked to the user, for app functionality, no tracking.
+37. **One GitHub Pages site holds the admin page and the policies**
+    (`pages.yml`), because a repository has one Pages site. It and
+    `supabase-deploy.yml` only run when started by hand, which GitHub allows
+    once they are on `main`; neither was run.
+38. **`send-push` runs every minute from Supabase Cron**, with the
+    service-role key kept in Supabase Vault (README step 8). Pushes can take
+    up to a minute.

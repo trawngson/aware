@@ -1,0 +1,92 @@
+name: Supabase deploy
+
+# Deploys the database migrations and the Edge Functions to the hosted
+# Supabase project. It only runs when started by hand (Actions → Supabase
+# deploy → Run workflow), and GitHub only offers that button once this file is
+# on the default branch (main). Step-by-step setup: supabase/README.md.
+#
+# Repository secrets it needs (Settings → Secrets and variables → Actions):
+#   SUPABASE_ACCESS_TOKEN  a personal access token from supabase.com
+#   SUPABASE_PROJECT_REF   the project's reference ID (Project Settings → General)
+#   SUPABASE_DB_PASSWORD   the database password chosen when creating the project
+# Optional, for push notifications (the first three together, or none):
+#   APNS_KEY_ID, APNS_TEAM_ID, APNS_PRIVATE_KEY (the .p8 file's contents), and
+#   APNS_USE_SANDBOX ("true" sends everything through Apple's test server;
+#   leave it unset: phones running a build from Xcode already go there)
+
+on:
+  workflow_dispatch:
+    inputs:
+      functions:
+        description: "Also deploy the Edge Functions"
+        type: boolean
+        default: true
+
+concurrency:
+  group: supabase-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: supabase/setup-cli@v3
+        with:
+          version: 2.118.0
+
+      - name: Check the secrets are set
+        run: |
+          missing=""
+          [ -n "$SUPABASE_ACCESS_TOKEN" ] || missing="$missing SUPABASE_ACCESS_TOKEN"
+          [ -n "$SUPABASE_DB_PASSWORD" ] || missing="$missing SUPABASE_DB_PASSWORD"
+          [ -n "$PROJECT_REF" ] || missing="$missing SUPABASE_PROJECT_REF"
+          if [ -n "$missing" ]; then
+            echo "::error::Add these repository secrets first:$missing (see supabase/README.md)"
+            exit 1
+          fi
+
+      - name: Link the project
+        run: supabase link --project-ref "$PROJECT_REF"
+
+      # Applies the migrations the project doesn't have yet, in order. Never
+      # runs seed data.
+      - name: Apply database migrations
+        run: supabase db push
+
+      - name: Deploy the Edge Functions
+        if: inputs.functions
+        run: supabase functions deploy send-push delete-account --project-ref "$PROJECT_REF"
+
+      - name: Set the APNs secrets
+        if: inputs.functions
+        env:
+          APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
+          APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
+          APNS_PRIVATE_KEY: ${{ secrets.APNS_PRIVATE_KEY }}
+          APNS_USE_SANDBOX: ${{ secrets.APNS_USE_SANDBOX }}
+        run: |
+          if [ -z "$APNS_KEY_ID" ]; then
+            echo "No APNs secrets: send-push will skip sending until they are added."
+            exit 0
+          fi
+          env_file="$RUNNER_TEMP/apns.env"
+          {
+            echo "APNS_KEY_ID=$APNS_KEY_ID"
+            echo "APNS_TEAM_ID=$APNS_TEAM_ID"
+            echo "APNS_BUNDLE_ID=net.nctson.awareapp"
+            echo "APNS_USE_SANDBOX=${APNS_USE_SANDBOX:-false}"
+            # One line, with \n for the line breaks; the function turns them back.
+            printf 'APNS_PRIVATE_KEY="%s"\n' "$(printf '%s' "$APNS_PRIVATE_KEY" | awk '{printf "%s\\n", $0}')"
+          } > "$env_file"
+          supabase secrets set --env-file "$env_file" --project-ref "$PROJECT_REF"
+          rm -f "$env_file"
