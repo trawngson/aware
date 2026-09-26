@@ -7,7 +7,8 @@ run-name: iOS render check${{ inputs.steps && format(' — {0}', inputs.steps) |
 #   gh workflow run ios-render-check.yml --ref <branch> \
 #     -f steps="tap:Recycling Map | shot:map" -f appearances=dark
 # Step syntax: awareappUITests/RenderCheckUITests.swift. Results are uploaded as
-# the "render" artifact: gh run download <run-id> -n render
+# the "render" artifact (full-size PNGs and result bundles, ~100 MB), and small
+# JPEG copies as "render-previews" (~1 MB): gh run download <run-id> -n render-previews
 
 on:
   workflow_dispatch:
@@ -55,6 +56,9 @@ jobs:
     env:
       IOS_VERSION: ${{ inputs.ios || '27.0' }}
       DEVICE: iPhone 18 Pro
+      # The runner image comes with this simulator; using it skips creating and
+      # first-booting a new one.
+      SIMULATOR: existing
       APPEARANCES: ${{ inputs.appearances == 'light' && 'light' || inputs.appearances == 'dark' && 'dark' || 'light dark' }}
       RENDER_STEPS: ${{ inputs.steps }}
       RECORD_VIDEO: ${{ inputs.record_video && '1' || '' }}
@@ -98,4 +102,22 @@ jobs:
         with:
           name: render
           path: ${{ runner.temp }}/render
+          if-no-files-found: warn
+
+      - name: Make previews
+        if: always()
+        run: |
+          cd "$RUNNER_TEMP/render" 2>/dev/null || exit 0
+          find . -name '*.png' | while read -r png; do
+            mkdir -p "$RUNNER_TEMP/render-previews/$(dirname "$png")"
+            sips -Z 800 -s format jpeg -s formatOptions 60 "$png" \
+              --out "$RUNNER_TEMP/render-previews/${png%.png}.jpg" >/dev/null
+          done
+
+      - name: Upload previews
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: render-previews
+          path: ${{ runner.temp }}/render-previews
           if-no-files-found: warn
