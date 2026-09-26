@@ -95,6 +95,15 @@ struct RecyclingMapView: View {
 
     // MARK: - Filters
 
+    /// `.chrome` without its drop shadow, so the chips sit flat on the map.
+    private static let chipGlass: GlassStyle = {
+        var style = GlassStyle.chrome
+        style.shadow = .clear
+        style.shadowRadius = 0
+        style.shadowY = 0
+        return style
+    }()
+
     private var filterChips: some View {
         ScrollView(.horizontal) {
             HStack(spacing: 8) {
@@ -127,12 +136,11 @@ struct RecyclingMapView: View {
                 .background {
                     if isSelected {
                         Capsule().fill(Theme.activeGradient)
-                            .shadow(color: Theme.greenDeep.opacity(0.32), radius: 6, y: 5)
                     }
                 }
                 .glassCapsule(isSelected ? GlassStyle(top: 0, bottom: 0, border: 0.35, highlight: 0.35, material: nil,
                                                       shadow: .clear, shadowRadius: 0, shadowY: 0)
-                                         : .chrome)
+                                         : Self.chipGlass)
         }
         .buttonStyle(PressableStyle())
         .accessibilityAddTraits(isSelected ? .isSelected : [])
