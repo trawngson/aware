@@ -261,6 +261,47 @@ success. Local Supabase also starts in this session (Docker Hub images, because
 the default ECR image host is blocked here), so migrations and pgTAP tests are
 tried locally before each push.
 
+**2026-09-26 15:50 UTC, phase 2 (core schema) pushed.** Migration
+`20260926160000_core_schema.sql`: `profiles` (made by a sign-up trigger with a
+"Recycler 1234" name and an avatar gradient from the app's palette; users can
+edit only their name), `app_settings` (one row: `show_samples`, daily cap 200,
+report threshold 3; anyone reads, only admins write), versioned `reward_rules`
+seeded for `hanoi-2026.1`, `scan_events`, `award_scan()` (the only way to earn
+points; returns state, points, reason code and scan event ID; clamps
+`scanned_at` to the last 7 days; daily cap by Vietnam day; each event earns at
+most once), `is_admin()` (never true for guests or banned users) and
+`leaderboard(period, limit)` for `month` (Vietnam time) and `all`, top N plus
+the caller's rank, banned users left out. RLS is on for every table. pgTAP:
+`profiles`, `rewards`, `settings`, `leaderboard` and an `rls` guard that fails
+if any public table lacks RLS or the anon role can write anywhere (88 tests,
+passing locally).
+
 ### Decisions made during the run
 
-_None yet._
+1. **Other waste earns 10 points, not 0.** The plan says "20 points for a
+   recyclable result, 0 otherwise, which matches `RecyclingPolicy`", but
+   `RecyclingPolicy` gives 10 points for other waste (`otherWastePoints`), and
+   the app's tests check that. The server's `reward_rules` copy the app exactly
+   (recyclable 20, other waste 10) so the "+10" the app shows is what the user
+   gets. To change it, add rows for a new policy version.
+2. **Answers decide the group.** Labels whose group depends on the user's
+   answer (cup material, clean or soiled cardboard) have one reward rule per
+   answer. Without a known answer, `award_scan` returns
+   `confirmation_required` and the same scan event can be sent again with the
+   answer.
+3. **The daily cap is all or nothing per scan.** A scan that would push the
+   day's total past the cap earns 0 (`daily_cap_reached`); a smaller one that
+   still fits counts.
+4. **Settled scan events are final.** Once a scan event is `eligible` or
+   `ineligible`, repeating it returns the stored result; only events still
+   waiting for confirmation are evaluated again.
+5. **Names from sign-in providers are ignored.** Every account starts as
+   "Recycler 1234" and the user picks a name, so nothing personal (such as a
+   name shared by Apple) appears publicly by default.
+6. **Profiles are public inside the app.** Any signed-in user can read every
+   profile row (name, avatar, role, ban and terms dates); only the owner can
+   change the name, and nothing else. Private data (scans, saves, blocks,
+   reports, device tokens) is in separate tables limited to its owner.
+7. **Local runs use Docker Hub images.** This session can't download from the
+   default image host (public.ecr.aws), so local Supabase runs with
+   `SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io`. CI is unchanged.
