@@ -131,6 +131,40 @@
         }
       }
     },
+    "Account": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tài khoản"
+          }
+        }
+      }
+    },
+    "Account deleted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account deleted"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã xoá tài khoản"
+          }
+        }
+      }
+    },
     "Add to Gallery": {
       "extractionState": "manual",
       "localizations": {
@@ -183,6 +217,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hãy trả lời câu hỏi phía trên trước"
+          }
+        }
+      }
+    },
+    "Apple ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple ID"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple ID"
           }
         }
       }
@@ -311,6 +362,23 @@
         }
       }
     },
+    "Cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Huỷ"
+          }
+        }
+      }
+    },
     "Cardboard": {
       "extractionState": "manual",
       "localizations": {
@@ -434,6 +502,23 @@
         }
       }
     },
+    "Couldn't sign in with Apple": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't sign in with Apple"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không đăng nhập được bằng Apple"
+          }
+        }
+      }
+    },
     "Day streak": {
       "extractionState": "manual",
       "localizations": {
@@ -502,6 +587,23 @@
         }
       }
     },
+    "Delete account": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete account"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá tài khoản"
+          }
+        }
+      }
+    },
     "Delete this post?": {
       "extractionState": "manual",
       "localizations": {
@@ -515,6 +617,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Xóa bài đăng này?"
+          }
+        }
+      }
+    },
+    "Delete your account?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete your account?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá tài khoản của bạn?"
+          }
+        }
+      }
+    },
+    "Display name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display name"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tên hiển thị"
           }
         }
       }
@@ -596,6 +732,23 @@
         }
       }
     },
+    "Everything in your account was removed. You can keep using AWARE as a new guest.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everything in your account was removed. You can keep using AWARE as a new guest."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mọi thứ trong tài khoản của bạn đã được xoá. Bạn có thể tiếp tục dùng AWARE với tư cách khách mới."
+          }
+        }
+      }
+    },
     "Flatten the box and stack or tie flat boxes together.": {
       "extractionState": "manual",
       "localizations": {
@@ -669,6 +822,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chai, lọ thủy tinh có thể tái chế."
+          }
+        }
+      }
+    },
+    "Guest": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guest"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khách"
           }
         }
       }
@@ -1188,6 +1358,23 @@
         }
       }
     },
+    "Name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tên"
+          }
+        }
+      }
+    },
     "No ads or spam.": {
       "extractionState": "manual",
       "localizations": {
@@ -1697,6 +1884,23 @@
         }
       }
     },
+    "Removes your scans, points, posts, replies and photos from AWARE.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes your scans, points, posts, replies and photos from AWARE."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá lượt quét, điểm, bài đăng, phản hồi và ảnh của bạn khỏi AWARE."
+          }
+        }
+      }
+    },
     "Report Post": {
       "extractionState": "manual",
       "localizations": {
@@ -1749,6 +1953,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tráng cốc và xếp chồng cùng các cốc nhựa sạch khác."
+          }
+        }
+      }
+    },
+    "Save": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu"
           }
         }
       }
@@ -1867,6 +2088,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Xem dự án gần tôi"
+          }
+        }
+      }
+    },
+    "Shown on your posts, replies and the leaderboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shown on your posts, replies and the leaderboard."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiển thị trên bài đăng, phản hồi và bảng xếp hạng của bạn."
+          }
+        }
+      }
+    },
+    "Sign in": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đăng nhập"
+          }
+        }
+      }
+    },
+    "Signed in with Apple": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed in with Apple"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã đăng nhập bằng Apple"
           }
         }
       }
@@ -2038,6 +2310,40 @@
         }
       }
     },
+    "Switch account": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch account"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chuyển tài khoản"
+          }
+        }
+      }
+    },
+    "Switch to it? Scans already saved to this guest account stay with the guest account.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch to it? Scans already saved to this guest account stay with the guest account."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chuyển sang tài khoản đó? Các lượt quét đã lưu vào tài khoản khách này sẽ ở lại tài khoản khách."
+          }
+        }
+      }
+    },
     "Take everything out of the box.": {
       "extractionState": "manual",
       "localizations": {
@@ -2157,6 +2463,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trung bình mỗi người thải ra khoảng 4 tấn CO₂ mỗi năm. Bạn đã bù lại được %@ con số đó."
+          }
+        }
+      }
+    },
+    "This Apple ID already has an account": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This Apple ID already has an account"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple ID này đã có tài khoản"
           }
         }
       }
@@ -2459,6 +2782,23 @@
         }
       }
     },
+    "You're using AWARE as a guest. Sign in with Apple to keep your scans, points and posts if you change or reset your phone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're using AWARE as a guest. Sign in with Apple to keep your scans, points and posts if you change or reset your phone."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đang dùng AWARE với tư cách khách. Đăng nhập bằng Apple để giữ lượt quét, điểm và bài đăng khi bạn đổi hoặc cài lại điện thoại."
+          }
+        }
+      }
+    },
     "Your account can't do that right now.": {
       "extractionState": "manual",
       "localizations": {
@@ -2489,6 +2829,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bài đăng của bạn chỉ hiện tên hiển thị, không bao giờ hiện email hay vị trí của bạn. Ảnh bạn chia sẻ thì mọi người dùng AWARE đều xem được."
+          }
+        }
+      }
+    },
+    "Your scans, points, posts, replies and photos will be removed for good. This can't be undone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your scans, points, posts, replies and photos will be removed for good. This can't be undone."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lượt quét, điểm, bài đăng, phản hồi và ảnh của bạn sẽ bị xoá vĩnh viễn. Không thể hoàn tác."
           }
         }
       }

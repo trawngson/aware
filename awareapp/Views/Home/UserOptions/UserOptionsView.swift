@@ -28,6 +28,25 @@ struct UserOptionsView: View {
                     .listRowBackground(Color.clear)
             }
 
+            // Only with a backend: without one there is no account.
+            if session.isBackendConfigured {
+                Section {
+                    NavigationLink {
+                        AccountView()
+                    } label: {
+                        HStack {
+                            row("Account", systemImage: "person.crop.circle.fill", tint: Theme.blue)
+                            Spacer()
+                            (session.isGuest ? Text("Guest") : Text("Apple ID"))
+                                .foregroundStyle(Theme.ink.opacity(0.5))
+                        }
+                    }
+                } header: {
+                    sectionHeader("Account")
+                }
+                .listRowBackground(Color.white.opacity(0.74))
+            }
+
             Section {
                 NavigationLink {
                     RecyclingGuidanceInfoView()

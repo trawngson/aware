@@ -432,6 +432,35 @@ like or announcement opens the Gallery. Checked locally: pgTAP (202 tests),
 Deno (15 tests), and the Linux harness registering, moving and removing a
 token against local Supabase.
 
+**2026-09-26 17:50 UTC, phase 8 (notifications) done.** Supabase checks
+[36259426078](https://github.com/trawngson/aware/actions/runs/36259426078)
+(database job: pgTAP and Playwright; new functions job: type-check and 15
+Deno tests) and iOS render check
+[36259429165](https://github.com/trawngson/aware/actions/runs/36259429165),
+both success. The More screen, with its Notifications switch, is still
+pixel-identical to the base branch, and no permission prompt appears on the
+tour.
+
+**2026-09-26 17:52 UTC, phase 9 (accounts) pushed.** More gets an
+Account row (only with a backend) showing "Guest" or "Apple ID", opening a
+screen with: the display name (saved to the profile; the word filter
+applies), **Sign in with Apple** (a native `SignInWithAppleButton` with a
+SHA-256 nonce and no name or email requested; it links the Apple ID to the
+guest account with `linkIdentityWithIdToken`, so the user ID and all data
+stay; if the Apple ID already has an account, the app offers to switch to
+it, see decision 32), and **Delete account** (after a confirmation, the
+`delete-account` Edge Function removes the user's photos, including reply
+photos on their posts, then the auth user, which cascades to every row; the
+phone then forgets its scans, cached Gallery and rankings and push token and
+starts over as a new guest). `supabase/config.toml` turns on manual linking
+for the local stack; the hosted project needs the same switch (owner guide).
+Checked locally: `delete-account` run with Deno against local Supabase (a
+guest with a post and a photo: status 200, auth user, profile, post and
+photo all gone; no token: 401); the Linux harness checks that a bad Apple
+token fails cleanly and leaves the guest as it was; a new unit test covers
+keeping unsynced scans when switching accounts. Apple sign-in itself can't
+run without the paid program (decision 31).
+
 ### Decisions made during the run
 
 1. **Other waste earns 10 points, not 0.** The plan says "20 points for a
@@ -544,3 +573,12 @@ token against local Supabase.
     project.** Both need the paid Apple Developer Program, and adding them now
     would break signing with the free team (rule 5). The code is in place and
     fails quietly until the owner adds them (`supabase/README.md`, Part D).
+32. **An Apple ID that already has an account offers "Switch account".**
+    Linking keeps the guest's data; if the Apple ID already belongs to another
+    AWARE account (for example after reinstalling), the app asks before
+    switching. Scans already synced to the guest account stay with it; scans
+    not synced yet move to the Apple account.
+33. **Sign in with Apple asks Apple for no name or email**, only the account
+    identifier (see decision 5).
+34. **After deleting the account the app starts over as a new guest** right
+    away, with the phone's scans, caches and push registration cleared.

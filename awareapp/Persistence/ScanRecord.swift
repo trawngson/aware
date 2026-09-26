@@ -86,6 +86,16 @@ final class LocalStore {
         try? context.save()
     }
 
+    /// Removes the scans with these IDs.
+    func deleteScans(_ ids: [UUID]) {
+        guard !ids.isEmpty else { return }
+        let descriptor = FetchDescriptor<ScanRecord>(predicate: #Predicate { ids.contains($0.id) })
+        for record in (try? context.fetch(descriptor)) ?? [] {
+            context.delete(record)
+        }
+        try? context.save()
+    }
+
     /// Removes every scan, e.g. after the account is deleted.
     func deleteAllScans() {
         try? context.delete(model: ScanRecord.self)

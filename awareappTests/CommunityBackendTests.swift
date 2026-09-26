@@ -87,6 +87,20 @@ struct LedgerSyncTests {
         #expect(ledger.totalPoints == 20)
         #expect(ledger.pendingScans().isEmpty)
     }
+
+    @Test func switchingAccountsKeepsOnlyUnsyncedScans() {
+        let ledger = RewardLedger()
+        let synced = UUID()
+        let pending = UUID()
+        ledger.award(RecyclingPolicy.evaluate(modelLabel: "metal_can"), scanEventID: synced)
+        ledger.applyServerResult(response(.eligible, points: 20, reason: "sorted_recyclable", id: synced), to: synced)
+        ledger.award(RecyclingPolicy.evaluate(modelLabel: "glass_container"), scanEventID: pending)
+        ledger.removeSynced()
+        #expect(ledger.scans.map(\.id) == [pending])
+        #expect(ledger.pendingScans().map(\.id) == [pending])
+        ledger.removeAll()
+        #expect(ledger.scans.isEmpty)
+    }
 }
 
 struct PersonalStatsTests {

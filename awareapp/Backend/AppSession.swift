@@ -23,6 +23,8 @@ final class AppSession: ObservableObject {
     @Published private(set) var settings: RemoteSettings?
     /// False after a sync failed because the server couldn't be reached.
     @Published private(set) var isOnline = true
+    /// True while the account is a guest (no Apple ID linked).
+    @Published private(set) var isGuest = true
 
     private let defaults: UserDefaults
     private let ledger: RewardLedger
@@ -51,6 +53,7 @@ final class AppSession: ObservableObject {
         if self.backend.isConfigured {
             settings = Self.cached(RemoteSettings.self, key: Keys.settings, in: defaults)
             profile = Self.cached(RemoteProfile.self, key: Keys.profile, in: defaults)
+            isGuest = self.backend.isGuest
         }
     }
 
@@ -109,6 +112,7 @@ final class AppSession: ObservableObject {
             needsAnotherRefresh = false
             do {
                 _ = try await backend.ensureSession()
+                isGuest = backend.isGuest
                 let settings = try await backend.fetchSettings()
                 apply(settings)
                 let profile = try await backend.fetchMyProfile()
@@ -134,6 +138,45 @@ final class AppSession: ObservableObject {
     func rename(to name: String) async throws {
         let profile = try await backend.updateDisplayName(name)
         apply(profile)
+    }
+
+    // MARK: - Account
+
+    /// Links an Apple ID to this account, keeping its scans, points, posts and
+    /// name. Throws `BackendError.identityInUse` when the Apple ID already has
+    /// its own account (then `switchToApple` can sign in to it).
+    func linkApple(idToken: String, nonce: String) async throws {
+        try await backend.linkApple(idToken: idToken, nonce: nonce)
+        isGuest = backend.isGuest
+        await refresh()
+    }
+
+    /// Signs in to the account that already uses this Apple ID. Scans synced
+    /// to the guest account stay with it; scans not synced yet move along.
+    func switchToApple(idToken: String, nonce: String) async throws {
+        try await backend.signInWithApple(idToken: idToken, nonce: nonce)
+        ledger.removeSynced()
+        forgetAccount()
+        await refresh()
+    }
+
+    /// Deletes the account on the server and everything about it on this
+    /// phone. The app then starts over as a new guest.
+    func deleteAccount() async throws {
+        try await backend.deleteAccount()
+        ledger.removeAll()
+        forgetAccount()
+        await refresh()
+    }
+
+    /// Clears what belonged to the previous account on this phone.
+    private func forgetAccount() {
+        profile = nil
+        defaults.removeObject(forKey: Keys.profile)
+        hasRestoredHistory = false
+        isGuest = backend.isGuest
+        GalleryStore.shared.reset()
+        LeaderboardStore.shared.reset()
     }
 
     /// Whether the user accepted the community terms (needed to post or reply).

@@ -36,6 +36,14 @@ final class LeaderboardStore: ObservableObject {
         }
     }
 
+    /// Forgets the cached rankings (after deleting or switching accounts).
+    func reset() {
+        monthRows = []
+        allTimeRows = []
+        communityStats = nil
+        defaults.removeObject(forKey: Self.cacheKey)
+    }
+
     func rows(for period: LeaderboardPeriod) -> [LeaderboardRow] {
         period == .month ? monthRows : allTimeRows
     }

@@ -108,6 +108,13 @@ final class RewardLedger: ObservableObject {
         scans = []
     }
 
+    /// Forgets the scans already synced to the previous account (after
+    /// switching accounts). Scans not synced yet stay and go to the new one.
+    func removeSynced() {
+        store.deleteScans(scans.filter { $0.syncState != .pending }.map(\.id))
+        scans = scans.filter { $0.syncState == .pending }
+    }
+
     private func replace(_ scan: ScanSnapshot) {
         store.save([scan])
         if let index = scans.firstIndex(where: { $0.id == scan.id }) {
