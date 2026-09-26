@@ -243,6 +243,16 @@ half done.
 _Update after each phase: date/time, phase, what changed, CI run links and
 results, and anything left over._
 
+**2026-09-26 15:35 UTC, access check.** Checked out `community-backend`
+(tracking `origin/community-backend` at `e44803e`) and set the git identity to
+Nguyen Truong Son <sonntt.az@gmail.com>. GitHub Actions results for the branch
+are readable: the one run so far is Supabase checks
+[36250920338](https://github.com/trawngson/aware/actions/runs/36250920338),
+success. PR #9 (`liquid-glass-redesign` into `main`) is open and not merged. The
+session has no `gh` CLI; CI is read through the GitHub tools instead. Docker
+starts in this session, so local Supabase can be tried for faster loops. Push
+access is confirmed by this commit reaching `origin/community-backend`.
+
 ### Decisions made during the run
 
 _None yet._
