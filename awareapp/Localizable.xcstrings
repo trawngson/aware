@@ -1,6 +1,57 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%@ %@ today": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@ today"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@ hôm nay"
+          }
+        }
+      }
+    },
+    "%@ from last week": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ from last week"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ so với tuần trước"
+          }
+        }
+      }
+    },
+    "+%lld this week": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%lld this week"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%lld trong tuần này"
+          }
+        }
+      }
+    },
     "AWARE's sorting tips follow Hanoi's household waste sorting rules, which split waste into three groups, plus hazardous items kept apart.": {
       "extractionState": "manual",
       "localizations": {
@@ -107,6 +158,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hộp xốp sạch có thể dùng để đựng đồ. Chọn hộp giấy hoặc hộp dùng nhiều lần khi mua đồ mang về sẽ tránh được rác xốp."
+          }
+        }
+      }
+    },
+    "Day streak": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Day streak"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chuỗi ngày"
           }
         }
       }
@@ -364,6 +432,23 @@
         }
       }
     },
+    "Items recycled": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Items recycled"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Món đã tái chế"
+          }
+        }
+      }
+    },
     "Keep it apart from all other waste in a sealed, leak-proof container and hand it over at a hazardous-waste collection point.": {
       "extractionState": "manual",
       "localizations": {
@@ -408,6 +493,40 @@
         }
       }
     },
+    "Keep scanning to see your trend": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep scanning to see your trend"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quét thêm để xem xu hướng của bạn"
+          }
+        }
+      }
+    },
+    "Latest": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gần đây"
+          }
+        }
+      }
+    },
     "Leave the ring pull attached.": {
       "extractionState": "manual",
       "localizations": {
@@ -415,6 +534,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Để nguyên khoen kéo trên lon."
+          }
+        }
+      }
+    },
+    "Leaves earned": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leaves earned"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Số lá đã nhận"
           }
         }
       }
@@ -492,6 +628,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chưa rõ đây là gì"
+          }
+        }
+      }
+    },
+    "One tree absorbs about 22kg of CO₂ per year — your savings equal %@ trees working for a year.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One tree absorbs about 22kg of CO₂ per year — your savings equal %@ trees working for a year."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Một cây xanh hấp thụ khoảng 22kg CO₂ mỗi năm — lượng bạn tiết kiệm bằng %@ cây làm việc trong một năm."
           }
         }
       }
@@ -672,6 +825,40 @@
         }
       }
     },
+    "Recycled · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recycled · %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã tái chế · %@"
+          }
+        }
+      }
+    },
+    "Recycler": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recycler"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Người tái chế"
+          }
+        }
+      }
+    },
     "Recycling guidance": {
       "extractionState": "manual",
       "localizations": {
@@ -716,6 +903,23 @@
         }
       }
     },
+    "Scan something and it shows up here.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan something and it shows up here."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quét một món đồ, nó sẽ hiện ở đây."
+          }
+        }
+      }
+    },
     "Scrape food scraps from foam boxes or trays into the green food-waste bag.": {
       "extractionState": "manual",
       "localizations": {
@@ -745,6 +949,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Xem ý tưởng tái chế"
+          }
+        }
+      }
+    },
+    "Sorted · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorted · %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã phân loại · %@"
           }
         }
       }
@@ -903,6 +1124,23 @@
         }
       }
     },
+    "The average person produces about 4 tons of CO₂ per year. You've offset %@ of that.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The average person produces about 4 tons of CO₂ per year. You've offset %@ of that."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trung bình mỗi người thải ra khoảng 4 tấn CO₂ mỗi năm. Bạn đã bù lại được %@ con số đó."
+          }
+        }
+      }
+    },
     "Tie several bags together into one bundle so they do not blow away.": {
       "extractionState": "manual",
       "localizations": {
@@ -976,6 +1214,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Có, sạch và khô"
+          }
+        }
+      }
+    },
+    "^[%lld day](inflect: true)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "^[%lld day](inflect: true)"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ngày"
+          }
+        }
+      }
+    },
+    "day": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ngày"
+          }
+        }
+      }
+    },
+    "days": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "days"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ngày"
           }
         }
       }

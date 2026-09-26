@@ -47,7 +47,7 @@ struct GalleryTabView: View {
             isComposing = true
         } label: {
             HStack(spacing: 10) {
-                MemberAvatar(member: Community.me, size: 38, borderColor: .white.opacity(0.8), borderWidth: 1.5)
+                MemberAvatar(member: Community.current, size: 38, borderColor: .white.opacity(0.8), borderWidth: 1.5)
                 Text("Share what you made…")
                     .font(.system(size: 15))
                     .foregroundStyle(Theme.ink.opacity(0.6))

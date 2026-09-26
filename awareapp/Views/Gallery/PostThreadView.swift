@@ -143,7 +143,7 @@ struct PostThreadView: View {
                     .padding(.leading, 42)
             }
             HStack(spacing: 10) {
-                MemberAvatar(member: Community.me, size: 32)
+                MemberAvatar(member: Community.current, size: 32)
                 HStack(spacing: 8) {
                     TextField("", text: $replyText,
                               prompt: Text("Add a reply…").foregroundStyle(Theme.ink.opacity(0.45)),

@@ -3,20 +3,39 @@ import SwiftUI
 
 struct WasteInsightsView: View {
     @State private var period: InsightPeriod = .week
+    @ObservedObject private var ledger = RewardLedger.shared
+    @ObservedObject private var session = AppSession.shared
+
+    /// The user's own numbers, or nil while the sample numbers show.
+    private var stats: PersonalStats? { MyStats.current }
 
     private var trendData: [DataPoint] {
-        period == .week ? SampleData.wasteWeekly : SampleData.wasteMonthly
+        if let stats { return stats.wastePoints(for: period) }
+        return period == .week ? SampleData.wasteWeekly : SampleData.wasteMonthly
+    }
+
+    private var categories: [(label: LocalizedStringKey, value: Double, color: Color)] {
+        stats?.categoryShares ?? SampleData.wasteByCategory
     }
 
     var body: some View {
+        let stats = self.stats
         TabScrollView {
             VStack(spacing: 16) {
-                InsightHeroCard(systemImage: "trash.fill", title: "Total waste saved", value: 6_700, unit: "g",
-                                trendIcon: "arrow.up.right", trend: "+12% from last week")
+                if let stats {
+                    let total = AwareFormat.mass(grams: stats.wasteGrams)
+                    let trend = InsightTrend.weekly(current: stats.thisWeekTotals.wasteGrams,
+                                                    previous: stats.lastWeekTotals.wasteGrams)
+                    InsightHeroCard(systemImage: "trash.fill", title: "Total waste saved", valueText: total.value,
+                                    unit: total.unit, trendIcon: trend.icon, trend: trend.text)
+                } else {
+                    InsightHeroCard(systemImage: "trash.fill", title: "Total waste saved", value: 6_700, unit: "g",
+                                    trendIcon: "arrow.up.right", trend: "+12% from last week")
+                }
                 PeriodPicker(period: $period)
                 trendCard
                 InsightSection(title: "Statistics") {
-                    StatGrid(stats: SampleData.wasteStats)
+                    StatGrid(stats: stats?.wasteStats ?? SampleData.wasteStats)
                 }
                 breakdownCard
                 InsightSection(title: "Tips to improve") {
@@ -42,7 +61,7 @@ struct WasteInsightsView: View {
     private var trendCard: some View {
         let values = trendData.map(\.value)
         let low = (values.min() ?? 0)
-        let high = (values.max() ?? 1)
+        let high = max(values.max() ?? 1, low + 1)
         let floor = low - (high - low) * 0.02
         let peak = trendData.max { $0.value < $1.value }
 
@@ -90,7 +109,7 @@ struct WasteInsightsView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Breakdown by category").font(.system(size: 16, weight: .semibold)).foregroundStyle(Theme.ink)
             HStack(spacing: 18) {
-                Chart(Array(SampleData.wasteByCategory.enumerated()), id: \.offset) { _, category in
+                Chart(Array(categories.enumerated()), id: \.offset) { _, category in
                     SectorMark(angle: .value("Share", category.value), innerRadius: .ratio(0.62))
                         .foregroundStyle(category.color)
                 }
@@ -103,7 +122,7 @@ struct WasteInsightsView: View {
                     }
                 }
                 VStack(spacing: 9) {
-                    ForEach(Array(SampleData.wasteByCategory.enumerated()), id: \.offset) { _, category in
+                    ForEach(Array(categories.enumerated()), id: \.offset) { _, category in
                         HStack(spacing: 8) {
                             Circle().fill(category.color).frame(width: 10, height: 10)
                             Text(category.label).font(.system(size: 14)).foregroundStyle(Theme.ink)

@@ -10,6 +10,7 @@ import SwiftUI
 /// "More": profile summary, guidance, preferences and about.
 struct UserOptionsView: View {
     @ObservedObject private var ledger = RewardLedger.shared
+    @ObservedObject private var session = AppSession.shared
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
     @Environment(\.openURL) private var openURL
 
@@ -95,9 +96,9 @@ struct UserOptionsView: View {
 
     private var profileCard: some View {
         HStack(spacing: 14) {
-            MemberAvatar(member: Community.me, size: 56, borderColor: .white.opacity(0.7), borderWidth: 1.5)
+            MemberAvatar(member: Community.current, size: 56, borderColor: .white.opacity(0.7), borderWidth: 1.5)
             VStack(alignment: .leading, spacing: 2) {
-                Text(Community.me.shortName)
+                Text(Community.current.shortName)
                     .font(.system(size: 20, weight: .bold))
                     .tracking(-0.5)
                     .foregroundStyle(.white)

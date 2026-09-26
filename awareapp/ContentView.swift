@@ -18,6 +18,7 @@ struct ContentView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     /// The device's Light/Dark setting; the tabs below override it for their content.
     @Environment(\.colorScheme) private var deviceColorScheme
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         // Screens open on the dark forest (or the camera), so their content and
@@ -44,6 +45,13 @@ struct ContentView: View {
         }
         .tint(Theme.green)
         .environment(\.deviceColorScheme, deviceColorScheme)
+        // Signs in as a guest and syncs, only when a backend is configured.
+        .task { AppSession.shared.start() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                Task { await AppSession.shared.refresh() }
+            }
+        }
         .fullScreenCover(isPresented: Binding(
             get: { !hasSeenOnboarding },
             set: { hasSeenOnboarding = !$0 }

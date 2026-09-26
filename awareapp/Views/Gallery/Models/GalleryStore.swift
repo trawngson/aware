@@ -29,7 +29,7 @@ class GalleryStore: ObservableObject {
     /// Creates a post by the current user from the composer.
     func addPost(content: String, image: UIImage?, tag: MaterialTag?) {
         addPost(GalleryPost(
-            author: Community.me,
+            author: Community.current,
             time: String(localized: "Just now"),
             content: content,
             tag: tag,
@@ -40,7 +40,7 @@ class GalleryStore: ObservableObject {
     /// Creates and adds a post from scan results
     func addPostFromScan(image: UIImage?, itemName: String, leafPoints: Int) {
         addPost(GalleryPost(
-            author: Community.me,
+            author: Community.current,
             time: String(localized: "Just now"),
             content: String(localized: "I just scanned and sorted: \(itemName) 🌱♻️"),
             attachmentImage: image
@@ -50,7 +50,7 @@ class GalleryStore: ObservableObject {
     func addReply(to postID: UUID, content: String, image: UIImage?) {
         guard let index = posts.firstIndex(where: { $0.id == postID }) else { return }
         posts[index].replies.append(GalleryReply(
-            author: Community.me,
+            author: Community.current,
             time: String(localized: "Just now"),
             content: content,
             image: image

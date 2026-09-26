@@ -277,6 +277,32 @@ if any public table lacks RLS or the anon role can write anywhere (88 tests).
 CI: Supabase checks [36252982560](https://github.com/trawngson/aware/actions/runs/36252982560),
 success.
 
+**2026-09-26 16:30 UTC, phase 3 (iOS foundation) pushed, waiting for the
+render check.** New in the app:
+- `Backend/`: `BackendConfig` (reads `BackendConfig.plist`, committed empty;
+  `-AWAREBackendDisabled YES` ignores it), the `CommunityBackend` protocol with
+  `SupabaseBackend` (supabase-swift 2.55.2, exact) and `NoBackend`,
+  `ScanSync` (sends pending scans oldest first, keeps the server's points,
+  restores history after a reinstall) and `AppSession` (guest sign-in with no
+  UI, `show_samples`/profile cache in UserDefaults, sync on launch, on
+  foreground, when the network comes back and after each scan).
+- `Persistence/`: SwiftData `ScanRecord` store; `RewardLedger` now saves
+  awarded scans there and is the sync queue (`pending` records).
+- `Stats/`: `PersonalStats` (points, waste and CO₂ saved from ImpactFactors,
+  streaks, weeks, months, categories) and `MyStats` (sample numbers while
+  samples are on and there are no scans). Home cards and both insight screens
+  take real numbers; their sample code paths are unchanged.
+- `RecyclingPolicy`'s result now carries the user's answer (`choiceID`), which
+  the server needs to pick the reward rule.
+- The render tour launches with `-AWAREBackendDisabled YES`, and the render
+  check script also runs `awareappTests` once per full tour.
+
+Checked before pushing: the Foundation-only files (config, models, backend,
+sync, stats, policy) compile on Linux against supabase-swift 2.55.2 and pass
+11 tests there, 4 of them against a local Supabase stack (guest session reuse,
+rename, awards, sync, history restore, leaderboard, offline). The SwiftUI and
+SwiftData parts can only be compiled by the render check.
+
 ### Decisions made during the run
 
 1. **Other waste earns 10 points, not 0.** The plan says "20 points for a
@@ -303,6 +329,29 @@ success.
    profile row (name, avatar, role, ban and terms dates); only the owner can
    change the name, and nothing else. Private data (scans, saves, blocks,
    reports, device tokens) is in separate tables limited to its owner.
-7. **Local runs use Docker Hub images.** This session can't download from the
+7. **Points are still awarded on "Add to Gallery".** That's when the app
+   awarded them before (the button is disabled until any question is
+   answered), so it counts as the user's explicit confirmation. Only rewarded
+   scans are saved and synced; the server gets `confirmed = true`.
+8. **After the first real scan, Home shows only the user's own numbers.**
+   While samples are on and nothing has been scanned, Home shows today's
+   sample numbers (24,100 leaves, 6,700 g, …), as the plan says. From the
+   first scan, all personal numbers are the user's own (the sample numbers are
+   not added to them), so a demo's numbers drop after its first scan.
+9. **The monthly goal is 500 leaves** (25 recyclables). The sample card's
+   "70%, 2,000 to go" had no real goal behind it.
+10. **Only sourced impact figures in real mode.** Waste saved uses the typical
+    masses from `CO2_IMPACT_NOTES.md` (bottle 10 g, can 13 g, jar 350 g, small
+    box 200 g; cups and foam have none) and counts recycled items only; CO₂
+    uses `ImpactFactors`. The CO₂ screen's "km not driven", "liters water"
+    and "kWh" tiles have no source, so real mode shows trees (22 kg a year,
+    as the screen already says), items recycled, streak and leaves instead.
+11. **The phone applies the cached daily cap too**, only when a backend is
+    configured, so offline scans don't promise points the server will refuse.
+    Without a backend there is no cap, as before.
+12. **The render tour always runs without a backend**
+    (`-AWAREBackendDisabled YES`), so CI never creates guest accounts on the
+    real project once the owner fills in `BackendConfig.plist`.
+13. **Local runs use Docker Hub images.** This session can't download from the
    default image host (public.ecr.aws), so local Supabase runs with
    `SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io`. CI is unchanged.
