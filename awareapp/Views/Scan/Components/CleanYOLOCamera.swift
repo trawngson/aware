@@ -57,6 +57,7 @@ struct CleanYOLOCamera: UIViewRepresentable {
         
         // Set initial visibility based on showDebug
         setOverlayVisibility(in: view, visible: showDebug)
+        setBoundingBoxLayersVisible(in: view, visible: showDebug)
         
         return view
 #endif
@@ -108,6 +109,7 @@ struct CleanYOLOCamera: UIViewRepresentable {
         
         // Update visibility based on showDebug
         setOverlayVisibility(in: uiView, visible: showDebug)
+        setBoundingBoxLayersVisible(in: uiView, visible: showDebug)
 #endif
     }
 
@@ -121,6 +123,18 @@ struct CleanYOLOCamera: UIViewRepresentable {
     }
     
 #if !targetEnvironment(simulator)
+    /// The Scan tab draws its own boxes (DetectionOverlay), so the Ultralytics
+    /// box layers only show in debug mode. They live on the preview layer and
+    /// are re-shown every frame, so they are hidden through opacity instead.
+    private func setBoundingBoxLayersVisible(in view: YOLOView, visible: Bool) {
+        let opacity: Float = visible ? 1 : 0
+        guard view.boundingBoxViews.first?.shapeLayer.opacity != opacity else { return }
+        for box in view.boundingBoxViews {
+            box.shapeLayer.opacity = opacity
+            box.textLayer.opacity = opacity
+        }
+    }
+
     private func setOverlayVisibility(in view: YOLOView, visible: Bool) {
         // Show/hide known public properties
         view.labelName.isHidden = !visible
