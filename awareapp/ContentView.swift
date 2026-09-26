@@ -20,8 +20,8 @@ struct ContentView: View {
     var body: some View {
         // Screens open on the dark forest (or the camera), so their content and
         // navigation bars use the dark appearance. The tab bar sits outside that
-        // and follows the device's Light/Dark setting, like a stock tab bar; only
-        // the always-light map switches the whole window to light.
+        // and follows the device's Light/Dark setting, like a stock tab bar, even
+        // on the always-light map, which only lightens its own navigation bar.
         TabView(selection: $navigationManager.selectedTab) {
             HomeTabView()
                 .environment(\.colorScheme, .dark)
@@ -37,7 +37,6 @@ struct ContentView: View {
                 .tag(AppTab.gallery)
         }
         .tint(Theme.green)
-        .preferredColorScheme(navigationManager.usesLightChrome ? .light : nil)
         .fullScreenCover(isPresented: Binding(
             get: { !hasSeenOnboarding },
             set: { hasSeenOnboarding = !$0 }

@@ -7,7 +7,7 @@ class NavigationManager: ObservableObject {
     
     @Published var selectedTab: AppTab = .home
     /// True while a screen with a light top edge (the map) is showing, so the
-    /// status bar, bar titles and back buttons switch to dark.
+    /// back buttons switch to dark.
     @Published var usesLightChrome = false
 
     /// Back-button and bar-item color for the tab navigation stacks.
