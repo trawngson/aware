@@ -35,6 +35,23 @@
         }
       }
     },
+    "%@ leaves": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ leaves"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ lá"
+          }
+        }
+      }
+    },
     "%@ recyclers · %@ kg together": {
       "extractionState": "manual",
       "localizations": {
@@ -86,6 +103,23 @@
         }
       }
     },
+    "%lld leaves": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld leaves"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld lá"
+          }
+        }
+      }
+    },
     "%lld nearby": {
       "extractionState": "manual",
       "localizations": {
@@ -99,6 +133,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld gần đây"
+          }
+        }
+      }
+    },
+    "%lld recycled items": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld recycled items"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld vật đã tái chế"
           }
         }
       }
@@ -120,6 +171,23 @@
         }
       }
     },
+    "18 days": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "18 days"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "18 ngày"
+          }
+        }
+      }
+    },
     "AWARE's sorting tips follow Hanoi's household waste sorting rules, which split waste into three groups, plus hazardous items kept apart.": {
       "extractionState": "manual",
       "localizations": {
@@ -127,6 +195,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mẹo phân loại của AWARE dựa theo quy định phân loại rác sinh hoạt của Hà Nội: rác được chia thành ba nhóm, còn chất thải nguy hại được để riêng."
+          }
+        }
+      }
+    },
+    "About": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giới thiệu"
+          }
+        }
+      }
+    },
+    "About this estimate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About this estimate"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Về con số ước tính này"
           }
         }
       }
@@ -161,6 +263,91 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đã xoá tài khoản"
+          }
+        }
+      }
+    },
+    "Achieved · 3h ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Achieved · 3h ago"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã đạt · 3 giờ trước"
+          }
+        }
+      }
+    },
+    "Add a reply…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a reply…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Viết phản hồi…"
+          }
+        }
+      }
+    },
+    "Add image": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add image"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm ảnh"
+          }
+        }
+      }
+    },
+    "Add photo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add photo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm ảnh"
+          }
+        }
+      }
+    },
+    "Add some instructions?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add some instructions?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm vài bước hướng dẫn?"
           }
         }
       }
@@ -272,6 +459,23 @@
         }
       }
     },
+    "Best": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tốt nhất"
+          }
+        }
+      }
+    },
     "Block": {
       "extractionState": "manual",
       "localizations": {
@@ -362,6 +566,40 @@
         }
       }
     },
+    "Breakdown by category": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Breakdown by category"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theo từng loại"
+          }
+        }
+      }
+    },
+    "CO₂ Saved": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CO₂ Saved"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CO₂ đã giảm"
+          }
+        }
+      }
+    },
     "Cancel": {
       "extractionState": "manual",
       "localizations": {
@@ -386,6 +624,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bìa các-tông"
+          }
+        }
+      }
+    },
+    "Cardboard Box": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cardboard Box"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hộp các-tông"
           }
         }
       }
@@ -519,6 +774,23 @@
         }
       }
     },
+    "Daily savings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daily savings"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mức giảm mỗi ngày"
+          }
+        }
+      }
+    },
     "Day streak": {
       "extractionState": "manual",
       "localizations": {
@@ -638,6 +910,40 @@
         }
       }
     },
+    "Depends on weight — pick the closest size.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depends on weight — pick the closest size."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tuỳ theo khối lượng — hãy chọn kích cỡ gần nhất."
+          }
+        }
+      }
+    },
+    "Detected Items": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detected Items"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vật phẩm đã nhận diện"
+          }
+        }
+      }
+    },
     "Display name": {
       "extractionState": "manual",
       "localizations": {
@@ -677,6 +983,23 @@
         }
       }
     },
+    "Done": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xong"
+          }
+        }
+      }
+    },
     "Drink or pour out what is left and rinse the cup.": {
       "extractionState": "manual",
       "localizations": {
@@ -684,6 +1007,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uống hết hoặc đổ phần còn lại rồi tráng cốc."
+          }
+        }
+      }
+    },
+    "EPA Waste Reduction Model": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EPA Waste Reduction Model"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mô hình Giảm thiểu Chất thải của EPA"
           }
         }
       }
@@ -728,6 +1068,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đổ hết cốc. Trân châu, thạch và đá bỏ vào túi màu xanh đựng chất thải thực phẩm."
+          }
+        }
+      }
+    },
+    "Estimated CO₂e avoided": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated CO₂e avoided"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lượng CO₂e tránh được (ước tính)"
           }
         }
       }
@@ -804,6 +1161,23 @@
         }
       }
     },
+    "Gallery": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gallery"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gallery"
+          }
+        }
+      }
+    },
     "Glass bottle or jar": {
       "extractionState": "manual",
       "localizations": {
@@ -826,6 +1200,40 @@
         }
       }
     },
+    "Goal progress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Goal progress"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiến độ mục tiêu"
+          }
+        }
+      }
+    },
+    "Got it!": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Got it!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã hiểu!"
+          }
+        }
+      }
+    },
     "Guest": {
       "extractionState": "manual",
       "localizations": {
@@ -839,6 +1247,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Khách"
+          }
+        }
+      }
+    },
+    "Guidance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guidance"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hướng dẫn"
           }
         }
       }
@@ -911,6 +1336,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đang tạm ẩn để chúng mình xem xét"
+          }
+        }
+      }
+    },
+    "Home": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trang chủ"
+          }
+        }
+      }
+    },
+    "How it's worked out": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How it's worked out"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cách tính"
           }
         }
       }
@@ -1207,6 +1666,23 @@
         }
       }
     },
+    "Language": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ngôn ngữ"
+          }
+        }
+      }
+    },
     "Latest": {
       "extractionState": "manual",
       "localizations": {
@@ -1220,6 +1696,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gần đây"
+          }
+        }
+      }
+    },
+    "Latest regulations update": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest regulations update"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cập nhật quy định mới nhất"
+          }
+        }
+      }
+    },
+    "Leaderboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leaderboard"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bảng xếp hạng"
           }
         }
       }
@@ -1375,6 +1885,40 @@
         }
       }
     },
+    "New Post": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Post"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bài đăng mới"
+          }
+        }
+      }
+    },
+    "No": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không"
+          }
+        }
+      }
+    },
     "No ads or spam.": {
       "extractionState": "manual",
       "localizations": {
@@ -1388,6 +1932,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Không quảng cáo hay spam."
+          }
+        }
+      }
+    },
+    "No items detected": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No items detected"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa nhận diện được vật phẩm nào"
           }
         }
       }
@@ -1427,6 +1988,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chưa rõ đây là gì"
+          }
+        }
+      }
+    },
+    "Notifications": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifications"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thông báo"
           }
         }
       }
@@ -1478,6 +2056,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trên bản đồ"
+          }
+        }
+      }
+    },
+    "One quick scan to sort with ease – help the Earth and save the trees.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One quick scan to sort with ease – help the Earth and save the trees."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quét nhanh một lần để phân loại dễ dàng – giúp Trái Đất và cứu những hàng cây."
           }
         }
       }
@@ -1611,6 +2206,40 @@
         }
       }
     },
+    "Pinch to zoom in or adjust lighting": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pinch to zoom in or adjust lighting"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chụm để phóng to hoặc chỉnh lại ánh sáng"
+          }
+        }
+      }
+    },
+    "Plastic Bottle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plastic Bottle"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chai nhựa"
+          }
+        }
+      }
+    },
     "Plastic bag": {
       "extractionState": "manual",
       "localizations": {
@@ -1672,6 +2301,40 @@
         }
       }
     },
+    "Point at an object": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Point at an object"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hướng camera vào một vật"
+          }
+        }
+      }
+    },
+    "Post": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Post"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bài đăng"
+          }
+        }
+      }
+    },
     "Post not found": {
       "extractionState": "manual",
       "localizations": {
@@ -1706,6 +2369,23 @@
         }
       }
     },
+    "Posts with steps get 3× more saves": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posts with steps get 3× more saves"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bài có các bước được lưu nhiều gấp 3 lần"
+          }
+        }
+      }
+    },
     "Pour out any liquid left inside.": {
       "extractionState": "manual",
       "localizations": {
@@ -1713,6 +2393,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đổ hết phần nước còn lại bên trong."
+          }
+        }
+      }
+    },
+    "Preferences": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preferences"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tuỳ chọn"
           }
         }
       }
@@ -1828,6 +2525,40 @@
         }
       }
     },
+    "Recycled · 1h ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recycled · 1h ago"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã tái chế · 1 giờ trước"
+          }
+        }
+      }
+    },
+    "Recycled · 2m ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recycled · 2m ago"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã tái chế · 2 phút trước"
+          }
+        }
+      }
+    },
     "Recycler": {
       "extractionState": "manual",
       "localizations": {
@@ -1845,6 +2576,23 @@
         }
       }
     },
+    "Recycling Map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recycling Map"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bản đồ tái chế"
+          }
+        }
+      }
+    },
     "Recycling guidance": {
       "extractionState": "manual",
       "localizations": {
@@ -1856,6 +2604,40 @@
         }
       }
     },
+    "Recycling map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recycling map"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bản đồ tái chế"
+          }
+        }
+      }
+    },
+    "Remove photo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove photo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ ảnh"
+          }
+        }
+      }
+    },
     "Remove plastic tape, plastic windows, and foam inserts. Foam goes in other waste.": {
       "extractionState": "manual",
       "localizations": {
@@ -1863,6 +2645,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gỡ băng dính nhựa, ô nhựa trong suốt và miếng xốp chèn. Xốp bỏ vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Remove tag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove tag"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ thẻ"
           }
         }
       }
@@ -1897,6 +2696,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Xoá lượt quét, điểm, bài đăng, phản hồi và ảnh của bạn khỏi AWARE."
+          }
+        }
+      }
+    },
+    "Replies": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replies"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phản hồi"
+          }
+        }
+      }
+    },
+    "Reply": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reply"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trả lời"
           }
         }
       }
@@ -1974,6 +2807,23 @@
         }
       }
     },
+    "Scan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quét"
+          }
+        }
+      }
+    },
     "Scan one thing today to make it %lld days in a row.": {
       "extractionState": "manual",
       "localizations": {
@@ -2025,6 +2875,23 @@
         }
       }
     },
+    "Scans per day, this week compared with last week": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scans per day, this week compared with last week"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Số lượt quét mỗi ngày, tuần này so với tuần trước"
+          }
+        }
+      }
+    },
     "Scrape food scraps from foam boxes or trays into the green food-waste bag.": {
       "extractionState": "manual",
       "localizations": {
@@ -2058,6 +2925,23 @@
         }
       }
     },
+    "Send reply": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send reply"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gửi phản hồi"
+          }
+        }
+      }
+    },
     "Share": {
       "extractionState": "manual",
       "localizations": {
@@ -2071,6 +2955,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chia sẻ"
+          }
+        }
+      }
+    },
+    "Share what you made…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share what you made…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chia sẻ thứ bạn đã làm…"
           }
         }
       }
@@ -2266,6 +3167,23 @@
         }
       }
     },
+    "Steps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Steps"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Các bước"
+          }
+        }
+      }
+    },
     "Still unsure? Put it in other waste so it doesn't end up mixed into recyclables.": {
       "extractionState": "manual",
       "localizations": {
@@ -2310,6 +3228,23 @@
         }
       }
     },
+    "Submit correction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Submit correction"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gửi chỉnh sửa"
+          }
+        }
+      }
+    },
     "Switch account": {
       "extractionState": "manual",
       "localizations": {
@@ -2340,6 +3275,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chuyển sang tài khoản đó? Các lượt quét đã lưu vào tài khoản khách này sẽ ở lại tài khoản khách."
+          }
+        }
+      }
+    },
+    "Tag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thẻ"
           }
         }
       }
@@ -2433,6 +3385,23 @@
         }
       }
     },
+    "Thanks for the feedback!": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thanks for the feedback!"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cảm ơn góp ý của bạn!"
+          }
+        }
+      }
+    },
     "That didn't work": {
       "extractionState": "manual",
       "localizations": {
@@ -2463,6 +3432,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trung bình mỗi người thải ra khoảng 4 tấn CO₂ mỗi năm. Bạn đã bù lại được %@ con số đó."
+          }
+        }
+      }
+    },
+    "The factors are US averages, so the real saving in Hanoi may differ. The number also assumes the item actually gets recycled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The factors are US averages, so the real saving in Hanoi may differ. The number also assumes the item actually gets recycled."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Các hệ số là mức trung bình ở Mỹ, nên lượng tiết kiệm thực tế ở Hà Nội có thể khác. Con số cũng giả định vật thật sự được tái chế."
+          }
+        }
+      }
+    },
+    "The figure is the greenhouse gas avoided by recycling the item instead of sending it to landfill, using factors from the US EPA's Waste Reduction Model (WARM, version 16, December 2023).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The figure is the greenhouse gas avoided by recycling the item instead of sending it to landfill, using factors from the US EPA's Waste Reduction Model (WARM, version 16, December 2023)."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con số này là lượng khí nhà kính tránh được khi tái chế vật thay vì đem chôn lấp, dùng hệ số từ Mô hình Giảm thiểu Chất thải của Cơ quan Bảo vệ Môi trường Hoa Kỳ (WARM, phiên bản 16, tháng 12/2023)."
           }
         }
       }
@@ -2501,6 +3504,23 @@
         }
       }
     },
+    "This item goes in other waste, so recycling it saves nothing here.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This item goes in other waste, so recycling it saves nothing here."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vật này thuộc nhóm rác còn lại, nên ở đây không tính được lượng tiết kiệm."
+          }
+        }
+      }
+    },
     "This needs an internet connection. Try again when you're back online.": {
       "extractionState": "manual",
       "localizations": {
@@ -2525,6 +3545,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Buộc nhiều túi lại thành một bó để túi không bị gió thổi bay."
+          }
+        }
+      }
+    },
+    "Tip: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tip: %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mẹo: %@"
           }
         }
       }
@@ -2580,6 +3617,57 @@
         }
       }
     },
+    "Total": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tổng"
+          }
+        }
+      }
+    },
+    "Translate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Translate"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dịch"
+          }
+        }
+      }
+    },
+    "Trend": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xu hướng"
+          }
+        }
+      }
+    },
     "Try scanning it again, a little closer and in good light.": {
       "extractionState": "manual",
       "localizations": {
@@ -2608,6 +3696,40 @@
         }
       }
     },
+    "Undo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoàn tác"
+          }
+        }
+      }
+    },
+    "View all %lld replies": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View all %lld replies"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xem tất cả %lld phản hồi"
+          }
+        }
+      }
+    },
     "Want to give it a second life? See our recycling ideas below.": {
       "extractionState": "manual",
       "localizations": {
@@ -2619,6 +3741,57 @@
         }
       }
     },
+    "Want to give it a second life? See recycling ideas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Want to give it a second life? See recycling ideas"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muốn cho nó cuộc đời thứ hai? Xem ý tưởng tái chế"
+          }
+        }
+      }
+    },
+    "Was this detection correct?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was this detection correct?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhận diện này có đúng không?"
+          }
+        }
+      }
+    },
+    "Waste Saved": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waste Saved"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rác được tái chế"
+          }
+        }
+      }
+    },
     "We couldn't identify this item.": {
       "extractionState": "manual",
       "localizations": {
@@ -2626,6 +3799,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "AWARE chưa nhận ra được vật này."
+          }
+        }
+      }
+    },
+    "We detected **%@**. Pick what it really is and we'll update the guidance.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We detected **%@**. Pick what it really is and we'll update the guidance."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chúng tôi nhận diện được **%@**. Hãy chọn đúng vật đó và chúng tôi sẽ cập nhật hướng dẫn."
           }
         }
       }
@@ -2647,6 +3837,57 @@
         }
       }
     },
+    "Weekly Goal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly Goal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu tuần"
+          }
+        }
+      }
+    },
+    "Welcome back": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome back"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chào mừng trở lại"
+          }
+        }
+      }
+    },
+    "Welcome to": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chào mừng đến với"
+          }
+        }
+      }
+    },
     "What is the cup made of?": {
       "extractionState": "manual",
       "localizations": {
@@ -2654,6 +3895,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cốc được làm bằng chất liệu gì?"
+          }
+        }
+      }
+    },
+    "What should this have been?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What should this have been?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đúng ra đây là gì?"
           }
         }
       }
@@ -2686,6 +3944,23 @@
         }
       }
     },
+    "Yes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Có"
+          }
+        }
+      }
+    },
     "Yes, clean and dry": {
       "extractionState": "manual",
       "localizations": {
@@ -2693,6 +3968,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Có, sạch và khô"
+          }
+        }
+      }
+    },
+    "You": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn"
           }
         }
       }
@@ -2799,6 +4091,23 @@
         }
       }
     },
+    "You've reached the end of the feed. Come back again soon?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You've reached the end of the feed. Come back again soon?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đã xem hết bảng tin. Lát nữa quay lại nhé?"
+          }
+        }
+      }
+    },
     "Your account can't do that right now.": {
       "extractionState": "manual",
       "localizations": {
@@ -2812,6 +4121,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tài khoản của bạn hiện chưa thể làm việc này."
+          }
+        }
+      }
+    },
+    "Your location": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your location"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vị trí của bạn"
           }
         }
       }
@@ -2897,6 +4223,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "ngày"
+          }
+        }
+      }
+    },
+    "items": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "items"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vật phẩm"
+          }
+        }
+      }
+    },
+    "to go": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "to go"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "còn lại"
+          }
+        }
+      }
+    },
+    "trees saved": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "trees saved"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cây được cứu"
+          }
+        }
+      }
+    },
+    "· Rank %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· Rank %lld"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· Hạng %lld"
           }
         }
       }

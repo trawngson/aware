@@ -461,6 +461,28 @@ token fails cleanly and leaves the guest as it was; a new unit test covers
 keeping unsynced scans when switching accounts. Apple sign-in itself can't
 run without the paid program (decision 31).
 
+**2026-09-26 18:12 UTC, phase 9 (accounts) done.** Supabase checks
+[36260412058](https://github.com/trawngson/aware/actions/runs/36260412058) and
+iOS render check [36260414793](https://github.com/trawngson/aware/actions/runs/36260414793)
+(including the new unit test), both success; screens unchanged from the base
+branch apart from the usual scan video, map tiles and keyboard bar.
+
+**2026-09-26 18:15 UTC, phase 10 (privacy and polish) pushed.**
+- `NSPhotoLibraryAddUsageDescription` ("save the scan photos you choose to
+  your photo library") joins the camera and location descriptions in the
+  build settings, so "Save Image" from the share sheet no longer crashes.
+- `awareapp/InfoPlist.xcstrings` gives the app name and the three usage
+  descriptions a Vietnamese version.
+- `awareapp/PrivacyInfo.xcprivacy`: no tracking, no tracking domains, the
+  UserDefaults and system boot time required-reason APIs, and the collected
+  data types (decision 36).
+- Vietnamese: every string in `Localizable.xcstrings` now has one, including
+  about 80 older strings that had none (decision 35).
+- `docs/`: draft privacy policy and community terms in English and
+  Vietnamese, each marked as a draft for the owner, with [brackets] where
+  the owner has to decide (contact, age policy, review times), and an index
+  page for GitHub Pages.
+
 ### Decisions made during the run
 
 1. **Other waste earns 10 points, not 0.** The plan says "20 points for a
@@ -582,3 +604,11 @@ run without the paid program (decision 31).
     identifier (see decision 5).
 34. **After deleting the account the app starts over as a new guest** right
     away, with the phone's scans, caches and push registration cleared.
+35. **Older strings got Vietnamese too.** About 80 strings from before this
+    work had no Vietnamese; they now do. "Gallery" stays "Gallery" in
+    Vietnamese, matching the existing "Thêm vào Gallery".
+36. **The privacy manifest declares UserDefaults (CA92.1) and system boot time
+    (35F9.1)**, the second for the YOLO code's frame timing, and the data the
+    backend stores: user ID, name, photos, other user content, coarse
+    location, product interaction (scans) and device ID (push token), all
+    linked to the user, for app functionality, no tracking.

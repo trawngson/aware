@@ -441,6 +441,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCameraUsageDescription = "scan and identify waste";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "show recycling projects near you and, only when you choose, put your post on the map (rounded to about 500 m)";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "save the scan photos you choose to your photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -473,6 +474,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCameraUsageDescription = "scan and identify waste";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "show recycling projects near you and, only when you choose, put your post on the map (rounded to about 500 m)";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "save the scan photos you choose to your photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
