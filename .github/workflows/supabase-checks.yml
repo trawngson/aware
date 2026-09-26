@@ -1,9 +1,10 @@
 name: Supabase checks
 
 # Starts a throwaway local Supabase stack (Docker) on a Linux runner, applies
-# every migration in supabase/migrations, and runs the pgTAP tests in
-# supabase/tests. Nothing here touches the hosted project, so it needs no
-# secrets. Run it by hand with:
+# every migration in supabase/migrations, runs the pgTAP tests in
+# supabase/tests, then tests the admin page (admin/) against that stack with
+# Playwright. Nothing here touches the hosted project, so it needs no secrets.
+# Run it by hand with:
 #   gh workflow run supabase-checks.yml --ref <branch>
 
 on:
@@ -39,6 +40,22 @@ jobs:
 
       - name: Run database tests (pgTAP)
         run: supabase test db
+
+      # The admin page against the same local stack. The keys come from
+      # `supabase status` and only exist on this runner.
+      - name: Install the admin page's test tools
+        working-directory: admin/tests
+        run: |
+          node --version
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Test the admin page (Playwright)
+        working-directory: admin/tests
+        run: |
+          eval "$(supabase status -o env)"
+          export SUPABASE_URL="$API_URL" SUPABASE_ANON_KEY="$ANON_KEY" SUPABASE_SERVICE_ROLE_KEY="$SERVICE_ROLE_KEY"
+          npx playwright test
 
       - name: Show container logs
         if: failure()

@@ -342,14 +342,14 @@ guidelines and Blocked people (only with a backend). The Linux harness runs
 the whole flow against local Supabase (terms, upload, like, save, reply,
 word filter, report, block, delete with photos).
 
-**2026-09-26 17:05 UTC, phase 5 (Gallery) done.** Supabase checks
+**2026-09-26 17:00 UTC, phase 5 (Gallery) done.** Supabase checks
 [36256497510](https://github.com/trawngson/aware/actions/runs/36256497510) and
 iOS render check [36256500839](https://github.com/trawngson/aware/actions/runs/36256500839),
 both success (unit tests included). Compared with `liquid-glass-redesign` (run
 36248867850): 16 of 20 screens pixel-identical; the rest are the scan video,
 map tiles and the keyboard area on New Post, as in phase 4.
 
-**2026-09-26 17:10 UTC, phase 6 (map) pushed.** Migration
+**2026-09-26 17:00 UTC, phase 6 (map) pushed.** Migration
 `20260926190000_map.sql`: posts get an optional latitude/longitude that a
 trigger rounds to a 0.005° grid (about 500 m) whatever the client sends,
 `map_posts(bounds, material)` (visible located posts in a region, blocked
@@ -367,6 +367,37 @@ backend layer also carries the calls that phases 8 and 9 use (device tokens,
 Apple sign-in, account deletion), unused until then. Checked locally: pgTAP
 with the migrations up to this one (179 tests) and the Linux harness (14
 tests, including a live map test).
+
+**2026-09-26 17:20 UTC, phase 6 (map) done.** Supabase checks
+[36257493090](https://github.com/trawngson/aware/actions/runs/36257493090) and
+iOS render check [36257496516](https://github.com/trawngson/aware/actions/runs/36257496516),
+both success. Compared with `liquid-glass-redesign`: 17 of 20 screens
+pixel-identical; the others are the scan video, map tiles and 0.13% on the
+dark leaderboard (a screen this phase doesn't touch; below the level the
+comparison maps).
+
+**2026-09-26 17:12 UTC, PR description fixed.** The tool that opened the
+draft PR had appended a footer naming the coding assistant to its
+description, against rule 1. It is removed; the PR has no comments. Later PR
+updates are checked the same way.
+
+**2026-09-26 17:22 UTC, phase 7 (admin page) pushed.** A static page in
+`admin/` (plain HTML, CSS and JavaScript, no build step) using supabase-js
+2.117.2 from jsDelivr, pinned with a subresource-integrity hash. Admins sign
+in with email and password; everyone else sees "This account isn't an admin."
+It shows counts (people, guests, scans and points today, posts, open
+reports), the settings (samples switch, daily cap, report threshold), the
+report queue (hide, restore, remove, "looks fine", ban the author), the
+latest posts (hide, restore, remove), a people search
+with ban/unban and the banned list, and announcements. User content is only
+ever inserted as text. `admin/config.js` is committed empty; the page asks to
+be set up until it is filled in. Migration `20260926200000_admin.sql` adds
+`announcements` (admins write, signed-in users read) and `admin_counts()`;
+pgTAP `admin` (9 tests). The Supabase checks workflow now also runs 7
+Playwright tests against the same local stack (`admin/tests`, npm packages
+pinned by `package-lock.json`): setup screen, non-admin refused, settings
+saved, report queue, hide/remove, ban/unban, announcement, and a script-in-a-
+post test. All 7 pass locally.
 
 ### Decisions made during the run
 
@@ -447,3 +478,14 @@ tests, including a live map test).
 22. **Local runs use Docker Hub images.** This session can't download from the
    default image host (public.ecr.aws), so local Supabase runs with
    `SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io`. CI is unchanged.
+23. **A post goes on the map only when its author turns on "On the map"**
+    (off by default, shown only with a backend). Distances and "nearby"
+    counts are measured from Hoan Kiem Lake until the user taps the locate
+    button; the phone's own location is never sent to the server.
+24. **Admins sign in with email and password.** The owner creates the admin
+    account in the Supabase dashboard (see `supabase/README.md`), so no email
+    sending has to be set up. Anonymous (guest) accounts can never be admins.
+25. **The admin page's tests can swap in a local supabase-js.** This session
+    can't reach jsDelivr, so locally the tests serve the same pinned version
+    from `node_modules` (`SUPABASE_JS_PATH`); CI loads it from the CDN with
+    the integrity hash, like the real page.
