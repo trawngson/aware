@@ -9,7 +9,7 @@ struct WasteInsightsView: View {
     }
 
     var body: some View {
-        ScrollView {
+        TabScrollView {
             VStack(spacing: 16) {
                 InsightHeroCard(systemImage: "trash.fill", title: "Total waste saved", value: 6_700, unit: "g",
                                 trendIcon: "arrow.up.right", trend: "+12% from last week")

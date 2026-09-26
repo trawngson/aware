@@ -7,7 +7,7 @@ struct HomeTabView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
+            TabScrollView {
                 VStack(spacing: 14) {
                     if #available(iOS 26, *) {
                         // Liquid Glass systems: the system glass button swells and stretches toward

@@ -35,7 +35,7 @@ struct ScanResultsView: View {
 
     var body: some View {
         let policy = policy
-        ScrollView {
+        TabScrollView {
             VStack(spacing: 14) {
                 Color.clear.frame(height: 180)
 

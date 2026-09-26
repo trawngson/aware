@@ -16,7 +16,7 @@ struct CO2InsightsView: View {
     ]
 
     var body: some View {
-        ScrollView {
+        TabScrollView {
             VStack(spacing: 16) {
                 InsightHeroCard(systemImage: "cloud.fill", title: "CO₂ emissions saved", value: 1_250, unit: "kg",
                                 trendIcon: "arrow.down.right", trend: "−9% emissions vs. average")

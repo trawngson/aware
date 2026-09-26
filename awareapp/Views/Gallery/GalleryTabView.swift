@@ -7,7 +7,7 @@ struct GalleryTabView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
+            TabScrollView {
                 LazyVStack(spacing: 14) {
                     composerRow
 

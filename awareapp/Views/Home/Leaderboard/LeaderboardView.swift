@@ -12,7 +12,7 @@ struct LeaderboardView: View {
     private var ranking: [(member: CommunityMember, points: Int)] { Community.ranking }
 
     var body: some View {
-        ScrollView {
+        TabScrollView {
             VStack(spacing: 18) {
                 if ranking.count >= 3 {
                     podium

@@ -25,7 +25,7 @@ struct PostThreadView: View {
 
     private func thread(_ post: GalleryPost) -> some View {
         ScrollViewReader { proxy in
-        ScrollView {
+        TabScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 postCard(post)
 

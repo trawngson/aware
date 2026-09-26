@@ -136,7 +136,7 @@ struct RecyclingGuidanceInfoView: View {
     private let groups: [DisposalGroup] = [.recyclable, .foodWaste, .other, .hazardous]
 
     var body: some View {
-        ScrollView {
+        TabScrollView {
             VStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 6) {
                     Label(RecyclingPolicy.jurisdiction, systemImage: "mappin")
