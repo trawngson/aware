@@ -249,19 +249,65 @@ struct RemotePost: Codable, Equatable, Sendable, Identifiable {
     static let columns = "id, title, body, material, image_path, like_count, reply_count, save_count, hidden_at, created_at, author:profiles!author_id(\(PostAuthor.columns))"
 }
 
-/// What the composer sends for a new post.
+/// What the composer sends for a new post. The location is rounded to about
+/// 500 m by the database.
 struct PostDraft: Encodable, Equatable, Sendable {
     var title: String?
     var body: String
     var material: String?
     var imagePath: String?
+    var latitude: Double?
+    var longitude: Double?
 
     enum CodingKeys: String, CodingKey {
         case title
         case body
         case material
         case imagePath = "image_path"
+        case latitude
+        case longitude
     }
+}
+
+/// A post on the recycling map (`map_posts()`).
+struct MapPost: Codable, Equatable, Sendable, Identifiable {
+    let id: UUID
+    let title: String?
+    let body: String
+    let material: String?
+    let imagePath: String?
+    let latitude: Double
+    let longitude: Double
+    let createdAt: Date
+    let authorID: UUID
+    let authorName: String
+    let authorInitials: String
+    let authorTop: Int
+    let authorBottom: Int
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case body
+        case material
+        case imagePath = "image_path"
+        case latitude
+        case longitude
+        case createdAt = "created_at"
+        case authorID = "author_id"
+        case authorName = "author_name"
+        case authorInitials = "author_initials"
+        case authorTop = "author_top"
+        case authorBottom = "author_bottom"
+    }
+}
+
+/// A map area, in degrees.
+struct MapBounds: Equatable, Sendable {
+    var minLatitude: Double
+    var minLongitude: Double
+    var maxLatitude: Double
+    var maxLongitude: Double
 }
 
 /// Something a user can report.

@@ -15,6 +15,10 @@ struct PostCard: View {
         VStack(alignment: .leading, spacing: 14) {
             PostAuthorRow(post: post, avatarSize: 40)
 
+            if post.isHiddenForReview {
+                HiddenForReviewNote()
+            }
+
             Text(post.content)
                 .font(.system(size: 15))
                 .lineSpacing(3)
@@ -56,8 +60,8 @@ struct PostCard: View {
                     ForEach(post.replies.prefix(previewReplies)) { reply in
                         ReplyPreviewRow(reply: reply)
                     }
-                    if post.replies.count > previewReplies {
-                        Text("View all \(post.replies.count) replies")
+                    if post.comments > previewReplies {
+                        Text("View all \(post.comments) replies")
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(Theme.green)
                     }
@@ -81,7 +85,14 @@ struct PostAuthorRow: View {
     let post: GalleryPost
     var avatarSize: CGFloat = 40
 
+    @ObservedObject private var store = GalleryStore.shared
+    @State private var isReporting = false
+    @State private var isConfirmingBlock = false
+    @State private var isConfirmingDelete = false
+
     var body: some View {
+        let isMine = store.isMine(post.author)
+        let points = post.author.id == Community.current.id ? Community.myPoints : post.author.points
         HStack(spacing: 10) {
             MemberAvatar(member: post.author, size: avatarSize)
             VStack(alignment: .leading, spacing: 1) {
@@ -89,11 +100,16 @@ struct PostAuthorRow: View {
                     .font(.system(size: avatarSize > 40 ? 16 : 15, weight: .semibold))
                     .foregroundStyle(Theme.ink)
                 HStack(spacing: 4) {
-                    LeafAmount(value: post.author.id == Community.current.id ? Community.myPoints : post.author.points,
-                               size: 12, color: Theme.ink.opacity(0.55))
-                    Text("· \(post.time)")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Theme.ink.opacity(0.55))
+                    if points > 0 {
+                        LeafAmount(value: points, size: 12, color: Theme.ink.opacity(0.55))
+                        Text("· \(post.time)")
+                            .font(.system(size: 12))
+                            .foregroundStyle(Theme.ink.opacity(0.55))
+                    } else {
+                        Text(post.time)
+                            .font(.system(size: 12))
+                            .foregroundStyle(Theme.ink.opacity(0.55))
+                    }
                 }
             }
             Spacer(minLength: 0)
@@ -106,6 +122,24 @@ struct PostAuthorRow: View {
                 } label: {
                     Label("Copy Text", systemImage: "doc.on.doc")
                 }
+                if isMine {
+                    Button(role: .destructive) {
+                        isConfirmingDelete = true
+                    } label: {
+                        Label("Delete Post", systemImage: "trash")
+                    }
+                } else {
+                    Button {
+                        isReporting = true
+                    } label: {
+                        Label("Report Post", systemImage: "flag")
+                    }
+                    Button(role: .destructive) {
+                        isConfirmingBlock = true
+                    } label: {
+                        Label("Block \(post.author.shortName)", systemImage: "hand.raised")
+                    }
+                }
             } label: {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 16, weight: .semibold))
@@ -114,6 +148,45 @@ struct PostAuthorRow: View {
                     .contentShape(Rectangle())
             }
             .accessibilityLabel("More")
+        }
+        .reportDialog(isPresented: $isReporting) { reason in
+            Task { await store.report(postID: post.id, reason: reason) }
+        }
+        .confirmationDialog(Text("Block \(post.author.shortName)?"), isPresented: $isConfirmingBlock,
+                            titleVisibility: .visible) {
+            Button("Block", role: .destructive) {
+                Task { await store.block(post.author) }
+            }
+        } message: {
+            Text("You won't see their posts or replies anymore. You can unblock them in More.")
+        }
+        .confirmationDialog(Text("Delete this post?"), isPresented: $isConfirmingDelete, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) {
+                Task { await store.delete(post) }
+            }
+        } message: {
+            Text("It will be removed for everyone, with its photo and replies.")
+        }
+    }
+}
+
+/// Shown on the user's own post or reply while it is hidden after reports.
+struct HiddenForReviewNote: View {
+    var body: some View {
+        Label("Hidden while we take a look", systemImage: "eye.slash")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(Theme.orangeDeep)
+    }
+}
+
+extension View {
+    /// Asks why something is being reported, then calls `onReport` with the reason.
+    func reportDialog(isPresented: Binding<Bool>, onReport: @escaping (String) -> Void) -> some View {
+        confirmationDialog(Text("Why are you reporting this?"), isPresented: isPresented, titleVisibility: .visible) {
+            Button("It's mean or hurtful") { onReport("hurtful") }
+            Button("It's spam or an ad") { onReport("spam") }
+            Button("It shares someone's personal details") { onReport("personal_details") }
+            Button("Something else") { onReport("other") }
         }
     }
 }
@@ -131,6 +204,8 @@ struct PostImage: View {
                     Image(uiImage: image).resizable().scaledToFill()
                 } else if let name = post.attachmentAssetName {
                     Image(name).resizable().scaledToFill()
+                } else if let url = post.attachmentURL {
+                    RemotePhoto(url: url)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
@@ -201,4 +276,24 @@ struct ReplyPreviewRow: View {
             .padding()
     }
     .background(Theme.page)
+}
+
+/// A photo stored on the backend, with a quiet placeholder while it loads or
+/// when the phone is offline.
+struct RemotePhoto: View {
+    let url: URL
+
+    var body: some View {
+        AsyncImage(url: url) { phase in
+            if let image = phase.image {
+                image.resizable().scaledToFill()
+            } else if phase.error != nil {
+                Image(systemName: "photo")
+                    .font(.system(size: 28))
+                    .foregroundStyle(Theme.ink.opacity(0.25))
+            } else {
+                ProgressView()
+            }
+        }
+    }
 }

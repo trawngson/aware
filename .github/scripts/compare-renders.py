@@ -19,6 +19,10 @@ import subprocess
 import sys
 import tempfile
 
+# Screens that differ on every run anyway: the scan screen plays a video and
+# the map loads tiles. They get no map of changes.
+NOISY = ("scan", "recycling-map")
+
 GRID_COLUMNS = 12
 GRID_ROWS = 24
 PIXEL_THRESHOLD = 40  # a channel difference above this counts as changed
@@ -107,14 +111,18 @@ def main():
                 if percent is None:
                     lines.append(f"| {relative} | {note} |")
                     continue
-                lines.append(f"| {relative} | {percent:.2f}% |")
-                if percent > REPORT_MAP_ABOVE:
+                noisy = any(word in relative for word in NOISY)
+                lines.append(f"| {relative} | {percent:.2f}%{' (video or map tiles)' if noisy else ''} |")
+                if percent > REPORT_MAP_ABOVE and not noisy:
                     maps.append((relative, grid))
+    # The table comes last, so the end of the job log shows it.
+    head = []
     if maps:
-        lines += ["", "Where they changed ('#' a lot, 'o' a little):"]
+        head += ["Where screens changed ('#' a lot, 'o' a little):"]
         for relative, grid in maps:
-            lines += ["", f"{relative}", "```"] + grid + ["```"]
-    report = "\n".join(lines)
+            head += ["", f"{relative}", "```"] + grid + ["```"]
+        head += [""]
+    report = "\n".join(head + lines)
     print(report)
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:

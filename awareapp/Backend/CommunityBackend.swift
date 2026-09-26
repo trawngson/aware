@@ -61,6 +61,12 @@ protocol CommunityBackend: AnyObject, Sendable {
     func fetchBlockedUsers() async throws -> [PostAuthor]
     /// Where a stored photo can be downloaded.
     func imageURL(for path: String) -> URL?
+
+    // Map
+    /// Visible posts with a location inside `bounds`, newest first.
+    func fetchMapPosts(in bounds: MapBounds, material: String?) async throws -> [MapPost]
+    /// How many visible posts with a location are within `radius` meters.
+    func fetchNearbyCount(latitude: Double, longitude: Double, radius: Double, material: String?) async throws -> Int
 }
 
 /// The backend used when none is configured. Every call fails with
@@ -97,4 +103,10 @@ final class NoBackend: CommunityBackend {
     func unblock(_ userID: UUID) async throws { throw BackendError.notConfigured }
     func fetchBlockedUsers() async throws -> [PostAuthor] { throw BackendError.notConfigured }
     func imageURL(for path: String) -> URL? { nil }
+    func fetchMapPosts(in bounds: MapBounds, material: String?) async throws -> [MapPost] {
+        throw BackendError.notConfigured
+    }
+    func fetchNearbyCount(latitude: Double, longitude: Double, radius: Double, material: String?) async throws -> Int {
+        throw BackendError.notConfigured
+    }
 }

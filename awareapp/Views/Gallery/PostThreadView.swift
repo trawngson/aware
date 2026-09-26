@@ -6,9 +6,13 @@ struct PostThreadView: View {
     let postID: UUID
 
     @ObservedObject private var store = GalleryStore.shared
+    @ObservedObject private var session = AppSession.shared
+    @Environment(\.dismiss) private var dismiss
     @State private var replyText = ""
     @State private var photoItem: PhotosPickerItem?
     @State private var replyImage: UIImage?
+    @State private var isSending = false
+    @State private var isShowingTerms = false
     @FocusState private var isReplyFocused: Bool
 
     var body: some View {
@@ -21,6 +25,16 @@ struct PostThreadView: View {
         }
         .background { ForestBackdrop.feed }
         .forestNavigationBar("Post")
+        .task { await store.loadReplies(for: postID) }
+        // Deleted, or its author blocked: go back to the feed.
+        .onChange(of: store.post(id: postID) == nil) { _, isGone in
+            if isGone { dismiss() }
+        }
+        .sheet(isPresented: $isShowingTerms) {
+            CommunityTermsSheet {
+                if let post = store.post(id: postID) { send(post) }
+            }
+        }
     }
 
     private func thread(_ post: GalleryPost) -> some View {
@@ -34,7 +48,7 @@ struct PostThreadView: View {
                         SectionLabel(title: "^[\(post.replies.count) reply](inflect: true)")
                         VStack(spacing: 10) {
                             ForEach(post.replies) { reply in
-                                ReplyBubble(reply: reply)
+                                ReplyBubble(reply: reply, postID: post.id)
                                     .id(reply.id)
                             }
                         }
@@ -66,6 +80,9 @@ struct PostThreadView: View {
     private func postCard(_ post: GalleryPost) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             PostAuthorRow(post: post, avatarSize: 44)
+            if post.isHiddenForReview {
+                HiddenForReviewNote()
+            }
             Text(post.content)
                 .font(.system(size: 15))
                 .lineSpacing(4)
@@ -117,7 +134,7 @@ struct PostThreadView: View {
     // MARK: - Reply bar
 
     private var canSend: Bool {
-        !replyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || replyImage != nil
+        !isSending && (!replyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || replyImage != nil)
     }
 
     private func replyBar(_ post: GalleryPost) -> some View {
@@ -154,7 +171,9 @@ struct PostThreadView: View {
                         .tint(Theme.green)
                         .focused($isReplyFocused)
                         .environment(\.colorScheme, .light)
-                    if canSend {
+                    if isSending {
+                        ProgressView()
+                    } else if canSend {
                         Button { send(post) } label: {
                             Image(systemName: "arrow.up.circle.fill")
                                 .font(.system(size: 24))
@@ -195,21 +214,71 @@ struct PostThreadView: View {
     }
 
     private func send(_ post: GalleryPost) {
-        let text = replyText.trimmingCharacters(in: .whitespacesAndNewlines)
-        withAnimation(.snappy) {
-            store.addReply(to: post.id, content: text, image: replyImage)
+        // Replies to real posts are public, so the terms come first.
+        if post.remote != nil && !session.hasAcceptedTerms {
+            isShowingTerms = true
+            return
         }
-        replyText = ""
-        replyImage = nil
-        photoItem = nil
-        isReplyFocused = false
+        let text = replyText.trimmingCharacters(in: .whitespacesAndNewlines)
+        isSending = true
+        Task {
+            let sent = await store.reply(to: post.id, content: text, image: replyImage)
+            isSending = false
+            guard sent else { return }
+            withAnimation(.snappy) {
+                replyText = ""
+                replyImage = nil
+                photoItem = nil
+            }
+            isReplyFocused = false
+        }
     }
 }
 
 private struct ReplyBubble: View {
     let reply: GalleryReply
+    let postID: UUID
+
+    @ObservedObject private var store = GalleryStore.shared
+    @State private var isReporting = false
+    @State private var isConfirmingBlock = false
 
     var body: some View {
+        bubble
+            .contextMenu {
+                if store.isMine(reply.author) {
+                    Button(role: .destructive) {
+                        Task { await store.delete(reply, in: postID) }
+                    } label: {
+                        Label("Delete Reply", systemImage: "trash")
+                    }
+                } else {
+                    Button {
+                        isReporting = true
+                    } label: {
+                        Label("Report Reply", systemImage: "flag")
+                    }
+                    Button(role: .destructive) {
+                        isConfirmingBlock = true
+                    } label: {
+                        Label("Block \(reply.author.shortName)", systemImage: "hand.raised")
+                    }
+                }
+            }
+            .reportDialog(isPresented: $isReporting) { reason in
+                Task { await store.report(replyID: reply.id, reason: reason) }
+            }
+            .confirmationDialog(Text("Block \(reply.author.shortName)?"), isPresented: $isConfirmingBlock,
+                                titleVisibility: .visible) {
+                Button("Block", role: .destructive) {
+                    Task { await store.block(reply.author) }
+                }
+            } message: {
+                Text("You won't see their posts or replies anymore. You can unblock them in More.")
+            }
+    }
+
+    private var bubble: some View {
         HStack(alignment: .top, spacing: 10) {
             MemberAvatar(member: reply.author, size: 30)
             VStack(alignment: .leading, spacing: 3) {
@@ -228,11 +297,19 @@ private struct ReplyBubble: View {
                         .foregroundStyle(Theme.ink)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+                if reply.isHiddenForReview {
+                    HiddenForReviewNote()
+                }
                 if let image = reply.image {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
                         .frame(maxWidth: 180, maxHeight: 180)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .padding(.top, 4)
+                } else if let url = reply.imageURL {
+                    RemotePhoto(url: url)
+                        .frame(width: 180, height: 180)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .padding(.top, 4)
                 }

@@ -309,7 +309,13 @@ sync, stats, policy) compile on Linux against supabase-swift 2.55.2 and pass
 rename, awards, sync, history restore, leaderboard, offline). The SwiftUI and
 SwiftData parts can only be compiled by the render check.
 
-**2026-09-26 16:45 UTC, phase 4 (leaderboard) pushed.** Migration
+**2026-09-26 16:45 UTC, phase 4 (leaderboard) done.** Supabase checks
+[36255370503](https://github.com/trawngson/aware/actions/runs/36255370503) and
+iOS render check [36255373256](https://github.com/trawngson/aware/actions/runs/36255373256),
+both success. The new comparison with `liquid-glass-redesign` (run
+36248867850): 16 of 20 screens are pixel-identical; the others differ only
+where every run differs (the scan screen's video, map tiles, the keyboard's
+suggestion bar on New Post). Migration
 `20260926170000_community_stats.sql` adds `community_stats()` (people with
 points and recycled items per label, banned users left out; pgTAP
 `community_stats`). In the app, `LeaderboardStore` fetches this month's and
@@ -319,6 +325,22 @@ are on, the sample people. The leaderboard gets a This Month / All Time
 switch, shown only with a backend. Home's impact card adds the real community
 to the sample totals. The backend layer also gains the Gallery calls for the
 next phase (tested live in the Linux harness, not used by the app yet).
+
+**2026-09-26 17:00 UTC, phase 5 (Gallery) pushed.** Migration
+`20260926180000_gallery.sql`: `posts`, `replies`, `likes`, `saves`, `reports`,
+`blocks`, counts kept by triggers, auto-hide after `report_threshold` distinct
+reports, an English/Vietnamese word filter (posts, replies and names), bans,
+`accept_terms()`, admin tools (`admin_moderate`, `admin_set_banned`,
+`admin_dismiss_reports`, `admin_report_queue`) and the `post-images` bucket
+(images only, 5 MB, uploads only into the user's own folder). pgTAP:
+`gallery`, `moderation`, `storage`. In the app: `GalleryStore` shows real
+posts (newest first, cached with SwiftData for offline use) followed by the
+samples while they show; posting and replying upload photos and ask for the
+community terms first; the post menu reports, blocks or deletes; replies can
+be reported, blocked or deleted with a long press; More gets Community
+guidelines and Blocked people (only with a backend). The Linux harness runs
+the whole flow against local Supabase (terms, upload, like, save, reply,
+word filter, report, block, delete with photos).
 
 ### Decisions made during the run
 
@@ -376,6 +398,26 @@ next phase (tested live in the Linux harness, not used by the app yet).
     reports; it never fails the job.
 14. **The leaderboard's All Time view uses the samples' points too.** Sample
     people have one number, used for both periods.
-15. **Local runs use Docker Hub images.** This session can't download from the
+15. **Photos are public by URL.** The `post-images` bucket is public, so the
+    app shows photos without signed URLs. Paths are random, but a hidden
+    post's photo stays reachable by its URL until it is removed.
+16. **Photos are deleted through the Storage API, not by the database.** This
+    Supabase version blocks deleting files from SQL. The app deletes a post's
+    photos (its own and its replies') when the author deletes it, the admin
+    page deletes the photo when an admin removes a post, and `delete-account`
+    removes a user's folder.
+17. **Liking needs no terms.** Only posting and replying ask for the community
+    terms; banned users still can't like.
+18. **Real posts come first, then the samples**, rather than mixing them by
+    date (the samples have fixed ages like "2d").
+19. **"Add to Gallery" on a scan result opens the composer** with the photo
+    and text filled in when there is a backend, instead of posting publicly
+    straight away. Without a backend it adds the post at once, as before.
+20. **Reporting or blocking sample content only hides it on the phone**
+    (samples aren't on the server).
+21. **Admin "Remove" keeps the row.** It marks the post or reply removed,
+    closes its reports and deletes its photo; authors deleting their own post
+    delete the row.
+22. **Local runs use Docker Hub images.** This session can't download from the
    default image host (public.ecr.aws), so local Supabase runs with
    `SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io`. CI is unchanged.

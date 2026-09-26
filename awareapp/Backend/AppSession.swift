@@ -134,6 +134,16 @@ final class AppSession: ObservableObject {
         apply(profile)
     }
 
+    /// Whether the user accepted the community terms (needed to post or reply).
+    var hasAcceptedTerms: Bool { profile?.hasAcceptedTerms ?? false }
+
+    /// Records that the user accepted the community terms.
+    func acceptTerms() async throws {
+        _ = try await backend.acceptTerms()
+        let profile = try await backend.fetchMyProfile()
+        apply(profile)
+    }
+
     // MARK: - Cache
 
     private func apply(_ settings: RemoteSettings) {

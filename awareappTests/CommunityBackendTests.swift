@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+import UIKit
 @testable import awareapp
 
 struct BackendConfigTests {
@@ -138,5 +139,37 @@ struct PersonalStatsTests {
         #expect(abs(stats.wasteGrams - 573) < 0.001)
         #expect(abs(stats.co2Grams - (12 + 131 + 115.5 + 732)) < 0.001)
         #expect(stats.recent.map(\.label) == ["plastic_bottle", "metal_can", "plastic_bag"])
+    }
+}
+
+@MainActor
+struct GalleryTests {
+
+    @Test func failuresGetFriendlyMessages() {
+        #expect(GalleryMessage.failure(BackendError.unreachable).title == String(localized: "You're offline"))
+        #expect(GalleryMessage.failure(BackendError.contentNotAllowed).title == String(localized: "Let's keep it friendly"))
+        #expect(GalleryMessage.failure(BackendError.rejected("banned")).title == String(localized: "That didn't work"))
+        #expect(GalleryMessage.failure(URLError(.badServerResponse)).title == String(localized: "Something went wrong"))
+    }
+
+    @Test func photosAreShrunkForUpload() throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let big = UIGraphicsImageRenderer(size: CGSize(width: 4_000, height: 3_000), format: format).image { context in
+            UIColor.systemGreen.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 4_000, height: 3_000))
+        }
+        let jpeg = try #require(ImageUpload.jpeg(from: big))
+        let decoded = try #require(UIImage(data: jpeg))
+        #expect(max(decoded.size.width, decoded.size.height) <= ImageUpload.maxDimension)
+        #expect(jpeg.count <= ImageUpload.maxBytes)
+    }
+
+    @Test func postAges() {
+        let now = Date()
+        #expect(GalleryStore.age(of: now.addingTimeInterval(-20), now: now) == String(localized: "Just now"))
+        #expect(GalleryStore.age(of: now.addingTimeInterval(-5 * 60), now: now) == "5m")
+        #expect(GalleryStore.age(of: now.addingTimeInterval(-3 * 3_600), now: now) == "3h")
+        #expect(GalleryStore.age(of: now.addingTimeInterval(-2 * 86_400), now: now) == "2d")
     }
 }

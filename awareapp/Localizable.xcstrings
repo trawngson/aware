@@ -136,6 +136,108 @@
         }
       }
     },
+    "Be kind. No bullying, hate or harassment.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Be kind. No bullying, hate or harassment."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy tử tế. Không bắt nạt, thù ghét hay quấy rối."
+          }
+        }
+      }
+    },
+    "Before you post": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Before you post"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trước khi đăng bài"
+          }
+        }
+      }
+    },
+    "Block": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Block"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chặn"
+          }
+        }
+      }
+    },
+    "Block %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Block %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chặn %@"
+          }
+        }
+      }
+    },
+    "Block %@?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Block %@?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chặn %@?"
+          }
+        }
+      }
+    },
+    "Blocked people": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blocked people"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Người đã chặn"
+          }
+        }
+      }
+    },
     "Bottles that held pesticides, strong chemicals, or motor oil are hazardous waste, not recyclables.": {
       "extractionState": "manual",
       "localizations": {
@@ -213,6 +315,74 @@
         }
       }
     },
+    "Community": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Community"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cộng đồng"
+          }
+        }
+      }
+    },
+    "Community guidelines": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Community guidelines"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nguyên tắc cộng đồng"
+          }
+        }
+      }
+    },
+    "Copy Text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy Text"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sao chép nội dung"
+          }
+        }
+      }
+    },
+    "Couldn't load this list. Check your connection and try again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load this list. Check your connection and try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tải được danh sách. Hãy kiểm tra kết nối rồi thử lại."
+          }
+        }
+      }
+    },
     "Day streak": {
       "extractionState": "manual",
       "localizations": {
@@ -226,6 +396,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chuỗi ngày"
+          }
+        }
+      }
+    },
+    "Delete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xóa"
+          }
+        }
+      }
+    },
+    "Delete Post": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Post"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xóa bài đăng"
+          }
+        }
+      }
+    },
+    "Delete Reply": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Reply"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xóa bình luận"
+          }
+        }
+      }
+    },
+    "Delete this post?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this post?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xóa bài đăng này?"
           }
         }
       }
@@ -439,6 +677,23 @@
         }
       }
     },
+    "Hidden while we take a look": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden while we take a look"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tạm ẩn để chúng mình xem xét"
+          }
+        }
+      }
+    },
     "How to sort it": {
       "extractionState": "manual",
       "localizations": {
@@ -446,6 +701,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cách phân loại"
+          }
+        }
+      }
+    },
+    "I agree": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I agree"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mình đồng ý"
           }
         }
       }
@@ -472,6 +744,23 @@
         }
       }
     },
+    "If something isn't right": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If something isn't right"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nếu có điều gì không ổn"
+          }
+        }
+      }
+    },
     "Is the cardboard clean and dry?": {
       "extractionState": "manual",
       "localizations": {
@@ -479,6 +768,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bìa các-tông có sạch và khô không?"
+          }
+        }
+      }
+    },
+    "It shares someone's personal details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It shares someone's personal details"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiết lộ thông tin cá nhân của người khác"
+          }
+        }
+      }
+    },
+    "It will be removed for everyone, with its photo and replies.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It will be removed for everyone, with its photo and replies."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bài đăng sẽ bị xóa với mọi người, cùng ảnh và các bình luận."
+          }
+        }
+      }
+    },
+    "It's mean or hurtful": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's mean or hurtful"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nội dung ác ý hoặc gây tổn thương"
+          }
+        }
+      }
+    },
+    "It's spam or an ad": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's spam or an ad"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spam hoặc quảng cáo"
           }
         }
       }
@@ -496,6 +853,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Món đã tái chế"
+          }
+        }
+      }
+    },
+    "Just now": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Just now"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vừa xong"
+          }
+        }
+      }
+    },
+    "Keep it about recycling, upcycling and caring for the planet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep it about recycling, upcycling and caring for the planet."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy chia sẻ về tái chế, tái sử dụng và bảo vệ môi trường."
           }
         }
       }
@@ -606,6 +997,23 @@
         }
       }
     },
+    "Let's keep it friendly": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let's keep it friendly"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cùng giữ không khí thân thiện nhé"
+          }
+        }
+      }
+    },
     "Light bulbs are hazardous waste. Mirrors, window glass, and ceramics are not bottles or jars; ask your collector before recycling them.": {
       "extractionState": "manual",
       "localizations": {
@@ -661,6 +1069,23 @@
         }
       }
     },
+    "No ads or spam.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No ads or spam."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không quảng cáo hay spam."
+          }
+        }
+      }
+    },
     "No, greasy, wet, or food-stained": {
       "extractionState": "manual",
       "localizations": {
@@ -672,6 +1097,23 @@
         }
       }
     },
+    "Not now": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để sau"
+          }
+        }
+      }
+    },
     "Not sure what this is": {
       "extractionState": "manual",
       "localizations": {
@@ -679,6 +1121,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chưa rõ đây là gì"
+          }
+        }
+      }
+    },
+    "OK": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
           }
         }
       }
@@ -700,6 +1159,23 @@
         }
       }
     },
+    "Only share photos you took, and never anyone's personal details.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only share photos you took, and never anyone's personal details."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chỉ chia sẻ ảnh do bạn chụp, và không bao giờ đăng thông tin cá nhân của người khác."
+          }
+        }
+      }
+    },
     "Other waste": {
       "extractionState": "manual",
       "localizations": {
@@ -707,6 +1183,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chất thải khác"
+          }
+        }
+      }
+    },
+    "Our community is a friendly place to share what you made. Before your first post, please agree to a few simple rules:": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Our community is a friendly place to share what you made. Before your first post, please agree to a few simple rules:"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cộng đồng AWARE là nơi thân thiện để chia sẻ những gì bạn làm ra. Trước khi đăng bài đầu tiên, bạn hãy đồng ý với vài quy tắc đơn giản:"
           }
         }
       }
@@ -805,6 +1298,57 @@
         }
       }
     },
+    "Please try again in a moment.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please try again in a moment."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn thử lại sau ít phút nhé."
+          }
+        }
+      }
+    },
+    "Post not found": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Post not found"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tìm thấy bài đăng"
+          }
+        }
+      }
+    },
+    "Posts that break these rules get hidden, and people who keep breaking them can't post anymore.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posts that break these rules get hidden, and people who keep breaking them can't post anymore."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bài vi phạm sẽ bị ẩn, và ai vi phạm nhiều lần sẽ không thể đăng bài nữa."
+          }
+        }
+      }
+    },
     "Pour out any liquid left inside.": {
       "extractionState": "manual",
       "localizations": {
@@ -882,6 +1426,23 @@
         }
       }
     },
+    "Read the community guidelines": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read the community guidelines"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đọc nguyên tắc cộng đồng"
+          }
+        }
+      }
+    },
     "Recyclable": {
       "extractionState": "manual",
       "localizations": {
@@ -945,6 +1506,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gỡ băng dính nhựa, ô nhựa trong suốt và miếng xốp chèn. Xốp bỏ vào chất thải khác."
+          }
+        }
+      }
+    },
+    "Report Post": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report Post"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Báo cáo bài đăng"
+          }
+        }
+      }
+    },
+    "Report Reply": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report Reply"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Báo cáo bình luận"
           }
         }
       }
@@ -1017,6 +1612,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Xem ý tưởng tái chế"
+          }
+        }
+      }
+    },
+    "Share": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chia sẻ"
+          }
+        }
+      }
+    },
+    "Some words in there aren't allowed in the community. Please reword it and try again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Some words in there aren't allowed in the community. Please reword it and try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Có vài từ không được dùng trong cộng đồng. Bạn hãy viết lại rồi thử lần nữa nhé."
+          }
+        }
+      }
+    },
+    "Something else": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something else"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lý do khác"
+          }
+        }
+      }
+    },
+    "Something went wrong": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something went wrong"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã có lỗi xảy ra"
           }
         }
       }
@@ -1181,6 +1844,23 @@
         }
       }
     },
+    "Tap ••• on a post, or press and hold a reply, to report it or to block its author. When a few people report the same post, it's hidden until someone from AWARE looks at it. Blocked people's posts and replies disappear for you, and you can unblock them in More.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap ••• on a post, or press and hold a reply, to report it or to block its author. When a few people report the same post, it's hidden until someone from AWARE looks at it. Blocked people's posts and replies disappear for you, and you can unblock them in More."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chạm vào ••• trên một bài đăng, hoặc nhấn giữ một bình luận, để báo cáo hoặc chặn người viết. Khi vài người cùng báo cáo một bài, bài đó sẽ bị ẩn cho đến khi đội ngũ AWARE xem xét. Bài và bình luận của người bạn chặn sẽ biến mất với bạn, và bạn có thể bỏ chặn trong mục Thêm."
+          }
+        }
+      }
+    },
     "Tear off any clean, dry parts and recycle those separately.": {
       "extractionState": "manual",
       "localizations": {
@@ -1188,6 +1868,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Xé riêng những phần còn sạch và khô để tái chế."
+          }
+        }
+      }
+    },
+    "Thanks for telling us": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thanks for telling us"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cảm ơn bạn đã báo cho chúng mình"
+          }
+        }
+      }
+    },
+    "That didn't work": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That didn't work"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa thực hiện được"
           }
         }
       }
@@ -1226,6 +1940,23 @@
         }
       }
     },
+    "This needs an internet connection. Try again when you're back online.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This needs an internet connection. Try again when you're back online."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Việc này cần có kết nối internet. Hãy thử lại khi bạn có mạng nhé."
+          }
+        }
+      }
+    },
     "Tie several bags together into one bundle so they do not blow away.": {
       "extractionState": "manual",
       "localizations": {
@@ -1244,6 +1975,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Thử quét lại gần hơn một chút và ở nơi đủ sáng."
+          }
+        }
+      }
+    },
+    "Unblock": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unblock"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ chặn"
           }
         }
       }
@@ -1270,6 +2018,23 @@
         }
       }
     },
+    "We'll take a look. You won't see it here anymore.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We'll take a look. You won't see it here anymore."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chúng mình sẽ xem xét. Bạn sẽ không thấy nội dung này nữa."
+          }
+        }
+      }
+    },
     "What is the cup made of?": {
       "extractionState": "manual",
       "localizations": {
@@ -1292,6 +2057,23 @@
         }
       }
     },
+    "Why are you reporting this?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Why are you reporting this?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vì sao bạn báo cáo nội dung này?"
+          }
+        }
+      }
+    },
     "Yes, clean and dry": {
       "extractionState": "manual",
       "localizations": {
@@ -1299,6 +2081,91 @@
           "stringUnit": {
             "state": "translated",
             "value": "Có, sạch và khô"
+          }
+        }
+      }
+    },
+    "You haven't blocked anyone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You haven't blocked anyone."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn chưa chặn ai."
+          }
+        }
+      }
+    },
+    "You won't see their posts or replies anymore. You can unblock them in More.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You won't see their posts or replies anymore. You can unblock them in More."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn sẽ không thấy bài đăng và bình luận của họ nữa. Bạn có thể bỏ chặn trong mục Thêm."
+          }
+        }
+      }
+    },
+    "You're offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're offline"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đang ngoại tuyến"
+          }
+        }
+      }
+    },
+    "Your account can't do that right now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your account can't do that right now."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tài khoản của bạn hiện chưa thể làm việc này."
+          }
+        }
+      }
+    },
+    "Your posts show your display name, never your email or location. Photos you share can be seen by everyone using AWARE.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your posts show your display name, never your email or location. Photos you share can be seen by everyone using AWARE."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bài đăng của bạn chỉ hiện tên hiển thị, không bao giờ hiện email hay vị trí của bạn. Ảnh bạn chia sẻ thì mọi người dùng AWARE đều xem được."
           }
         }
       }

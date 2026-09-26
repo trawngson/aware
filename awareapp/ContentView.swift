@@ -15,6 +15,7 @@ enum AppTab: Int {
 
 struct ContentView: View {
     @ObservedObject private var navigationManager = NavigationManager.shared
+    @ObservedObject private var messages = MessageCenter.shared
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     /// The device's Light/Dark setting; the tabs below override it for their content.
     @Environment(\.colorScheme) private var deviceColorScheme
@@ -51,6 +52,14 @@ struct ContentView: View {
             if phase == .active {
                 Task { await AppSession.shared.refresh() }
             }
+        }
+        // Gallery results (thanks for reporting, offline, not allowed), from any tab.
+        .alert(messages.message?.title ?? "",
+               isPresented: Binding(get: { messages.message != nil }, set: { if !$0 { messages.message = nil } }),
+               presenting: messages.message) { _ in
+            Button("OK") {}
+        } message: { message in
+            Text(message.text)
         }
         .fullScreenCover(isPresented: Binding(
             get: { !hasSeenOnboarding },

@@ -342,6 +342,54 @@ final class SupabaseBackend: CommunityBackend, @unchecked Sendable {
         try? client.storage.from(Self.imageBucket).getPublicURL(path: path)
     }
 
+    // MARK: - Map
+
+    private struct MapParams: Encodable {
+        let minLatitude: Double
+        let minLongitude: Double
+        let maxLatitude: Double
+        let maxLongitude: Double
+        let material: String?
+        enum CodingKeys: String, CodingKey {
+            case minLatitude = "p_min_latitude"
+            case minLongitude = "p_min_longitude"
+            case maxLatitude = "p_max_latitude"
+            case maxLongitude = "p_max_longitude"
+            case material = "p_material"
+        }
+    }
+
+    func fetchMapPosts(in bounds: MapBounds, material: String?) async throws -> [MapPost] {
+        _ = try await ensureSession()
+        let params = MapParams(minLatitude: bounds.minLatitude, minLongitude: bounds.minLongitude,
+                               maxLatitude: bounds.maxLatitude, maxLongitude: bounds.maxLongitude,
+                               material: material)
+        return try await run {
+            try await client.rpc("map_posts", params: params).execute().value
+        }
+    }
+
+    private struct NearbyParams: Encodable {
+        let latitude: Double
+        let longitude: Double
+        let radius: Double
+        let material: String?
+        enum CodingKeys: String, CodingKey {
+            case latitude = "p_latitude"
+            case longitude = "p_longitude"
+            case radius = "p_radius_meters"
+            case material = "p_material"
+        }
+    }
+
+    func fetchNearbyCount(latitude: Double, longitude: Double, radius: Double, material: String?) async throws -> Int {
+        _ = try await ensureSession()
+        let params = NearbyParams(latitude: latitude, longitude: longitude, radius: radius, material: material)
+        return try await run {
+            try await client.rpc("nearby_count", params: params).execute().value
+        }
+    }
+
     // MARK: - Helpers
 
     private static let profileColumns =
@@ -358,6 +406,7 @@ final class SupabaseBackend: CommunityBackend, @unchecked Sendable {
     }
 
     /// Runs a request and turns its failure into a `BackendError`.
+    @discardableResult
     private func run<T>(_ body: () async throws -> T) async throws -> T {
         do {
             return try await body()

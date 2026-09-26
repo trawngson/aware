@@ -42,8 +42,9 @@ final class ScanRecord {
     }
 }
 
-/// The app's SwiftData store. Falls back to memory if the file can't be
-/// opened, so the app still runs (without keeping scans across launches).
+/// The app's SwiftData store: scans and cached community content. Falls back
+/// to memory if the file can't be opened, so the app still runs (without
+/// keeping anything across launches).
 @MainActor
 final class LocalStore {
     static let shared = LocalStore()
@@ -52,7 +53,7 @@ final class LocalStore {
     var context: ModelContext { container.mainContext }
 
     init(inMemory: Bool = false) {
-        let schema = Schema([ScanRecord.self])
+        let schema = Schema([ScanRecord.self, CachedContent.self])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)
         if let container = try? ModelContainer(for: schema, configurations: [configuration]) {
             self.container = container

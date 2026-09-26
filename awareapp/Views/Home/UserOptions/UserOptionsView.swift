@@ -43,6 +43,25 @@ struct UserOptionsView: View {
             }
             .listRowBackground(Color.white.opacity(0.74))
 
+            // Only with a backend: without one there is no community to moderate.
+            if session.isBackendConfigured {
+                Section {
+                    NavigationLink {
+                        CommunityGuidelinesView()
+                    } label: {
+                        row("Community guidelines", systemImage: "person.2.fill", tint: Theme.green)
+                    }
+                    NavigationLink {
+                        BlockedPeopleView()
+                    } label: {
+                        row("Blocked people", systemImage: "hand.raised.fill", tint: Theme.slate)
+                    }
+                } header: {
+                    sectionHeader("Community")
+                }
+                .listRowBackground(Color.white.opacity(0.74))
+            }
+
             Section {
                 Toggle(isOn: $notificationsEnabled) {
                     row("Notifications", systemImage: "bell.fill", tint: Theme.orangeDeep)
