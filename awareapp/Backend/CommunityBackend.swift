@@ -7,6 +7,8 @@ enum BackendError: Error, Equatable {
     case unreachable
     /// The server refused this request for good (bad input, not allowed).
     case rejected(String)
+    /// The text contains words the community filter doesn't allow.
+    case contentNotAllowed
     /// Anything else the server reported. Try again later.
     case server(String)
 }
@@ -34,6 +36,31 @@ protocol CommunityBackend: AnyObject, Sendable {
     func fetchMyScanEvents(limit: Int) async throws -> [RemoteScanEvent]
 
     func fetchLeaderboard(period: LeaderboardPeriod, limit: Int) async throws -> [LeaderboardRow]
+    func fetchCommunityStats() async throws -> CommunityStats
+
+    // Gallery
+    /// Visible posts, newest first, each with its first two replies.
+    func fetchFeed(before: Date?, limit: Int) async throws -> [RemotePost]
+    func fetchReplies(postID: UUID) async throws -> [RemoteReply]
+    /// The posts the user liked and saved.
+    func fetchMyReactions() async throws -> (liked: Set<UUID>, saved: Set<UUID>)
+    func setLiked(_ liked: Bool, postID: UUID) async throws
+    func setSaved(_ saved: Bool, postID: UUID) async throws
+    /// Records that the user accepted the community terms.
+    func acceptTerms() async throws -> Date
+    /// Uploads a JPEG into the user's folder and returns its storage path.
+    func uploadImage(_ jpeg: Data) async throws -> String
+    func createPost(_ draft: PostDraft) async throws -> RemotePost
+    func createReply(postID: UUID, body: String, imagePath: String?) async throws -> RemoteReply
+    /// Deletes the user's own post and its photos.
+    func deletePost(_ post: RemotePost) async throws
+    func deleteReply(_ reply: RemoteReply) async throws
+    func report(_ target: ReportTarget, reason: String?) async throws
+    func block(_ userID: UUID) async throws
+    func unblock(_ userID: UUID) async throws
+    func fetchBlockedUsers() async throws -> [PostAuthor]
+    /// Where a stored photo can be downloaded.
+    func imageURL(for path: String) -> URL?
 }
 
 /// The backend used when none is configured. Every call fails with
@@ -51,4 +78,23 @@ final class NoBackend: CommunityBackend {
     func fetchLeaderboard(period: LeaderboardPeriod, limit: Int) async throws -> [LeaderboardRow] {
         throw BackendError.notConfigured
     }
+    func fetchCommunityStats() async throws -> CommunityStats { throw BackendError.notConfigured }
+    func fetchFeed(before: Date?, limit: Int) async throws -> [RemotePost] { throw BackendError.notConfigured }
+    func fetchReplies(postID: UUID) async throws -> [RemoteReply] { throw BackendError.notConfigured }
+    func fetchMyReactions() async throws -> (liked: Set<UUID>, saved: Set<UUID>) { throw BackendError.notConfigured }
+    func setLiked(_ liked: Bool, postID: UUID) async throws { throw BackendError.notConfigured }
+    func setSaved(_ saved: Bool, postID: UUID) async throws { throw BackendError.notConfigured }
+    func acceptTerms() async throws -> Date { throw BackendError.notConfigured }
+    func uploadImage(_ jpeg: Data) async throws -> String { throw BackendError.notConfigured }
+    func createPost(_ draft: PostDraft) async throws -> RemotePost { throw BackendError.notConfigured }
+    func createReply(postID: UUID, body: String, imagePath: String?) async throws -> RemoteReply {
+        throw BackendError.notConfigured
+    }
+    func deletePost(_ post: RemotePost) async throws { throw BackendError.notConfigured }
+    func deleteReply(_ reply: RemoteReply) async throws { throw BackendError.notConfigured }
+    func report(_ target: ReportTarget, reason: String?) async throws { throw BackendError.notConfigured }
+    func block(_ userID: UUID) async throws { throw BackendError.notConfigured }
+    func unblock(_ userID: UUID) async throws { throw BackendError.notConfigured }
+    func fetchBlockedUsers() async throws -> [PostAuthor] { throw BackendError.notConfigured }
+    func imageURL(for path: String) -> URL? { nil }
 }

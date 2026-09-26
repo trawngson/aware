@@ -48,6 +48,8 @@ concurrency:
 
 permissions:
   contents: read
+  # To fetch the base branch's previews for the comparison step.
+  actions: read
 
 jobs:
   render:
@@ -121,3 +123,22 @@ jobs:
           name: render-previews
           path: ${{ runner.temp }}/render-previews
           if-no-files-found: warn
+
+      # Informational: how much each screen changed since the last green run on
+      # the pull request's base branch, with a rough map of where. The report is
+      # in the job log and summary, for reviewing without downloading images.
+      - name: Compare with the base branch
+        if: always() && github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          [ -d "$RUNNER_TEMP/render-previews" ] || { echo "No previews to compare."; exit 0; }
+          command -v gh >/dev/null || { echo "gh is not installed here."; exit 0; }
+          run_id=$(gh run list -R "$GITHUB_REPOSITORY" --workflow ios-render-check.yml --branch "$BASE_REF" \
+            --status success --limit 1 --json databaseId -q '.[0].databaseId')
+          [ -n "$run_id" ] || { echo "No green run on $BASE_REF to compare with."; exit 0; }
+          echo "Baseline: run $run_id on $BASE_REF"
+          gh run download "$run_id" -R "$GITHUB_REPOSITORY" -n render-previews -D "$RUNNER_TEMP/baseline-previews"
+          python3 .github/scripts/compare-renders.py "$RUNNER_TEMP/baseline-previews" "$RUNNER_TEMP/render-previews"

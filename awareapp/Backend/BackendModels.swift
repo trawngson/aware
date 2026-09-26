@@ -125,7 +125,7 @@ enum LeaderboardPeriod: String, Sendable {
 }
 
 /// One row of `leaderboard()`.
-struct LeaderboardRow: Decodable, Equatable, Sendable {
+struct LeaderboardRow: Codable, Equatable, Sendable {
     let rank: Int
     let userID: UUID
     let displayName: String
@@ -146,4 +146,127 @@ struct LeaderboardRow: Decodable, Equatable, Sendable {
         case points
         case isMe = "is_me"
     }
+}
+
+/// Community totals from `community_stats()`.
+struct CommunityStats: Codable, Equatable, Sendable {
+    /// People who have earned points (banned users left out).
+    let recyclers: Int
+    /// Recycled items that earned points, by canonical label.
+    let recycledByLabel: [String: Int]
+
+    enum CodingKeys: String, CodingKey {
+        case recyclers
+        case recycledByLabel = "recycled_by_label"
+    }
+
+    /// Estimated weight kept out of landfill, from typical item masses.
+    var recycledGrams: Double {
+        recycledByLabel.reduce(0) { total, entry in
+            guard let label = CanonicalLabel(rawValue: entry.key) else { return total }
+            return total + Double(entry.value) * PersonalStats.typicalMassGrams(for: label)
+        }
+    }
+}
+
+// MARK: - Gallery
+
+/// The public part of a post or reply author's profile.
+struct PostAuthor: Codable, Equatable, Sendable {
+    let id: UUID
+    let displayName: String
+    let avatarInitials: String
+    let avatarTop: Int
+    let avatarBottom: Int
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case displayName = "display_name"
+        case avatarInitials = "avatar_initials"
+        case avatarTop = "avatar_top"
+        case avatarBottom = "avatar_bottom"
+    }
+
+    static let columns = "id, display_name, avatar_initials, avatar_top, avatar_bottom"
+}
+
+/// A reply (`replies`), with its author.
+struct RemoteReply: Codable, Equatable, Sendable, Identifiable {
+    let id: UUID
+    let postID: UUID
+    let body: String
+    let imagePath: String?
+    /// Set while it is hidden for review (only its author sees it then).
+    let hiddenAt: Date?
+    let createdAt: Date
+    let author: PostAuthor
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case postID = "post_id"
+        case body
+        case imagePath = "image_path"
+        case hiddenAt = "hidden_at"
+        case createdAt = "created_at"
+        case author
+    }
+
+    static let columns = "id, post_id, body, image_path, hidden_at, created_at, author:profiles!author_id(\(PostAuthor.columns))"
+}
+
+/// A post (`posts`), with its author, counts and, from the feed, its first
+/// replies.
+struct RemotePost: Codable, Equatable, Sendable, Identifiable {
+    let id: UUID
+    let title: String?
+    let body: String
+    /// "plastic", "paper", "glass" or "metal".
+    let material: String?
+    let imagePath: String?
+    var likeCount: Int
+    var replyCount: Int
+    var saveCount: Int
+    let hiddenAt: Date?
+    let createdAt: Date
+    let author: PostAuthor
+    var replies: [RemoteReply]?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case body
+        case material
+        case imagePath = "image_path"
+        case likeCount = "like_count"
+        case replyCount = "reply_count"
+        case saveCount = "save_count"
+        case hiddenAt = "hidden_at"
+        case createdAt = "created_at"
+        case author
+        case replies
+    }
+
+    static let columns = "id, title, body, material, image_path, like_count, reply_count, save_count, hidden_at, created_at, author:profiles!author_id(\(PostAuthor.columns))"
+}
+
+/// What the composer sends for a new post.
+struct PostDraft: Encodable, Equatable, Sendable {
+    var title: String?
+    var body: String
+    var material: String?
+    var imagePath: String?
+
+    enum CodingKeys: String, CodingKey {
+        case title
+        case body
+        case material
+        case imagePath = "image_path"
+    }
+}
+
+/// Something a user can report.
+enum ReportTarget: Equatable, Sendable {
+    case post(UUID)
+    case reply(UUID)
+    case user(UUID)
 }

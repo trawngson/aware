@@ -277,8 +277,14 @@ if any public table lacks RLS or the anon role can write anywhere (88 tests).
 CI: Supabase checks [36252982560](https://github.com/trawngson/aware/actions/runs/36252982560),
 success.
 
-**2026-09-26 16:30 UTC, phase 3 (iOS foundation) pushed, waiting for the
-render check.** New in the app:
+**2026-09-26 16:30 UTC, phase 3 (iOS foundation) done.** iOS render check
+[36254249515](https://github.com/trawngson/aware/actions/runs/36254249515),
+success: build 325 s (first build with supabase-swift), unit tests 63 s, 10
+screenshots in each appearance. The screenshots couldn't be looked at here:
+this session's network blocks the artifact download host, so the next push
+adds a CI step that compares each screen with the last green run on
+`liquid-glass-redesign` and prints the differences in the job log. New in the
+app:
 - `Backend/`: `BackendConfig` (reads `BackendConfig.plist`, committed empty;
   `-AWAREBackendDisabled YES` ignores it), the `CommunityBackend` protocol with
   `SupabaseBackend` (supabase-swift 2.55.2, exact) and `NoBackend`,
@@ -302,6 +308,17 @@ sync, stats, policy) compile on Linux against supabase-swift 2.55.2 and pass
 11 tests there, 4 of them against a local Supabase stack (guest session reuse,
 rename, awards, sync, history restore, leaderboard, offline). The SwiftUI and
 SwiftData parts can only be compiled by the render check.
+
+**2026-09-26 16:45 UTC, phase 4 (leaderboard) pushed.** Migration
+`20260926170000_community_stats.sql` adds `community_stats()` (people with
+points and recycled items per label, banned users left out; pgTAP
+`community_stats`). In the app, `LeaderboardStore` fetches this month's and
+all-time rankings and the community totals (cached for offline use), and
+`Community.standings(for:)` merges the user, real people and, while samples
+are on, the sample people. The leaderboard gets a This Month / All Time
+switch, shown only with a backend. Home's impact card adds the real community
+to the sample totals. The backend layer also gains the Gallery calls for the
+next phase (tested live in the Linux harness, not used by the app yet).
 
 ### Decisions made during the run
 
@@ -352,6 +369,13 @@ SwiftData parts can only be compiled by the render check.
 12. **The render tour always runs without a backend**
     (`-AWAREBackendDisabled YES`), so CI never creates guest accounts on the
     real project once the owner fills in `BackendConfig.plist`.
-13. **Local runs use Docker Hub images.** This session can't download from the
+13. **Screens are checked by a pixel comparison in CI.** Artifact downloads
+    are blocked here, so the render check now compares each preview with the
+    last green run on the PR's base branch and prints how much changed, with a
+    rough map of where (`.github/scripts/compare-renders.py`). It only
+    reports; it never fails the job.
+14. **The leaderboard's All Time view uses the samples' points too.** Sample
+    people have one number, used for both periods.
+15. **Local runs use Docker Hub images.** This session can't download from the
    default image host (public.ecr.aws), so local Supabase runs with
    `SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io`. CI is unchanged.

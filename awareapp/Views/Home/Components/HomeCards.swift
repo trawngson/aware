@@ -379,6 +379,21 @@ struct RecentActivityCard: View {
 struct CommunityImpactCard: View {
     var stats: PersonalStats? = nil
     @ObservedObject private var ledger = RewardLedger.shared
+    @ObservedObject private var session = AppSession.shared
+    @ObservedObject private var store = LeaderboardStore.shared
+
+    /// The sample community's totals while samples show, plus the real one's.
+    private var communityLine: Text {
+        let real = store.communityStats
+        let recyclers = (session.showSamples ? 1_247 : 0) + (real?.recyclers ?? 0)
+        let grams = real?.recycledGrams ?? 0
+        if session.showSamples || grams >= 1_000_000 {
+            let tons = (session.showSamples ? 2.4 : 0) + grams / 1_000_000
+            return Text("\(AwareFormat.grouped(recyclers)) recyclers · \(tons.formatted(.number.precision(.fractionLength(0...1)))) tons together")
+        }
+        let kilograms = (grams / 1_000).formatted(.number.precision(.fractionLength(0...1)))
+        return Text("\(AwareFormat.grouped(recyclers)) recyclers · \(kilograms) kg together")
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -401,7 +416,7 @@ struct CommunityImpactCard: View {
                             .overlay(Circle().strokeBorder(.white.opacity(0.85), lineWidth: 1.5))
                     }
                 }
-                Text("\(AwareFormat.grouped(1_247)) recyclers · \(2.4.formatted()) tons together")
+                communityLine
                     .font(.system(size: 13))
                     .foregroundStyle(.white.opacity(0.88))
                     .lineLimit(1)

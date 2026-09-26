@@ -71,13 +71,33 @@ enum Community {
     @MainActor
     static var myPoints: Int { MyStats.current?.points ?? me.points }
 
-    /// Everyone this month, highest first, with the current user's live total.
+    /// The user's points for a leaderboard period: their own this month (or
+    /// all time), or the demo's points while the sample numbers show.
     @MainActor
-    static var ranking: [(member: CommunityMember, points: Int)] {
-        ([(current, myPoints)] + others.map { ($0, $0.points) })
-            .sorted { $0.1 > $1.1 }
-            .map { (member: $0.0, points: $0.1) }
+    static func periodPoints(for period: LeaderboardPeriod) -> Int {
+        guard let stats = MyStats.current else { return me.points }
+        return period == .month ? stats.thisMonth.points : stats.points
     }
+
+    /// Everyone on the leaderboard, highest first: the user with their live
+    /// total, real people from the backend and, while samples are on, the
+    /// sample people.
+    @MainActor
+    static func standings(for period: LeaderboardPeriod) -> [(member: CommunityMember, points: Int)] {
+        let user = current
+        var entries = [(member: user, points: periodPoints(for: period))]
+        if AppSession.shared.showSamples {
+            entries += others.map { (member: $0, points: $0.points) }
+        }
+        entries += LeaderboardStore.shared.rows(for: period)
+            .filter { !$0.isMe && $0.userID.uuidString.lowercased() != user.id }
+            .map { (member: CommunityMember(row: $0), points: $0.points) }
+        return entries.sorted { $0.points > $1.points }
+    }
+
+    /// This month's standings.
+    @MainActor
+    static var ranking: [(member: CommunityMember, points: Int)] { standings(for: .month) }
 
     @MainActor
     static var myRank: Int {

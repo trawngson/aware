@@ -8,17 +8,31 @@ import SwiftUI
 
 struct LeaderboardView: View {
     @ObservedObject private var ledger = RewardLedger.shared
+    @ObservedObject private var session = AppSession.shared
+    @ObservedObject private var store = LeaderboardStore.shared
+    @State private var period: LeaderboardPeriod = .month
 
-    private var ranking: [(member: CommunityMember, points: Int)] { Community.ranking }
+    private var ranking: [(member: CommunityMember, points: Int)] { Community.standings(for: period) }
 
     var body: some View {
+        let ranking = self.ranking
         TabScrollView {
             VStack(spacing: 18) {
+                // All-time rankings exist only on the server.
+                if session.isBackendConfigured {
+                    Picker("Period", selection: $period.animation(.snappy)) {
+                        Text("This Month").tag(LeaderboardPeriod.month)
+                        Text("All Time").tag(LeaderboardPeriod.all)
+                    }
+                    .pickerStyle(.segmented)
+                    .environment(\.colorScheme, .light)
+                }
                 if ranking.count >= 3 {
-                    podium
+                    podium(ranking)
                 }
                 VStack(spacing: 8) {
-                    ForEach(Array(ranking.enumerated().dropFirst(3)), id: \.element.member.id) { index, entry in
+                    ForEach(Array(ranking.enumerated().dropFirst(ranking.count >= 3 ? 3 : 0)),
+                            id: \.element.member.id) { index, entry in
                         rankRow(rank: index + 1, entry: entry)
                     }
                 }
@@ -38,11 +52,13 @@ struct LeaderboardView: View {
             ])
         }
         .forestNavigationBar("Leaderboard")
+        .task { await store.refresh() }
+        .refreshable { await store.refresh() }
     }
 
     // MARK: - Podium
 
-    private var podium: some View {
+    private func podium(_ ranking: [(member: CommunityMember, points: Int)]) -> some View {
         HStack(alignment: .bottom, spacing: 22) {
             podiumPlace(rank: 2, entry: ranking[1])
                 .frame(maxWidth: .infinity)

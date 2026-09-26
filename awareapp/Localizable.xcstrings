@@ -35,6 +35,40 @@
         }
       }
     },
+    "%@ recyclers · %@ kg together": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ recyclers · %@ kg together"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ người tái chế · cùng nhau %@ kg"
+          }
+        }
+      }
+    },
+    "%@ recyclers · %@ tons together": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ recyclers · %@ tons together"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ người tái chế · cùng nhau %@ tấn"
+          }
+        }
+      }
+    },
     "+%lld this week": {
       "extractionState": "manual",
       "localizations": {
@@ -70,6 +104,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Thêm vào Gallery"
+          }
+        }
+      }
+    },
+    "All Time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All Time"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mọi lúc"
           }
         }
       }
@@ -693,6 +744,23 @@
         }
       }
     },
+    "Period": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Period"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khoảng thời gian"
+          }
+        }
+      }
+    },
     "Plastic bag": {
       "extractionState": "manual",
       "localizations": {
@@ -1137,6 +1205,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trung bình mỗi người thải ra khoảng 4 tấn CO₂ mỗi năm. Bạn đã bù lại được %@ con số đó."
+          }
+        }
+      }
+    },
+    "This Month": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This Month"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tháng này"
           }
         }
       }

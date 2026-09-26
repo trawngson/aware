@@ -119,6 +119,7 @@ final class AppSession: ObservableObject {
                     hasRestoredHistory = true
                 }
                 isOnline = true
+                await LeaderboardStore.shared.refresh()
             } catch BackendError.unreachable {
                 isOnline = false
             } catch {
@@ -159,6 +160,19 @@ final class AppSession: ObservableObject {
 }
 
 extension CommunityMember {
+    /// A real person on the leaderboard.
+    init(row: LeaderboardRow) {
+        self.init(
+            id: row.userID.uuidString.lowercased(),
+            name: row.displayName,
+            shortName: row.displayName,
+            points: row.points,
+            avatar: .initials(row.avatarInitials,
+                              top: Color(hex: UInt32(clamping: row.avatarTop)),
+                              bottom: Color(hex: UInt32(clamping: row.avatarBottom)))
+        )
+    }
+
     /// A member drawn from a server profile: initials on their gradient.
     init(profile: RemoteProfile) {
         self.init(
