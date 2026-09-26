@@ -253,6 +253,14 @@ session has no `gh` CLI; CI is read through the GitHub tools instead. Docker
 starts in this session, so local Supabase can be tried for faster loops. Push
 access is confirmed by this commit reaching `origin/community-backend`.
 
+**2026-09-26 15:40 UTC, phase 1 (setup) done.** Draft PR
+[#10](https://github.com/trawngson/aware/pull/10) "Community backend" opened
+from `community-backend` into `liquid-glass-redesign`. Supabase checks run by
+hand on the branch head: [36252366974](https://github.com/trawngson/aware/actions/runs/36252366974),
+success. Local Supabase also starts in this session (Docker Hub images, because
+the default ECR image host is blocked here), so migrations and pgTAP tests are
+tried locally before each push.
+
 ### Decisions made during the run
 
 _None yet._
