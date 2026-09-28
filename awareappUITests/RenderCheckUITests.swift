@@ -28,8 +28,8 @@ import XCTest
 ///
 /// Next to the screenshots, `timeline.json` lists each step with its start and
 /// end time (seconds since 1970, the clock `ios-render-check.sh` stamps the
-/// video with) and where it touched the window (0–1), so clips can be cut from
-/// the recording.
+/// video with) and where and when it touched the window (0–1), so clips can be
+/// cut from the recording.
 final class RenderCheckUITests: XCTestCase {
     static let fullTour = """
         onboarding | shot:onboarding | launch | shot:home \
@@ -154,11 +154,12 @@ final class RenderCheckUITests: XCTestCase {
                 return
             }
             let window = app.windows.firstMatch
+            stepDetails["touch"] = ["x": 0.5, "y": Double(from), "toX": 0.5, "toY": Double(to),
+                                    "time": Date().timeIntervalSince1970]
             window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: from))
                 .press(forDuration: 0.05,
                        thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: to)),
                        withVelocity: 500, thenHoldForDuration: 0.25)
-            stepDetails["touch"] = ["x": 0.5, "y": Double(from), "toX": 0.5, "toY": Double(to)]
         case "type":
             app.typeText(argument)
         case "wait":
@@ -200,14 +201,15 @@ final class RenderCheckUITests: XCTestCase {
         }
     }
 
-    /// Remembers where a tap lands, relative to the window.
+    /// Remembers where a tap lands, relative to the window, and when it was sent.
     @MainActor
     private func noteTouch(on element: XCUIElement, in app: XCUIApplication) {
         let frame = element.frame
         let bounds = app.windows.firstMatch.frame
         guard bounds.width > 0, bounds.height > 0 else { return }
         stepDetails["touch"] = ["x": Double((frame.midX - bounds.minX) / bounds.width),
-                                "y": Double((frame.midY - bounds.minY) / bounds.height)]
+                                "y": Double((frame.midY - bounds.minY) / bounds.height),
+                                "time": Date().timeIntervalSince1970]
     }
 
     /// Adds the step to `timeline.json`, rewritten after every step so a failed
