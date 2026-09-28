@@ -13,7 +13,7 @@ import XCTest
 ///     tab:<name>         select a tab (Home, Scan, Gallery)
 ///     tap:<text>         tap the first button whose label contains text
 ///     tap-text:<text>    tap the first static text whose label contains text
-///     back               tap the navigation bar's back button
+///     back               tap the back button (or swipe back when there is none)
 ///     swipe-back         swipe from the left edge
 ///     scroll:up|down     swipe the screen
 ///     glide:up|down      drag the screen slowly, without a fling
@@ -127,13 +127,19 @@ final class RenderCheckUITests: XCTestCase {
             noteTouch(on: text, in: app)
             text.tap()
         case "back":
-            let back = app.navigationBars.buttons.firstMatch
-            XCTAssertTrue(back.waitForExistence(timeout: 5), "No back button")
-            noteTouch(on: back, in: app)
-            back.tap()
+            // The navigation bar's button, or the system back button wherever
+            // it is. Some pushed screens on iOS 27 had neither after earlier
+            // navigation; the edge swipe still goes back there.
+            if let back = firstExisting([app.navigationBars.buttons.firstMatch, app.buttons["BackButton"],
+                                         app.buttons["Back"]], timeout: 5) {
+                noteTouch(on: back, in: app)
+                back.tap()
+            } else {
+                print("RenderCheck: no back button, swiping back instead")
+                swipeBack(in: app)
+            }
         case "swipe-back":
-            drag(in: app, from: CGVector(dx: 0.01, dy: 0.55), to: CGVector(dx: 0.85, dy: 0.55),
-                 velocity: 300, hold: 0.1)
+            swipeBack(in: app)
         case "scroll":
             switch argument {
             case "up": app.swipeDown()
@@ -154,6 +160,13 @@ final class RenderCheckUITests: XCTestCase {
             drag(in: app, from: CGVector(dx: 0.5, dy: from), to: CGVector(dx: 0.5, dy: to),
                  velocity: 500, hold: 0.25)
         case "type":
+            // Into the focused field, or else the first one, tapped to focus it.
+            let focused = app.descendants(matching: .any)
+                .matching(NSPredicate(format: "hasKeyboardFocus == true")).firstMatch
+            if !focused.waitForExistence(timeout: 2),
+               let field = firstExisting([app.textViews.firstMatch, app.textFields.firstMatch], timeout: 2) {
+                field.tap()
+            }
             app.typeText(argument)
         case "wait":
             let seconds = try XCTUnwrap(Double(argument), "wait takes a number of seconds, not \(argument)")
@@ -192,6 +205,23 @@ final class RenderCheckUITests: XCTestCase {
         if let outputDirectory {
             try screenshot.pngRepresentation.write(to: outputDirectory.appendingPathComponent("\(fileName).png"))
         }
+    }
+
+    /// The first of the elements to exist within `timeout` seconds.
+    @MainActor
+    private func firstExisting(_ elements: [XCUIElement], timeout: TimeInterval) -> XCUIElement? {
+        let deadline = Date().addingTimeInterval(timeout)
+        repeat {
+            if let element = elements.first(where: { $0.exists }) { return element }
+            Thread.sleep(forTimeInterval: 0.25)
+        } while Date() < deadline
+        return nil
+    }
+
+    @MainActor
+    private func swipeBack(in app: XCUIApplication) {
+        drag(in: app, from: CGVector(dx: 0.01, dy: 0.55), to: CGVector(dx: 0.85, dy: 0.55),
+             velocity: 300, hold: 0.1)
     }
 
     /// Presses for 0.05 s, drags at `velocity` points per second and holds for
