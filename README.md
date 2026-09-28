@@ -26,6 +26,19 @@
 </div>
 
 
+<!-- FILM -->
+<div align="center">
+  <a href="https://github.com/trawngson/aware/raw/aware-video-master/aware-motion.mp4">
+    <img src="https://raw.githubusercontent.com/trawngson/aware/aware-video-master/preview.webp" alt="Highlights from the AWARE film: a plastic bottle is scanned, sorted by Hanoi's rules, turned into leaves on the dashboard and shared on the Recycling Map" width="100%">
+  </a>
+  <p>
+    <b><a href="https://github.com/trawngson/aware/raw/aware-video-master/aware-motion.mp4">▶ Watch the 60-second film</a></b>
+    <br />
+    <sub>1080p · 60 fps · with sound · 80 MB. Every frame is rendered from code in <a href="video">video/</a>.</sub>
+  </p>
+</div>
+
+
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 <p align="center">
