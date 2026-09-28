@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       steps:
-        description: "Steps, e.g. 'tap:Recycling Map | shot:map'. Empty runs the full tour."
+        description: "Steps, e.g. 'tap:Recycling Map | shot:map'. Empty runs the full tour, 'readme' the README's."
         type: string
         default: ""
       appearances:
