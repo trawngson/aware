@@ -45,13 +45,13 @@
       <img src=".github/readme/scan.gif" width="300" alt="Scanning a plastic bottle: the detector outlines it live, then AWARE opens its recycling guidance and the scan is added to the Gallery">
     </td>
     <td width="60%">
-      <h3>📸 Scan it, sort it</h3>
+      <h3>Scan it, sort it</h3>
       <p>Point the camera at an item. The YOLO model runs on the phone and outlines what it sees as you move. When it's sure and the item holds still for a second, AWARE opens the guidance:</p>
       <ul>
         <li><b>What it is</b>: plastic bottle, glass bottle or jar, metal can, cardboard, plastic bag, disposable cup or styrofoam</li>
         <li><b>Where it goes</b>, following Hanoi's household waste sorting rules, with the steps to get it ready</li>
         <li><b>What it saves</b>: an estimate of the CO₂e avoided, based on the EPA's Waste Reduction Model</li>
-        <li><b>Leaves 🍃</b> for recycling it, and a quick fix when the model gets it wrong</li>
+        <li><b>Leaves</b> for recycling it, and a quick fix when the model gets it wrong</li>
       </ul>
       <p>Add it to the Gallery to show everyone what you sorted.</p>
     </td>
@@ -65,19 +65,17 @@
     <td width="33%" align="center"><img src=".github/readme/gallery.gif" width="250" alt="Liking and scrolling posts in the Gallery, then opening one"></td>
   </tr>
   <tr>
-    <td valign="top"><b>🏡 Home</b><br>Your leaves, the waste and CO₂ you've saved, the month's goal, your streak and recent scans, and how the whole community is doing.</td>
-    <td valign="top"><b>🗺️ Recycling map</b><br>What people have recycled and made around you. Filter by material and open a project from its card.</td>
-    <td valign="top"><b>🖼️ Gallery</b><br>Upcycling ideas from the community: like, save, read the replies, and get inspired for your own.</td>
+    <td valign="top"><b>Home</b><br>Your leaves, the waste and CO₂ you've saved, the month's goal, your streak and recent scans, and how the whole community is doing.</td>
+    <td valign="top"><b>Recycling map</b><br>What people have recycled and made around you. Filter by material and open a project from its card.</td>
+    <td valign="top"><b>Gallery</b><br>Upcycling ideas from the community: like, save, read the replies, and get inspired for your own.</td>
   </tr>
   <tr>
     <td width="33%" align="center"><img src=".github/readme/insights.gif" width="250" alt="The Waste Saved and CO₂ Saved insights"></td>
     <td width="33%" align="center"><img src=".github/readme/compose.gif" width="250" alt="Writing a new Gallery post"></td>
-    <td width="33%" align="center"><img src=".github/readme/theme.gif" width="250" alt="The recycling map and Gallery switching between Light and Dark"></td>
   </tr>
   <tr>
-    <td valign="top"><b>📈 Insights</b><br>Tap Waste Saved or CO₂ Saved for the trend, a breakdown by material, and what it all adds up to in trees and water.</td>
-    <td valign="top"><b>✍️ Share what you made</b><br>Post a photo of your project with tags and steps so others can make it too.</td>
-    <td valign="top"><b>🌗 Light and Dark</b><br>The forest screens stay dark, while the tab bar and the map follow your phone's appearance.</td>
+    <td valign="top"><b>Insights</b><br>Tap Waste Saved or CO₂ Saved for the trend, a breakdown by material, and what it all adds up to in trees and water.</td>
+    <td valign="top"><b>Share what you made</b><br>Post a photo of your project with tags and steps so others can make it too.</td>
   </tr>
 </table>
 

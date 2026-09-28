@@ -101,9 +101,6 @@ CLIPS = [
     Clip("compose", "dark", start="tap:Share what you made@touch-0.5", end="tap:Cancel@end+0.6"),
 ]
 
-# Light and Dark of these shots, revealed in turn.
-THEME_SHOTS = ["recycling-map", "gallery"]
-
 BANNER_SHOTS = ["onboarding", "home", "scan-results", "gallery", "recycling-map"]
 
 
@@ -441,33 +438,6 @@ def build_clips(timelines, clips, frame):
                   f"{len(framed) / clip.fps:.1f}s, {path.stat().st_size / 1e6:.2f} MB")
 
 
-def build_theme_gif(timelines, shots, frame, fps=15, hold=1.3, reveal=0.75):
-    """Light and Dark of each shot, the other revealed in a growing circle."""
-    frames = []
-    size = None
-    for name in shots:
-        light = fit_width(timelines["light"].shot(name), GIF_WIDTH)
-        dark = fit_width(timelines["dark"].shot(name), GIF_WIDTH)
-        size = light.size
-        width, height = size
-        # the circle grows from the top right, where Control Center's switch is
-        center = (width * 0.86, height * 0.04)
-        far = math.hypot(width, height)
-        for a, b in ((light, dark), (dark, light)):
-            frames += [a] * round(hold * fps)
-            steps = round(reveal * fps)
-            for i in range(1, steps + 1):
-                k = i / steps
-                k = k * k * (3 - 2 * k)
-                mask = rounded_mask(size, (center[0] - far * k, center[1] - far * k,
-                                           center[0] + far * k, center[1] + far * k), far * k, supersample=2)
-                frames.append(Image.composite(b, a, mask))
-    framed = [np.asarray(frame(image)) for image in frames]
-    path = OUT / "theme.gif"
-    encode_gif(framed, fps, path)
-    print(f"   {path.name}: {len(framed)} frames, {path.stat().st_size / 1e6:.2f} MB")
-
-
 # MARK: - Stills and banner
 
 def still_image(timeline, still):
@@ -558,7 +528,7 @@ def main():
     global OUT
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("render", type=Path, help="the downloaded render artifact")
-    parser.add_argument("--only", nargs="*", help="build only these: icon, stills, banner, theme, or clip names")
+    parser.add_argument("--only", nargs="*", help="build only these: icon, stills, banner, or clip names")
     parser.add_argument("--offset", type=float, default=0.0,
                         help="seconds the recordings start before their stamped start time")
     parser.add_argument("--out", type=Path, default=OUT, help=f"where to write (default {OUT.relative_to(ROOT)})")
@@ -581,10 +551,6 @@ def main():
         images = build_stills(timelines, STILLS)
         if wanted("banner"):
             build_banner(images, BANNER_SHOTS)
-    if wanted("theme") and {"light", "dark"} <= timelines.keys():
-        print("== Light and Dark")
-        width, height = fit_width(timelines["dark"].shot(THEME_SHOTS[0]), GIF_WIDTH).size
-        build_theme_gif(timelines, THEME_SHOTS, DeviceFrame(width, height))
     clips = [clip for clip in CLIPS if wanted(clip.name) and clip.appearance in timelines]
     if clips:
         print("== GIFs")
