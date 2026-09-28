@@ -46,11 +46,11 @@ final class RenderCheckUITests: XCTestCase {
     static let readmeTour = """
         onboarding | wait:1 | shot:onboarding | tap:Got it | wait:1.5 | shot:home \
         | glide:down | wait:0.8 | glide:down | wait:0.8 | glide:down | wait:1 | scroll:up | wait:1.5 \
-        | tap:Waste Saved | wait:1 | shot:waste-saved | glide:down | wait:1 | back | wait:1 \
+        | tap:Waste Saved | wait:1 | shot:waste-saved | glide:down | wait:1 | swipe-back | wait:1 \
         | tap:CO | wait:1 | shot:co2-saved | back | wait:1 \
         | tap:Recycling Map | wait:1 | shot:recycling-map \
         | tap:Plastic | wait:1.5 | tap:Paper | wait:1.5 | tap:Glass | wait:1.5 | tap:All | wait:1.5 | back | wait:1 \
-        | tap:Recycle Leaderboard | wait:0.5 | shot:leaderboard | glide:down | wait:1 | back | wait:1 \
+        | tap:Recycle Leaderboard | wait:0.5 | shot:leaderboard | glide:down | wait:1 | swipe-back | wait:1 \
         | tap:Welcome back | wait:0.5 | shot:more | back | wait:1 \
         | tab:Gallery | wait:0.5 | shot:gallery | tap:Like | wait:1.2 \
         | glide:down | wait:0.8 | glide:down | wait:1 | scroll:up | wait:1.5 \
@@ -132,11 +132,8 @@ final class RenderCheckUITests: XCTestCase {
             noteTouch(on: back, in: app)
             back.tap()
         case "swipe-back":
-            let window = app.windows.firstMatch
-            window.coordinate(withNormalizedOffset: CGVector(dx: 0.01, dy: 0.55))
-                .press(forDuration: 0.05,
-                       thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.55)),
-                       withVelocity: 300, thenHoldForDuration: 0.1)
+            drag(in: app, from: CGVector(dx: 0.01, dy: 0.55), to: CGVector(dx: 0.85, dy: 0.55),
+                 velocity: 300, hold: 0.1)
         case "scroll":
             switch argument {
             case "up": app.swipeDown()
@@ -154,13 +151,8 @@ final class RenderCheckUITests: XCTestCase {
                 XCTFail("glide takes up or down, not \(argument)")
                 return
             }
-            let window = app.windows.firstMatch
-            stepDetails["touch"] = ["x": 0.5, "y": Double(from), "toX": 0.5, "toY": Double(to),
-                                    "time": Date().timeIntervalSince1970]
-            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: from))
-                .press(forDuration: 0.05,
-                       thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: to)),
-                       withVelocity: 500, thenHoldForDuration: 0.25)
+            drag(in: app, from: CGVector(dx: 0.5, dy: from), to: CGVector(dx: 0.5, dy: to),
+                 velocity: 500, hold: 0.25)
         case "type":
             app.typeText(argument)
         case "wait":
@@ -200,6 +192,18 @@ final class RenderCheckUITests: XCTestCase {
         if let outputDirectory {
             try screenshot.pngRepresentation.write(to: outputDirectory.appendingPathComponent("\(fileName).png"))
         }
+    }
+
+    /// Presses for 0.05 s, drags at `velocity` points per second and holds for
+    /// `hold` seconds before lifting, noting the drag for the timeline.
+    @MainActor
+    private func drag(in app: XCUIApplication, from: CGVector, to: CGVector, velocity: Double, hold: TimeInterval) {
+        let window = app.windows.firstMatch
+        stepDetails["touch"] = ["x": Double(from.dx), "y": Double(from.dy), "toX": Double(to.dx), "toY": Double(to.dy),
+                                "velocity": velocity, "hold": hold, "time": Date().timeIntervalSince1970]
+        window.coordinate(withNormalizedOffset: from)
+            .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: to),
+                   withVelocity: XCUIGestureVelocity(rawValue: CGFloat(velocity)), thenHoldForDuration: hold)
     }
 
     /// Remembers where a tap lands, relative to the window, and when it was sent.

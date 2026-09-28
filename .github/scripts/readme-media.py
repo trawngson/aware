@@ -250,7 +250,7 @@ class Timeline:
         self.video_start = float(start_file.read_text()) - offset if start_file.exists() else None
         first = next(step["file"] for step in self.steps if "file" in step)
         with Image.open(self.folder / first) as image:
-            self.points_high = image.height / POINT_SCALE
+            self.points = (image.width / POINT_SCALE, image.height / POINT_SCALE)
 
     def shot(self, name):
         for step in self.steps:
@@ -280,7 +280,8 @@ class Timeline:
         return moment - self.video_start + shift, i
 
     def touches(self, start, end):
-        """Touches between two recording times: (time, x, y, to_x, to_y)."""
+        """The timeline's touch entries between two recording times, with
+        `time` and `end` in recording time."""
         found = []
         for step in self.steps:
             touch = step.get("touch")
@@ -289,7 +290,7 @@ class Timeline:
             moment = touch["time"] - self.video_start
             if start - 1 <= moment <= end:
                 finished = step.get("end", touch["time"] + 1) - self.video_start
-                found.append((moment, touch["x"], touch["y"], touch.get("toX"), touch.get("toY"), finished))
+                found.append({**touch, "time": moment, "end": finished})
         return found
 
 
@@ -320,22 +321,26 @@ def reaction_time(frames, times, touch_time, until):
     return None
 
 
-def draw_touches(frames, times, touches, points_high):
+def draw_touches(frames, times, touches, points):
     """Draws a fingertip on the frames (RGB arrays, changed in place) where and
-    when each tap or glide lands. `points_high` is the screen's height in points."""
+    when each tap or drag lands. `points` is the screen's size in points."""
     height, width = frames[0].shape[:2]
     radius = width * 0.06
     tracks = []
-    for moment, x, y, to_x, to_y, end in touches:
-        seen = reaction_time(frames, times, moment, end)
-        down = seen - 0.05 if seen is not None else moment + TOUCH_MISSING_DELAY
-        if to_y is None:
+    for touch in touches:
+        x, y = touch["x"], touch["y"]
+        seen = reaction_time(frames, times, touch["time"], touch["end"])
+        down = seen - 0.05 if seen is not None else touch["time"] + TOUCH_MISSING_DELAY
+        if "toX" not in touch:
             tracks.append(([(down - 0.06, x, y), (down + 0.22, x, y)], 0.28))
         else:
-            # RenderCheckUITests' glide: a 0.05 s press, a drag at 500 pt/s, a 0.25 s hold
-            travel = abs(to_y - y) * points_high / 500
+            # RenderCheckUITests' drag: a 0.05 s press, the drag, then a hold
+            to_x, to_y = touch["toX"], touch["toY"]
+            distance = math.hypot((to_x - x) * points[0], (to_y - y) * points[1])
+            travel = distance / touch.get("velocity", 500)
+            hold = touch.get("hold", 0.25)
             tracks.append(([(down - 0.06, x, y), (down + 0.05, x, y),
-                            (down + 0.05 + travel, to_x, to_y), (down + 0.3 + travel, to_x, to_y)], 0.2))
+                            (down + 0.05 + travel, to_x, to_y), (down + 0.05 + travel + hold, to_x, to_y)], 0.2))
 
     for track, fade_out in tracks:
         first, lift = track[0][0], track[-1][0]
@@ -426,7 +431,7 @@ def build_clips(timelines, clips, frame):
                 print(f"!! {clip.name}: nothing between {start:.1f}s and {end:.1f}s of the recording")
                 continue
             times = np.array(times)
-            draw_touches(images, times, timeline.touches(start, end), timeline.points_high)
+            draw_touches(images, times, timeline.touches(start, end), timeline.points)
             images = shorten_pauses(images, clip.fps, clip.max_still, clip.end_still)
             images = crossfade_to_start(images, clip.fps, clip.fade)
             framed = [np.asarray(frame(Image.fromarray(image))) for image in images]
