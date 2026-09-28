@@ -274,6 +274,8 @@ class Timeline:
         name, edge, shift = match.group(1), match.group(2), float(match.group(3) or 0)
         i = self.index(name, after)
         step = self.steps[i]
+        if edge == "end" and "end" not in step:
+            sys.exit(f"Step {name!r} didn't finish in {self.folder / 'timeline.json'}")
         moment = step["touch"]["time"] if edge == "touch" else step[edge]
         return moment - self.video_start + shift, i
 
@@ -286,7 +288,8 @@ class Timeline:
                 continue
             moment = touch["time"] - self.video_start
             if start - 1 <= moment <= end:
-                found.append((moment, touch["x"], touch["y"], touch.get("toX"), touch.get("toY"), step["end"] - self.video_start))
+                finished = step.get("end", touch["time"] + 1) - self.video_start
+                found.append((moment, touch["x"], touch["y"], touch.get("toX"), touch.get("toY"), finished))
         return found
 
 

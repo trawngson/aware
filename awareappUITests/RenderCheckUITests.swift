@@ -47,7 +47,7 @@ final class RenderCheckUITests: XCTestCase {
         onboarding | wait:1 | shot:onboarding | tap:Got it | wait:1.5 | shot:home \
         | glide:down | wait:0.8 | glide:down | wait:0.8 | glide:down | wait:1 | scroll:up | wait:1.5 \
         | tap:Waste Saved | wait:1 | shot:waste-saved | glide:down | wait:1 | back | wait:1 \
-        | tap:CO₂ Saved | wait:1 | shot:co2-saved | back | wait:1 \
+        | tap:CO | wait:1 | shot:co2-saved | back | wait:1 \
         | tap:Recycling Map | wait:1 | shot:recycling-map \
         | tap:Plastic | wait:1.5 | tap:Paper | wait:1.5 | tap:Glass | wait:1.5 | tap:All | wait:1.5 | back | wait:1 \
         | tap:Recycle Leaderboard | wait:0.5 | shot:leaderboard | glide:down | wait:1 | back | wait:1 \
@@ -94,8 +94,9 @@ final class RenderCheckUITests: XCTestCase {
         for step in steps {
             let start = Date().timeIntervalSince1970
             stepDetails = [:]
+            try record(step, start: start, done: false)
             try perform(step, in: app)
-            try record(step, start: start)
+            try record(step, start: start, done: true)
         }
     }
 
@@ -212,14 +213,17 @@ final class RenderCheckUITests: XCTestCase {
                                 "time": Date().timeIntervalSince1970]
     }
 
-    /// Adds the step to `timeline.json`, rewritten after every step so a failed
-    /// run still has the steps before the failure.
+    /// Writes the step to `timeline.json` before it runs, without an end time,
+    /// so a failed run shows where it stopped, and again once it's done.
     @MainActor
-    private func record(_ step: String, start: TimeInterval) throws {
+    private func record(_ step: String, start: TimeInterval, done: Bool) throws {
         var entry = stepDetails
         entry["step"] = step
         entry["start"] = start
-        entry["end"] = Date().timeIntervalSince1970
+        if done {
+            entry["end"] = Date().timeIntervalSince1970
+            timeline.removeLast()
+        }
         timeline.append(entry)
         guard let outputDirectory else { return }
         let data = try JSONSerialization.data(withJSONObject: timeline, options: [.prettyPrinted, .sortedKeys])

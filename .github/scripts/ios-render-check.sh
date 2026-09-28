@@ -146,6 +146,19 @@ for appearance in $APPEARANCES; do
         -only-testing:awareappUITests/RenderCheckUITests -parallel-testing-enabled NO \
         -resultBundlePath "$OUT/$appearance.xcresult" -quiet; then
         echo "!! Render check failed in $appearance appearance; see $OUT/$appearance.xcresult" >&2
+        # Where it stopped (the step timeline.json has no end time for) and why.
+        if [ -f "$OUT/$appearance/timeline.json" ]; then
+            python3 -c '
+import json, sys
+unfinished = [s["step"] for s in json.load(open(sys.argv[1])) if "end" not in s]
+print("   stopped at:", unfinished[-1] if unfinished else "after the last step")
+' "$OUT/$appearance/timeline.json" >&2 || true
+        fi
+        xcrun xcresulttool get test-results summary --path "$OUT/$appearance.xcresult" 2>/dev/null | python3 -c '
+import json, sys
+for failure in json.load(sys.stdin).get("testFailures", []):
+    print("  ", failure.get("failureText", ""))
+' >&2 2>/dev/null || true
         status=1
     fi
     if [ -n "$recorder" ]; then
