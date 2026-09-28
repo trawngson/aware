@@ -1,0 +1,123 @@
+name: iOS render check
+run-name: iOS render check${{ inputs.steps && format(' — {0}', inputs.steps) || '' }}
+
+# Builds the app with Xcode 27 and captures screens on an iOS simulator. Pull
+# requests run the full tour in Light and Dark. A manual run can capture only
+# some screens, e.g.
+#   gh workflow run ios-render-check.yml --ref <branch> \
+#     -f steps="tap:Recycling Map | shot:map" -f appearances=dark
+# Step syntax: awareappUITests/RenderCheckUITests.swift. Results are uploaded as
+# the "render" artifact (full-size PNGs and result bundles, ~100 MB), and small
+# JPEG copies as "render-previews" (~1 MB): gh run download <run-id> -n render-previews
+
+on:
+  workflow_dispatch:
+    inputs:
+      steps:
+        description: "Steps, e.g. 'tap:Recycling Map | shot:map'. Empty runs the full tour."
+        type: string
+        default: ""
+      appearances:
+        description: Appearances to capture
+        type: choice
+        options: [both, light, dark]
+        default: both
+      ios:
+        description: iOS simulator runtime version
+        type: string
+        default: "27.0"
+      record_video:
+        description: Also record a video per appearance
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - "awareapp/**"
+      - "awareappUITests/**"
+      - "UltralyticsYOLO/**"
+      - "awareapp.xcodeproj/**"
+      - "demo/input.MOV"
+      - ".github/workflows/ios-render-check.yml"
+      - ".github/scripts/ios-render-check.sh"
+
+concurrency:
+  # A new push to a pull request replaces its running check; manual runs never
+  # cancel each other.
+  group: ios-render-check-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: xcode-27
+    timeout-minutes: 45
+    env:
+      IOS_VERSION: ${{ inputs.ios || '27.0' }}
+      DEVICE: iPhone 18 Pro
+      # The runner image comes with this simulator; using it skips creating and
+      # first-booting a new one.
+      SIMULATOR: existing
+      APPEARANCES: ${{ inputs.appearances == 'light' && 'light' || inputs.appearances == 'dark' && 'dark' || 'light dark' }}
+      RENDER_STEPS: ${{ inputs.steps }}
+      RECORD_VIDEO: ${{ inputs.record_video && '1' || '' }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show toolchain, set cache path
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes
+          echo "CACHE_DIR=$RUNNER_TEMP/xcode-cache" >> "$GITHUB_ENV"
+
+      # Downloaded Swift packages, saved again only when Package.resolved changes.
+      # (Xcode's compilation cache was tried: it saved about as much build time as
+      # uploading its 233 MB cost.)
+      - name: Restore Swift packages
+        uses: actions/cache@v6
+        with:
+          path: ${{ env.CACHE_DIR }}
+          key: xcode27-spm-${{ hashFiles('awareapp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+
+      # Xcode 27 prints "error: the following command failed with exit code 0 but
+      # produced no further output" for some compile tasks that only have
+      # warnings. The build still succeeds; the script fails on real errors.
+      - name: Build and capture screens
+        run: .github/scripts/ios-render-check.sh "$RUNNER_TEMP/render"
+
+      - name: List results
+        if: always()
+        run: |
+          {
+            echo "### Render check (iOS $IOS_VERSION, $APPEARANCES)"
+            echo "Steps: ${RENDER_STEPS:-full tour}"
+            echo
+            (cd "$RUNNER_TEMP/render" 2>/dev/null && find . \( -name '*.png' -o -name '*.mp4' \) | sort | sed 's/^\.\//- /') || echo "No screenshots."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: render
+          path: ${{ runner.temp }}/render
+          if-no-files-found: warn
+
+      - name: Make previews
+        if: always()
+        run: |
+          cd "$RUNNER_TEMP/render" 2>/dev/null || exit 0
+          find . -name '*.png' | while read -r png; do
+            mkdir -p "$RUNNER_TEMP/render-previews/$(dirname "$png")"
+            sips -Z 800 -s format jpeg -s formatOptions 60 "$png" \
+              --out "$RUNNER_TEMP/render-previews/${png%.png}.jpg" >/dev/null
+          done
+
+      - name: Upload previews
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: render-previews
+          path: ${{ runner.temp }}/render-previews
+          if-no-files-found: warn

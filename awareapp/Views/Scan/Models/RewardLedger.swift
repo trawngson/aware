@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 enum RewardState: Equatable {
@@ -19,10 +20,10 @@ struct RewardResult: Equatable {
 /// points and awards each scan event at most once. It never reads the
 /// detector directly; it only sees the policy result.
 @MainActor
-final class RewardLedger {
+final class RewardLedger: ObservableObject {
     static let shared = RewardLedger()
 
-    private(set) var awardedEvents: [UUID: Int] = [:]
+    @Published private(set) var awardedEvents: [UUID: Int] = [:]
 
     var totalPoints: Int { awardedEvents.values.reduce(0, +) }
 

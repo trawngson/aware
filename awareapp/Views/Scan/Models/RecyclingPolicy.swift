@@ -126,6 +126,8 @@ struct PolicyResult: Equatable {
 enum RecyclingPolicy {
     static let version = "hanoi-2026.1"
     static let ontologyVersion = "aware-ontology-v3"
+    /// When this table was last reviewed against the sources below.
+    static let lastReviewed = DateComponents(calendar: Calendar(identifier: .gregorian), year: 2026, month: 9, day: 19).date!
 
     static var jurisdiction: String { String(localized: "Hanoi, Vietnam") }
 

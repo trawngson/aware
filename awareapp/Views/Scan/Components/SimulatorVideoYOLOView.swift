@@ -31,6 +31,10 @@ final class SimulatorVideoYOLOView: UIView {
     private var isModelReady = false
     private var isInferring = false
     private var isActive = true
+    /// Rotation stored in the video track. Inference still runs on the raw
+    /// frame (as before), but boxes and captured photos are turned upright so
+    /// they match what the player shows.
+    private var frameOrientation: CGImagePropertyOrientation = .up
 
     init(
         frame: CGRect,
@@ -103,6 +107,7 @@ final class SimulatorVideoYOLOView: UIView {
 
         let item = AVPlayerItem(url: videoURL)
         item.add(videoOutput)
+        loadFrameOrientation(of: item.asset)
 
         player.replaceCurrentItem(with: item)
         player.actionAtItemEnd = .none
@@ -125,6 +130,23 @@ final class SimulatorVideoYOLOView: UIView {
         self.displayLink = displayLink
 
         player.play()
+    }
+
+    private func loadFrameOrientation(of asset: AVAsset) {
+        Task { [weak self] in
+            guard
+                let track = try? await asset.loadTracks(withMediaType: .video).first,
+                let transform = try? await track.load(.preferredTransform)
+            else { return }
+            let orientation: CGImagePropertyOrientation
+            switch (transform.a, transform.b, transform.c, transform.d) {
+            case (0, 1, -1, 0): orientation = .right
+            case (0, -1, 1, 0): orientation = .left
+            case (-1, 0, 0, -1): orientation = .down
+            default: orientation = .up
+            }
+            await MainActor.run { self?.frameOrientation = orientation }
+        }
     }
 
     private func loadModel(modelPathOrName: String, task: YOLOTask) {
@@ -177,12 +199,15 @@ final class SimulatorVideoYOLOView: UIView {
 
         isInferring = true
         let frame = CIImage(cvPixelBuffer: pixelBuffer)
+        let orientation = frameOrientation
 
         inferenceQueue.async { [weak self] in
             guard let self else { return }
 
-            let result = detector(frame)
-            let renderedFrame = self.imageContext.createCGImage(frame, from: frame.extent)
+            let rawResult = detector(frame)
+            let result = Self.rotate(rawResult, to: orientation)
+            let upright = frame.oriented(orientation)
+            let renderedFrame = self.imageContext.createCGImage(upright, from: upright.extent)
 
             DispatchQueue.main.async {
                 self.isInferring = false
@@ -194,6 +219,29 @@ final class SimulatorVideoYOLOView: UIView {
                 self.onDetection?(result)
             }
         }
+    }
+
+    /// Maps normalized, top-left-origin boxes from the raw frame into the
+    /// upright frame the player displays.
+    private static func rotate(_ result: YOLOResult, to orientation: CGImagePropertyOrientation) -> YOLOResult {
+        guard orientation != .up else { return result }
+        let size = orientation == .down
+            ? result.orig_shape
+            : CGSize(width: result.orig_shape.height, height: result.orig_shape.width)
+        let boxes = result.boxes.map { box -> Box in
+            let r = box.xywhn
+            let n: CGRect
+            switch orientation {
+            case .right: n = CGRect(x: 1 - r.maxY, y: r.minX, width: r.height, height: r.width)
+            case .left: n = CGRect(x: r.minY, y: 1 - r.maxX, width: r.height, height: r.width)
+            case .down: n = CGRect(x: 1 - r.maxX, y: 1 - r.maxY, width: r.width, height: r.height)
+            default: n = r
+            }
+            let pixels = CGRect(x: n.minX * size.width, y: n.minY * size.height,
+                                width: n.width * size.width, height: n.height * size.height)
+            return Box(index: box.index, cls: box.cls, conf: box.conf, xywh: pixels, xywhn: n)
+        }
+        return YOLOResult(orig_shape: size, boxes: boxes, speed: result.speed, fps: result.fps, names: result.names)
     }
 
     private func showMissingVideoMessage() {

@@ -2,25 +2,26 @@ import SwiftUI
 
 struct GalleryReply: Identifiable, Equatable {
     let id: UUID
-    let userName: String
+    let author: CommunityMember
     let time: String
     let content: String
-    let avatarSymbol: String
-    let avatarColor: Color
-    
+    let image: UIImage?
+
     init(
         id: UUID = UUID(),
-        userName: String,
+        author: CommunityMember,
         time: String,
         content: String,
-        avatarSymbol: String = "face.smiling.fill",
-        avatarColor: Color = .green
+        image: UIImage? = nil
     ) {
         self.id = id
-        self.userName = userName
+        self.author = author
         self.time = time
         self.content = content
-        self.avatarSymbol = avatarSymbol
-        self.avatarColor = avatarColor
+        self.image = image
+    }
+
+    static func == (lhs: GalleryReply, rhs: GalleryReply) -> Bool {
+        lhs.id == rhs.id && lhs.content == rhs.content && lhs.image === rhs.image
     }
 }

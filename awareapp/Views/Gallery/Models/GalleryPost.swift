@@ -1,164 +1,141 @@
 import SwiftUI
 
+/// Main material of a shared project. Used for post tags and map filters.
+enum MaterialTag: String, CaseIterable, Identifiable {
+    case plastic, paper, glass, metal
+
+    var id: String { rawValue }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .plastic: "Plastic"
+        case .paper: "Paper"
+        case .glass: "Glass"
+        case .metal: "Metal"
+        }
+    }
+
+    var tint: Color {
+        switch self {
+        case .plastic: Theme.green
+        case .paper: Theme.blue
+        case .glass: Theme.cyanDeep
+        case .metal: Theme.orangeDeep
+        }
+    }
+}
+
 struct GalleryPost: Identifiable, Equatable {
     let id: UUID
-    let userName: String
+    let author: CommunityMember
     let time: String
+    /// Short project name, shown on the recycling map.
+    let title: String?
     let content: String
     let likes: Int
-    let comments: Int
     let saved: Int
-    let shares: String
-    let hasAttachment: Bool
+    let shares: Int
     let showTranslate: Bool
-    let avatarSymbol: String
-    let avatarColor: Color
-    let leafCount: String
-    let replies: [GalleryReply]
-    let avatarAssetName: String?
+    let tag: MaterialTag?
+    var replies: [GalleryReply]
     let attachmentAssetName: String?
     let attachmentImage: UIImage?  // For user-uploaded images
-    
+
+    var comments: Int { replies.count }
+    var hasAttachment: Bool { attachmentAssetName != nil || attachmentImage != nil }
+
     init(
         id: UUID = UUID(),
-        userName: String,
+        author: CommunityMember,
         time: String,
+        title: String? = nil,
         content: String,
         likes: Int = 0,
-        comments: Int = 0,
         saved: Int = 0,
-        shares: String = "",
-        hasAttachment: Bool = false,
+        shares: Int = 0,
         showTranslate: Bool = false,
-        avatarSymbol: String = "face.smiling.fill",
-        avatarColor: Color = .green,
-        leafCount: String = "0",
+        tag: MaterialTag? = nil,
         replies: [GalleryReply] = [],
-        avatarAssetName: String? = nil,
         attachmentAssetName: String? = nil,
         attachmentImage: UIImage? = nil
     ) {
         self.id = id
-        self.userName = userName
+        self.author = author
         self.time = time
+        self.title = title
         self.content = content
         self.likes = likes
-        self.comments = comments
         self.saved = saved
         self.shares = shares
-        self.hasAttachment = hasAttachment
         self.showTranslate = showTranslate
-        self.avatarSymbol = avatarSymbol
-        self.avatarColor = avatarColor
-        self.leafCount = leafCount
+        self.tag = tag
         self.replies = replies
-        self.avatarAssetName = avatarAssetName
         self.attachmentAssetName = attachmentAssetName
         self.attachmentImage = attachmentImage
     }
-    
+
     // Custom Equatable implementation (UIImage is not Equatable)
     static func == (lhs: GalleryPost, rhs: GalleryPost) -> Bool {
         lhs.id == rhs.id &&
-        lhs.userName == rhs.userName &&
-        lhs.time == rhs.time &&
         lhs.content == rhs.content &&
-        lhs.likes == rhs.likes &&
-        lhs.comments == rhs.comments &&
-        lhs.saved == rhs.saved &&
-        lhs.hasAttachment == rhs.hasAttachment &&
-        lhs.attachmentAssetName == rhs.attachmentAssetName
+        lhs.replies == rhs.replies &&
+        lhs.attachmentAssetName == rhs.attachmentAssetName &&
+        lhs.attachmentImage === rhs.attachmentImage
+    }
+
+    /// Stable IDs so the recycling map can link to the sample posts.
+    enum SampleID {
+        static let fabricLamp = UUID(uuidString: "6B1F2C8E-2D4A-4E61-9B4B-0A1D7E3C5F01")!
+        static let eggCartonTurtle = UUID(uuidString: "6B1F2C8E-2D4A-4E61-9B4B-0A1D7E3C5F02")!
+        static let bottleSpiral = UUID(uuidString: "6B1F2C8E-2D4A-4E61-9B4B-0A1D7E3C5F03")!
     }
 
     static let sample: [GalleryPost] = [
         GalleryPost(
-            userName: "Dieu Linh Do",
+            id: SampleID.fabricLamp,
+            author: Community.dieuLinh,
             time: "2d",
+            title: "Fabric lamp",
             content: "I just recycled my mom's old fabric into this beautiful lamp for my room's decor! I think this is by far my most beautiful project.\nAnyone hyped up for a tutorial?",
             likes: 2000,
-            comments: 2,
             saved: 2,
-            shares: "2",
-            hasAttachment: true,
-            showTranslate: false,
-            avatarSymbol: "face.smiling.fill",
-            avatarColor: .orange,
-            leafCount: "2,460",
+            shares: 2,
             replies: [
-                GalleryReply(
-                    userName: "Truong Son Nguyen",
-                    time: "1d",
-                    content: "YESS SHOW US HOW",
-                    avatarSymbol: "face.smiling.fill",
-                    avatarColor: .blue
-                ),
-                GalleryReply(
-                    userName: "Ha Chi Pham",
-                    time: "22h",
-                    content: "i made something similar a while ago:))",
-                    avatarSymbol: "face.smiling.inverse",
-                    avatarColor: .purple
-                )
+                GalleryReply(author: Community.me, time: "1d", content: "YESS SHOW US HOW"),
+                GalleryReply(author: Community.haChi, time: "22h", content: "i made something similar a while ago:))"),
             ],
-            avatarAssetName: nil,
             attachmentAssetName: "RecycleProject1"
         ),
         GalleryPost(
-            userName: "Anthony",
+            id: SampleID.eggCartonTurtle,
+            author: Community.anthony,
             time: "1d",
+            title: "Egg carton turtle",
             content: "Yo, I'm so excited to share with you guys what I've been working on for the last few days: it's a DIY little turtle made from used egg carton.\nI was about to throw them away but then I suddenly had this amazing idea in my head. Do you guys think it looks good??",
             likes: 7,
-            comments: 1,
             saved: 0,
-            shares: "",
-            hasAttachment: true,
-            showTranslate: false,
-            avatarSymbol: "face.smiling.inverse",
-            avatarColor: .purple,
-            leafCount: "1,980",
+            tag: .paper,
             replies: [
-                GalleryReply(
-                    userName: "Truong Son Nguyen",
-                    time: "10m",
-                    content: "Hey that looks so cute!",
-                    avatarSymbol: "face.smiling.fill",
-                    avatarColor: .blue
-                )
+                GalleryReply(author: Community.me, time: "10m", content: "Hey that looks so cute!"),
             ],
-            avatarAssetName: nil,
             attachmentAssetName: "RecycleProject2"
         ),
         GalleryPost(
-            userName: "Max",
+            id: SampleID.bottleSpiral,
+            author: Community.max,
             time: "14h",
+            title: "Bottle flower spiral",
             content: "I just followed one of @Anthony's tutorial and ended up with this cute-looking flower spiral, it's so adorable that I think I might keep it on my bedside from now on!",
             likes: 30,
-            comments: 2,
             saved: 289,
-            shares: "27",
-            hasAttachment: true,
+            shares: 27,
             showTranslate: true,
-            avatarSymbol: "face.dashed",
-            avatarColor: .blue,
-            leafCount: "820",
+            tag: .plastic,
             replies: [
-                GalleryReply(
-                    userName: "Anthony",
-                    time: "10h",
-                    content: "Nice, yours look way better than mine actually :)",
-                    avatarSymbol: "face.smiling.fill",
-                    avatarColor: .green
-                ),
-                GalleryReply(
-                    userName: "Max",
-                    time: "9h",
-                    content: "Keep posting more tutorials! 🤣",
-                    avatarSymbol: "face.dashed",
-                    avatarColor: .blue
-                )
+                GalleryReply(author: Community.anthony, time: "10h", content: "Nice, yours look way better than mine actually :)"),
+                GalleryReply(author: Community.max, time: "9h", content: "Keep posting more tutorials!"),
             ],
-            avatarAssetName: nil,
             attachmentAssetName: "RecycleProject3"
-        )
+        ),
     ]
 }
