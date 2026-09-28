@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AWARE motion piece</title>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="src/style.css">
+<style>
+  #player { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 12px; align-items: center; padding: 10px 16px;
+    background: rgba(0,0,0,.72); color: #ddd; font: 13px/1 system-ui, sans-serif; z-index: 10; }
+  #player input { flex: 1; }
+  #player button { font: inherit; padding: 6px 12px; }
+  body.render #player { display: none; }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <div id="scenes"></div>
+    <div id="vignette"></div>
+    <canvas id="grain" width="512" height="512"></canvas>
+    <div id="flash"></div>
+    <div id="fade"></div>
+  </div>
+</div>
+<div id="player"><button id="pp" type="button">Play</button><span id="tc">0.00</span><input id="scrub" type="range" min="0" max="60" step="0.0167" value="0"></div>
+<script src="src/engine.js"></script>
+<script src="src/art.js"></script>
+<script src="src/common.js"></script>
+<script src="src/act1.js"></script>
+<script src="src/act2.js"></script>
+<script src="src/act3.js"></script>
+<script src="src/act4.js"></script>
+<script src="src/act5.js"></script>
+<script src="src/act6.js"></script>
+<script src="src/act7.js"></script>
+<script src="src/main.js"></script>
+</body>
+</html>
