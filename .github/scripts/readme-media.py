@@ -55,6 +55,8 @@ STILL_WIDTH = 402      # screen width of the framed screenshots (2× at 201 pt)
 GIF_WIDTH = 300        # screen width in the GIFs
 DECODE_FPS = 60        # recordings are decoded at this rate, then sampled per GIF
 TOUCH_MISSING_DELAY = 0.35  # when a tap's reaction can't be seen, assume this delay
+ALIGN_FPS = 30         # recordings are sampled at this rate to line them up with their timeline
+ALIGN_SEARCH = 15.0    # how far (seconds) a recording's stamped start may be off
 
 
 @dataclass
@@ -133,11 +135,12 @@ def video_size(path):
 
 def decode(path, width, height, fps=DECODE_FPS, start=0.0, count=None):
     """Yields RGB frames at `fps`, frame k showing time start + k / fps."""
-    command = [FFMPEG, "-v", "error"]
+    command = [FFMPEG, "-v", "error", "-i", str(path), "-vf",
+               f"fps=fps={fps}:start_time=0,scale={width}:{height}:flags=lanczos"]
     if start:
+        # After the input, so the whole recording goes through the same
+        # filter and a moment is the same frame as in a full decode.
         command += ["-ss", f"{start:.3f}"]
-    command += ["-i", str(path), "-vf",
-                f"fps=fps={fps}:start_time=0,scale={width}:{height}:flags=lanczos"]
     if count:
         command += ["-frames:v", str(count)]
     command += ["-f", "rawvideo", "-pix_fmt", "rgb24", "-"]
@@ -152,6 +155,20 @@ def decode(path, width, height, fps=DECODE_FPS, start=0.0, count=None):
     finally:
         process.stdout.close()
         process.wait()
+
+
+def screen_changes(path, width=64):
+    """How much the screen changes into each frame of a recording sampled at
+    ALIGN_FPS, frame k showing time k / ALIGN_FPS."""
+    video_width, video_height = video_size(path)
+    height = round(video_height * width / video_width / 2) * 2
+    changes, previous = [0.0], None
+    for frame in decode(path, width, height, fps=ALIGN_FPS):
+        current = frame.astype(np.int16)
+        if previous is not None:
+            changes.append(float(np.abs(current - previous).mean()))
+        previous = current
+    return np.array(changes)
 
 
 def encode_gif(frames, fps, path):
@@ -241,16 +258,52 @@ def fit_width(image, width):
 class Timeline:
     """One appearance's tour: its steps, screenshots and recording."""
 
-    def __init__(self, render, appearance, offset=0.0):
+    def __init__(self, render, appearance, offset=None):
+        """`offset`: seconds the recording starts before its stamped start;
+        None works it out from the recording (see `align`)."""
         self.appearance = appearance
         self.folder = render / appearance
         self.steps = json.loads((self.folder / "timeline.json").read_text())
         self.video = render / f"{appearance}.mp4"
         start_file = render / f"{appearance}.video-start"
-        self.video_start = float(start_file.read_text()) - offset if start_file.exists() else None
+        self.video_start = float(start_file.read_text()) if start_file.exists() else None
+        if self.video_start is not None and self.video.exists():
+            if offset is None:
+                self.align()
+            else:
+                self.video_start -= offset
         first = next(step["file"] for step in self.steps if "file" in step)
         with Image.open(self.folder / first) as image:
             self.points = (image.width / POINT_SCALE, image.height / POINT_SCALE)
+
+    def align(self):
+        """Moves the recording's start so the screen changes right after each
+        tap. The stamped start was seconds off on CI, so clips began and ended
+        at the wrong steps."""
+        changes = screen_changes(self.video)
+        taps = [step["touch"]["time"] - self.video_start for step in self.steps
+                if step["step"].startswith(("tap:", "tab:")) and "time" in step.get("touch", {})]
+        if not taps:
+            return
+
+        def mean(start, end):
+            a, b = max(0, round(start * ALIGN_FPS)), min(len(changes), round(end * ALIGN_FPS))
+            return float(changes[a:b].mean()) if b > a else 0.0
+
+        def score(shift, times):
+            # quiet just before the tap, changing just after
+            return sum(mean(t + shift, t + shift + 0.4) - mean(t + shift - 0.6, t + shift - 0.1) for t in times)
+
+        frame = 1 / ALIGN_FPS
+        best = max(np.arange(-ALIGN_SEARCH, ALIGN_SEARCH, frame), key=lambda shift: score(shift, taps))
+        # Each tap on its own, to show whether the shift holds through the tour
+        each = [max(np.arange(best - 1.5, best + 1.5, frame), key=lambda shift: score(shift, [t])) - best
+                for t in taps]
+        last = max(step.get("end", step["start"]) for step in self.steps) - self.video_start
+        print(f"== {self.appearance}: recording {len(changes) / ALIGN_FPS:.1f}s, timeline ends at {last:.1f}s; "
+              f"shifted {best:+.2f}s over {len(taps)} taps")
+        print("   each tap: " + " ".join(f"{t:.0f}s{shift:+.1f}" for t, shift in zip(taps, each)))
+        self.video_start -= best
 
     def shot(self, name):
         for step in self.steps:
@@ -532,8 +585,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("render", type=Path, help="the downloaded render artifact")
     parser.add_argument("--only", nargs="*", help="build only these: icon, stills, banner, or clip names")
-    parser.add_argument("--offset", type=float, default=0.0,
-                        help="seconds the recordings start before their stamped start time")
+    parser.add_argument("--offset", type=float,
+                        help="seconds the recordings start before their stamped start time "
+                             "(default: worked out from when the screen reacts to taps)")
     parser.add_argument("--out", type=Path, default=OUT, help=f"where to write (default {OUT.relative_to(ROOT)})")
     args = parser.parse_args()
     OUT = args.out.resolve()
