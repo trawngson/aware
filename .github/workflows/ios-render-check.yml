@@ -9,6 +9,10 @@ run-name: iOS render check${{ inputs.steps && format(' — {0}', inputs.steps) |
 # Step syntax: awareappUITests/RenderCheckUITests.swift. Results are uploaded as
 # the "render" artifact (full-size PNGs and result bundles, ~100 MB), and small
 # JPEG copies as "render-previews" (~1 MB): gh run download <run-id> -n render-previews
+#
+# The README's tour with video rebuilds the README's screenshots and GIFs
+# (.github/readme/) and commits them to the branch the run was on:
+#   gh workflow run ios-render-check.yml --ref <branch> -f steps=readme -f record_video=true
 
 on:
   workflow_dispatch:
@@ -104,6 +108,18 @@ jobs:
           path: ${{ runner.temp }}/render
           if-no-files-found: warn
 
+      # What readme-media.py needs: the screenshots, timelines and recordings,
+      # without the result bundles.
+      - name: Upload the README tour
+        if: success() && inputs.steps == 'readme' && inputs.record_video
+        uses: actions/upload-artifact@v7
+        with:
+          name: readme-tour
+          path: |
+            ${{ runner.temp }}/render
+            !${{ runner.temp }}/render/*.xcresult
+          retention-days: 7
+
       - name: Make previews
         if: always()
         run: |
@@ -113,6 +129,11 @@ jobs:
             sips -Z 800 -s format jpeg -s formatOptions 60 "$png" \
               --out "$RUNNER_TEMP/render-previews/${png%.png}.jpg" >/dev/null
           done
+          # Timelines and accessibility dumps, to see where and why a run stopped
+          find . \( -name timeline.json -o -name '*-dump.txt' \) -not -path '*.xcresult/*' | while read -r file; do
+            mkdir -p "$RUNNER_TEMP/render-previews/$(dirname "$file")"
+            cp "$file" "$RUNNER_TEMP/render-previews/$file"
+          done
 
       - name: Upload previews
         if: always()
@@ -121,3 +142,49 @@ jobs:
           name: render-previews
           path: ${{ runner.temp }}/render-previews
           if-no-files-found: warn
+
+  # Builds the README's screenshots and GIFs from a finished README tour and
+  # commits them to the branch the run was on.
+  readme-media:
+    needs: render
+    if: inputs.steps == 'readme' && inputs.record_video
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: readme-tour
+          path: ${{ runner.temp }}/render
+
+      # gifsicle and pngquant make the GIFs and PNGs smaller.
+      - name: Install tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg gifsicle pngquant
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install -q numpy pillow
+
+      - name: Build the README media
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" .github/scripts/readme-media.py "$RUNNER_TEMP/render"
+          {
+            echo "### README media"
+            (cd .github/readme && find . -type f | sort | while read -r file; do
+              echo "- ${file#./}: $(du -k "$file" | cut -f1) kB"
+            done)
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit the README media
+        run: |
+          git add .github/readme
+          if git diff --cached --quiet; then
+            echo "The README media didn't change."
+            exit 0
+          fi
+          git -c user.name="$GITHUB_ACTOR" -c user.email="$GITHUB_ACTOR_ID+$GITHUB_ACTOR@users.noreply.github.com" \
+            commit -q -m "Update the README's screenshots and GIFs"
+          git push origin "HEAD:$GITHUB_REF_NAME"
