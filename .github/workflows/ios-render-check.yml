@@ -1,5 +1,5 @@
 name: iOS render check
-run-name: iOS render check${{ inputs.steps && format(' — {0}', inputs.steps) || '' }}
+run-name: iOS render check${{ inputs.media_from_run && format(' — README media from {0}', inputs.media_from_run) || inputs.steps && format(' — {0}', inputs.steps) || '' }}
 
 # Builds the app with Xcode 27 and captures screens on an iOS simulator. Pull
 # requests run the full tour in Light and Dark. A manual run can capture only
@@ -13,6 +13,9 @@ run-name: iOS render check${{ inputs.steps && format(' — {0}', inputs.steps) |
 # The README's tour with video rebuilds the README's screenshots and GIFs
 # (.github/readme/) and commits them to the branch the run was on:
 #   gh workflow run ios-render-check.yml --ref <branch> -f steps=readme -f record_video=true
+# To rebuild them from an earlier such run without capturing again (the
+# readme-tour artifact is kept for 7 days):
+#   gh workflow run ios-render-check.yml --ref <branch> -f media_from_run=<run-id>
 
 on:
   workflow_dispatch:
@@ -34,6 +37,10 @@ on:
         description: Also record a video per appearance
         type: boolean
         default: false
+      media_from_run:
+        description: "Only rebuild the README media, from this earlier run's README tour (its run ID)"
+        type: string
+        default: ""
   pull_request:
     paths:
       - "awareapp/**"
@@ -55,6 +62,7 @@ permissions:
 
 jobs:
   render:
+    if: ${{ !inputs.media_from_run }}
     runs-on: xcode-27
     timeout-minutes: 45
     env:
@@ -143,15 +151,18 @@ jobs:
           path: ${{ runner.temp }}/render-previews
           if-no-files-found: warn
 
-  # Builds the README's screenshots and GIFs from a finished README tour and
-  # commits them to the branch the run was on.
+  # Builds the README's screenshots and GIFs from a finished README tour (this
+  # run's, or media_from_run's) and commits them to the branch the run was on.
   readme-media:
     needs: render
-    if: inputs.steps == 'readme' && inputs.record_video
+    if: >-
+      !cancelled() && (inputs.media_from_run != '' ||
+      (needs.render.result == 'success' && inputs.steps == 'readme' && inputs.record_video))
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
       contents: write
+      actions: read
     steps:
       - uses: actions/checkout@v7
 
@@ -159,6 +170,8 @@ jobs:
         with:
           name: readme-tour
           path: ${{ runner.temp }}/render
+          run-id: ${{ inputs.media_from_run || github.run_id }}
+          github-token: ${{ github.token }}
 
       # gifsicle and pngquant make the GIFs and PNGs smaller.
       - name: Install tools
