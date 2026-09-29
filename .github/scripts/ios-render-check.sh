@@ -10,15 +10,17 @@
 #                      runtime (a booted one first), creating one only if none exists
 #        APPEARANCES   "light dark" (default), "light" or "dark"
 #        RENDER_STEPS  steps for the UI test, e.g. "tap:Recycling Map | shot:map";
-#                      empty runs the full tour (see RenderCheckUITests)
+#                      empty runs the full tour, "readme" the README's tour
+#                      (see RenderCheckUITests)
 #        RECORD_VIDEO  1 to also record <appearance>.mp4
 #        CACHE_DIR     keeps downloaded Swift packages here, so later runs (or CI
 #                      with this directory cached) skip fetching them
 #
-# Output: <output-dir>/<appearance>/NN-name.png and <output-dir>/<appearance>.xcresult
-# (plus <appearance>.mp4 when recording). An existing simulator gets its status
-# bar and appearance back and is shut down again if the script booted it; the
-# app and test runner stay installed on it.
+# Output: <output-dir>/<appearance>/NN-name.png, <appearance>/timeline.json (when
+# each step ran) and <output-dir>/<appearance>.xcresult, plus <appearance>.mp4 and
+# <appearance>.video-start (when it started) when recording. An existing
+# simulator gets its status bar and appearance back and is shut down again if the
+# script booted it; the app and test runner stay installed on it.
 set -euo pipefail
 
 OUT=${1:?usage: ios-render-check.sh <output-dir>}
@@ -125,8 +127,15 @@ for appearance in $APPEARANCES; do
     xcrun simctl ui "$UDID" appearance "$appearance"
     recorder=
     if [ "$RECORD_VIDEO" = 1 ] || [ "$RECORD_VIDEO" = true ]; then
-        xcrun simctl io "$UDID" recordVideo --codec h264 --force "$OUT/$appearance.mp4" >/dev/null 2>&1 &
+        xcrun simctl io "$UDID" recordVideo --codec h264 --force "$OUT/$appearance.mp4" >"$OUT/$appearance.recorder.log" 2>&1 &
         recorder=$!
+        # The video's start on the clock the test's timeline.json uses, so clips
+        # can be cut at its steps.
+        for _ in $(seq 50); do
+            grep -q "Recording started" "$OUT/$appearance.recorder.log" 2>/dev/null && break
+            sleep 0.1
+        done
+        python3 -c 'import time; print(f"{time.time():.3f}")' >"$OUT/$appearance.video-start"
         sleep 2
     fi
     # Parallel testing would run the test on a clone of this simulator, which
@@ -137,6 +146,19 @@ for appearance in $APPEARANCES; do
         -only-testing:awareappUITests/RenderCheckUITests -parallel-testing-enabled NO \
         -resultBundlePath "$OUT/$appearance.xcresult" -quiet; then
         echo "!! Render check failed in $appearance appearance; see $OUT/$appearance.xcresult" >&2
+        # Where it stopped (the step timeline.json has no end time for) and why.
+        if [ -f "$OUT/$appearance/timeline.json" ]; then
+            python3 -c '
+import json, sys
+unfinished = [s["step"] for s in json.load(open(sys.argv[1])) if "end" not in s]
+print("   stopped at:", unfinished[-1] if unfinished else "after the last step")
+' "$OUT/$appearance/timeline.json" >&2 || true
+        fi
+        xcrun xcresulttool get test-results summary --path "$OUT/$appearance.xcresult" 2>/dev/null | python3 -c '
+import json, sys
+for failure in json.load(sys.stdin).get("testFailures", []):
+    print("  ", failure.get("failureText", ""))
+' >&2 2>/dev/null || true
         status=1
     fi
     if [ -n "$recorder" ]; then
