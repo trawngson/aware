@@ -91,7 +91,8 @@ final class RenderCheckUITests: XCTestCase {
         let app = XCUIApplication()
         // What was on screen when a step failed.
         addTeardownBlock { @MainActor [weak self] in
-            guard let self, self.testRun?.hasSucceeded == false else { return }
+            // (hasSucceeded is still false here even when every step passed)
+            guard let self, (self.testRun?.totalFailureCount ?? 0) > 0 else { return }
             try? self.dump(app, as: "failure-dump")
         }
         if let first = steps.first, first != "launch", first != "onboarding" {
@@ -192,8 +193,11 @@ final class RenderCheckUITests: XCTestCase {
         if app.state != .notRunning { app.terminate() }
         // A fresh simulator takes its region from the host (CI runners are
         // en_US), so pin it for screenshots that compare across machines.
-        app.launchArguments = ["-hasSeenOnboarding", showingOnboarding ? "NO" : "YES",
-                               "-AppleLanguages", "(en-VN)", "-AppleLocale", "en_VN"]
+        // `-hasSeenOnboarding NO` would override what "Got it!" saves, so
+        // onboarding could never close; the app resets the flag for
+        // -AWAREShowOnboarding instead. It goes last, as it takes no value.
+        app.launchArguments = ["-AppleLanguages", "(en-VN)", "-AppleLocale", "en_VN"]
+            + (showingOnboarding ? ["-AWAREShowOnboarding"] : ["-hasSeenOnboarding", "YES"])
         app.launch()
         let ready = showingOnboarding ? app.buttons["Got it!"] : app.tabBars.buttons["Home"]
         XCTAssertTrue(ready.waitForExistence(timeout: 10), "App did not finish launching")
