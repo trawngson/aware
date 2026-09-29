@@ -56,7 +56,7 @@ GIF_WIDTH = 300        # screen width in the GIFs
 DECODE_FPS = 60        # recordings are decoded at this rate, then sampled per GIF
 TOUCH_MISSING_DELAY = 0.35  # when a tap's reaction can't be seen, assume this delay
 ALIGN_FPS = 30         # recordings are sampled at this rate to line them up with their timeline
-ALIGN_SEARCH = 15.0    # how far (seconds) a recording's stamped start may be off
+ALIGN_SEARCH = 60.0    # how far (seconds) a recording's stamped start may be off (4 and 19 s seen)
 SHOT_TO_CHANGE = 0.4   # about how soon after a screenshot the next step changes the screen
 
 
