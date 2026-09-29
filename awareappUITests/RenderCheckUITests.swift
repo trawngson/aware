@@ -20,6 +20,7 @@ import XCTest
 ///     type:<text>        type into the focused field
 ///     wait:<seconds>     pause
 ///     shot:<name>        screenshot, saved as NN-name.png
+///     dump               the accessibility tree, saved as NN-dump.txt
 ///
 /// The app launches (onboarding skipped) before the first step unless that step
 /// is `launch` or `onboarding`. The Scan tab's live camera feed never lets the
@@ -88,6 +89,11 @@ final class RenderCheckUITests: XCTestCase {
             .filter { !$0.isEmpty }
 
         let app = XCUIApplication()
+        // What was on screen when a step failed.
+        addTeardownBlock { @MainActor [weak self] in
+            guard let self, self.testRun?.hasSucceeded == false else { return }
+            try? self.dump(app, as: "failure-dump")
+        }
         if let first = steps.first, first != "launch", first != "onboarding" {
             launch(app, showingOnboarding: false)
         }
@@ -173,6 +179,9 @@ final class RenderCheckUITests: XCTestCase {
             Thread.sleep(forTimeInterval: seconds)
         case "shot":
             try capture(argument.isEmpty ? "screen" : argument)
+        case "dump":
+            shotCount += 1
+            try dump(app, as: String(format: "%02d-dump", shotCount))
         default:
             XCTFail("Unknown render step: \(step)")
         }
@@ -205,6 +214,14 @@ final class RenderCheckUITests: XCTestCase {
         if let outputDirectory {
             try screenshot.pngRepresentation.write(to: outputDirectory.appendingPathComponent("\(fileName).png"))
         }
+    }
+
+    /// Saves the app's accessibility tree, the elements the steps can find.
+    @MainActor
+    private func dump(_ app: XCUIApplication, as name: String) throws {
+        guard let outputDirectory else { return }
+        try app.debugDescription.write(to: outputDirectory.appendingPathComponent("\(name).txt"),
+                                       atomically: true, encoding: .utf8)
     }
 
     /// The first of the elements to exist within `timeout` seconds.

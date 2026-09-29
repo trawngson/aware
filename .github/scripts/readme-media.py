@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Builds the README's screenshots and GIFs from an iOS render check run.
 
-Capture the README tour in both appearances with video, download the full-size
-results, then build:
+The render check workflow runs it after a README tour with video and commits
+the results to the branch it ran on:
 
     gh workflow run ios-render-check.yml --ref <branch> -f steps=readme -f record_video=true
-    gh run download <run-id> -n render -D render
+
+To build them by hand from such a run instead:
+
+    gh run download <run-id> -n readme-tour -D render
     python3 .github/scripts/readme-media.py render
 
 Everything is written to .github/readme/. Needs Pillow, numpy and ffmpeg (on
