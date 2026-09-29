@@ -139,11 +139,14 @@ for appearance in $APPEARANCES; do
         sleep 2
     fi
     # Parallel testing would run the test on a clone of this simulator, which
-    # has neither the chosen appearance nor the status bar override.
+    # has neither the chosen appearance nor the status bar override. After a
+    # failure, collecting the simulator's diagnostics timed out after 10 minutes
+    # on CI; the timeline and the failure's accessibility tree tell more.
     if ! TEST_RUNNER_RENDER_DIR="$OUT/$appearance" TEST_RUNNER_RENDER_STEPS="$RENDER_STEPS" \
         xcodebuild test-without-building -project awareapp.xcodeproj -scheme awareapp \
         -destination "$DESTINATION" -derivedDataPath "$DERIVED" \
         -only-testing:awareappUITests/RenderCheckUITests -parallel-testing-enabled NO \
+        -collect-test-diagnostics never \
         -resultBundlePath "$OUT/$appearance.xcresult" -quiet; then
         echo "!! Render check failed in $appearance appearance; see $OUT/$appearance.xcresult" >&2
         # Where it stopped (the step timeline.json has no end time for) and why.
