@@ -1,5 +1,5 @@
 name: iOS render check
-run-name: iOS render check${{ inputs.steps && format(' — {0}', inputs.steps) || '' }}
+run-name: iOS render check${{ inputs.media_from_run && format(' — README media from {0}', inputs.media_from_run) || inputs.steps && format(' — {0}', inputs.steps) || '' }}
 
 # Builds the app with Xcode 27 and captures screens on an iOS simulator. Pull
 # requests run the full tour in Light and Dark. A manual run can capture only
@@ -9,6 +9,13 @@ run-name: iOS render check${{ inputs.steps && format(' — {0}', inputs.steps) |
 # Step syntax: awareappUITests/RenderCheckUITests.swift. Results are uploaded as
 # the "render" artifact (full-size PNGs and result bundles, ~100 MB), and small
 # JPEG copies as "render-previews" (~1 MB): gh run download <run-id> -n render-previews
+#
+# The README's tour with video rebuilds the README's screenshots and GIFs
+# (.github/readme/) and commits them to the branch the run was on:
+#   gh workflow run ios-render-check.yml --ref <branch> -f steps=readme -f record_video=true
+# To rebuild them from an earlier such run without capturing again (the
+# readme-tour artifact is kept for 7 days):
+#   gh workflow run ios-render-check.yml --ref <branch> -f media_from_run=<run-id>
 
 on:
   workflow_dispatch:
@@ -30,6 +37,14 @@ on:
         description: Also record a video per appearance
         type: boolean
         default: false
+      media_from_run:
+        description: "Only rebuild the README media, from this earlier run's README tour (its run ID)"
+        type: string
+        default: ""
+      media_args:
+        description: "More arguments for readme-media.py, e.g. '--only sheets'"
+        type: string
+        default: ""
   pull_request:
     paths:
       - "awareapp/**"
@@ -51,6 +66,7 @@ permissions:
 
 jobs:
   render:
+    if: ${{ !inputs.media_from_run }}
     runs-on: xcode-27
     timeout-minutes: 45
     env:
@@ -104,6 +120,18 @@ jobs:
           path: ${{ runner.temp }}/render
           if-no-files-found: warn
 
+      # What readme-media.py needs: the screenshots, timelines and recordings,
+      # without the result bundles.
+      - name: Upload the README tour
+        if: success() && inputs.steps == 'readme' && inputs.record_video
+        uses: actions/upload-artifact@v7
+        with:
+          name: readme-tour
+          path: |
+            ${{ runner.temp }}/render
+            !${{ runner.temp }}/render/*.xcresult
+          retention-days: 7
+
       - name: Make previews
         if: always()
         run: |
@@ -113,6 +141,11 @@ jobs:
             sips -Z 800 -s format jpeg -s formatOptions 60 "$png" \
               --out "$RUNNER_TEMP/render-previews/${png%.png}.jpg" >/dev/null
           done
+          # Timelines and accessibility dumps, to see where and why a run stopped
+          find . \( -name timeline.json -o -name '*-dump.txt' \) -not -path '*.xcresult/*' | while read -r file; do
+            mkdir -p "$RUNNER_TEMP/render-previews/$(dirname "$file")"
+            cp "$file" "$RUNNER_TEMP/render-previews/$file"
+          done
 
       - name: Upload previews
         if: always()
@@ -121,3 +154,88 @@ jobs:
           name: render-previews
           path: ${{ runner.temp }}/render-previews
           if-no-files-found: warn
+
+  # Builds the README's screenshots and GIFs from a finished README tour (this
+  # run's, or media_from_run's) and commits them to the branch the run was on.
+  readme-media:
+    needs: render
+    if: >-
+      !cancelled() && (inputs.media_from_run != '' ||
+      (needs.render.result == 'success' && inputs.steps == 'readme' && inputs.record_video))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: readme-tour
+          path: ${{ runner.temp }}/render
+          run-id: ${{ inputs.media_from_run || github.run_id }}
+          github-token: ${{ github.token }}
+
+      # gifsicle and pngquant make the GIFs and PNGs smaller.
+      - name: Install tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg gifsicle pngquant
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install -q numpy pillow
+
+      # How each recording's timing lines up with its tour, in the log.
+      - name: Inspect the recordings
+        run: |
+          cd "$RUNNER_TEMP/render"
+          for appearance in light dark; do
+            [ -f "$appearance.mp4" ] || continue
+            echo "== $appearance: stamped start $(cat "$appearance.video-start")"
+            python3 -c '
+          import json, sys
+          steps = json.load(open(sys.argv[1]))
+          print("   timeline:", steps[0]["step"], steps[0]["start"], "...", steps[-1]["step"], steps[-1].get("end"))
+          ' "$appearance/timeline.json"
+            sed 's/^/   recorder: /' "$appearance.recorder.log"
+            ffprobe -v error -show_entries format=start_time,duration:stream=codec_name,start_time,duration,nb_frames,r_frame_rate,avg_frame_rate,time_base \
+              -of default=noprint_wrappers=1 "$appearance.mp4" | sed 's/^/   /'
+            ffprobe -v error -select_streams v -show_entries packet=pts_time -of csv=p=0 "$appearance.mp4" > pts.txt
+            echo "   first frames: $(head -5 pts.txt | tr '\n' ' ') ... last: $(tail -2 pts.txt | tr '\n' ' ') ($(wc -l < pts.txt) frames)"
+            echo "   gaps over 1 s: $(sort -n pts.txt | awk 'NR > 1 && $1 - p > 1 { printf "%.1f+%.1f ", p, $1 - p } { p = $1 }')"
+          done
+
+      - name: Build the README media
+        env:
+          MEDIA_ARGS: ${{ inputs.media_args }}
+        run: |
+          # shellcheck disable=SC2086 # MEDIA_ARGS is split into arguments
+          "$RUNNER_TEMP/venv/bin/python" .github/scripts/readme-media.py "$RUNNER_TEMP/render" \
+            --sheets "$RUNNER_TEMP/sheets" $MEDIA_ARGS
+          {
+            echo "### README media"
+            (cd .github/readme && find . -type f | sort | while read -r file; do
+              echo "- ${file#./}: $(du -k "$file" | cut -f1) kB"
+            done)
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # A frame a second of each recording, labeled with the step running then,
+      # to check the clips' timing by eye.
+      - name: Upload the contact sheets
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: readme-sheets
+          path: ${{ runner.temp }}/sheets
+          if-no-files-found: ignore
+
+      - name: Commit the README media
+        run: |
+          git add .github/readme
+          if git diff --cached --quiet; then
+            echo "The README media didn't change."
+            exit 0
+          fi
+          git -c user.name="$GITHUB_ACTOR" -c user.email="$GITHUB_ACTOR_ID+$GITHUB_ACTOR@users.noreply.github.com" \
+            commit -q -m "Update the README's screenshots and GIFs"
+          git push origin "HEAD:$GITHUB_REF_NAME"

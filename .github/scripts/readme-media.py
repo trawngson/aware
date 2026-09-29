@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Builds the README's screenshots and GIFs from an iOS render check run.
 
-Capture the README tour in both appearances with video, download the full-size
-results, then build:
+The render check workflow runs it after a README tour with video and commits
+the results to the branch it ran on:
 
     gh workflow run ios-render-check.yml --ref <branch> -f steps=readme -f record_video=true
-    gh run download <run-id> -n render -D render
+
+To build them by hand from such a run instead:
+
+    gh run download <run-id> -n readme-tour -D render
     python3 .github/scripts/readme-media.py render
 
 Everything is written to .github/readme/. Needs Pillow, numpy and ffmpeg (on
@@ -52,6 +55,9 @@ STILL_WIDTH = 402      # screen width of the framed screenshots (2× at 201 pt)
 GIF_WIDTH = 300        # screen width in the GIFs
 DECODE_FPS = 60        # recordings are decoded at this rate, then sampled per GIF
 TOUCH_MISSING_DELAY = 0.35  # when a tap's reaction can't be seen, assume this delay
+ALIGN_FPS = 30         # recordings are sampled at this rate to line them up with their timeline
+ALIGN_SEARCH = 60.0    # how far (seconds) a recording's stamped start may be off (4 and 19 s seen)
+SHOT_TO_CHANGE = 0.4   # about how soon after a screenshot the next step changes the screen
 
 
 @dataclass
@@ -79,7 +85,9 @@ class Clip:
 STILLS = [
     Still("onboarding", shot="onboarding"),
     Still("home", shot="home"),
-    Still("scan-live", at="tab:Scan@touch+2.2"),
+    # The camera shows the bottle about 3 s after the tab opens, and the
+    # results a second later.
+    Still("scan-live", at="tab:Scan@touch+3.4"),
     Still("scan-results", shot="scan-results"),
     Still("scan-guidance", shot="scan-guidance"),
     Still("waste-saved", shot="waste-saved"),
@@ -130,11 +138,12 @@ def video_size(path):
 
 def decode(path, width, height, fps=DECODE_FPS, start=0.0, count=None):
     """Yields RGB frames at `fps`, frame k showing time start + k / fps."""
-    command = [FFMPEG, "-v", "error"]
+    command = [FFMPEG, "-v", "error", "-i", str(path), "-vf",
+               f"fps=fps={fps}:start_time=0,scale={width}:{height}:flags=lanczos"]
     if start:
+        # After the input, so the whole recording goes through the same
+        # filter and a moment is the same frame as in a full decode.
         command += ["-ss", f"{start:.3f}"]
-    command += ["-i", str(path), "-vf",
-                f"fps=fps={fps}:start_time=0,scale={width}:{height}:flags=lanczos"]
     if count:
         command += ["-frames:v", str(count)]
     command += ["-f", "rawvideo", "-pix_fmt", "rgb24", "-"]
@@ -238,16 +247,85 @@ def fit_width(image, width):
 class Timeline:
     """One appearance's tour: its steps, screenshots and recording."""
 
-    def __init__(self, render, appearance, offset=0.0):
+    def __init__(self, render, appearance, offset=None):
+        """`offset`: seconds the recording starts before its stamped start;
+        None works it out from the recording (see `align`)."""
         self.appearance = appearance
         self.folder = render / appearance
         self.steps = json.loads((self.folder / "timeline.json").read_text())
         self.video = render / f"{appearance}.mp4"
         start_file = render / f"{appearance}.video-start"
-        self.video_start = float(start_file.read_text()) - offset if start_file.exists() else None
+        self.video_start = float(start_file.read_text()) if start_file.exists() else None
+        if self.video_start is not None and self.video.exists():
+            if offset is None:
+                self.align()
+            else:
+                self.video_start -= offset
         first = next(step["file"] for step in self.steps if "file" in step)
         with Image.open(self.folder / first) as image:
             self.points = (image.width / POINT_SCALE, image.height / POINT_SCALE)
+
+    def align(self, width=48):
+        """Moves the recording's start to where its frames match the tour's
+        screenshots. On CI the recording began seconds after its stamped start,
+        so clips began and ended at the wrong steps."""
+        video_width, video_height = video_size(self.video)
+        height = round(video_height * width / video_width / 2) * 2
+        frames = np.stack([frame.mean(axis=2) for frame in decode(self.video, width, height, fps=ALIGN_FPS)])
+        shots = []
+        for step in self.steps:
+            if "file" in step and "end" in step:
+                with Image.open(self.folder / step["file"]) as image:
+                    small = np.asarray(image.convert("L").resize((width, height), Image.BILINEAR), np.float64)
+                shots.append((step.get("shotTime", step["end"]) - self.video_start, small))
+        if not shots:
+            return
+
+        def distances(shift):
+            indices = np.clip(np.round((np.array([t for t, _ in shots]) + shift) * ALIGN_FPS).astype(int),
+                              0, len(frames) - 1)
+            return np.array([np.abs(frames[k] - small).mean() for k, (_, small) in zip(indices, shots)])
+
+        shifts = np.arange(-ALIGN_SEARCH, ALIGN_SEARCH, 1 / ALIGN_FPS)
+        table = np.array([distances(shift) for shift in shifts])       # shift × shot
+        scores = table.mean(axis=1)
+        # A shot's screen held still for the 2 s capture waits before it, and
+        # the next step changes it soon after, so the shifts that fit all shots
+        # form a stretch, with the right one near its end.
+        near = scores <= scores.min() + 0.1 * (np.median(scores) - scores.min())
+        low = high = int(scores.argmin())
+        while low > 0 and near[low - 1]:
+            low -= 1
+        while high < len(shifts) - 1 and near[high + 1]:
+            high += 1
+        best = float(max(shifts[low], shifts[high] - SHOT_TO_CHANGE))
+        each = shifts[table.argmin(axis=0)]
+        print(f"== {self.appearance}: shifted {best:+.2f}s to match its {len(shots)} screenshots "
+              f"({shifts[low]:+.2f}…{shifts[high]:+.2f}s fit; distance {scores.min():.1f}, "
+              f"typical {np.median(scores):.1f})")
+        print("   best per shot: " + " ".join(f"{shift:+.1f}" for shift in each))
+        self.video_start -= best
+
+    def contact_sheet(self, folder, width=96, columns=16):
+        """A frame a second of the recording, each labeled with its time and
+        the step the timeline had running then, to check the timing by eye."""
+        video_width, video_height = video_size(self.video)
+        height = round(video_height * width / video_width / 2) * 2
+        frames = list(decode(self.video, width, height, fps=1))
+        label = 26
+        rows = math.ceil(len(frames) / columns)
+        sheet = Image.new("RGB", (columns * (width + 4), rows * (height + label + 4)), (255, 255, 255))
+        draw = ImageDraw.Draw(sheet)
+        for k, frame in enumerate(frames):
+            x, y = (k % columns) * (width + 4), (k // columns) * (height + label + 4)
+            sheet.paste(Image.fromarray(frame), (x, y + label))
+            running = [step["step"] for step in self.steps if step["start"] <= self.video_start + k]
+            draw.text((x + 2, y), f"{k}s", fill=(0, 0, 0))
+            draw.text((x + 2, y + 12), running[-1][:16] if running else "-", fill=(160, 0, 0))
+        folder.mkdir(parents=True, exist_ok=True)
+        path = folder / f"{self.appearance}.jpg"
+        sheet.save(path, quality=80)
+        print(f"   {path}: {len(frames)} frames")
 
     def shot(self, name):
         for step in self.steps:
@@ -529,9 +607,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("render", type=Path, help="the downloaded render artifact")
     parser.add_argument("--only", nargs="*", help="build only these: icon, stills, banner, or clip names")
-    parser.add_argument("--offset", type=float, default=0.0,
-                        help="seconds the recordings start before their stamped start time")
+    parser.add_argument("--offset", type=float,
+                        help="seconds the recordings start before their stamped start time "
+                             "(default: worked out from when the screen reacts to taps)")
     parser.add_argument("--out", type=Path, default=OUT, help=f"where to write (default {OUT.relative_to(ROOT)})")
+    parser.add_argument("--sheets", type=Path, help="also write a contact sheet of each recording here")
     args = parser.parse_args()
     OUT = args.out.resolve()
 
@@ -539,6 +619,11 @@ def main():
                  for appearance in ("light", "dark") if (args.render / appearance / "timeline.json").exists()}
     if not timelines:
         sys.exit(f"No light/timeline.json or dark/timeline.json in {args.render}")
+    if args.sheets:
+        print("== Contact sheets")
+        for timeline in timelines.values():
+            if timeline.video_start is not None and timeline.video.exists():
+                timeline.contact_sheet(args.sheets)
     only = set(args.only or [])
     wanted = lambda name: not only or name in only
     OUT.mkdir(parents=True, exist_ok=True)
