@@ -29,8 +29,8 @@ import XCTest
 ///
 /// Next to the screenshots, `timeline.json` lists each step with its start and
 /// end time (seconds since 1970, the clock `ios-render-check.sh` stamps the
-/// video with) and where and when it touched the window (0–1), so clips can be
-/// cut from the recording.
+/// video with), where and when it touched the window (0–1) and when a shot was
+/// taken, so clips can be cut from the recording.
 final class RenderCheckUITests: XCTestCase {
     static let fullTour = """
         onboarding | shot:onboarding | launch | shot:home \
@@ -211,6 +211,8 @@ final class RenderCheckUITests: XCTestCase {
         let fileName = String(format: "%02d-%@", shotCount, name)
         stepDetails["file"] = "\(fileName).png"
         let screenshot = XCUIScreen.main.screenshot()
+        // When the screen looked like this, for lining up a recording with it
+        stepDetails["shotTime"] = Date().timeIntervalSince1970
         let attachment = XCTAttachment(screenshot: screenshot)
         attachment.name = fileName
         attachment.lifetime = .keepAlways

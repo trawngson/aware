@@ -57,6 +57,7 @@ DECODE_FPS = 60        # recordings are decoded at this rate, then sampled per G
 TOUCH_MISSING_DELAY = 0.35  # when a tap's reaction can't be seen, assume this delay
 ALIGN_FPS = 30         # recordings are sampled at this rate to line them up with their timeline
 ALIGN_SEARCH = 15.0    # how far (seconds) a recording's stamped start may be off
+SHOT_TO_CHANGE = 0.4   # about how soon after a screenshot the next step changes the screen
 
 
 @dataclass
@@ -84,7 +85,9 @@ class Clip:
 STILLS = [
     Still("onboarding", shot="onboarding"),
     Still("home", shot="home"),
-    Still("scan-live", at="tab:Scan@touch+2.2"),
+    # The camera shows the bottle about 3 s after the tab opens, and the
+    # results a second later.
+    Still("scan-live", at="tab:Scan@touch+3.4"),
     Still("scan-results", shot="scan-results"),
     Still("scan-guidance", shot="scan-guidance"),
     Still("waste-saved", shot="waste-saved"),
@@ -155,20 +158,6 @@ def decode(path, width, height, fps=DECODE_FPS, start=0.0, count=None):
     finally:
         process.stdout.close()
         process.wait()
-
-
-def screen_changes(path, width=64):
-    """How much the screen changes into each frame of a recording sampled at
-    ALIGN_FPS, frame k showing time k / ALIGN_FPS."""
-    video_width, video_height = video_size(path)
-    height = round(video_height * width / video_width / 2) * 2
-    changes, previous = [0.0], None
-    for frame in decode(path, width, height, fps=ALIGN_FPS):
-        current = frame.astype(np.int16)
-        if previous is not None:
-            changes.append(float(np.abs(current - previous).mean()))
-        previous = current
-    return np.array(changes)
 
 
 def encode_gif(frames, fps, path):
@@ -267,7 +256,6 @@ class Timeline:
         self.video = render / f"{appearance}.mp4"
         start_file = render / f"{appearance}.video-start"
         self.video_start = float(start_file.read_text()) if start_file.exists() else None
-        self.stamp = self.video_start
         if self.video_start is not None and self.video.exists():
             if offset is None:
                 self.align()
@@ -277,39 +265,50 @@ class Timeline:
         with Image.open(self.folder / first) as image:
             self.points = (image.width / POINT_SCALE, image.height / POINT_SCALE)
 
-    def align(self):
-        """Moves the recording's start so the screen changes right after each
-        tap. The stamped start was seconds off on CI, so clips began and ended
-        at the wrong steps."""
-        changes = screen_changes(self.video)
-        taps = [step["touch"]["time"] - self.video_start for step in self.steps
-                if step["step"].startswith(("tap:", "tab:")) and "time" in step.get("touch", {})]
-        if not taps:
+    def align(self, width=48):
+        """Moves the recording's start to where its frames match the tour's
+        screenshots. On CI the recording began seconds after its stamped start,
+        so clips began and ended at the wrong steps."""
+        video_width, video_height = video_size(self.video)
+        height = round(video_height * width / video_width / 2) * 2
+        frames = np.stack([frame.mean(axis=2) for frame in decode(self.video, width, height, fps=ALIGN_FPS)])
+        shots = []
+        for step in self.steps:
+            if "file" in step and "end" in step:
+                with Image.open(self.folder / step["file"]) as image:
+                    small = np.asarray(image.convert("L").resize((width, height), Image.BILINEAR), np.float64)
+                shots.append((step.get("shotTime", step["end"]) - self.video_start, small))
+        if not shots:
             return
 
-        def mean(start, end):
-            a, b = max(0, round(start * ALIGN_FPS)), min(len(changes), round(end * ALIGN_FPS))
-            return float(changes[a:b].mean()) if b > a else 0.0
+        def distances(shift):
+            indices = np.clip(np.round((np.array([t for t, _ in shots]) + shift) * ALIGN_FPS).astype(int),
+                              0, len(frames) - 1)
+            return np.array([np.abs(frames[k] - small).mean() for k, (_, small) in zip(indices, shots)])
 
-        def score(shift, times):
-            # quiet just before the tap, changing just after
-            return sum(mean(t + shift, t + shift + 0.4) - mean(t + shift - 0.6, t + shift - 0.1) for t in times)
-
-        frame = 1 / ALIGN_FPS
-        best = max(np.arange(-ALIGN_SEARCH, ALIGN_SEARCH, frame), key=lambda shift: score(shift, taps))
-        # Each tap on its own, to show whether the shift holds through the tour
-        each = [max(np.arange(best - 1.5, best + 1.5, frame), key=lambda shift: score(shift, [t])) - best
-                for t in taps]
-        last = max(step.get("end", step["start"]) for step in self.steps) - self.video_start
-        print(f"== {self.appearance}: recording {len(changes) / ALIGN_FPS:.1f}s, timeline ends at {last:.1f}s; "
-              f"shifted {best:+.2f}s over {len(taps)} taps")
-        print("   each tap: " + " ".join(f"{t:.0f}s{shift:+.1f}" for t, shift in zip(taps, each)))
+        shifts = np.arange(-ALIGN_SEARCH, ALIGN_SEARCH, 1 / ALIGN_FPS)
+        table = np.array([distances(shift) for shift in shifts])       # shift × shot
+        scores = table.mean(axis=1)
+        # A shot's screen held still for the 2 s capture waits before it, and
+        # the next step changes it soon after, so the shifts that fit all shots
+        # form a stretch, with the right one near its end.
+        near = scores <= scores.min() + 0.1 * (np.median(scores) - scores.min())
+        low = high = int(scores.argmin())
+        while low > 0 and near[low - 1]:
+            low -= 1
+        while high < len(shifts) - 1 and near[high + 1]:
+            high += 1
+        best = float(max(shifts[low], shifts[high] - SHOT_TO_CHANGE))
+        each = shifts[table.argmin(axis=0)]
+        print(f"== {self.appearance}: shifted {best:+.2f}s to match its {len(shots)} screenshots "
+              f"({shifts[low]:+.2f}…{shifts[high]:+.2f}s fit; distance {scores.min():.1f}, "
+              f"typical {np.median(scores):.1f})")
+        print("   best per shot: " + " ".join(f"{shift:+.1f}" for shift in each))
         self.video_start -= best
 
     def contact_sheet(self, folder, width=96, columns=16):
         """A frame a second of the recording, each labeled with its time and
-        the step the timeline had running then by the stamped start, to check
-        the timing by eye."""
+        the step the timeline had running then, to check the timing by eye."""
         video_width, video_height = video_size(self.video)
         height = round(video_height * width / video_width / 2) * 2
         frames = list(decode(self.video, width, height, fps=1))
@@ -320,7 +319,7 @@ class Timeline:
         for k, frame in enumerate(frames):
             x, y = (k % columns) * (width + 4), (k // columns) * (height + label + 4)
             sheet.paste(Image.fromarray(frame), (x, y + label))
-            running = [step["step"] for step in self.steps if step["start"] <= self.stamp + k]
+            running = [step["step"] for step in self.steps if step["start"] <= self.video_start + k]
             draw.text((x + 2, y), f"{k}s", fill=(0, 0, 0))
             draw.text((x + 2, y + 12), running[-1][:16] if running else "-", fill=(160, 0, 0))
         folder.mkdir(parents=True, exist_ok=True)
@@ -623,7 +622,7 @@ def main():
     if args.sheets:
         print("== Contact sheets")
         for timeline in timelines.values():
-            if timeline.stamp is not None and timeline.video.exists():
+            if timeline.video_start is not None and timeline.video.exists():
                 timeline.contact_sheet(args.sheets)
     only = set(args.only or [])
     wanted = lambda name: not only or name in only
