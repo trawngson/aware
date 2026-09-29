@@ -41,6 +41,10 @@ on:
         description: "Only rebuild the README media, from this earlier run's README tour (its run ID)"
         type: string
         default: ""
+      media_args:
+        description: "More arguments for readme-media.py, e.g. '--only sheets'"
+        type: string
+        default: ""
   pull_request:
     paths:
       - "awareapp/**"
@@ -181,15 +185,49 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/venv"
           "$RUNNER_TEMP/venv/bin/pip" install -q numpy pillow
 
-      - name: Build the README media
+      # How each recording's timing lines up with its tour, in the log.
+      - name: Inspect the recordings
         run: |
-          "$RUNNER_TEMP/venv/bin/python" .github/scripts/readme-media.py "$RUNNER_TEMP/render"
+          cd "$RUNNER_TEMP/render"
+          for appearance in light dark; do
+            [ -f "$appearance.mp4" ] || continue
+            echo "== $appearance: stamped start $(cat "$appearance.video-start")"
+            python3 -c '
+          import json, sys
+          steps = json.load(open(sys.argv[1]))
+          print("   timeline:", steps[0]["step"], steps[0]["start"], "...", steps[-1]["step"], steps[-1].get("end"))
+          ' "$appearance/timeline.json"
+            sed 's/^/   recorder: /' "$appearance.recorder.log"
+            ffprobe -v error -show_entries format=start_time,duration:stream=codec_name,start_time,duration,nb_frames,r_frame_rate,avg_frame_rate,time_base \
+              -of default=noprint_wrappers=1 "$appearance.mp4" | sed 's/^/   /'
+            ffprobe -v error -select_streams v -show_entries packet=pts_time -of csv=p=0 "$appearance.mp4" > pts.txt
+            echo "   first frames: $(head -5 pts.txt | tr '\n' ' ') ... last: $(tail -2 pts.txt | tr '\n' ' ') ($(wc -l < pts.txt) frames)"
+            echo "   gaps over 1 s: $(sort -n pts.txt | awk 'NR > 1 && $1 - p > 1 { printf "%.1f+%.1f ", p, $1 - p } { p = $1 }')"
+          done
+
+      - name: Build the README media
+        env:
+          MEDIA_ARGS: ${{ inputs.media_args }}
+        run: |
+          # shellcheck disable=SC2086 # MEDIA_ARGS is split into arguments
+          "$RUNNER_TEMP/venv/bin/python" .github/scripts/readme-media.py "$RUNNER_TEMP/render" \
+            --sheets "$RUNNER_TEMP/sheets" $MEDIA_ARGS
           {
             echo "### README media"
             (cd .github/readme && find . -type f | sort | while read -r file; do
               echo "- ${file#./}: $(du -k "$file" | cut -f1) kB"
             done)
           } >> "$GITHUB_STEP_SUMMARY"
+
+      # A frame a second of each recording, labeled with the step running then,
+      # to check the clips' timing by eye.
+      - name: Upload the contact sheets
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: readme-sheets
+          path: ${{ runner.temp }}/sheets
+          if-no-files-found: ignore
 
       - name: Commit the README media
         run: |

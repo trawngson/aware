@@ -267,6 +267,7 @@ class Timeline:
         self.video = render / f"{appearance}.mp4"
         start_file = render / f"{appearance}.video-start"
         self.video_start = float(start_file.read_text()) if start_file.exists() else None
+        self.stamp = self.video_start
         if self.video_start is not None and self.video.exists():
             if offset is None:
                 self.align()
@@ -304,6 +305,28 @@ class Timeline:
               f"shifted {best:+.2f}s over {len(taps)} taps")
         print("   each tap: " + " ".join(f"{t:.0f}s{shift:+.1f}" for t, shift in zip(taps, each)))
         self.video_start -= best
+
+    def contact_sheet(self, folder, width=96, columns=16):
+        """A frame a second of the recording, each labeled with its time and
+        the step the timeline had running then by the stamped start, to check
+        the timing by eye."""
+        video_width, video_height = video_size(self.video)
+        height = round(video_height * width / video_width / 2) * 2
+        frames = list(decode(self.video, width, height, fps=1))
+        label = 26
+        rows = math.ceil(len(frames) / columns)
+        sheet = Image.new("RGB", (columns * (width + 4), rows * (height + label + 4)), (255, 255, 255))
+        draw = ImageDraw.Draw(sheet)
+        for k, frame in enumerate(frames):
+            x, y = (k % columns) * (width + 4), (k // columns) * (height + label + 4)
+            sheet.paste(Image.fromarray(frame), (x, y + label))
+            running = [step["step"] for step in self.steps if step["start"] <= self.stamp + k]
+            draw.text((x + 2, y), f"{k}s", fill=(0, 0, 0))
+            draw.text((x + 2, y + 12), running[-1][:16] if running else "-", fill=(160, 0, 0))
+        folder.mkdir(parents=True, exist_ok=True)
+        path = folder / f"{self.appearance}.jpg"
+        sheet.save(path, quality=80)
+        print(f"   {path}: {len(frames)} frames")
 
     def shot(self, name):
         for step in self.steps:
@@ -589,6 +612,7 @@ def main():
                         help="seconds the recordings start before their stamped start time "
                              "(default: worked out from when the screen reacts to taps)")
     parser.add_argument("--out", type=Path, default=OUT, help=f"where to write (default {OUT.relative_to(ROOT)})")
+    parser.add_argument("--sheets", type=Path, help="also write a contact sheet of each recording here")
     args = parser.parse_args()
     OUT = args.out.resolve()
 
@@ -596,6 +620,11 @@ def main():
                  for appearance in ("light", "dark") if (args.render / appearance / "timeline.json").exists()}
     if not timelines:
         sys.exit(f"No light/timeline.json or dark/timeline.json in {args.render}")
+    if args.sheets:
+        print("== Contact sheets")
+        for timeline in timelines.values():
+            if timeline.stamp is not None and timeline.video.exists():
+                timeline.contact_sheet(args.sheets)
     only = set(args.only or [])
     wanted = lambda name: not only or name in only
     OUT.mkdir(parents=True, exist_ok=True)
