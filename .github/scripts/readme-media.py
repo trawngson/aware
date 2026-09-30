@@ -600,7 +600,7 @@ def build_stills(timelines, stills, island):
     return images
 
 
-def build_banner(images, shots, size=(1760, 880), corner=36):
+def build_banner(images, shots, size=(1760, 880), corner=36, gap=20):
     """The phones fanned out over the app's forest, for the top of the README."""
     width, height = size
     forest = Image.open(FOREST).convert("RGB")
@@ -616,19 +616,18 @@ def build_banner(images, shots, size=(1760, 880), corner=36):
     background = background * (0.55 + 0.25 * glow[..., None]) + tint * (0.28 * glow[..., None])
     banner = Image.fromarray(background.clip(0, 255).astype(np.uint8)).convert("RGBA")
 
-    # middle phone largest, the others smaller and further down, drawn outside in
+    # middle phone largest, the others smaller and further down, drawn outside in,
+    # with the same gap between each phone and the next
+    shots = [name for name in shots if (name, "dark") in images]
     middle = len(shots) // 2
+    phones = [fit_width(images[(name, "dark")], round(330 * [1.0, 0.86, 0.74][min(abs(i - middle), 2)]))
+              for i, name in enumerate(shots)]
+    lefts = np.cumsum([0] + [phone.width + gap for phone in phones])
+    shift = width / 2 - (lefts[middle] + phones[middle].width / 2)
     placements = []
-    for i, name in enumerate(shots):
+    for i, phone in enumerate(phones):
         distance = abs(i - middle)
-        scale = [1.0, 0.86, 0.74][min(distance, 2)]
-        phone = images.get((name, "dark"))
-        if phone is None:
-            continue
-        phone = fit_width(phone, round(330 * scale))
-        x = width / 2 + (i - middle) * 300 - phone.width / 2
-        y = 88 + distance * 70
-        placements.append((distance, phone, round(x), y))
+        placements.append((distance, phone, round(lefts[i] + shift), 88 + distance * 70))
     for distance, phone, x, y in sorted(placements, key=lambda p: -p[0]):
         shadowed = with_shadow(phone, blur=22, offset=18, opacity=0.55, pad=48)
         if distance:
