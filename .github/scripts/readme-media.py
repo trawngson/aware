@@ -39,7 +39,8 @@ OUT = ROOT / ".github" / "readme"
 FOREST = ROOT / "awareapp/Assets.xcassets/ForestBackground.imageset/ForestBackground.jpg"
 ICON = ROOT / "awareapp/Assets.xcassets/AppIcon.appiconset/AppIcon~ios-marketing.png"
 
-# An iPhone Pro, in fractions of the screen's width.
+# An iPhone Pro, in fractions of the screen's width. The island is measured
+# from the recordings (see `find_island`); these are for when there are none.
 BEZEL = 0.036
 RIM = 0.009
 CORNER = 0.148
@@ -189,10 +190,59 @@ def rounded_mask(size, box, radius, supersample=4):
     return big.resize(size, Image.LANCZOS)
 
 
-class DeviceFrame:
-    """Puts screens of one size in an iPhone frame, returning RGBA images."""
+def find_island(videos):
+    """Where the recordings show the Dynamic Island, as (left, top, width,
+    height) in fractions of the screen's width, or None if they don't.
 
-    def __init__(self, screen_width, screen_height):
+    The simulator draws the island into its recordings but not into the
+    tour's screenshots, so the frame draws its own island exactly over this
+    one. An island of the wrong size left the recorded one showing around it.
+    """
+    brightest = None
+    for video in videos:
+        width, height = video_size(video)
+        if brightest is not None and brightest.shape[1] != width:
+            continue
+        for image in decode(video, width, height, fps=1):
+            top = image[:width // 4].max(axis=2)
+            brightest = top if brightest is None else np.maximum(brightest, top)
+    if brightest is None:
+        return None
+
+    def run(line, at):
+        """The stretch of True in `line` around index `at`, as (start, end)."""
+        start = end = at
+        while start > 0 and line[start - 1]:
+            start -= 1
+        while end < len(line) and line[end]:
+            end += 1
+        return start, end
+
+    # The island stays dark in every frame while the screen around it lights up.
+    dark = brightest < np.median(brightest) / 2
+    width = brightest.shape[1]
+    center = width // 2
+    column = dark[:, center]
+    below_edge = np.flatnonzero(column & ~np.cumprod(column).astype(bool))
+    if not len(below_edge):
+        return None
+    top, bottom = run(column, below_edge[0])
+    left, right = run(dark[(top + bottom) // 2], center)
+    if not (0.05 < (bottom - top) / width < 0.15 and 0.2 < (right - left) / width < 0.45
+            and abs(left + right - width) <= 4):
+        print(f"!! Found something dark at the top of the recordings ({right - left}×{bottom - top} px "
+              f"at {left}, {top}), but it isn't the island")
+        return None
+    print(f"== The recordings' island: {right - left}×{bottom - top} px at ({left}, {top}) "
+          f"of a {width} px wide screen")
+    return left / width, top / width, (right - left) / width, (bottom - top) / width
+
+
+class DeviceFrame:
+    """Puts screens of one size in an iPhone frame, returning RGBA images.
+    `island` is (left, top, width, height) in fractions of the screen's width."""
+
+    def __init__(self, screen_width, screen_height, island=None):
         self.bezel = bezel = round(screen_width * BEZEL)
         self.size = size = (screen_width + 2 * bezel, screen_height + 2 * bezel)
         radius = screen_width * CORNER
@@ -205,8 +255,9 @@ class DeviceFrame:
         self.body = Image.alpha_composite(body, inner)
 
         self.screen_mask = rounded_mask(size, (bezel, bezel, bezel + screen_width, bezel + screen_height), radius)
-        island_width, island_height = screen_width * ISLAND_WIDTH, screen_width * ISLAND_HEIGHT
-        left, top = bezel + (screen_width - island_width) / 2, bezel + screen_width * ISLAND_TOP
+        left, top, island_width, island_height = (
+            v * screen_width for v in island or ((1 - ISLAND_WIDTH) / 2, ISLAND_TOP, ISLAND_WIDTH, ISLAND_HEIGHT))
+        left, top = left + bezel, top + bezel
         island = Image.new("RGBA", size, (0, 0, 0, 255))
         island.putalpha(rounded_mask(size, (left, top, left + island_width, top + island_height), island_height / 2))
         self.island = island
@@ -528,7 +579,7 @@ def still_image(timeline, still):
     sys.exit(f"No frame at {still.at} in {timeline.video}")
 
 
-def build_stills(timelines, stills):
+def build_stills(timelines, stills, island):
     images = {}
     folder = OUT / "screens"
     folder.mkdir(parents=True, exist_ok=True)
@@ -539,7 +590,7 @@ def build_stills(timelines, stills):
             if not timeline:
                 continue
             screen = fit_width(still_image(timeline, still), STILL_WIDTH)
-            frame = frames.setdefault(screen.size, DeviceFrame(*screen.size))
+            frame = frames.setdefault(screen.size, DeviceFrame(*screen.size, island))
             framed = frame(screen)
             images[(still.name, appearance)] = framed
             suffix = "" if appearance == "dark" else f"-{appearance}"
@@ -627,21 +678,27 @@ def main():
     only = set(args.only or [])
     wanted = lambda name: not only or name in only
     OUT.mkdir(parents=True, exist_ok=True)
+    clips = [clip for clip in CLIPS if wanted(clip.name) and clip.appearance in timelines]
+    island = None
+    if wanted("stills") or wanted("banner") or clips:
+        island = find_island([timeline.video for timeline in timelines.values()
+                              if timeline.video_start is not None and timeline.video.exists()])
+        if island is None:
+            print("!! No island found in the recordings; drawing the usual iPhone Pro one")
 
     if wanted("icon"):
         print("== Icon")
         build_icon()
     if wanted("stills") or wanted("banner"):
         print("== Screenshots")
-        images = build_stills(timelines, STILLS)
+        images = build_stills(timelines, STILLS, island)
         if wanted("banner"):
             build_banner(images, BANNER_SHOTS)
-    clips = [clip for clip in CLIPS if wanted(clip.name) and clip.appearance in timelines]
     if clips:
         print("== GIFs")
         sample = timelines[clips[0].appearance].shot("home")
         width, height = GIF_WIDTH, round(sample.height * GIF_WIDTH / sample.width / 2) * 2
-        build_clips(timelines, clips, DeviceFrame(width, height))
+        build_clips(timelines, clips, DeviceFrame(width, height, island))
 
 
 if __name__ == "__main__":
