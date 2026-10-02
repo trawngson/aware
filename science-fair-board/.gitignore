@@ -1,0 +1,2 @@
+# Print files are rebuilt with node build.cjs
+out/*.pdf

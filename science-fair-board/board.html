@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWARE Fair Board</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* Real-world millimetres throughout: the panels print at 1:1.
+   Left wing 400 x 900, centre 800 x 900, right wing 400 x 900. */
+:root {
+  --paper: #E6EDE3;
+  --card: #FFFFFF;
+  --ink: #10261A;
+  --ink-2: #34483B;
+  --muted: #637268;
+  --line: #D3DCD0;
+  --forest: #0E2D1C;
+  --green: #1F7A46;
+  --green-2: #2E9E5B;
+  --mint: #BFF0CF;
+  --mint-2: #E3F4E8;
+  --grey: #C5CFC7;
+  --amber: #A06300;
+  --amber-2: #FFF0CF;
+  --red: #B4462F;
+  --red-2: #F7DFD7;
+  --teal: #0E7C86;
+  --teal-2: #DAEEF0;
+}
+@page { margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--paper); color: var(--ink); }
+body {
+  font-family: "Figtree", sans-serif; font-size: 6mm; line-height: 1.3; font-weight: 500;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+b, strong { font-weight: 750; }
+svg { display: block; overflow: visible; }
+svg text { font-family: "Figtree", sans-serif; }
+.disp { font-family: "Bricolage Grotesque", sans-serif; }
+.muted { color: var(--muted); }
+
+/* ---------- Board ---------- */
+body.flat { background: #C3CCC0; padding: 30mm; width: max-content; }
+#board { display: flex; gap: 6mm; align-items: flex-start; }
+.panel {
+  position: relative; height: 900mm; flex: none; overflow: hidden;
+  background: var(--paper); padding: 12mm;
+}
+.panel.wing { width: 400mm; --iw: 376mm; }
+.panel.centre { width: 800mm; --iw: 776mm; }
+/* Content is laid out at 1/z of the panel and zoomed back up, so every
+   mm-sized element scales by z while figures keep their printed width.
+   fitPanels() picks z so each panel is full without clipping. */
+.fit { zoom: var(--z, 1); width: calc(var(--iw) / var(--z, 1)); height: calc(876mm / var(--z, 1)); display: flex; flex-direction: column; gap: 5mm; }
+.flat .panel { box-shadow: 0 2mm 8mm rgba(0,0,0,.18); }
+
+/* ---------- Section cards ---------- */
+.sec { background: var(--card); border-radius: 3.5mm; overflow: hidden; border: .35mm solid var(--line); display: flex; flex-direction: column; }
+.hd {
+  display: flex; align-items: center; gap: 3mm;
+  background: var(--forest); color: #fff; padding: 2.4mm 4.5mm 2.4mm 3mm;
+  font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 7.4mm; letter-spacing: .03em; text-transform: uppercase; line-height: 1;
+}
+.hd .n { display: grid; place-items: center; min-width: 10mm; height: 9mm; padding: 0 1.5mm; border-radius: 1.8mm; background: var(--mint); color: var(--forest); font-size: 5.2mm; letter-spacing: 0; }
+.hd .sub { margin-left: auto; font-family: "Figtree", sans-serif; font-weight: 600; font-size: 5mm; text-transform: none; letter-spacing: 0; color: var(--mint); }
+.bd { padding: 4mm 4.5mm 4.5mm; flex: 1; }
+.grow { flex: 1; }
+
+p + p { margin-top: 1.6mm; }
+.lead { font-size: 6.8mm; line-height: 1.25; font-weight: 600; }
+.lead em { font-style: normal; color: var(--green); font-weight: 800; }
+.small { font-size: 5.3mm; line-height: 1.3; }
+.cap { font-size: 4.6mm; line-height: 1.3; color: var(--muted); margin-top: 1.4mm; }
+.cap b { color: var(--ink-2); font-weight: 800; }
+.h4 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 6.4mm; line-height: 1.1; letter-spacing: -.01em; margin-bottom: 1.6mm; }
+.h4 .note { font-family: "Figtree", sans-serif; font-weight: 600; font-size: 4.2mm; color: var(--muted); letter-spacing: 0; }
+.row { display: flex; gap: 4mm; }
+.tag { display: inline-flex; align-items: center; font-family: "Figtree", sans-serif; font-weight: 800; font-size: 3.9mm; letter-spacing: .07em; text-transform: uppercase; padding: .8mm 2.2mm; border-radius: 6mm; line-height: 1; }
+.tag.pred { background: var(--amber-2); color: var(--amber); }
+.hd .tag { margin-left: 2mm; }
+.icon { display: inline-block; width: 1em; height: 1em; flex: none; vertical-align: -0.14em; }
+.icon svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.divide { height: .35mm; background: var(--line); margin: 3.2mm 0; }
+
+/* table */
+table.t { width: 100%; border-collapse: collapse; font-size: 5.2mm; line-height: 1.22; }
+table.t th { text-align: left; font-size: 4.2mm; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 0 2mm 1.2mm 0; border-bottom: .35mm solid var(--ink-2); }
+table.t td { padding: 1.35mm 2mm 1.35mm 0; border-bottom: .3mm solid var(--line); vertical-align: top; }
+table.t tr:last-child td { border-bottom: 0; }
+table.t td.ok { color: var(--green); font-weight: 800; white-space: nowrap; }
+table.t td.part { color: var(--amber); font-weight: 800; white-space: nowrap; }
+.half { display: inline-block; width: .8em; height: .8em; border-radius: 50%; border: .35mm solid currentColor; background: linear-gradient(90deg, currentColor 50%, transparent 50%); vertical-align: -0.05em; }
+.empty { display: inline-block; width: .8em; height: .8em; border-radius: 50%; border: .35mm solid currentColor; vertical-align: -0.05em; }
+table.t td.k { font-weight: 750; }
+
+/* ---------- Left ---------- */
+.abstract { font-size: 5.6mm; line-height: 1.34; text-align: justify; hyphens: auto; }
+.quote { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 8.4mm; line-height: 1.05; letter-spacing: -.02em; margin-bottom: 3mm; }
+.quote em { font-style: normal; color: var(--green); }
+.bigstat { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; line-height: .85; letter-spacing: -.04em; }
+.barriers { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2mm 4mm; margin-top: 3mm; }
+.barrier { display: grid; grid-template-columns: 9mm 1fr; gap: 0 2mm; font-size: 5mm; line-height: 1.25; }
+.barrier .icon { font-size: 8.4mm; color: var(--green); grid-row: span 2; }
+.barrier b { font-size: 5.5mm; }
+.classes { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1.8mm; }
+.cls.legend { display: flex; flex-direction: column; justify-content: center; background: var(--mint-2); padding: 3mm; font-size: 4.6mm; line-height: 1.25; color: var(--ink-2); }
+.cls.legend b { font-family: "Bricolage Grotesque", sans-serif; font-size: 6.4mm; color: var(--ink); line-height: 1.05; margin-bottom: 1.5mm; }
+.cls { position: relative; aspect-ratio: 3 / 4; border-radius: 2mm; overflow: hidden; }
+.cls img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cls span { position: absolute; left: 0; right: 0; bottom: 0; padding: 5mm .6mm 1.2mm; text-align: center; color: #fff; font-size: 4mm; font-weight: 800; line-height: 1.05; background: linear-gradient(transparent, rgba(4,18,10,.88)); }
+.cls i { position: absolute; top: 1.2mm; right: 1.2mm; font-style: normal; font-size: 4mm; font-weight: 800; background: rgba(255,255,255,.92); color: var(--ink); border-radius: 1.2mm; padding: .3mm 1.1mm; }
+
+/* ---------- Centre banner ---------- */
+.banner {
+  position: relative; border-radius: 4mm; overflow: hidden; color: #fff; flex: none;
+  background: radial-gradient(180mm 110mm at 88% 0%, rgba(191,240,207,.20), transparent 70%), linear-gradient(120deg, #0A2416 0%, #12442A 55%, #1C6A3F 100%);
+  padding: 11mm 13mm 10mm;
+  display: grid; grid-template-columns: 104mm 1fr; gap: 11mm; align-items: center;
+}
+.banner::before { content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,.04) 0 .45mm, transparent .45mm 52mm), repeating-linear-gradient(-45deg, rgba(255,255,255,.04) 0 .45mm, transparent .45mm 52mm); }
+.banner > * { position: relative; }
+.appicon { width: 104mm; height: 104mm; border-radius: 24mm; overflow: hidden; box-shadow: 0 2.5mm 8mm rgba(0,0,0,.35); }
+.appicon img { width: 100%; height: 100%; display: block; }
+.title { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 78mm; line-height: .78; letter-spacing: -.045em;
+  background: linear-gradient(90deg, #BFF0CF 0%, #FFFFFF 70%); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 1.5mm; }
+.subtitle { font-weight: 800; font-size: 10.4mm; line-height: 1.08; margin-top: 2.5mm; letter-spacing: -.01em; }
+.tagline { font-size: 7mm; line-height: 1.25; margin-top: 2mm; color: #D3EDDA; }
+.tagline b { color: #fff; }
+.chips { display: flex; gap: 3mm; margin-top: 5mm; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 2mm; padding: 2mm 4mm; border-radius: 10mm; background: rgba(255,255,255,.1); border: .35mm solid rgba(191,240,207,.4); font-weight: 750; font-size: 5.6mm; }
+.chip .icon { font-size: 6mm; color: var(--mint); }
+
+/* architecture */
+.arch { position: relative; }
+.stages { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9mm; position: relative; }
+.stage { text-align: center; position: relative; }
+.stage .top { display: flex; align-items: center; justify-content: center; gap: 2mm; margin-bottom: 1.6mm; }
+.stage .num { display: grid; place-items: center; width: 8.4mm; height: 8.4mm; border-radius: 50%; background: var(--green); color: #fff; font-weight: 800; font-size: 4.8mm; }
+.stage .name { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 8mm; letter-spacing: -.01em; }
+.stage img { width: 100%; display: block; filter: drop-shadow(0 1.2mm 2mm rgba(0,0,0,.22)); }
+.stage .spec { font-size: 5.3mm; line-height: 1.28; margin-top: 2mm; color: var(--ink-2); text-align: left; }
+.stage .spec b { color: var(--ink); }
+.arrowR { position: absolute; top: 100mm; right: -8.6mm; width: 8mm; height: 8mm; color: var(--green); }
+.offline { grid-column: 1 / 4; grid-row: 1; margin: -3.5mm; border: .6mm dashed var(--green-2); border-radius: 5mm; position: relative; z-index: 0; }
+.stage { grid-row: 1; z-index: 1; }
+.stages > .stage:nth-child(2) { grid-column: 1; }
+.stages > .stage:nth-child(3) { grid-column: 2; }
+.stages > .stage:nth-child(4) { grid-column: 3; }
+.stages > .stage:nth-child(5) { grid-column: 4; }
+.stages > .stage:nth-child(6) { grid-column: 5; }
+.offline span { position: absolute; top: -3.4mm; left: 50%; transform: translateX(-50%); background: var(--card); padding: 0 2.5mm; font-weight: 800; font-size: 4.4mm; color: var(--green); white-space: nowrap; letter-spacing: .05em; text-transform: uppercase; }
+
+/* results */
+.results { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 7mm; }
+.results > div { display: flex; flex-direction: column; }
+.colhd { display: flex; align-items: baseline; gap: 2mm; border-bottom: .5mm solid var(--forest); padding-bottom: 1.2mm; margin-bottom: 2.5mm; }
+.colhd .disp { font-weight: 800; font-size: 7.6mm; letter-spacing: -.01em; }
+.hero { display: flex; align-items: flex-end; gap: 3mm; margin-bottom: 1mm; }
+.hero .bigstat { font-size: 28mm; }
+.hero .l { font-size: 5.4mm; line-height: 1.2; padding-bottom: .6mm; }
+.statrow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2mm; margin-top: 2.5mm; }
+.st { background: var(--mint-2); border-radius: 2.5mm; padding: 2mm 2.2mm; }
+.st .v { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 9.6mm; line-height: 1; letter-spacing: -.02em; }
+.st .v small { font-size: 4.4mm; margin-left: .4mm; letter-spacing: 0; }
+.st .k { font-size: 4.3mm; line-height: 1.2; color: var(--ink-2); margin-top: .6mm; }
+.dets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm; }
+.det { position: relative; aspect-ratio: 3 / 4; border-radius: 2mm; overflow: hidden; }
+.det img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.det .box { position: absolute; border: .7mm solid #5BD98A; border-radius: .8mm; }
+.det .box span { position: absolute; left: -.7mm; top: -6.4mm; white-space: nowrap; background: #5BD98A; color: var(--forest); font-size: 4mm; font-weight: 800; padding: .5mm 1.4mm; border-radius: .8mm .8mm .8mm 0; }
+.tryit { display: flex; align-items: center; justify-content: center; gap: 2.5mm; background: var(--forest); color: #fff; border-radius: 3.5mm; padding: 3.2mm; font-weight: 800; font-size: 6.6mm; flex: none; }
+.tryit .icon { font-size: 7mm; color: var(--mint); }
+
+.parity { display: grid; grid-template-columns: 9mm 1fr; gap: 2.5mm; align-items: start; margin-top: 3mm; background: var(--mint-2); border-radius: 2.5mm; padding: 2.4mm 3mm; font-size: 4.9mm; line-height: 1.27; }
+.parity .icon { font-size: 8mm; color: var(--green); }
+/* ---------- Right ---------- */
+.causes { display: grid; gap: 2.2mm; margin-top: 3mm; }
+.cause { display: grid; grid-template-columns: 10mm 1fr; gap: 2.5mm; font-size: 5.2mm; line-height: 1.26; align-items: start; }
+.cause .icon { font-size: 9mm; color: var(--red); margin-top: .4mm; }
+.cause b { font-size: 5.5mm; }
+.limits { font-size: 4.9mm; line-height: 1.28; color: var(--ink-2); background: #F2F4F1; border-radius: 2.5mm; padding: 2.4mm 3mm; margin-top: 3mm; }
+.limits b { color: var(--ink); }
+.math { font-size: 4.7mm; line-height: 1.3; color: var(--ink-2); background: var(--amber-2); border-radius: 2.5mm; padding: 2.2mm 3mm; margin-top: 2.5mm; }
+.math b { color: var(--ink); }
+.ripple { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8mm 4mm; margin-top: 2.6mm; font-size: 5mm; line-height: 1.25; }
+.ripple b { color: var(--green); }
+.partner { display: grid; grid-template-columns: 10mm 1fr; gap: 2.5mm; align-items: start; background: var(--teal-2); border-radius: 2.5mm; padding: 2.4mm 3mm; margin-top: 2.6mm; font-size: 5mm; line-height: 1.27; }
+.partner .icon { font-size: 9mm; color: var(--teal); }
+.partner b { color: var(--teal); }
+.status { display: grid; grid-template-columns: 6mm 1fr; gap: 1.1mm 1.5mm; margin-top: 2.4mm; font-size: 4.9mm; line-height: 1.22; }
+.status .ok { color: var(--green); font-weight: 800; }
+.status .wip { color: var(--amber); font-weight: 800; }
+.status .todo { color: var(--muted); font-weight: 800; }
+.road { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2mm; margin-top: 3mm; }
+.road .ph { border-top: 1.2mm solid var(--green); padding-top: 1.6mm; font-size: 4.8mm; line-height: 1.24; }
+.road .ph.done { border-color: var(--forest); }
+.road .ph.next { border-color: var(--green-2); }
+.road .ph.later { border-color: var(--grey); }
+.road .y { font-weight: 800; font-size: 4.6mm; color: var(--green); letter-spacing: .03em; }
+.road .h { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 6mm; line-height: 1.05; margin: .4mm 0 1mm; }
+.concl { background: var(--forest); color: #fff; border-radius: 3.5mm; padding: 4.5mm 5.5mm; font-size: 5.5mm; line-height: 1.32; flex: none; }
+.concl .h4 { color: var(--mint); font-size: 7.4mm; }
+.concl ul { list-style: none; display: grid; gap: 1.2mm; }
+.concl li { padding-left: 5mm; position: relative; }
+.concl li::before { content: ""; position: absolute; left: 0; top: 1.7mm; width: 2.2mm; height: 2.2mm; border-radius: 50%; background: var(--mint); }
+.concl .vision { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 8.4mm; line-height: 1.1; color: var(--mint); margin-top: 2.6mm; }
+.refs { display: grid; grid-template-columns: 1fr 34mm; gap: 4mm; align-items: end; flex: none; }
+.refs ol { font-size: 4.1mm; line-height: 1.3; color: var(--ink-2); padding-left: 4.4mm; }
+.qr { text-align: center; font-size: 3.6mm; font-weight: 800; color: var(--ink-2); }
+.qr img { width: 34mm; height: 34mm; display: block; background: #fff; padding: 1.6mm; border-radius: 1.6mm; margin-bottom: 1mm; }
+
+/* ---------- A3 tiles (mode=tiles): marks only; build.cjs adds the artwork ---------- */
+html:has(body.tiles), body.tiles { background: transparent; }
+.sheet { position: relative; overflow: hidden; background: transparent; page-break-after: always; break-after: page; }
+.sheet .win { position: absolute; overflow: hidden; }
+.sheet .mark { position: absolute; background: #000; }
+.sheet .label { position: absolute; font-size: 3.4mm; line-height: 1.2; color: #000; font-weight: 600; white-space: nowrap; }
+.sheet .label b { font-size: 4.6mm; }
+.sheet .glue { position: absolute; border: .3mm dashed rgba(0,0,0,.55); }
+.sheet .minimap { position: absolute; display: grid; gap: .4mm; }
+.sheet .minimap div { background: #ddd; }
+.sheet .minimap div.on { background: #1F7A46; }
+.sheet .scalebar { position: absolute; height: 2mm; border: .3mm solid #000; border-top: 0; }
+</style>
+</head>
+<body>
+<div id="board">
+
+<!-- ================================ LEFT WING ================================ -->
+<section class="panel wing" id="panel-left"><div class="fit">
+
+  <div class="sec">
+    <div class="hd"><span class="n">A</span>Abstract</div>
+    <div class="bd"><p class="abstract">
+      Hanoi now requires households to sort their waste, but people decide in seconds at the bin, usually with no guidance. We built <b>AWARE</b>, an iOS app that recognises seven common waste types with an on-device <b>YOLO26n</b> detector and explains, step by step, where each item goes under Hanoi's rules, with <b>no internet</b>. We drew training data from 3,131 public images (TACO, Open Images V7) and tested on <b>113 photos we took ourselves</b>. On a 2018 iPhone XR the 5 MB model ran at <b>24 FPS</b> (25 ms per frame). Accuracy on our photos was <b>mAP50 0.30</b>: strong for cans (0.72) and bags (0.57), weak for cardboard and styrofoam, which we trace to domain shift and class imbalance. A 30-day pilot with 500 students will test whether sorting improves, and whether it lasts.
+    </p></div>
+  </div>
+
+  <div class="sec">
+    <div class="hd"><span class="n">01</span>The problem<span class="sub">Why sorting fails at the bin</span></div>
+    <div class="bd">
+      <div class="quote">Recycling isn't failing because people don't care. It fails because the right choice is <em>confusing at the moment of disposal.</em></div>
+      <div class="row" style="gap:5mm; align-items:center">
+        <div id="fig-waffle" style="width:104mm; flex:none"></div>
+        <div style="flex:1">
+          <div class="bigstat" style="font-size:19mm">1.8M<span style="font-size:8mm; letter-spacing:0"> tonnes</span></div>
+          <div class="small" style="margin:1mm 0 3.2mm">of plastic waste a year in Vietnam</div>
+          <div class="bigstat" style="font-size:19mm; color:var(--green-2)">27%</div>
+          <div class="small" style="margin-top:1mm">is recycled. Each square is 1% of the plastic; <b>73 of 100</b> are not recycled.</div>
+          <div class="cap"><b>Fig. 1</b> Source: MONRE, via UNEP [1].</div>
+        </div>
+      </div>
+      <div class="divide"></div>
+      <div id="fig-bins"></div>
+      <div class="cap"><b>Fig. 2</b> Hanoi's three household groups (Law on Environmental Protection 2020, Art. 75). Since <b>8 Jan 2026</b>, collectors may refuse unsorted waste (Decision 87) [2].</div>
+      <div class="barriers">
+        <div class="barrier"><span class="icon" data-icon="help"></span><b>No instant guidance</b><span>Nobody tells you which bin, at the bin.</span></div>
+        <div class="barrier"><span class="icon" data-icon="shuffle"></span><b>Confusing, local rules</b><span>They change by material and city.</span></div>
+        <div class="barrier"><span class="icon" data-icon="wifioff"></span><b>Apps need internet</b><span>Cloud photo apps are slow or fail offline.</span></div>
+        <div class="barrier"><span class="icon" data-icon="trash"></span><b>Contamination</b><span>Wrong items lower a bag's value to collectors.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="hd"><span class="n">02</span>Engineering goal<span class="sub">Design criteria → results</span></div>
+    <div class="bd">
+      <p class="lead">Build a phone app that <em>identifies everyday waste</em> and gives <em>Hanoi sorting guidance</em> in real time, with <em>no internet</em>.</p>
+      <table class="t" style="margin-top:2.6mm">
+        <tr><th>Criterion</th><th>Target</th><th>Result</th></tr>
+        <tr><td class="k">Waste types</td><td>7 common classes</td><td class="ok">✓ 7</td></tr>
+        <tr><td class="k">Runs on the phone</td><td>No server, no upload</td><td class="ok">✓ Core ML</td></tr>
+        <tr><td class="k">Speed, iPhone XR (2018)</td><td>≥ 10 frames / s</td><td class="ok">✓ 24 FPS</td></tr>
+        <tr><td class="k">Delay per frame (p95)</td><td>≤ 100 ms</td><td class="ok">✓ 31 ms</td></tr>
+        <tr><td class="k">Model size · memory</td><td>≤ 25 MB · ≤ 500 MB</td><td class="ok">✓ 5 · 78 MB</td></tr>
+        <tr><td class="k">Local rules</td><td>Hanoi 2026, step by step</td><td class="ok">✓ 7 / 7</td></tr>
+        <tr><td class="k">Accuracy, our photos</td><td>As high as possible</td><td class="part"><span class="half"></span> mAP50 0.30</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec grow">
+    <div class="hd"><span class="n">03</span>Data &amp; training<span class="sub">Real waste, real data</span></div>
+    <div class="bd">
+      <div id="fig-data"></div>
+      <div class="cap"><b>Fig. 3</b> Every source label was reviewed by hand and mapped to one AWARE class or rejected. Our test photos were frozen before any model was tested.</div>
+      <div class="h4" style="margin-top:3.4mm">Examples from our label review</div>
+      <div id="fig-mapping"></div>
+      <div class="cap"><b>Fig. 4</b> 64 source labels, each with a written reason (mapping_ledger.yaml).</div>
+      <div class="divide"></div>
+      <div class="classes">
+        <div class="cls"><img src="assets/photos/plastic_bottle.png" alt=""><i>29</i><span>Plastic bottle</span></div>
+        <div class="cls"><img src="assets/photos/glass_container.png" alt=""><i>23</i><span>Glass</span></div>
+        <div class="cls"><img src="assets/photos/metal_can.png" alt=""><i>14</i><span>Metal can</span></div>
+        <div class="cls"><img src="assets/photos/cardboard.png" alt=""><i>29</i><span>Card&shy;board</span></div>
+        <div class="cls"><img src="assets/photos/plastic_bag.png" alt=""><i>16</i><span>Plastic bag</span></div>
+        <div class="cls"><img src="assets/photos/disposable_cup.png" alt=""><i>18</i><span>Dispos&shy;able cup</span></div>
+        <div class="cls"><img src="assets/photos/styrofoam.png" alt=""><i>10</i><span>Styro&shy;foam</span></div>
+      </div>
+      <div class="cap"><b>Fig. 5</b> Number = objects of that class in our 113 test photos (139 in all). They cover indoor and outdoor light, many angles, reflective surfaces, look-alike packaging and several objects at once.</div>
+      <div class="divide"></div>
+      <div class="row" style="gap:5mm">
+        <div style="flex:1.05">
+          <div class="h4">Fewer classes, trained fairly</div>
+          <div id="fig-ontology"></div>
+        </div>
+        <div style="flex:1">
+          <table class="t">
+            <tr><td class="k">Model</td><td>YOLO26n, COCO start</td></tr>
+            <tr><td class="k">Input</td><td>640 × 640 px</td></tr>
+            <tr><td class="k">Epochs</td><td>171 (best: 131)</td></tr>
+            <tr><td class="k">GPU</td><td>1 × A100, 28 min</td></tr>
+            <tr><td class="k">Export</td><td>Core ML, 16-bit</td></tr>
+            <tr><td class="k">Check</td><td>82 / 82 boxes match PyTorch</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================ CENTRE ================================ -->
+<section class="panel centre" id="panel-centre"><div class="fit">
+  <header class="banner">
+    <div class="appicon"><img src="assets/icon.png" alt="AWARE app icon"></div>
+    <div>
+      <div class="title">AWARE</div>
+      <div class="subtitle">AI Waste-sorting and Recycling Enhancement Application</div>
+      <div class="tagline"><b>From confusion to clarity:</b> an offline AI that sees your waste and tells you which bin, in real time.</div>
+      <div class="chips">
+        <span class="chip"><span class="icon" data-icon="wifioff"></span><span>Offline edge AI</span></span>
+        <span class="chip"><span class="icon" data-icon="scan"></span><span>YOLO26 + Core ML</span></span>
+        <span class="chip"><span class="icon" data-icon="layers"></span><span>7 waste classes</span></span>
+        <span class="chip"><span class="icon" data-icon="phone"></span><span>iOS &amp; iPadOS</span></span>
+        <span class="chip"><span class="icon" data-icon="leaf"></span><span>Points &amp; CO<sub>2</sub> tracking</span></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="sec">
+    <div class="hd"><span class="n">04</span>How AWARE works<span class="sub">System design · scan to impact</span></div>
+    <div class="bd" style="padding-top:7mm">
+      <div class="arch" id="arch">
+        <div class="stages">
+          <div class="offline"><span>Everything in this box runs on the phone, offline</span></div>
+          <div class="stage">
+            <div class="top"><span class="num">1</span><span class="name">Scan</span></div>
+            <img src="assets/screens/scan-live.png" alt="">
+            <div class="spec">Camera frames go to the model as you move; boxes appear live. <b>Hold still 1 s</b> to lock on.</div>
+            <span class="arrowR" data-icon="arrow"></span>
+          </div>
+          <div class="stage">
+            <div class="top"><span class="num">2</span><span class="name">Identify</span></div>
+            <img src="assets/screens/scan-results.png" alt="">
+            <div class="spec"><b>YOLO26n on Core ML</b>, 25 ms. Box at ≥ 40% confidence; result opens at <b>≥ 75%</b>. Then: <b>“Was this correct?”</b></div>
+            <span class="arrowR" data-icon="arrow"></span>
+          </div>
+          <div class="stage">
+            <div class="top"><span class="num">3</span><span class="name">Guide</span></div>
+            <img src="assets/screens/scan-guidance.png" alt="">
+            <div class="spec">A <b>Hanoi rule table</b> maps each class to recyclable, food, other or hazardous, with prep steps (English &amp; Vietnamese).</div>
+            <span class="arrowR" data-icon="arrow"></span>
+          </div>
+          <div class="stage">
+            <div class="top"><span class="num">4</span><span class="name">Reward</span></div>
+            <img src="assets/screens/home.png" alt="">
+            <div class="spec"><b>+20 leaves</b> per recyclable (+10 other), once per scan. Streaks, goals, map, leaderboard, CO<sub>2</sub> saved.</div>
+            <span class="arrowR" data-icon="arrow"></span>
+          </div>
+          <div class="stage">
+            <div class="top"><span class="num">5</span><span class="name">Share</span></div>
+            <img src="assets/screens/gallery.png" alt="">
+            <div class="spec">An <b>upcycling Gallery</b>: post what you made, like, reply, and get ideas for your own.</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap" style="margin-top:6.5mm"><b>Fig. 6</b> The scan-to-impact journey. Real app screens; points, CO<sub>2</sub> and leaderboard values are sample data until login and tracking ship.</div>
+    </div>
+  </div>
+
+  <div class="sec grow">
+    <div class="hd"><span class="n">05</span>Results<span class="sub">113 photos we took ourselves · a 10-minute stress test on a 2018 iPhone XR</span></div>
+    <div class="bd">
+      <div class="results">
+        <div>
+          <div class="colhd"><span class="disp">Accuracy</span><span class="small muted">on our photos</span></div>
+          <div class="hero"><div class="bigstat">0.30</div><div class="l"><b>mAP50</b> on our photos<br>vs 0.41 on validation</div></div>
+          <div class="cap" style="margin:0 0 2mm">mAP50: 1 = every object found and labelled right.</div>
+          <div id="fig-perclass"></div>
+          <div class="cap"><b>Fig. 7</b> Per class (n = objects). *All 10 styrofoam photos show one box.</div>
+          <div class="h4" style="margin-top:3.4mm">Where each class ends up <span class="note">at 25% confidence</span></div>
+          <div id="fig-errors"></div>
+          <div class="cap"><b>Fig. 8</b> Cans and bags are found; cups get called cans and bottles get called cups; cardboard and styrofoam are mostly missed.</div>
+        </div>
+        <div>
+          <div class="colhd"><span class="disp">Speed on a 2018 iPhone</span></div>
+          <div id="fig-fps"></div>
+          <div id="fig-lat" style="margin-top:2mm"></div>
+          <div class="cap"><b>Fig. 9</b> 10 minutes of non-stop scanning. It never dropped below 21.6 FPS, even after the phone grew hot (iOS thermal state “serious”).</div>
+          <div class="statrow">
+            <div class="st"><div class="v">5.0<small>MB</small></div><div class="k">model (goal ≤ 25)</div></div>
+            <div class="st"><div class="v">78<small>MB</small></div><div class="k">memory (≤ 500)</div></div>
+            <div class="st"><div class="v">−5<small>%</small></div><div class="k">battery in 10 min</div></div>
+            <div class="st"><div class="v">2.6<small>s</small></div><div class="k">to first frame</div></div>
+          </div>
+          <div class="h4" style="margin-top:3.6mm">Small vs larger model</div>
+          <table class="t" id="tbl-models"></table>
+          <div class="cap"><b>Table 1</b> We picked YOLO26n <b>before</b> testing. YOLO26s is slightly more accurate but 4× larger.</div>
+          <div class="parity"><span class="icon" data-icon="check2"></span><div><b>Core ML matches PyTorch.</b> On all 113 test photos the phone model found the same 82 objects with the same boxes; confidence differed by 0.014 (median).</div></div>
+        </div>
+        <div>
+          <div class="colhd"><span class="disp">Knowing when to ask</span></div>
+          <div id="fig-threshold"></div>
+          <div class="cap"><b>Fig. 10</b> Top answer per photo (113). Raising the bar from 25% to 75% cuts wrong answers from 31 to 11, but leaves more photos unanswered. So AWARE <b>asks you to confirm</b> and learns from corrections.</div>
+          <div class="h4" style="margin-top:3.4mm">What the AI sees</div>
+          <div class="dets">
+            <div class="det"><img src="assets/photos/det_can.png" alt=""><div class="box" style="left:15%;top:13%;width:72%;height:76%"><span>Can 81%</span></div></div>
+            <div class="det"><img src="assets/photos/det_cup.png" alt=""><div class="box" style="left:10%;top:9%;width:75%;height:72%"><span>Cup 90%</span></div></div>
+            <div class="det"><img src="assets/photos/det_pump.png" alt=""><div class="box" style="left:26%;top:9%;width:40%;height:69%"><span>Bottle 88%</span></div></div>
+          </div>
+          <div class="cap"><b>Fig. 11</b> Detections on our own photos.</div>
+          <div class="h4" style="margin-top:3.4mm">The confidence rule in the app</div>
+          <div id="fig-gate"></div>
+          <div class="cap"><b>Fig. 12</b> AWARE only answers on its own when it is sure; otherwise it asks.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tryit"><span class="icon" data-icon="phone"></span>Try it yourself: scan anything on the table</div>
+</div>
+</section>
+
+<!-- ================================ RIGHT WING ================================ -->
+<section class="panel wing" id="panel-right"><div class="fit">
+
+  <div class="sec">
+    <div class="hd"><span class="n">06</span>Discussion<span class="sub">Why accuracy drops on real photos</span></div>
+    <div class="bd">
+      <div class="row" style="gap:5mm; align-items:flex-start">
+        <div style="flex:1">
+          <div id="fig-gap"></div>
+          <div class="cap"><b>Fig. 13</b> Both models lose ~0.1 mAP50 going from the public validation images to our photos.</div>
+        </div>
+        <div style="flex:1">
+          <div id="fig-imbalance"></div>
+          <div class="cap"><b>Fig. 14</b> Cans dominate training boxes, so other round things get called cans.</div>
+        </div>
+      </div>
+      <div class="causes">
+        <div class="cause"><span class="icon" data-icon="globe"></span><div><b>Domain shift.</b> TACO shows mostly outdoor, often crushed litter; our photos show clean, whole items at home.</div></div>
+        <div class="cause"><span class="icon" data-icon="scale"></span><div><b>Class imbalance.</b> 39% of cups and 17% of bottles were labelled “metal can”.</div></div>
+        <div class="cause"><span class="icon" data-icon="box"></span><div><b>Cardboard looks different.</b> Training had torn scraps; we photographed whole boxes, and 48% were missed.</div></div>
+      </div>
+      <div class="limits"><b>Limitations.</b> Only 10–29 test objects per class; styrofoam is one object photographed 10 times; CO<sub>2</sub> factors are US averages (EPA WARM); app screens use sample points.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="hd"><span class="n">07</span>Predicted impact<span class="tag pred">Prediction</span><span class="sub">From one classroom to Hanoi</span></div>
+    <div class="bd">
+      <div id="fig-classroom"></div>
+      <div class="cap"><b>Fig. 15</b> Today each class has one mixed bin. With AWARE: a two-bin station, and students scan before they throw.</div>
+      <div class="divide"></div>
+      <div id="fig-scale"></div>
+      <div class="cap"><b>Fig. 16</b> Predicted items sorted with AWARE and CO<sub>2</sub>e avoided per month. The pilot school is Vinschool The Harmony.</div>
+      <div class="math"><b>Assumptions:</b> 30% of students scan 0.5 items per school day, 20 days a month. Mix: 40% bottles (12–15 g CO<sub>2</sub>e each), 15% cans (102–131 g), 10% cardboard (3.66 kg per kg); bags and cups count 0. That gives 20–50 g per item [8]. Upper bound: assumes items would otherwise be landfilled. <b>Target: −60% wrong items in recycling bins.</b></div>
+      <div class="ripple">
+        <div><b>Schools:</b> lifelong habits; scan data becomes a science lesson.</div>
+        <div><b>Families:</b> an easy way to meet Hanoi's sorting rule.</div>
+        <div><b>Collectors:</b> cleaner recyclables sell for more to ve chai; fewer refused bags for URENCO.</div>
+        <div><b>Environment:</b> less landfill, more recycling, a cleaner Vietnam.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="hd"><span class="n">08</span>Pilot study<span class="sub">Will people sort better, and will it last?</span></div>
+    <div class="bd">
+      <div id="fig-pilot"></div>
+      <div class="cap"><b>Fig. 17</b> Our hypothesis (not yet measured): pilot classes improve more than control classes and keep most of the gain a month later.</div>
+      <table class="t" style="margin-top:2.4mm">
+        <tr><th>We measure</th><th>How</th></tr>
+        <tr><td class="k">Sorting accuracy</td><td>Count right vs wrong items in each bin, pilot vs control, W0 → W4</td></tr>
+        <tr><td class="k">Does it last?</td><td>Same count at W8; weekly active users in the app</td></tr>
+        <tr><td class="k">Recyclables</td><td>kg per week, weighed by the waste collector</td></tr>
+        <tr><td class="k">Knowledge</td><td>10-item sorting quiz, before and after</td></tr>
+        <tr><td class="k">AI in real use</td><td>% of scans confirmed vs corrected</td></tr>
+      </table>
+      <div class="partner"><span class="icon" data-icon="truck"></span><div><b>Waste collection partner (planned):</b> the school's cleaning team and its contractor (URENCO in Hanoi), plus local ve chai buyers, weigh recyclables and other waste each week. Independent numbers, not ours.</div></div>
+    </div>
+  </div>
+
+  <div class="sec grow">
+    <div class="hd"><span class="n">09</span>Next steps<span class="sub">Learning loop &amp; roadmap</span></div>
+    <div class="bd">
+      <div class="row" style="gap:4mm; align-items:center">
+        <div id="fig-loop" style="width:160mm; flex:none"></div>
+        <div style="flex:1">
+          <p class="small"><b>Real use, continuous improvement.</b> Every “Was this correct?” answer is a labelled Vietnamese photo. Steps 1–2 are built; 3–5 start in the pilot.</p>
+          <div class="status">
+            <span class="ok">✓</span><span>Scan, guidance, Gallery, offline</span>
+            <span class="ok">✓</span><span>7-class model trained, tested, shipped</span>
+            <span class="wip"><span class="half"></span></span><span>Login and real progress tracking</span>
+            <span class="wip"><span class="half"></span></span><span>Saving feedback for retraining</span>
+            <span class="todo"><span class="empty"></span></span><span>Smart-bin hardware prototype</span>
+          </div>
+        </div>
+      </div>
+      <div class="road">
+        <div class="ph done"><div class="y">2026 · DONE</div><div class="h">Working MVP</div>Offline app; first model (Jul); YOLO26n tested and shipped (Sep)</div>
+        <div class="ph"><div class="y">2026–27</div><div class="h">Launch &amp; validate</div>Pilot, login, real tracking, retrain</div>
+        <div class="ph next"><div class="y">2027–29</div><div class="h">Expand</div>More Hanoi schools, ambassadors, recyclers</div>
+        <div class="ph later"><div class="y">2029 +</div><div class="h">Scale</div>Nationwide; smart bin with a camera; Asia</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concl">
+    <div class="h4">Conclusion</div>
+    <ul>
+      <li>An offline, 5 MB AI runs at 24 FPS on a 2018 iPhone: real-time sorting help is possible without internet.</li>
+      <li>It is reliable for cans and bags, not yet for cardboard and styrofoam; we know why and how to fix it.</li>
+      <li>The pilot will show whether clear guidance at the bin changes behaviour, and whether it lasts.</li>
+    </ul>
+    <div class="vision">Same waste. A smarter tomorrow.</div>
+  </div>
+
+  <div class="refs">
+    <ol>
+      <li>UNEP GRID, “Viet Nam: Pollution”, citing MONRE.</li>
+      <li>Law on Environmental Protection 2020, Art. 75; Hanoi People's Committee Decision No. 87; MONRE Letter 9368/BTNMT-KSONMT (2023).</li>
+      <li>Proença &amp; Simões, TACO: Trash Annotations in Context, 2020.</li>
+      <li>Kuznetsova et al., The Open Images Dataset V4, IJCV 2020.</li>
+      <li>Lin et al., Microsoft COCO, ECCV 2014.</li>
+      <li>Ultralytics YOLO26, 2025.</li>
+      <li>Apple, Core ML.</li>
+      <li>US EPA, Waste Reduction Model (WARM) v16, 2023.</li>
+    </ol>
+    <div class="qr"><img src="assets/qr-github.svg" alt="QR code">Code &amp; data</div>
+  </div>
+</div>
+</section>
+</div>
+
+<script>
+// ============================ Icons (Lucide-style, 24 grid) ============================
+const ICONS = {
+  help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+  shuffle: '<path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/>',
+  wifioff: '<path d="M12 20h.01"/><path d="M8.5 16.43a5 5 0 0 1 7 0"/><path d="M2 8.82a15 15 0 0 1 4.17-2.65"/><path d="M10.66 5c4.01-.36 8.14.9 11.34 3.76"/><path d="M16.85 11.25a10 10 0 0 1 2.22 1.68"/><path d="M5 12.86a10 10 0 0 1 5.17-2.69"/><path d="M2 2l20 20"/>',
+  trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/>',
+  scan: '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/>',
+  layers: '<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
+  phone: '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
+  leaf: '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+  arrow: '<path d="M4 12h15"/><path d="m13 6 6 6-6 6"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  scale: '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+  box: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+  truck: '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  recycle: '<path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/><path d="m14 16-3 3 3 3"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843"/><path d="m13.378 9.633 4.096 1.098 1.097-4.096"/>',
+  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  check2: '<circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/>',
+  lock: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
+};
+const iconSvg = (name) => `<svg viewBox="0 0 24 24">${ICONS[name]}</svg>`;
+document.querySelectorAll('[data-icon]').forEach((el) => { el.classList.add('icon'); el.innerHTML = iconSvg(el.dataset.icon); });
+// Icon inside an SVG figure at (x, y), size s (mm).
+const ico = (name, x, y, s, color, sw = 2) =>
+  `<g transform="translate(${x} ${y}) scale(${s / 24})" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</g>`;
+
+const C = { ink: '#10261A', ink2: '#34483B', muted: '#637268', line: '#D3DCD0', forest: '#0E2D1C', green: '#1F7A46', green2: '#2E9E5B', mint: '#BFF0CF', mint2: '#E3F4E8', grey: '#C5CFC7', grey2: '#E9EDE8', amber: '#A06300', amber2: '#FFF0CF', red: '#B4462F', red2: '#F7DFD7', teal: '#0E7C86', teal2: '#DAEEF0', brown: '#8A5A2B' };
+const svg = (w, h, body) => `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto">${body}</svg>`;
+const T = (x, y, s, txt, o = {}) => `<text x="${x}" y="${y}" font-size="${s}" font-weight="${o.w || 500}" fill="${o.c || C.ink}" text-anchor="${o.a || 'start'}"${o.ff ? ` font-family="${o.ff}"` : ''}${o.ls ? ` letter-spacing="${o.ls}"` : ''}${o.halo ? ' stroke="#fff" stroke-width="1.3" stroke-linejoin="round" paint-order="stroke"' : ''}>${txt}</text>`;
+const R = (x, y, w, h, fill, o = {}) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.r ?? 0}" fill="${fill}"${o.s ? ` stroke="${o.s}" stroke-width="${o.sw || 0.35}"` : ''}${o.dash ? ` stroke-dasharray="${o.dash}"` : ''}/>`;
+const L = (x1, y1, x2, y2, s, w = 0.35, dash) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${s}" stroke-width="${w}"${dash ? ` stroke-dasharray="${dash}"` : ''}/>`;
+const arrowHead = (x, y, dir, s, color) => {
+  const p = { r: [[0, 0], [-s, -s * .6], [-s, s * .6]], d: [[0, 0], [-s * .6, -s], [s * .6, -s]], l: [[0, 0], [s, -s * .6], [s, s * .6]], u: [[0, 0], [-s * .6, s], [s * .6, s]] }[dir];
+  return `<path d="M${p.map(([a, b]) => `${x + a} ${y + b}`).join(' L')} Z" fill="${color}"/>`;
+};
+const put = (id, html) => { document.getElementById(id).innerHTML = html; };
+const BRIC = 'Bricolage Grotesque';
+
+// ============================ Fig. 1 waffle ============================
+(() => {
+  const cell = 8.2, gap = 1.1, n = 10, size = n * cell + (n - 1) * gap;
+  let b = '';
+  for (let i = 0; i < 100; i++) {
+    const col = i % n, row = n - 1 - Math.floor(i / n); // fill from the bottom row
+    b += R(col * (cell + gap), row * (cell + gap), cell, cell, i < 27 ? C.green2 : C.grey, { r: 1.2 });
+  }
+  put('fig-waffle', svg(size, size, b));
+})();
+
+// ============================ Fig. 2 Hanoi bins ============================
+(() => {
+  const W = 348, H = 50;
+  const bins = [
+    { name: 'Recyclable', sub: 'paper, plastic, metal, glass', col: C.teal, icon: 'recycle' },
+    { name: 'Food waste', sub: 'leftovers, peels', col: C.brown, icon: 'leaf' },
+    { name: 'Other waste', sub: 'everything else', col: '#6B7770', icon: 'trash' }
+  ];
+  let b = '';
+  bins.forEach((bin, i) => {
+    const x = i * 116 + 2;
+    b += `<path d="M${x + 3} 9 L${x + 31} 9 L${x + 28.5} 44 Q${x + 28.2} 46 ${x + 26} 46 L${x + 8} 46 Q${x + 5.8} 46 ${x + 5.5} 44 Z" fill="${bin.col}"/>`;
+    b += R(x + 1, 4.5, 32, 5.5, bin.col, { r: 1.4 }) + R(x + 13, 2, 8, 3, bin.col, { r: 1 });
+    b += ico(bin.icon, x + 9.5, 18, 15, '#fff', 2.2);
+    b += T(x + 37, 22, 6.2, bin.name, { w: 800, ff: BRIC });
+    b += T(x + 37, 30, 4.3, bin.sub, { c: C.muted });
+  });
+  put('fig-bins', svg(W, H, b));
+})();
+
+// ============================ Fig. 3 data pipeline ============================
+(() => {
+  const W = 352, H = 112;
+  let b = '';
+  const box = (x, y, w, h, title, lines, o = {}) => {
+    let s = R(x, y, w, h, o.fill || C.grey2, { r: 2.2, s: o.stroke, sw: 0.45, dash: o.dash });
+    s += T(x + 3.2, y + 7.4, 5, title, { w: 800, ff: BRIC, c: o.tc || C.ink });
+    lines.forEach((l, i) => { s += T(x + 3.2, y + 13.4 + i * 5.3, 4.1, l, { c: o.lc || C.ink2 }); });
+    return s;
+  };
+  b += box(0, 0, 104, 26, 'TACO v1.0', ['1,500 photos · 4,784 boxes', '60 labels · outdoor litter']);
+  b += box(0, 31, 104, 26, 'Open Images V7', ['1,631 photos · 3,454 boxes', '4 labels · bags and tin cans']);
+  b += box(0, 62, 104, 21, 'COCO (118,000 photos)', ['starting weights only'], { fill: '#fff', stroke: C.grey, dash: '1.4 1' });
+  const rx = 122, rw = 104;
+  b += box(rx, 0, rw, 57, 'Label review', ['64 source labels, one by one'], { fill: C.mint2 });
+  const seg = [[20, C.green, 'mapped to a class'], [6, C.amber, 'unclear, left out'], [38, C.grey, 'rejected']];
+  let sx = rx + 3.2; const bw = rw - 6.4, by = 22;
+  seg.forEach(([n, col]) => { const w = bw * n / 64; b += R(sx, by, w - 0.5, 7, col, { r: 0.8 }); sx += w; });
+  seg.forEach(([n, col, lab], i) => {
+    const y = 37 + i * 6;
+    b += R(rx + 3.2, y - 3.4, 3.6, 3.6, col, { r: 0.6 }) + T(rx + 9, y, 4.2, `<tspan font-weight="800">${n}</tspan> ${lab}`, { c: C.ink2 });
+  });
+  const cx = 244, cw = 108;
+  b += box(cx, 0, cw, 26, '7 AWARE classes', ['bottle · glass · can · cardboard', 'bag · cup · styrofoam'], { fill: C.forest, tc: '#fff', lc: C.mint });
+  b += box(cx, 31, cw, 26, 'Group-aware split, 80 / 20', ['training · 448 validation photos', 'duplicates removed across sets']);
+  b += box(cx, 62, cw, 21, 'Train YOLO26n', ['early stop at epoch 171'], { fill: C.mint2 });
+  const ar = (x1, y1, x2, y2, dash) => L(x1, y1, x2 - 1.6, y2, C.green, 0.6, dash) + arrowHead(x2, y2, 'r', 2.4, C.green);
+  b += ar(104, 13, rx, 20) + ar(104, 44, rx, 36);
+  b += ar(rx + rw, 28, cx, 13);
+  b += L(cx + cw / 2, 26, cx + cw / 2, 29.4, C.green, 0.6) + arrowHead(cx + cw / 2, 31, 'd', 2.4, C.green);
+  b += L(cx + cw / 2, 57, cx + cw / 2, 60.4, C.green, 0.6) + arrowHead(cx + cw / 2, 62, 'd', 2.4, C.green);
+  b += L(104, 72.5, cx - 1.6, 72.5, C.green, 0.6, '1.6 1.2') + arrowHead(cx, 72.5, 'r', 2.4, C.green);
+  b += R(0, 89, W, 23, '#fff', { r: 2.2, s: C.red, sw: 0.6 });
+  b += ico('lock', 3.5, 93.5, 13, C.red, 2.2);
+  b += T(21, 97.6, 5, 'Our test set: 113 photos, 139 objects, taken by us', { w: 800, ff: BRIC });
+  b += T(21, 104, 4.1, 'Frozen 18 Sep 2026, before any model was tested · never used for training', { c: C.ink2 });
+  b += T(21, 109.4, 4.1, 'Homes, schools and shops · each model scored on it exactly once', { c: C.ink2 });
+  put('fig-data', svg(W, H, b));
+})();
+
+// ============================ ontology 9 -> 8 -> 7 ============================
+(() => {
+  const W = 182, H = 44;
+  let b = '';
+  const node = (x, n, fill, tc) => R(x, 0, 30, 20, fill, { r: 2 }) + T(x + 15, 12.4, 10, n, { w: 800, ff: BRIC, a: 'middle', c: tc }) + T(x + 15, 17.6, 3.4, 'CLASSES', { a: 'middle', c: tc, w: 700 });
+  b += node(0, '9', C.grey2, C.ink2) + node(76, '8', C.grey2, C.ink2) + node(152, '7', C.forest, '#fff');
+  const step = (x1, x2, l1, l2) => L(x1, 10, x2 - 1.6, 10, C.red, 0.6) + arrowHead(x2, 10, 'r', 2.4, C.red) +
+    T((x1 + x2) / 2, 27, 3.9, l1, { a: 'middle', w: 800, c: C.red }) + T((x1 + x2) / 2, 32, 3.7, l2, { a: 'middle', c: C.ink2 });
+  b += step(31, 75, '− battery', 'only 2 boxes') + step(107, 151, '− plastic container', 'only 17, mixed');
+  b += T(0, 42, 3.7, 'Classes we couldn’t train fairly were dropped before training.', { c: C.muted });
+  put('fig-ontology', svg(W, H, b));
+})();
+
+// ============================ Fig. 6 per-class accuracy ============================
+(() => {
+  const data = [['Metal can', 0.715, 14], ['Plastic bag', 0.566, 16], ['Glass', 0.315, 23], ['Disposable cup', 0.253, 18], ['Plastic bottle', 0.191, 29], ['Styrofoam*', 0.035, 10], ['Cardboard', 0.024, 29]];
+  const W = 186, lab = 44, rowH = 9.4, top = 6, max = 0.8, pw = W - lab - 13;
+  const H = top + data.length * rowH + 7;
+  let b = '';
+  [0, 0.2, 0.4, 0.6, 0.8].forEach((t) => { const x = lab + pw * t / max; b += L(x, top - 1, x, top + data.length * rowH, C.grey2, 0.3) + T(x, H - 0.6, 3.5, t.toFixed(1), { a: 'middle', c: C.muted }); });
+  const ox = lab + pw * 0.3 / max;
+  b += L(ox, top - 3, ox, top + data.length * rowH, C.ink, 0.45) + T(ox + 1.2, top - 1.4, 3.5, 'overall 0.30', { w: 800 });
+  data.forEach(([name, v, n], i) => {
+    const y = top + i * rowH, w = pw * v / max;
+    b += T(lab - 2.4, y + 5.6, 4.2, `${name} <tspan fill="${C.muted}" font-size="3.4" font-weight="500">n=${n}</tspan>`, { a: 'end', w: 700 });
+    b += `<path d="M${lab} ${y + 1.4} h${Math.max(w - 1.2, 0.4)} q1.2 0 1.2 1.2 v3.6 q0 1.2 -1.2 1.2 h-${Math.max(w - 1.2, 0.4)} Z" fill="${v >= 0.3 ? C.green : '#9DB8A6'}"/>`;
+    b += T(lab + w + 1.6, y + 5.6, 4.1, v.toFixed(2), { w: 800, halo: 1 });
+  });
+  put('fig-perclass', svg(W, H, b));
+})();
+
+// ============================ Fig. 7 error breakdown ============================
+(() => {
+  // records/target-test-evaluations-v2.yaml error_analysis_yolo26n (conf 0.25, IoU 0.45)
+  const data = [['Metal can', .71, .00], ['Plastic bag', .69, .19], ['Cardboard', .24, .48], ['Disposable cup', .22, .17], ['Plastic bottle', .10, .14], ['Glass', .00, .22], ['Styrofoam', .00, .70]];
+  const W = 186, lab = 44, rowH = 8.2, top = 8, pw = W - lab;
+  const H = top + data.length * rowH;
+  let b = '';
+  const leg = [['found, right class', C.green], ['called something else', C.amber], ['missed', C.grey]];
+  let lx = lab;
+  leg.forEach(([t, c]) => { b += R(lx, 0.6, 3.4, 3.4, c, { r: .6 }) + T(lx + 4.6, 3.8, 3.6, t, { c: C.ink2, w: 600 }); lx += t.length * 1.7 + 9; });
+  data.forEach(([name, ok, miss], i) => {
+    const y = top + i * rowH, other = Math.max(0, 1 - ok - miss);
+    b += T(lab - 2.4, y + 4.6, 4.1, name, { a: 'end', w: 700 });
+    let x = lab;
+    [[ok, C.green, '#fff'], [other, C.amber, '#fff'], [miss, C.grey, C.ink2]].forEach(([v, c, tc]) => {
+      if (v <= 0) return;
+      b += R(x, y + 0.8, Math.max(pw * v - 0.6, 0.3), 5.2, c, { r: 0.6 });
+      if (v >= 0.12) b += T(x + 1.4, y + 4.7, 3.4, Math.round(v * 100) + '%', { c: tc, w: 800 });
+      x += pw * v;
+    });
+  });
+  put('fig-errors', svg(W, H, b));
+})();
+
+// ============================ Fig. 8 FPS + latency per minute ============================
+(() => {
+  // records/device-benchmark-results-v1.yaml, run 2
+  const fps = [21.77, 21.7, 25.68, 26.75, 25.65, 25.87, 24.8, 24.07, 22.43, 21.58];
+  const lat = [24.9, 24.9, 22.01, 22.06, 24.96, 25.08, 25.39, 26.36, 27.2, 24.99];
+  const W = 194, padL = 12, padR = 4, pw = W - padL - padR;
+  const x = (min) => padL + pw * (min / 10);
+  const xm = (i) => x(i + 0.5);
+  {
+    const H = 58, top = 7, ph = 38, y = (v) => top + ph - ph * v / 30;
+    let b = T(0, 3.8, 4.4, 'Frames per second, each minute', { w: 800 });
+    [0, 10, 20, 30].forEach((t) => { b += L(padL, y(t), W - padR, y(t), C.grey2, 0.3) + T(padL - 1.6, y(t) + 1.3, 3.4, t, { a: 'end', c: C.muted }); });
+    b += L(padL, y(10), W - padR, y(10), C.red, 0.5, '2 1.2') + T(W - padR, y(10) - 1.4, 3.4, 'goal ≥ 10', { a: 'end', w: 800, c: C.red });
+    b += `<path d="M${xm(0)} ${y(0)} L${fps.map((v, i) => `${xm(i)} ${y(v)}`).join(' L')} L${xm(9)} ${y(0)} Z" fill="${C.green}" opacity=".1"/>`;
+    b += `<path d="M${fps.map((v, i) => `${xm(i)} ${y(v)}`).join(' L')}" fill="none" stroke="${C.green}" stroke-width="0.8" stroke-linejoin="round"/>`;
+    fps.forEach((v, i) => { b += `<circle cx="${xm(i)}" cy="${y(v)}" r="1.25" fill="${C.green}" stroke="#fff" stroke-width=".5"/>`; });
+    b += T(xm(3), y(26.75) - 2.6, 3.6, '26.8', { a: 'middle', w: 800 }) + T(xm(9), y(21.58) - 2.6, 3.6, '21.6', { a: 'middle', w: 800 });
+    const ty = top + ph + 3.4, th = 4.6;
+    const segs = [[0, 95.4, '#CFE9D6', 'cool'], [95.4, 225.4, '#F6E3B4', 'warm'], [225.4, 600, '#F2C6A8', 'hot (iOS “serious”)']];
+    segs.forEach(([a, z, c, t]) => { b += R(x(a / 60), ty, x(z / 60) - x(a / 60) - 0.3, th, c) + T(x(a / 60) + 1.2, ty + 3.4, 3.2, t, { w: 700, c: C.ink2 }); });
+    b += T(padL - 1.6, ty + 3.4, 3.2, 'heat', { a: 'end', c: C.muted });
+    put('fig-fps', svg(W, H, b));
+  }
+  {
+    const H = 34, top = 6, ph = 20, y = (v) => top + ph - ph * (v - 15) / 20;
+    let b = T(0, 3.8, 4.4, 'Milliseconds per frame (median each minute)', { w: 800 });
+    [15, 25, 35].forEach((t) => { b += L(padL, y(t), W - padR, y(t), C.grey2, 0.3) + T(padL - 1.6, y(t) + 1.3, 3.4, t, { a: 'end', c: C.muted }); });
+    b += `<path d="M${lat.map((v, i) => `${xm(i)} ${y(v)}`).join(' L')}" fill="none" stroke="${C.teal}" stroke-width="0.8"/>`;
+    lat.forEach((v, i) => { b += `<circle cx="${xm(i)}" cy="${y(v)}" r="1.1" fill="${C.teal}" stroke="#fff" stroke-width=".5"/>`; });
+    for (let i = 0; i <= 10; i += 2) b += T(x(i), H - 0.4, 3.4, i === 10 ? '10 min' : i, { a: 'middle', c: C.muted });
+    put('fig-lat', svg(W, H, b));
+  }
+})();
+
+// ============================ Table 1 models ============================
+document.getElementById('tbl-models').innerHTML = `
+  <tr><th></th><th>YOLO26n ✓</th><th>YOLO26s</th></tr>
+  <tr><td class="k">mAP50, validation</td><td>0.41</td><td>0.42</td></tr>
+  <tr><td class="k">mAP50, our photos</td><td>0.30</td><td>0.33</td></tr>
+  <tr><td class="k">App model size</td><td><b>5.0 MB</b></td><td>19.2 MB</td></tr>
+  <tr><td class="k">Training time</td><td>28 min</td><td>39 min</td></tr>`;
+
+// ============================ Fig. 9 threshold trade-off ============================
+(() => {
+  const rows = [['≥ 25%', 32, 31, 50], ['≥ 75%', 19, 11, 83]];
+  const W = 196, lab = 22, pw = W - lab, H = 38;
+  let b = '';
+  const leg = [['right', C.green], ['wrong', C.red], ['“not sure”', C.grey]];
+  let lx = lab;
+  leg.forEach(([t, c]) => { b += R(lx, 0.6, 3.4, 3.4, c, { r: .6 }) + T(lx + 4.6, 3.8, 3.8, t, { c: C.ink2, w: 600 }); lx += 26; });
+  rows.forEach(([name, ok, bad, none], i) => {
+    const y = 8 + i * 14.5;
+    b += T(lab - 2.4, y + 7.2, 4.4, name, { a: 'end', w: 800 });
+    let x = lab;
+    [[ok, C.green, '#fff'], [bad, C.red, '#fff'], [none, C.grey, C.ink2]].forEach(([v, c, tc]) => {
+      const w = pw * v / 113;
+      b += R(x, y, w - 0.6, 10, c, { r: 0.8 }) + T(x + 2, y + 6.9, 5, v, { c: tc, w: 800, ff: BRIC });
+      x += w;
+    });
+  });
+  put('fig-threshold', svg(W, H, b));
+})();
+
+// ============================ confidence gate ============================
+(() => {
+  const W = 200, H = 50, x0 = 4, pw = W - 8, x = (v) => x0 + pw * v;
+  let b = '';
+  const zones = [[0, .4, C.grey2, 'nothing shown', C.muted], [.4, .75, '#FCEBB6', 'yellow box: keep scanning', C.amber], [.75, 1, '#C9EFD5', 'green: guidance opens', C.green]];
+  zones.forEach(([a, z, c, t, tc]) => { b += R(x(a), 8, x(z) - x(a) - .4, 13, c, { r: 1.2 }) + T((x(a) + x(z)) / 2, 16.2, 3.9, t, { a: 'middle', w: 800, c: tc }); });
+  [0, .4, .75, 1].forEach((v) => { b += L(x(v), 22, x(v), 25, C.ink2, .4) + T(x(v), 29.5, 3.8, Math.round(v * 100) + '%', { a: v === 0 ? 'start' : v === 1 ? 'end' : 'middle', w: 800 }); });
+  b += T(x0, 4.6, 3.8, 'Model confidence for the top item', { w: 700, c: C.ink2 });
+  b += ico('scan', x(.75) + 2, 33, 7, C.green, 2.2) + T(x(.75) + 11, 38.4, 3.9, 'held steady 1 s', { w: 800, c: C.green });
+  b += T(x0, 38.4, 3.9, 'then always: “Was this correct?” Yes / No', { w: 700, c: C.ink2 });
+  b += T(x0, 45, 3.6, 'No → pick the right class (a labelled photo for retraining)', { c: C.muted });
+  put('fig-gate', svg(W, H, b));
+})();
+
+// ============================ Fig. 4 label mapping examples ============================
+(() => {
+  const rows = [
+    ['TACO', 'Foam cup', 'ok', 'Disposable cup', 'cups are one class, any material'],
+    ['TACO', 'Pizza box', 'ok', 'Cardboard', 'still cardboard when greasy'],
+    ['TACO', 'Food can', 'ok', 'Metal can', 'fits the metal-can definition'],
+    ['TACO', 'Aerosol', 'rev', 'Metal can?', 'only if clearly a metal can'],
+    ['TACO', 'Drink carton', 'no', 'Rejected', 'layered material, not cardboard'],
+    ['TACO', 'Broken glass', 'no', 'Rejected', 'fragments are not containers'],
+    ['Open Images', 'Bottle', 'no', 'Rejected', 'glass, plastic, medicine… mixed']
+  ];
+  const W = 352, rowH = 8.6, H = rows.length * rowH;
+  const col = { ok: [C.green, '#fff'], rev: [C.amber2, C.amber], no: [C.grey2, C.muted] };
+  let b = '';
+  rows.forEach(([src, from, kind, to, why], i) => {
+    const y = i * rowH;
+    b += T(0, y + 5.4, 3.4, src.toUpperCase(), { w: 800, c: C.muted, ls: .2 });
+    b += R(30, y + .8, 54, 6.6, C.grey2, { r: 3.3 }) + T(57, y + 5.4, 4.1, from, { a: 'middle', w: 700 });
+    b += L(86, y + 4.1, 94, y + 4.1, C.ink2, .5) + arrowHead(96.5, y + 4.1, 'r', 2.2, C.ink2);
+    const [bg, tc] = col[kind];
+    b += R(99, y + .8, 52, 6.6, bg, { r: 3.3 }) + T(125, y + 5.4, 4.1, (kind === 'ok' ? '✓ ' : kind === 'no' ? '✗ ' : '') + to, { a: 'middle', w: 800, c: tc });
+    b += T(156, y + 5.4, 4.1, why, { c: C.ink2 });
+  });
+  put('fig-mapping', svg(W, H, b));
+})();
+
+// ============================ Fig. 11 validation -> test gap ============================
+(() => {
+  const W = 170, lab = 30, H = 40, pw = W - lab - 6, lo = 0.25, hi = 0.45;
+  const x = (v) => lab + pw * (v - lo) / (hi - lo);
+  let b = '';
+  [0.25, 0.3, 0.35, 0.4, 0.45].forEach((t) => { b += L(x(t), 4, x(t), 26, C.grey2, 0.3) + T(x(t), 31, 3.4, t.toFixed(2), { a: 'middle', c: C.muted }); });
+  [['YOLO26n', 0.409, 0.300], ['YOLO26s', 0.423, 0.330]].forEach(([n, v, t], i) => {
+    const y = 9 + i * 12;
+    b += T(lab - 2, y + 1.4, 4.2, n, { a: 'end', w: 800 });
+    b += L(x(t), y, x(v), y, C.grey, 1.6);
+    b += `<circle cx="${x(v)}" cy="${y}" r="2" fill="${C.green}"/><circle cx="${x(t)}" cy="${y}" r="2" fill="${C.red}"/>`;
+  });
+  b += `<circle cx="${lab}" cy="37" r="1.4" fill="${C.green}"/>` + T(lab + 2.4, 38.2, 3.6, 'validation (public)', { c: C.ink2 });
+  b += `<circle cx="${lab + 46}" cy="37" r="1.4" fill="${C.red}"/>` + T(lab + 48.4, 38.2, 3.6, 'our photos', { c: C.ink2 });
+  put('fig-gap', svg(W, H, b));
+})();
+
+// ============================ Fig. 12 imbalance ============================
+(() => {
+  const W = 170, H = 40;
+  let b = T(0, 4, 4.2, 'Training boxes by class', { w: 800 });
+  const pw = W, y = 8;
+  b += R(0, y, pw * 0.6 - 0.5, 12, C.amber, { r: 1 }) + T(2.4, y + 8, 5, '≈ 60% metal cans', { c: '#fff', w: 800, ff: BRIC });
+  b += R(pw * 0.6, y, pw * 0.4, 12, C.grey, { r: 1 }) + T(pw * 0.6 + 2.4, y + 8, 4.2, '6 other classes', { c: C.ink2, w: 700 });
+  b += T(0, 28, 3.9, 'Predicted “metal can” when it was really:', { w: 700, c: C.ink2 });
+  b += T(0, 34.4, 4.4, `<tspan font-weight="800" fill="${C.red}">39%</tspan> of cups · <tspan font-weight="800" fill="${C.red}">17%</tspan> of bottles · <tspan font-weight="800" fill="${C.red}">17%</tspan> of glass`, { c: C.ink });
+  put('fig-imbalance', svg(W, H, b));
+})();
+
+// ============================ Fig. 13 classroom ============================
+(() => {
+  const W = 352, H = 62;
+  let b = '';
+  const bin = (x, y, w, h, col, label) => {
+    let s = `<path d="M${x} ${y} L${x + w} ${y} L${x + w - 2.5} ${y + h} L${x + 2.5} ${y + h} Z" fill="${col}"/>` + R(x - 1.5, y - 4, w + 3, 4.6, col, { r: 1.2 });
+    if (label) s += T(x + w / 2, y + h + 5, 4, label, { a: 'middle', w: 800, c: C.ink2 });
+    return s;
+  };
+  const bottle = (x, y, s, c) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="1.2" y="0" width="1.6" height="1.6" fill="${c}"/><path d="M1 1.6 h2 v1 q1 .6 1 1.8 v6 q0 .6 -.6 .6 h-2.8 q-.6 0 -.6 -.6 v-6 q0 -1.2 1 -1.8z" fill="${c}"/></g>`;
+  const can = (x, y, s, c) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="0" y="0" width="3.6" height="5.6" rx=".6" fill="${c}"/><rect x=".3" y=".8" width="3" height=".5" fill="#fff" opacity=".6"/></g>`;
+  const paper = (x, y, s, c) => `<g transform="translate(${x} ${y}) scale(${s}) rotate(-12)"><rect width="5" height="4" fill="${c}"/></g>`;
+  b += R(0, 0, 140, H, '#F2F4F1', { r: 3 }) + R(160, 0, 192, H, C.mint2, { r: 3 });
+  b += T(5, 8, 5, 'TODAY', { w: 800, c: C.muted, ls: 0.4 }) + T(165, 8, 5, 'WITH AWARE', { w: 800, c: C.green, ls: 0.4 });
+  b += bin(48, 24, 30, 28, '#7B867E', 'one mixed bin');
+  b += bottle(50, 12, 1.4, C.teal) + can(60, 14, 1.5, C.red) + paper(68, 15, 1.6, C.brown) + can(73, 11, 1.3, C.amber);
+  b += `<circle cx="100" cy="24" r="9" fill="#fff" stroke="${C.grey}" stroke-width=".5"/>` + T(100, 28.6, 13, '?', { a: 'middle', w: 800, ff: BRIC, c: C.amber });
+  b += T(88, 44, 3.8, 'which bin?', { w: 700, c: C.muted });
+  b += L(142, H / 2, 156, H / 2, C.green, 0.9) + arrowHead(159, H / 2, 'r', 3.2, C.green);
+  b += R(172, 14, 20, 38, C.forest, { r: 3 }) + R(173.6, 17, 16.8, 30, '#3a5a46', { r: 1.2 });
+  b += bottle(176.5, 20, 1.6, '#BFE3EA') + R(176, 19, 12, 22, 'none', { s: '#5BD98A', sw: 0.6, r: 0.6 });
+  b += T(182, 50.5, 2.6, 'Plastic bottle ✓', { a: 'middle', c: '#fff', w: 800 });
+  b += L(194, 33, 210, 33, C.green, 0.7, '1.4 1') + arrowHead(213, 33, 'r', 2.6, C.green);
+  b += bin(222, 24, 28, 28, C.teal, 'recyclable') + ico('recycle', 229, 31, 14, '#fff', 2.2);
+  b += bin(262, 24, 28, 28, '#6B7770', 'other') + ico('trash', 269, 31, 14, '#fff', 2.2);
+  b += bottle(232, 9, 1.4, C.teal) + can(243, 12, 1.3, C.red);
+  b += T(300, 22, 4, '+20 leaves', { w: 800, c: C.green }) + T(300, 28, 3.6, 'class leaderboard', { c: C.ink2 }) + T(300, 34, 3.6, 'learn the rule', { c: C.ink2 }) + T(300, 40, 3.6, 'at the bin', { c: C.ink2 });
+  put('fig-classroom', svg(W, H, b));
+})();
+
+// ============================ Fig. 14 scale ============================
+(() => {
+  const W = 352, H = 66;
+  const lv = [
+    { r: 13, who: 'One class', n: '30 students', items: '90', co2: '2–5 kg' },
+    { r: 22, who: 'Pilot school', n: '500 students', items: '1,500', co2: '30–75 kg' },
+    { r: 31, who: '10 Hanoi schools', n: '5,000 students', items: '15,000', co2: '0.3–0.75 t' }
+  ];
+  const fills = ['#2E9E5B', '#9ED3AF', '#CFEBD8'];
+  let b = '';
+  const cx = 34, cy = 33;
+  [...lv].reverse().forEach((l, i) => { b += `<circle cx="${cx}" cy="${cy}" r="${l.r}" fill="${fills[2 - i]}"/>`; });
+  b += ico('users', cx - 5, cy - 5, 10, '#fff', 2.2);
+  const tx = 82, cols = [tx, tx + 70, tx + 130, tx + 200];
+  b += T(cols[1], 6, 3.8, 'STUDENTS', { w: 800, c: C.muted, ls: .3 }) + T(cols[2], 6, 3.8, 'ITEMS / MONTH', { w: 800, c: C.muted, ls: .3 }) + T(cols[3], 6, 3.8, 'CO₂e / MONTH', { w: 800, c: C.muted, ls: .3 });
+  lv.forEach((l, i) => {
+    const y = 20 + i * 17;
+    b += `<circle cx="${tx - 4}" cy="${y - 1.8}" r="2.2" fill="${fills[i]}" stroke="${C.green}" stroke-width=".3"/>`;
+    b += T(cols[0], y, 5, l.who, { w: 800, ff: BRIC }) + T(cols[1], y, 4.6, l.n, { c: C.ink2 });
+    b += T(cols[2], y + .6, 7.2, l.items, { w: 800, ff: BRIC }) + T(cols[3], y + .6, 7.2, l.co2, { w: 800, ff: BRIC, c: C.green });
+    if (i < 2) b += L(tx, y + 6.2, W, y + 6.2, C.line, 0.3);
+  });
+  put('fig-scale', svg(W, H, b));
+})();
+
+// ============================ Fig. 15 pilot hypothesis ============================
+(() => {
+  const W = 352, H = 70, padL = 16, top = 4, ph = 50, pw = W - padL - 4;
+  const x = (w) => padL + pw * w / 8, y = (v) => top + ph - ph * v;
+  let b = '';
+  b += R(x(1), top, x(4) - x(1), ph, C.mint2) + T((x(1) + x(4)) / 2, top + 5, 3.8, 'AWARE IN USE (pilot classes)', { a: 'middle', w: 800, c: C.green, ls: .3 });
+  b += L(padL, y(0), W - 4, y(0), C.ink2, 0.4) + L(padL, top, padL, y(0), C.ink2, 0.4);
+  b += `<text transform="translate(${padL - 3} ${top + ph / 2}) rotate(-90)" font-size="3.6" text-anchor="middle" fill="${C.muted}" font-weight="700">items in the right bin</text>`;
+  [[0, 'W0 baseline'], [4, 'W4 measure'], [8, 'W8 follow-up']].forEach(([w, t]) => { b += L(x(w), y(0), x(w), y(0) + 1.6, C.ink2, .4) + T(x(w), y(0) + 6, 3.8, t, { a: w === 0 ? 'start' : w === 8 ? 'end' : 'middle', w: 700 }); });
+  const pilot = [[0, .30], [1, .36], [2, .50], [3, .62], [4, .70], [6, .64], [8, .61]];
+  const ctrl = [[0, .30], [2, .33], [4, .36], [6, .35], [8, .34]];
+  const path = (pts) => 'M' + pts.map(([w, v]) => `${x(w)} ${y(v)}`).join(' L');
+  b += `<path d="${path(pilot)}" fill="none" stroke="${C.green}" stroke-width="1" stroke-dasharray="2.4 1.4"/>`;
+  b += `<path d="${path(ctrl)}" fill="none" stroke="${C.muted}" stroke-width="1" stroke-dasharray="2.4 1.4"/>`;
+  b += T(x(4.2), y(.74), 4.2, 'pilot classes', { w: 800, c: C.green }) + T(x(6.4), y(.35) + 6.5, 4.2, 'control classes', { w: 800, c: C.muted });
+  b += `<circle cx="${x(4)}" cy="${y(.70)}" r="1.6" fill="${C.green}"/><circle cx="${x(8)}" cy="${y(.61)}" r="1.6" fill="${C.green}"/>`;
+  b += T(x(4) - 2, y(.70) - 2.4, 3.8, 'H1: better', { a: 'end', w: 800 }) + T(x(8) - 2, y(.61) - 2.6, 3.8, 'H2: lasts', { a: 'end', w: 800 });
+  b += T(W - 4, top + 4, 3.6, 'shape only: values unknown', { a: 'end', c: C.amber, w: 800 });
+  put('fig-pilot', svg(W, H, b));
+})();
+
+// ============================ Fig. 16 learning loop ============================
+(() => {
+  const W = 150, H = 96, cx = 75, cy = 49, r = 33;
+  const steps = [['Scan', true], ['Confirm or fix', true], ['New photos', false], ['Retrain', false], ['Better model', false]];
+  let b = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${C.grey}" stroke-width=".7"/>`;
+  steps.forEach((_, i) => {
+    const a = -Math.PI / 2 + (i + 0.5) * 2 * Math.PI / steps.length;
+    const px = cx + r * Math.cos(a), py = cy + r * Math.sin(a), deg = a * 180 / Math.PI + 90;
+    b += `<path d="M1.8 0 L-1.6 -1.8 L-1.6 1.8 Z" transform="translate(${px} ${py}) rotate(${deg})" fill="${C.muted}"/>`;
+  });
+  steps.forEach(([t, built], i) => {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / steps.length;
+    const px = cx + r * Math.cos(a), py = cy + r * Math.sin(a);
+    b += `<circle cx="${px}" cy="${py}" r="6" fill="${built ? C.green : '#fff'}" stroke="${C.green}" stroke-width=".7"${built ? '' : ' stroke-dasharray="1.4 .9"'}/>`;
+    b += T(px, py + 1.7, 4.6, i + 1, { a: 'middle', w: 800, c: built ? '#fff' : C.green });
+    const dx = Math.cos(a), dy = Math.sin(a);
+    const lx = px + dx * 9.5, ly = py + dy * 9.5 + 1.4;
+    b += T(lx, ly + (dy < -0.9 ? -1 : dy > 0.5 ? 3 : 0), 3.9, t, { a: Math.abs(dx) < 0.3 ? 'middle' : dx > 0 ? 'start' : 'end', w: 800 });
+  });
+  b += `<clipPath id="lc"><rect x="${cx - 9}" y="${cy - 9}" width="18" height="18" rx="4"/></clipPath><image href="assets/icon.png" x="${cx - 9}" y="${cy - 9}" width="18" height="18" clip-path="url(#lc)"/>`;
+  put('fig-loop', svg(W, H, b));
+})();
+
+// ============================ Fit: largest text zoom per panel without clipping ============================
+const fits = (panel) => {
+  const fit = panel.querySelector('.fit');
+  if (fit.scrollHeight > fit.clientHeight + 1) return false;
+  return [...fit.querySelectorAll('.sec')].every((sec) => sec.scrollHeight <= sec.clientHeight + 1);
+};
+const fitPanels = () => {
+  const panels = [...document.querySelectorAll('.panel')];
+  const best = panels.map((p) => {
+    let lo = 1, hi = 1.4;
+    for (let i = 0; i < 14; i++) { const mid = (lo + hi) / 2; p.style.setProperty('--z', mid); if (fits(p)) lo = mid; else hi = mid; }
+    return lo;
+  });
+  // Keep type sizes consistent across the board: no panel more than 8% above the smallest.
+  const cap = Math.min(...best) * 1.08;
+  // 1.5% headroom so print layout can't push a wrapped line out of its card.
+  panels.forEach((p, i) => p.style.setProperty('--z', (Math.min(best[i], cap) * 0.985).toFixed(4)));
+  document.body.dataset.zoom = panels.map((p) => p.id + '=' + p.style.getPropertyValue('--z')).join(' ');
+};
+
+// ============================ Modes ============================
+function runMode() {
+const params = new URLSearchParams(location.search);
+const mode = params.get('mode') || 'flat';
+const PANELS = {
+  left: { el: 'panel-left', w: 400, h: 900, name: 'LEFT WING', code: 'L' },
+  centre: { el: 'panel-centre', w: 800, h: 900, name: 'CENTRE', code: 'C' },
+  right: { el: 'panel-right', w: 400, h: 900, name: 'RIGHT WING', code: 'R' }
+};
+if (mode === 'flat') document.body.classList.add('flat');
+if (mode === 'panel') {
+  const p = PANELS[params.get('p')];
+  document.querySelectorAll('.panel').forEach((el) => { if (el.id !== p.el) el.remove(); });
+}
+
+// A3 sheets: each sheet is one cell of a panel plus a 10 mm overlap strip on
+// its right/bottom edge where a neighbour exists. This mode prints only crop
+// marks and labels; build.cjs places the artwork from the full-size panel PDF.
+if (mode === 'tiles') {
+  document.body.classList.add('tiles');
+  const OVERLAP = 10, MARGIN = 10;
+  const LAYOUT = { left: { sw: 420, sh: 297, cols: 1, rows: 4 }, centre: { sw: 297, sh: 420, cols: 3, rows: 3 }, right: { sw: 420, sh: 297, cols: 1, rows: 4 } };
+  const out = document.createElement('div');
+  let sheetNo = 0;
+  const total = Object.values(LAYOUT).reduce((s, l) => s + l.cols * l.rows, 0);
+  for (const [key, p] of Object.entries(PANELS)) {
+    const Lt = LAYOUT[key], cw = p.w / Lt.cols, ch = p.h / Lt.rows;
+    for (let r = 0; r < Lt.rows; r++) for (let c = 0; c < Lt.cols; c++) {
+      sheetNo++;
+      const ox = c < Lt.cols - 1 ? OVERLAP : 0, oy = r < Lt.rows - 1 ? OVERLAP : 0;
+      const winW = cw + ox, winH = ch + oy, x0 = MARGIN, y0 = MARGIN;
+      const sheet = document.createElement('div');
+      sheet.className = 'sheet';
+      sheet.style.width = Lt.sw + 'mm'; sheet.style.height = Lt.sh + 'mm';
+      Object.assign(sheet.dataset, { panel: key, row: r, col: c, cw, ch, winW, winH, sw: Lt.sw, sh: Lt.sh, x0, y0 });
+      const mk = (x, y, w, h) => { const m = document.createElement('div'); m.className = 'mark'; Object.assign(m.style, { left: x + 'mm', top: y + 'mm', width: w + 'mm', height: h + 'mm' }); sheet.appendChild(m); };
+      const TK = 0.25, LEN = 4, GAP = 1.5;
+      for (const xx of [x0, x0 + cw]) { mk(xx - TK / 2, y0 - GAP - LEN, TK, LEN); mk(xx - TK / 2, y0 + winH + GAP, TK, LEN); }
+      for (const yy of [y0, y0 + ch]) { mk(x0 - GAP - LEN, yy - TK / 2, LEN, TK); mk(x0 + winW + GAP, yy - TK / 2, LEN, TK); }
+      if (ox || oy) {
+        const g = document.createElement('div'); g.className = 'glue';
+        Object.assign(g.style, { left: x0 + 'mm', top: y0 + 'mm', width: (cw + 0.3) + 'mm', height: (ch + 0.3) + 'mm', borderLeft: '0', borderTop: '0' });
+        if (!ox) g.style.borderRight = '0';
+        if (!oy) g.style.borderBottom = '0';
+        sheet.appendChild(g);
+      }
+      const lab = document.createElement('div'); lab.className = 'label';
+      lab.style.left = (x0 + 12) + 'mm'; lab.style.top = (y0 + winH + 2) + 'mm';
+      lab.innerHTML = `<b>${p.code}${r + 1}-${c + 1}</b> &nbsp;${p.name} · row ${r + 1} of ${Lt.rows}, column ${c + 1} of ${Lt.cols} · sheet ${sheetNo} of ${total} · print at 100% (Actual size) · the bar on the right must measure 50 mm`;
+      sheet.appendChild(lab);
+      const sb = document.createElement('div'); sb.className = 'scalebar';
+      Object.assign(sb.style, { left: (Lt.sw - MARGIN - 52) + 'mm', top: (y0 + winH + 3) + 'mm', width: '50mm' });
+      sheet.appendChild(sb);
+      const mm = document.createElement('div'); mm.className = 'minimap';
+      Object.assign(mm.style, { left: x0 + 'mm', top: (y0 + winH + 2) + 'mm', gridTemplateColumns: `repeat(${Lt.cols}, ${8 / Lt.cols}mm)`, gridTemplateRows: `repeat(${Lt.rows}, ${6 / Lt.rows}mm)` });
+      for (let rr = 0; rr < Lt.rows; rr++) for (let cc = 0; cc < Lt.cols; cc++) { const d = document.createElement('div'); if (rr === r && cc === c) d.className = 'on'; mm.appendChild(d); }
+      sheet.appendChild(mm);
+      const win = document.createElement('div'); win.className = 'win';
+      Object.assign(win.style, { left: x0 + 'mm', top: y0 + 'mm', width: winW + 'mm', height: winH + 'mm' });
+      sheet.appendChild(win);
+      out.appendChild(sheet);
+    }
+  }
+  document.getElementById('board').replaceWith(out);
+}
+
+}
+
+(async () => {
+  await document.fonts.ready;
+  await Promise.all([...document.images].map((img) => img.complete ? null : new Promise((r) => { img.onload = img.onerror = r; })));
+  fitPanels();
+  runMode();
+  document.body.dataset.ready = '1';
+})();
+</script>
+</body>
+</html>
