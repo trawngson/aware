@@ -44,6 +44,7 @@ struct ContentView: View {
         }
         .tint(Theme.green)
         .environment(\.deviceColorScheme, deviceColorScheme)
+        .overlay { RewardToastHost() }
         .fullScreenCover(isPresented: Binding(
             get: { !hasSeenOnboarding },
             set: { hasSeenOnboarding = !$0 }

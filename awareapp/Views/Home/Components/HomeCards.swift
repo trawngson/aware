@@ -2,6 +2,8 @@ import SwiftUI
 
 // Home dashboard cards. All figures are demo values, except the current
 // user's points, which include rewards earned from scans this session.
+// DEMO ONLY: the goal, Items Scanned and Recent Activity cards also add this
+// session's scans to their demo values (see DemoSessionStats).
 
 // MARK: - Waste / CO₂ saved
 
@@ -36,8 +38,13 @@ struct SavedStatCard: View {
 // MARK: - Monthly goal
 
 struct MonthlyGoalCard: View {
-    private let progress = 0.7
-    private let pointsToGo = 2_000
+    // DEMO ONLY: points earned this session count toward the demo goal
+    // (70% done, 2,000 to go before any scans). Replace with the real goal.
+    @ObservedObject private var ledger = RewardLedger.shared
+    private let goal = 6_700
+    private var earned: Int { 4_700 + ledger.totalPoints }
+    private var progress: Double { min(1, Double(earned) / Double(goal)) }
+    private var pointsToGo: Int { max(0, goal - earned) }
 
     private var monthName: String {
         Date.now.formatted(.dateTime.month(.wide))
@@ -200,12 +207,19 @@ struct WeeklyStreakCard: View {
 // MARK: - Items scanned
 
 struct ItemsScannedCard: View {
-    private let categories: [(name: LocalizedStringKey, count: Int, color: Color)] = [
-        ("Plastic", 18, Theme.green),
-        ("Paper", 14, Color(hex: 0x4FA878)),
-        ("Metal", 9, Color(hex: 0x8FBFA4)),
-        ("Glass", 6, Color(hex: 0xC3DBCC)),
-    ]
+    // DEMO ONLY: the demo counts plus this session's scans
+    // (DemoSessionStats). Replace with the user's real scan counts.
+    @ObservedObject private var ledger = RewardLedger.shared
+
+    private var categories: [(name: LocalizedStringKey, count: Int, color: Color)] {
+        let scanned = DemoSessionStats.itemCounts(ledger.awards)
+        return [
+            ("Plastic", 18 + scanned[.plastic, default: 0], Theme.green),
+            ("Paper", 14 + scanned[.paper, default: 0], Color(hex: 0x4FA878)),
+            ("Metal", 9 + scanned[.metal, default: 0], Color(hex: 0x8FBFA4)),
+            ("Glass", 6 + scanned[.glass, default: 0], Color(hex: 0xC3DBCC)),
+        ]
+    }
 
     private var total: Int { categories.map(\.count).reduce(0, +) }
 
@@ -216,7 +230,7 @@ struct ItemsScannedCard: View {
                 Text("\(total)").displayNumber(40)
                 Text("items").font(.system(size: 17)).foregroundStyle(Theme.ink.opacity(0.55)).padding(.bottom, 4)
                 Spacer(minLength: 0)
-                TrendPill(systemImage: "arrow.up", text: "+12 this week")
+                TrendPill(systemImage: "arrow.up", text: "+\(12 + ledger.awards.count) this week")
             }
             GeometryReader { proxy in
                 HStack(spacing: 3) {
@@ -247,45 +261,76 @@ struct ItemsScannedCard: View {
 
 struct RecentActivityCard: View {
     private struct Activity: Identifiable {
-        let id = UUID()
+        var id = UUID()
         let icon: String
         let tint: Color
-        let title: LocalizedStringKey
-        let detail: LocalizedStringKey
+        let title: Text
+        let detail: Text
         let points: Int
     }
 
+    // DEMO ONLY: this session's scans go above the demo rows below. Replace
+    // with the user's real, saved activity.
+    @ObservedObject private var ledger = RewardLedger.shared
+
     // Points follow the reward policy: 20 for a sorted recyclable.
-    private let activities = [
-        Activity(icon: "waterbottle.fill", tint: Theme.green, title: "Plastic Bottle", detail: "Recycled · 2m ago", points: RecyclingPolicy.recyclablePoints),
-        Activity(icon: "shippingbox.fill", tint: Theme.amber, title: "Cardboard Box", detail: "Recycled · 1h ago", points: RecyclingPolicy.recyclablePoints),
-        Activity(icon: "trophy.fill", tint: Theme.teal, title: "Weekly Goal", detail: "Achieved · 3h ago", points: 100),
+    private let demoActivities = [
+        Activity(icon: "waterbottle.fill", tint: Theme.green, title: Text("Plastic Bottle"), detail: Text("Recycled · 2m ago"), points: RecyclingPolicy.recyclablePoints),
+        Activity(icon: "shippingbox.fill", tint: Theme.amber, title: Text("Cardboard Box"), detail: Text("Recycled · 1h ago"), points: RecyclingPolicy.recyclablePoints),
+        Activity(icon: "trophy.fill", tint: Theme.teal, title: Text("Weekly Goal"), detail: Text("Achieved · 3h ago"), points: 100),
     ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             CardHeader(systemImage: "clock.arrow.circlepath", title: "Recent Activity", caption: "Today", showsChevron: false)
-            VStack(spacing: 12) {
-                ForEach(activities) { activity in
-                    HStack(spacing: 12) {
-                        IconTile(systemImage: activity.icon, tint: activity.tint, size: 38, cornerRadius: 13, iconSize: 17)
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text(activity.title).cardTitleStyle()
-                            Text(activity.detail).font(.system(size: 12)).foregroundStyle(Theme.ink.opacity(0.55))
+            // Refreshes "2m ago" on the session's scans.
+            TimelineView(.everyMinute) { context in
+                VStack(spacing: 12) {
+                    ForEach(activities(now: context.date)) { activity in
+                        HStack(spacing: 12) {
+                            IconTile(systemImage: activity.icon, tint: activity.tint, size: 38, cornerRadius: 13, iconSize: 17)
+                            VStack(alignment: .leading, spacing: 1) {
+                                activity.title.cardTitleStyle()
+                                activity.detail.font(.system(size: 12)).foregroundStyle(Theme.ink.opacity(0.55))
+                            }
+                            Spacer(minLength: 0)
+                            HStack(spacing: 2) {
+                                Text("+\(activity.points)")
+                                Image(systemName: "leaf.fill").font(.system(size: 11))
+                            }
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(Theme.green)
                         }
-                        Spacer(minLength: 0)
-                        HStack(spacing: 2) {
-                            Text("+\(activity.points)")
-                            Image(systemName: "leaf.fill").font(.system(size: 11))
-                        }
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Theme.green)
                     }
                 }
             }
         }
         .padding(16)
         .glass(.card)
+    }
+
+    /// The session's scans, newest first, then the demo rows; three in all.
+    private func activities(now: Date) -> [Activity] {
+        let scans: [Activity] = ledger.awards.reversed().map { award in
+            Activity(
+                id: award.id,
+                icon: award.label?.iconName ?? "leaf.fill",
+                tint: award.label?.tint ?? Theme.green,
+                title: Text(verbatim: award.displayName),
+                detail: award.group == .recyclable
+                    ? Text("Recycled · \(Self.timeAgo(award.date, now: now))")
+                    : Text("Sorted · \(Self.timeAgo(award.date, now: now))"),
+                points: award.points
+            )
+        }
+        return Array((scans + demoActivities).prefix(3))
+    }
+
+    private static func timeAgo(_ date: Date, now: Date) -> String {
+        let minutes = Int(now.timeIntervalSince(date) / 60)
+        if minutes < 1 { return String(localized: "just now") }
+        if minutes < 60 { return String(localized: "\(minutes)m ago") }
+        return String(localized: "\(minutes / 60)h ago")
     }
 }
 

@@ -34,6 +34,9 @@ struct DetectedItemRow: View {
                         .contentTransition(.numericText())
                 }
             }
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.45))
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 13)

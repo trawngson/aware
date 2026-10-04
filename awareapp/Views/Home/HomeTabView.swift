@@ -29,14 +29,18 @@ struct HomeTabView: View {
                         .buttonStyle(PressableStyle())
                     }
 
+                    // DEMO ONLY: the demo totals plus this session's scans
+                    // (DemoSessionStats). Replace with the user's real totals.
                     HStack(spacing: 10) {
                         NavigationLink(destination: WasteInsightsView()) {
                             SavedStatCard(systemImage: "trash.fill", title: "Waste Saved", tint: Theme.green,
-                                          value: 6_700, unit: "g", trendUp: true, trend: "12% today")
+                                          value: 6_700 + Int(DemoSessionStats.wasteSavedGrams(ledger.awards).rounded()),
+                                          unit: "g", trendUp: true, trend: "12% today")
                         }
                         NavigationLink(destination: CO2InsightsView()) {
                             SavedStatCard(systemImage: "cloud.fill", title: "CO₂ Saved", tint: Theme.teal,
-                                          value: 1_250, unit: "kg", trendUp: false, trend: "9% today")
+                                          value: 1_250 + Int((DemoSessionStats.co2SavedGrams(ledger.awards) / 1000).rounded()),
+                                          unit: "kg", trendUp: false, trend: "9% today")
                         }
                     }
                     .buttonStyle(PressableStyle())

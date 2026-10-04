@@ -87,6 +87,15 @@ struct ScanResultsView: View {
                 ImpactInfoSheet(label: label, isRecycled: policy.group == .recyclable)
             }
         }
+        // Points are for sorting the item, not for posting it, so leaving any
+        // way (Back, a swipe, another tab) awards them too.
+        .onDisappear { awardPoints() }
+    }
+
+    /// Reads the policy when called, not when the body was last built, so an
+    /// answer or a correction made just before leaving still counts.
+    private func awardPoints() {
+        RewardLedger.shared.award(policy, scanEventID: scanEventID)
     }
 
     // MARK: - Hero image

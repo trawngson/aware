@@ -139,6 +139,19 @@ struct ScanTabView: View {
         }
     }
     
+    /// Opens the guidance for a tapped item, without waiting for it to reach
+    /// the auto-confirm threshold.
+    private func openResults(for detection: YOLODetection) {
+        guard !showResults else { return }
+        stableDetectionTimer?.invalidate()
+        stableDetectionTimer = nil
+        stableDetectionLabel = nil
+        confirmedDetection = detection
+        withAnimation {
+            showResults = true
+        }
+    }
+
     private func dismissResults() {
         confirmedDetection = nil
         // Reset detection state to allow new scans
@@ -359,11 +372,17 @@ struct ScanTabView: View {
     private var detectionList: some View {
         VStack(spacing: 10) {
             ForEach(detections) { detection in
-                DetectedItemRow(
-                    label: detection.label,
-                    confidence: detection.confidence,
-                    isStrong: detection.confidence >= autoConfirmThreshold
-                )
+                Button {
+                    openResults(for: detection)
+                } label: {
+                    DetectedItemRow(
+                        label: detection.label,
+                        confidence: detection.confidence,
+                        isStrong: detection.confidence >= autoConfirmThreshold
+                    )
+                }
+                .buttonStyle(PressableStyle())
+                .accessibilityHint("Shows how to sort it")
                 .id("\(detection.id)-\(detection.label)")
                 .transition(
                     .asymmetric(

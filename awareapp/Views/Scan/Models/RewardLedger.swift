@@ -16,6 +16,17 @@ struct RewardResult: Equatable {
     let scanEventID: UUID
 }
 
+/// A scan event that earned points.
+struct AwardedScan: Identifiable, Equatable {
+    /// The scan event's ID.
+    let id: UUID
+    let label: CanonicalLabel?
+    let displayName: String
+    let group: DisposalGroup?
+    let points: Int
+    let date: Date
+}
+
 /// Reward layer (SPECIFICATION.md 5.3): decides whether a scan event earns
 /// points and awards each scan event at most once. It never reads the
 /// detector directly; it only sees the policy result.
@@ -23,13 +34,14 @@ struct RewardResult: Equatable {
 final class RewardLedger: ObservableObject {
     static let shared = RewardLedger()
 
-    @Published private(set) var awardedEvents: [UUID: Int] = [:]
+    /// Scan events awarded this session, oldest first.
+    @Published private(set) var awards: [AwardedScan] = []
 
-    var totalPoints: Int { awardedEvents.values.reduce(0, +) }
+    var totalPoints: Int { awards.map(\.points).reduce(0, +) }
 
     func evaluate(_ policy: PolicyResult, scanEventID: UUID) -> RewardResult {
-        if let points = awardedEvents[scanEventID] {
-            return RewardResult(state: .alreadyAwarded, points: points, reason: "already_awarded", scanEventID: scanEventID)
+        if let award = awards.first(where: { $0.id == scanEventID }) {
+            return RewardResult(state: .alreadyAwarded, points: award.points, reason: "already_awarded", scanEventID: scanEventID)
         }
         switch policy.state {
         case .confirmationRequired:
@@ -50,7 +62,8 @@ final class RewardLedger: ObservableObject {
     func award(_ policy: PolicyResult, scanEventID: UUID) -> RewardResult {
         let result = evaluate(policy, scanEventID: scanEventID)
         guard result.state == .eligible else { return result }
-        awardedEvents[scanEventID] = result.points
+        awards.append(AwardedScan(id: scanEventID, label: policy.label, displayName: policy.displayName,
+                                  group: policy.group, points: result.points, date: .now))
         return result
     }
 }
