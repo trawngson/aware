@@ -1,0 +1,45 @@
+{
+  "revision": "v2",
+  "units": "mm",
+  "body_diameter_mm": 600.0,
+  "canopy_diameter_mm": 660.0,
+  "rim_height_mm": 800.0,
+  "overall_height_mm": 1300.0,
+  "footprint_width_mm": 600.0,
+  "footprint_depth_mm": 670.0,
+  "rear_mast_center_y_mm": 325.0,
+  "liner_height_mm": 720.0,
+  "nominal_brim_capacity_per_liner_l": 43.09,
+  "nominal_total_brim_capacity_l": 172.38,
+  "plate_radius_mm": 140.0,
+  "plate_thickness_mm": 4.0,
+  "plate_level_top_height_mm": 979.0,
+  "tilt_pivot_mm": [
+    0,
+    0,
+    935.0
+  ],
+  "maximum_plate_tilt_degrees": 38.0,
+  "destination_directions_degrees": [
+    45,
+    135,
+    225,
+    315
+  ],
+  "fill_sensor_count": 4,
+  "fill_sensor_radial_position_mm": 190.0,
+  "fill_sensor_window_height_mm": 1266.0,
+  "provisional_full_level_mm": 700.0,
+  "provisional_full_distance_threshold_mm": 566.0,
+  "receiver_full_fov_degrees_assumed": 15.0,
+  "level_plate_ir_beam_clearance_mm": 12.22,
+  "category_labels": [
+    "",
+    "",
+    "",
+    ""
+  ],
+  "demo_bottle_height_mm": 160.0,
+  "demo_bottle_diameter_mm": 60.0,
+  "status": "Concept geometry; drives, loading limits and fabrication details provisional"
+}
