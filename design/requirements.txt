@@ -1,0 +1,2 @@
+cadquery==2.8.0
+matplotlib==3.10.8

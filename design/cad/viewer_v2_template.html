@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart bin v2 · rear mast and tipping plate</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#243638;background:#edf2ee;--line:#d8e0d9}*{box-sizing:border-box}body{margin:0}header{height:85px;padding:19px 26px;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:20px}h1{font-size:22px;letter-spacing:-.5px;margin:0 0 5px}.subtitle{font-size:13px;color:#6a7b72}.badge{font-size:12px;padding:8px 12px;border-radius:25px;background:#eaf3ed;border:1px solid #d1e2d6;white-space:nowrap}main{height:calc(100vh - 85px);min-height:590px;display:grid;grid-template-columns:270px 1fr}aside{padding:22px;background:#fafcf9;border-right:1px solid var(--line);overflow:auto}h2{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#708179;margin:0 0 12px}.group{margin-bottom:25px}.views{display:grid;gap:7px}button{font:inherit;font-size:13px;padding:10px 12px;border:1px solid #d3dfd5;border-radius:8px;background:#fff;color:#344c40;cursor:pointer;text-align:left}button:hover{background:#eaf1eb}button.active,.primary{color:#fff;background:#285847;border-color:#285847}.primary:hover{background:#347159}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px}.buttons .primary{grid-column:1/-1;text-align:center}button:disabled{opacity:.4;cursor:default}label{display:flex;align-items:center;gap:8px;font-size:12px;margin:11px 0}input[type=checkbox],input[type=range]{accent-color:#29614c}input[type=range]{width:100%}select{width:100%;font:inherit;font-size:12px;padding:8px;border:1px solid #d4ded5;border-radius:7px;background:#fff;color:#385144}.note{font-size:12px;line-height:1.55;color:#718178}.stat{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:8px 0;border-bottom:1px solid #e5ebe5}.stat strong{font-weight:600;white-space:nowrap}.stage{position:relative;min-width:0;min-height:0}canvas{width:100%;height:100%;display:block;touch-action:none}.viewlabel{position:absolute;left:25px;top:22px;font-size:12px;color:#60796b;pointer-events:none}.hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);font-size:11px;padding:9px 14px;border-radius:24px;border:1px solid var(--line);background:#ffffffeb;color:#728179;pointer-events:none;white-space:nowrap}.demo-card{position:absolute;top:58px;left:25px;width:290px;background:#fffffff3;border:1px solid #d6e3d8;border-radius:12px;padding:15px 17px;box-shadow:0 6px 24px #233b2410;pointer-events:none}.demo-card[hidden]{display:none}.eyebrow{color:#62846f;font-size:10px;text-transform:uppercase;letter-spacing:1.5px}.demo-title{font-size:18px;letter-spacing:-.3px;font-weight:650;margin:7px 0}.demo-detail{font-size:12px;color:#718075;line-height:1.45}.progress{height:4px;background:#e4ece5;border-radius:4px;overflow:hidden;margin:12px 0 9px}.progress div{height:100%;width:0;background:#3c9d67}.timeline{font-size:10px;color:#8a978e}.demo-stage{font-size:12px;font-weight:550;color:#35614a}.error{padding:40px}@media(max-width:720px){header{height:95px;padding:15px}.badge{display:none}main{height:calc(100vh - 95px);grid-template-columns:205px 1fr}aside{padding:16px}.demo-card{left:12px;top:45px;width:215px;padding:12px}.viewlabel{left:12px;font-size:10px}.hint{font-size:9px;padding:7px}h1{font-size:20px}}
+</style>
+</head>
+<body>
+<header><div><h1>Smart sorting bin</h1><div class="subtitle">Rear mast · one tipping plate · four blank-category bins</div></div><div class="badge">v2 · no rotary carrier</div></header>
+<main><aside>
+<div class="group"><h2>Water bottle example</h2><div class="buttons"><button class="primary" id="play">▶ Play detection demo</button><button id="pause" disabled>Pause</button><button id="reset">Reset</button></div><label><input id="sound" type="checkbox" checked>Detection and movement sounds</label><div class="note" id="audio-note">Sound starts with your click. No external audio files.</div></div>
+<div class="group"><h2>View</h2><div class="views"><button data-view="assembled" class="active">Assembled</button><button data-view="internals">Four compartments</button><button data-view="exploded">Exploded service view</button><button data-view="plan">Top / IR sensor positions</button><button data-view="mechanism">Tilt joint detail</button></div></div>
+<div class="group"><h2>Plate direction</h2><select id="route"><option value="0">Level / ready to detect</option><option value="1">Tip toward sub-bin 1</option><option value="2">Tip toward sub-bin 2</option><option value="3">Tip toward sub-bin 3</option><option value="4">Tip toward sub-bin 4</option></select><div class="note" style="margin-top:8px">The demo uses the selected bin, or sub-bin 4 when the plate is level. This is an example route; category mapping is undecided.</div></div>
+<div class="group"><h2>Inspection</h2><label><input id="shell" type="checkbox" checked>Outer shell</label><label><input id="canopy" type="checkbox" checked>Canopy</label><label><input id="sensors" type="checkbox" checked>Four fill sensors</label><div class="note">Explode amount</div><input id="explode" type="range" min="0" max="1" step=".01" value="0"><select id="part" style="margin-top:10px"><option value="">Highlight a component…</option></select></div>
+<div class="group"><h2>Provisional geometry</h2><div id="stats"></div></div>
+<div class="note">Full destination → keep the plate level and request service. The four bins stay separate; the plate does not send an item to a different category.</div>
+<div class="note" style="margin-top:12px">The bottle animation illustrates the sequence. It is not a rigid-body simulation or live sensor output. Actuator torque, surface friction and real-item tests remain to be resolved.</div>
+</aside>
+<div class="stage"><canvas id="canvas" aria-label="Interactive three-dimensional smart bin CAD preview"></canvas><div id="viewlabel" class="viewlabel">ASSEMBLED · REAR SUPPORT / SINGLE PLATE</div><div class="demo-card" id="demo-card" hidden><div class="eyebrow">Illustrative detection sequence</div><div class="demo-title" id="demo-title">Ready</div><div class="demo-detail" id="demo-detail"></div><div class="progress"><div id="progress"></div></div><div class="demo-stage" id="demo-stage"></div><div class="timeline" style="margin-top:8px">Place → scan → identify → tip → return</div></div><div class="hint">Drag to rotate · scroll to zoom · double-click to reset view</div></div>
+</main>
+<script id="mesh" type="application/json">__MESH_DATA__</script>
+<script id="dimensions" type="application/json">__DIMENSIONS__</script>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const meshes=JSON.parse($('#mesh').textContent),dim=JSON.parse($('#dimensions').textContent);
+const rows=[['Body diameter',dim.body_diameter_mm+' mm'],['Overall height',dim.overall_height_mm+' mm'],['Plate diameter',2*dim.plate_radius_mm+' mm'],['Maximum tip',dim.maximum_plate_tilt_degrees+'°'],['Sub-bins','4 separate liners'],['Brim capacity',dim.nominal_brim_capacity_per_liner_l+' L / liner']];
+$('#stats').innerHTML=rows.map(r=>`<div class="stat"><span>${r[0]}</span><strong>${r[1]}</strong></div>`).join('');
+for(const m of meshes){const option=document.createElement('option');option.value=m.name;option.textContent=m.name.replaceAll('_',' ');$('#part').appendChild(option)}
+const canvas=$('#canvas'),gl=canvas.getContext('webgl',{antialias:true,alpha:false,preserveDrawingBuffer:true});
+if(!gl){$('.stage').innerHTML='<div class="error">WebGL is unavailable. Open the PNG or STEP preview instead.</div>';throw Error('WebGL unavailable')}
+const vertex=`attribute vec3 a_pos;attribute vec3 a_normal;uniform mat4 u_mvp;uniform mat4 u_model;varying vec3 v_normal;void main(){gl_Position=u_mvp*u_model*vec4(a_pos,1.0);v_normal=mat3(u_model)*a_normal;}`;
+const fragment=`precision mediump float;uniform vec3 u_color;uniform float u_opacity;varying vec3 v_normal;void main(){vec3 n=normalize(v_normal);if(!gl_FrontFacing)n=-n;float light=.30+.52*max(0.,dot(n,normalize(vec3(.5,-.7,1.))))+.20*max(0.,dot(n,normalize(vec3(-.8,.3,.5))));gl_FragColor=vec4(u_color*light,u_opacity);}`;
+function compile(type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s}
+const program=gl.createProgram();gl.attachShader(program,compile(gl.VERTEX_SHADER,vertex));gl.attachShader(program,compile(gl.FRAGMENT_SHADER,fragment));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
+const loc={p:gl.getAttribLocation(program,'a_pos'),n:gl.getAttribLocation(program,'a_normal'),mvp:gl.getUniformLocation(program,'u_mvp'),model:gl.getUniformLocation(program,'u_model'),color:gl.getUniformLocation(program,'u_color'),opacity:gl.getUniformLocation(program,'u_opacity')};
+gl.enableVertexAttribArray(loc.p);gl.enableVertexAttribArray(loc.n);gl.enable(gl.DEPTH_TEST);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+const sub=(a,b)=>a.map((v,i)=>v-b[i]),dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],norm=v=>{const l=Math.hypot(...v);return v.map(x=>x/(l||1))};
+function identity(){return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1])}
+function mul(a,b){const c=new Float32Array(16);for(let j=0;j<4;j++)for(let i=0;i<4;i++)for(let k=0;k<4;k++)c[j*4+i]+=a[k*4+i]*b[j*4+k];return c}
+function translation(x,y,z){const m=identity();m[12]=x;m[13]=y;m[14]=z;return m}
+function rx(a){const c=Math.cos(a),s=Math.sin(a);return new Float32Array([1,0,0,0,0,c,s,0,0,-s,c,0,0,0,0,1])}
+function ry(a){const c=Math.cos(a),s=Math.sin(a);return new Float32Array([c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1])}
+function rz(a){const c=Math.cos(a),s=Math.sin(a);return new Float32Array([c,s,0,0,-s,c,0,0,0,0,1,0,0,0,0,1])}
+function vector(m,v){return[m[0]*v[0]+m[4]*v[1]+m[8]*v[2]+m[12],m[1]*v[0]+m[5]*v[1]+m[9]*v[2]+m[13],m[2]*v[0]+m[6]*v[1]+m[10]*v[2]+m[14]]}
+function around(rotation,p){return mul(translation(...p),mul(rotation,translation(...p.map(v=>-v))))}
+function look(eye,center,up){const z=norm(sub(eye,center)),x=norm(cross(up,z)),y=cross(z,x);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1])}
+function ortho(l,r,b,t,n,f){return new Float32Array([2/(r-l),0,0,0,0,2/(t-b),0,0,0,0,-2/(f-n),0,-(r+l)/(r-l),-(t+b)/(t-b),-(f+n)/(f-n),1])}
+function upload(values){const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.STATIC_DRAW);return{buffer,count:values.length/6}}
+for(const m of meshes){const values=[];for(const t of m.triangles){const points=t.map(i=>m.vertices[i]),n=norm(cross(sub(points[1],points[0]),sub(points[2],points[0])));for(const p of points)values.push(...p.map(v=>v/1000),...n)}Object.assign(m,upload(values))}
+function lathe(profile,color,opacity=1){const values=[],slices=64;for(let j=0;j<profile.length-1;j++)for(let i=0;i<slices;i++){const a=i*2*Math.PI/slices,b=(i+1)*2*Math.PI/slices;const[z0,r0]=profile[j],[z1,r1]=profile[j+1];const points=[[r0*Math.cos(a),r0*Math.sin(a),z0],[r0*Math.cos(b),r0*Math.sin(b),z0],[r1*Math.cos(b),r1*Math.sin(b),z1],[r1*Math.cos(a),r1*Math.sin(a),z1]];for(const ids of[[0,1,2],[0,2,3]]){const n=norm(cross(sub(points[ids[1]],points[ids[0]]),sub(points[ids[2]],points[ids[0]])));for(const id of ids)values.push(...points[id],...n)}}return{...upload(values),color,opacity}}
+const hs=dim.demo_bottle_height_mm/160,rs=dim.demo_bottle_diameter_mm/60;
+const profile=[[0,0],[0,.024],[.006,.030],[.015,.030],[.023,.029],[.030,.030],[.090,.030],[.105,.028],[.120,.020],[.130,.011],[.148,.011],[.148,0]].map(([z,r])=>[z*hs,r*rs]);
+const bottle=[lathe([[.146,0],[.146,.013],[.158,.013],[.160,.011],[.160,0]].map(([z,r])=>[z*hs,r*rs]),[.13,.45,.74]),lathe([[.043,.0306],[.080,.0306]].map(([z,r])=>[z*hs,r*rs]),[.82,.93,.97]),lathe([[.048,.0308],[.055,.0308]].map(([z,r])=>[z*hs,r*rs]),[.24,.65,.84]),lathe(profile,[.66,.88,.98],.58)];
+const ringValues=[];for(let i=0;i<96;i++){const a=i*2*Math.PI/96;ringValues.push(.034*rs*Math.cos(a),.034*rs*Math.sin(a),0,0,0,1)}const scanRing=upload(ringValues);
+function drawItem(item,model,color=item.color,opacity=item.opacity??1,primitive=gl.TRIANGLES){gl.bindBuffer(gl.ARRAY_BUFFER,item.buffer);gl.vertexAttribPointer(loc.p,3,gl.FLOAT,false,24,0);gl.vertexAttribPointer(loc.n,3,gl.FLOAT,false,24,12);gl.uniformMatrix4fv(loc.model,false,model);gl.uniform3fv(loc.color,color);gl.uniform1f(loc.opacity,opacity);gl.drawArrays(primitive,0,item.count)}
+function drawTransparentCanopy(item,model,color){
+  // Draw the far-facing surfaces before the near-facing surfaces. Neither pass
+  // writes depth, so the camera, screen, bottle and plate stay visible through it.
+  gl.enable(gl.BLEND);gl.depthMask(false);gl.enable(gl.CULL_FACE);
+  gl.cullFace(gl.FRONT);drawItem(item,model,color,.18);
+  gl.cullFace(gl.BACK);drawItem(item,model,color,.18);
+  gl.disable(gl.CULL_FACE);gl.depthMask(true);gl.disable(gl.BLEND);
+}
+// A local canvas texture lights the actual CAD display face during the demo.
+// It remains blank outside the demo, and assigns no waste-category labels.
+const screenFace=meshes.find(m=>m.name==='blank_display_face');
+const screenBounds=[0,1,2].map(axis=>[Math.min(...screenFace.vertices.map(v=>v[axis]))/1000,Math.max(...screenFace.vertices.map(v=>v[axis]))/1000]);
+const sx0=screenBounds[0][0]+.004,sx1=screenBounds[0][1]-.004,sy=screenBounds[1][0]-.0003,sz0=screenBounds[2][0]+.004,sz1=screenBounds[2][1]-.004;
+const screenVertices=new Float32Array([sx0,sy,sz0,0,0,sx1,sy,sz0,1,0,sx1,sy,sz1,1,1,sx0,sy,sz0,0,0,sx1,sy,sz1,1,1,sx0,sy,sz1,0,1]);
+const screenBuffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,screenBuffer);gl.bufferData(gl.ARRAY_BUFFER,screenVertices,gl.STATIC_DRAW);
+const screenProgram=gl.createProgram();
+gl.attachShader(screenProgram,compile(gl.VERTEX_SHADER,`attribute vec3 a_pos;attribute vec2 a_uv;uniform mat4 u_mvp;uniform mat4 u_model;varying vec2 v_uv;void main(){gl_Position=u_mvp*u_model*vec4(a_pos,1.0);v_uv=a_uv;}`));
+gl.attachShader(screenProgram,compile(gl.FRAGMENT_SHADER,`precision mediump float;uniform sampler2D u_screen;varying vec2 v_uv;void main(){gl_FragColor=texture2D(u_screen,v_uv);}`));
+gl.linkProgram(screenProgram);if(!gl.getProgramParameter(screenProgram,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(screenProgram));
+const screenLoc={p:gl.getAttribLocation(screenProgram,'a_pos'),uv:gl.getAttribLocation(screenProgram,'a_uv'),mvp:gl.getUniformLocation(screenProgram,'u_mvp'),model:gl.getUniformLocation(screenProgram,'u_model'),texture:gl.getUniformLocation(screenProgram,'u_screen')};
+const screenCanvas=document.createElement('canvas');screenCanvas.width=1024;screenCanvas.height=512;
+const screenContext=screenCanvas.getContext('2d'),screenTexture=gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D,screenTexture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+let screenKey='';
+function screenState(t,target,paused=false){
+  let phase,status,lines,footer;
+  if(t<.7){phase='loading';status='READY';lines=['PLACE','ONE ITEM'];footer='LEVEL PLATE'}
+  else if(t<2.4){phase='scanning';status='DETECTING';lines=['SCANNING','...'];footer='EXAMINING ITEM'}
+  else if(t<3.6){phase='detected';status='DETECTED';lines=['WATER','BOTTLE'];footer=`TO SUB-BIN ${target}`}
+  else if(t<6.9){phase='delivery';status='SORTING';lines=[`SUB-BIN ${target}`,'DELIVERING'];footer='WATER BOTTLE'}
+  else if(t<8.3){phase='return';status='RESETTING';lines=['RETURNING','TO LEVEL'];footer='ITEM DELIVERED'}
+  else{phase='ready';status='READY';lines=['THANK YOU','READY'];footer='NEXT ITEM'}
+  return{phase,status:paused?'PAUSED':status,lines,footer,progress:clamp(t/9),paused};
+}
+function updateScreenTexture(t,target,paused){
+  const state=screenState(t,target,paused),key=`${state.phase}/${target}/${paused}/${Math.floor(t*15)}`;
+  if(key===screenKey)return;screenKey=key;
+  const ctx=screenContext,accent=paused?'#ffd786':'#81f2bd';
+  ctx.fillStyle='#071f26';ctx.fillRect(0,0,1024,512);
+  ctx.fillStyle=accent;ctx.fillRect(0,0,12,512);
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.font='600 38px system-ui, sans-serif';ctx.fillStyle=accent;ctx.fillText(state.status,48,52,920);
+  ctx.fillStyle='#f3fffc';ctx.font='700 104px system-ui, sans-serif';
+  ctx.fillText(state.lines[0],48,165,928);ctx.fillText(state.lines[1],48,275,928);
+  ctx.font='600 46px system-ui, sans-serif';ctx.fillStyle=accent;ctx.fillText(state.footer,48,386,928);
+  ctx.fillStyle='#25454b';ctx.fillRect(48,458,928,12);ctx.fillStyle=accent;ctx.fillRect(48,458,928*state.progress,12);
+  if(state.phase==='scanning'){const x=48+(t-.7)/1.7*904;ctx.fillStyle='#bafbdd';ctx.fillRect(x,442,24,44)}
+  gl.bindTexture(gl.TEXTURE_2D,screenTexture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,screenCanvas);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+}
+function drawScreen(mvp){
+  updateScreenTexture(player.time,player.target,player.paused);
+  gl.useProgram(screenProgram);gl.disableVertexAttribArray(loc.p);gl.disableVertexAttribArray(loc.n);
+  gl.enableVertexAttribArray(screenLoc.p);gl.enableVertexAttribArray(screenLoc.uv);
+  gl.bindBuffer(gl.ARRAY_BUFFER,screenBuffer);gl.vertexAttribPointer(screenLoc.p,3,gl.FLOAT,false,20,0);gl.vertexAttribPointer(screenLoc.uv,2,gl.FLOAT,false,20,12);
+  gl.uniformMatrix4fv(screenLoc.mvp,false,mvp);gl.uniformMatrix4fv(screenLoc.model,false,translation(...screenFace.explode.map(v=>v*explosion/1000)));
+  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,screenTexture);gl.uniform1i(screenLoc.texture,0);gl.drawArrays(gl.TRIANGLES,0,6);
+  gl.disableVertexAttribArray(screenLoc.p);gl.disableVertexAttribArray(screenLoc.uv);gl.enableVertexAttribArray(loc.p);gl.enableVertexAttribArray(loc.n);gl.useProgram(program);
+}
+let theta=-.9,phi=.30,zoom=1,mode='assembled',isPlan=false,explosion=0,lastFrame=0;
+const pivot=dim.tilt_pivot_mm.map(v=>v/1000),maxTilt=dim.maximum_plate_tilt_degrees*Math.PI/180;
+function tiltAngles(fraction,bin){const d=(45+(bin-1)*90)*Math.PI/180,t=maxTilt*fraction;return[Math.asin(-Math.sin(t)*Math.sin(d)),Math.atan2(Math.sin(t)*Math.cos(d),Math.cos(t))]}
+const player={running:false,active:false,paused:false,time:0,target:4,lastCue:-1};
+let audio=null,master=null;
+const activeSounds=new Set();
+function trackSound(node){activeSounds.add(node);node.onended=()=>activeSounds.delete(node);return node}
+async function startAudio(){if(!$('#sound').checked)return;try{if(!audio){audio=new(window.AudioContext||window.webkitAudioContext)();master=audio.createGain();master.gain.value=.16;master.connect(audio.destination)}await audio.resume();$('#audio-note').textContent='Sound enabled · detection chime and soft actuator cue.'}catch{$('#audio-note').textContent='Audio unavailable in this browser. Animation still works.'}}
+function tone(frequency,start,duration,gain=.65){if(!audio||audio.state!=='running'||!$('#sound').checked)return;const oscillator=trackSound(audio.createOscillator()),volume=audio.createGain();oscillator.type='sine';oscillator.frequency.value=frequency;volume.gain.setValueAtTime(0,start);volume.gain.linearRampToValueAtTime(gain,start+.012);volume.gain.exponentialRampToValueAtTime(.001,start+duration);oscillator.connect(volume);volume.connect(master);oscillator.start(start);oscillator.stop(start+duration+.02)}
+function chime(done=false){if(!audio)return;const now=audio.currentTime;tone(done?660:740,now,.14,.5);tone(done?990:1110,now+.12,.21,.5)}
+function movement(duration){if(!audio||audio.state!=='running'||!$('#sound').checked)return;const count=Math.floor(audio.sampleRate*duration),buffer=audio.createBuffer(1,count,audio.sampleRate),data=buffer.getChannelData(0);let previous=0;for(let i=0;i<count;i++){previous=(previous+.025*(Math.random()*2-1))/1.025;data[i]=previous*3}const source=trackSound(audio.createBufferSource()),filter=audio.createBiquadFilter(),volume=audio.createGain();source.buffer=buffer;filter.type='lowpass';filter.frequency.value=520;const now=audio.currentTime;volume.gain.setValueAtTime(0,now);volume.gain.linearRampToValueAtTime(.28,now+.1);volume.gain.setValueAtTime(.28,now+Math.max(.1,duration-.15));volume.gain.linearRampToValueAtTime(0,now+duration);source.connect(filter);filter.connect(volume);volume.connect(master);source.start();source.stop(now+duration)}
+function cues(previous,t){for(const[at,type]of[[.7,'scan'],[2.4,'detected'],[3.6,'tip'],[6.3,'land'],[7,'return'],[8.3,'done']]){if(previous<at&&t>=at){if(type==='scan')tone(520,audio?.currentTime??0,.07,.2);if(type==='detected')chime();if(type==='tip')movement(1.3);if(type==='land')tone(220,audio?.currentTime??0,.12,.2);if(type==='return')movement(1.15);if(type==='done')chime(true)}}}
+const smooth=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t)},clamp=t=>Math.max(0,Math.min(1,t));
+function demoPose(t){let f=0;if(t>=3.6&&t<4.9)f=smooth((t-3.6)/1.3);else if(t>=4.9&&t<7)f=1;else if(t>=7&&t<8.3)f=1-smooth((t-7)/1.3);return{tilt:f,slide:t<4.9?0:clamp((t-4.9)/1.1)**2*.16,fall:smooth((t-6)/.9)}}
+function updateCard(t){let title,detail,stage;if(t<.7){title='Place the bottle';detail='One item rests on the level plate.';stage='1 / 5 · loading'}else if(t<2.4){title='Scanning…';detail='The camera examines the item on the plate.';stage='2 / 5 · detection'}else if(t<3.6){title='Water bottle detected';detail=`Example destination: sub-bin ${player.target}. Category mapping remains blank.`;stage='3 / 5 · identified'}else if(t<6.9){title='Tipping into the bin';detail=`The plate tips toward sub-bin ${player.target}. The bottle rolls off the same surface.`;stage='4 / 5 · delivery'}else if(t<8.3){title='Returning to level';detail='The bottle is in the bin. The plate resets for the next item.';stage='5 / 5 · reset'}else{title='Ready for the next item';detail=`Example complete: bottle delivered to sub-bin ${player.target}.`;stage='Demo complete'}$('#demo-title').textContent=title;$('#demo-detail').textContent=detail;$('#demo-stage').textContent=player.paused?'Paused · '+stage:stage;$('#progress').style.width=Math.min(100,t/9*100)+'%'}
+function bottleModel(t,pose){const[a,b]=tiltAngles(t>=6?1:pose.tilt,player.target),rotation=mul(ry(b),rx(a));const d=norm([Math.sin(b),-Math.cos(b)*Math.sin(a),0]);const direction=d[0]||d[1]?d:[Math.cos((45+(player.target-1)*90)*Math.PI/180),Math.sin((45+(player.target-1)*90)*Math.PI/180),0];const axis=[-direction[1],direction[0],0],height=dim.demo_bottle_height_mm/1000,radius=dim.demo_bottle_diameter_mm/2000,plateLocalZ=(dim.plate_level_top_height_mm-dim.tilt_pivot_mm[2])/1000;
+const orientation=new Float32Array([-direction[0],-direction[1],0,0,0,0,1,0,...axis,0,0,0,0,1]);const placement=[pose.slide*direction[0]-height/2*axis[0],pose.slide*direction[1]-height/2*axis[1],plateLocalZ+radius+(t<.7?(1-smooth(t/.7))*.10:0)];let model=mul(translation(...pivot),mul(rotation,mul(translation(...placement),mul(orientation,rz(-pose.slide/radius)))));
+if(t>=6){const anchor=vector(model,[0,0,height/2]),landHeight=(dim.rim_height_mm-680)/1000;model=mul(translation(0,0,(landHeight-anchor[2])*pose.fall),model)}return model}
+function setView(view){resetDemo(false);mode=view;isPlan=view==='plan';theta=-.9;phi=.30;zoom=1;explosion=view==='exploded'?1:0;$('#explode').value=explosion;$('#shell').checked=view!=='internals'&&view!=='mechanism';$('#canopy').checked=view!=='plan'&&view!=='mechanism';$('#sensors').checked=true;$('#part').value='';if(view==='mechanism'){zoom=.28;phi=.10;theta=-1.5}document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));const names={assembled:'ASSEMBLED · REAR SUPPORT / SINGLE PLATE',internals:'FOUR QUARTER-CIRCLE LINERS',exploded:'EXPLODED · SERVICE ACCESS',plan:'TOP PLAN · FOUR IR SENSOR POSITIONS',mechanism:'TWO LIMITED TILT AXES · ONE PLATE'};$('#viewlabel').textContent=names[view]}
+function resetDemo(hide=true){player.running=false;player.active=false;player.paused=false;player.time=0;$('#demo-card').hidden=true;$('#play').textContent='▶ Play detection demo';$('#pause').textContent='Pause';$('#pause').disabled=true;for(const node of activeSounds){try{node.stop()}catch{}}activeSounds.clear();if(audio)audio.suspend().catch(()=>{});if(hide&&mode==='demo'){mode='assembled';theta=-.9;phi=.30;zoom=1;$('#canopy').checked=true;$('#viewlabel').textContent='ASSEMBLED · REAR SUPPORT / SINGLE PLATE'}}
+function play(){if(player.active&&player.paused){player.running=true;player.paused=false;$('#pause').textContent='Pause';startAudio();return}resetDemo(false);player.target=Number($('#route').value)||4;$('#route').value='0';player.active=true;player.running=true;mode='demo';isPlan=false;theta=-.9;phi=.50;zoom=.72;explosion=0;$('#explode').value=0;$('#canopy').checked=true;$('#shell').checked=true;$('#part').value='';$('#demo-card').hidden=false;$('#pause').disabled=false;$('#play').textContent='↻ Restart demo';$('#viewlabel').textContent='WATER BOTTLE EXAMPLE · ILLUSTRATIVE MOTION';startAudio();updateCard(0)}
+$('#play').addEventListener('click',play);$('#pause').addEventListener('click',()=>{if(!player.active)return;player.paused=!player.paused;player.running=!player.paused;$('#pause').textContent=player.paused?'Resume':'Pause';if(player.paused){if(audio)audio.suspend().catch(()=>{})}else startAudio();updateCard(player.time)});$('#reset').addEventListener('click',()=>{resetDemo();$('#route').value='0'});$('#sound').addEventListener('change',()=>{if(master)master.gain.setTargetAtTime($('#sound').checked?.16:0,audio.currentTime,.02);if($('#sound').checked&&player.running)startAudio();$('#audio-note').textContent=$('#sound').checked?'Sound enabled when you play.':'Sound muted.'});
+document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>setView(button.dataset.view)));$('#route').addEventListener('change',()=>resetDemo());$('#explode').addEventListener('input',()=>{resetDemo();explosion=Number($('#explode').value)});
+let dragging=false,lastX=0,lastY=0;canvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!dragging)return;isPlan=false;theta-=(e.clientX-lastX)*.008;phi=Math.max(-.15,Math.min(1.48,phi+(e.clientY-lastY)*.008));lastX=e.clientX;lastY=e.clientY});canvas.addEventListener('pointerup',()=>dragging=false);canvas.addEventListener('pointercancel',()=>dragging=false);canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.20,Math.min(3,zoom*Math.exp(e.deltaY*.001)))},{passive:false});canvas.addEventListener('dblclick',()=>{theta=-.9;phi=.30;zoom=mode==='demo'?.72:1});
+function frame(now){const dt=lastFrame?Math.min(.05,(now-lastFrame)/1000):0;lastFrame=now;if(player.running){const previous=player.time;player.time=Math.min(9,player.time+dt);cues(previous,player.time);updateCard(player.time);if(player.time>=9){player.running=false;$('#pause').disabled=true;$('#play').textContent='↻ Replay detection demo'}}
+const ratio=Math.min(devicePixelRatio||1,2),w=Math.max(1,Math.floor(canvas.clientWidth*ratio)),h=Math.max(1,Math.floor(canvas.clientHeight*ratio));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}gl.viewport(0,0,w,h);gl.clearColor(.935,.954,.935,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);let focus=isPlan?[0,0,.65]:[0,.025,mode==='demo'?.90:mode==='mechanism'?.925:.65+.1*explosion],elevation=isPlan?Math.PI/2:phi,eye=[focus[0]+4*Math.cos(elevation)*Math.cos(theta),focus[1]+4*Math.cos(elevation)*Math.sin(theta),focus[2]+4*Math.sin(elevation)];let size=(isPlan?.36:.77+.2*explosion)*zoom;if(w/h<.8)size*=.8/(w/h);const mvp=mul(ortho(-size*w/h,size*w/h,-size,size,.01,12),look(eye,focus,isPlan?[0,1,0]:[0,0,1]));gl.uniformMatrix4fv(loc.mvp,false,mvp);
+const pose=player.active?demoPose(player.time):null,bin=player.active?player.target:Number($('#route').value),fraction=player.active?pose.tilt:bin?1:0,[roll,pitch]=tiltAngles(fraction,bin||4),fullRotation=around(mul(ry(pitch),rx(roll)),pivot),pitchRotation=around(ry(pitch),pivot);gl.disable(gl.BLEND);gl.depthMask(true);
+let transparentCanopy=null;
+for(const m of meshes){if(m.group==='shell'&&!$('#shell').checked)continue;if(m.name==='canopy'&&!$('#canopy').checked)continue;if(m.group==='fill_sensors'&&!$('#sensors').checked)continue;if(isPlan&&!['liners','labels','shell','fill_sensors'].includes(m.group))continue;let model=identity();if(m.group==='tilt_plate')model=fullRotation;else if(m.group==='tilt_pitch')model=pitchRotation;model=mul(translation(...m.explode.map(v=>v*explosion/1000)),model);let color=m.color;if($('#part').value===m.name)color=[.18,.65,.51];else if(player.active&&player.time>=2.4&&m.name==='sub_bin_'+player.target)color=[.40,.66,.52];if(m.name==='canopy'&&player.active){transparentCanopy={item:m,model,color};continue}drawItem(m,model,color)}
+if(player.active){if(!isPlan)drawScreen(mvp);const model=bottleModel(player.time,pose);for(let i=0;i<bottle.length-1;i++)drawItem(bottle[i],model);gl.enable(gl.BLEND);gl.depthMask(false);drawItem(bottle.at(-1),model);gl.depthMask(true);gl.disable(gl.BLEND);if(player.time>=.7&&player.time<2.4){const height=(player.time-.7)/1.7*dim.demo_bottle_height_mm/1000;drawItem(scanRing,mul(model,translation(0,0,height)),[.22,.98,.55],1,gl.LINE_LOOP)}}
+if(transparentCanopy)drawTransparentCanopy(transparentCanopy.item,transparentCanopy.model,transparentCanopy.color);
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+</script>
+</body></html>

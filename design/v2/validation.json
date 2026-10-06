@@ -1,0 +1,373 @@
+{
+  "parts": [
+    {
+      "name": "outer_shell",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 5811896.144
+    },
+    {
+      "name": "plinth_with_rear_mast_base",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 4638124.996
+    },
+    {
+      "name": "liner_support_deck",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 2202030.255
+    },
+    {
+      "name": "foot_1",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 15707.963
+    },
+    {
+      "name": "foot_2",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 15707.963
+    },
+    {
+      "name": "foot_3",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 15707.963
+    },
+    {
+      "name": "foot_4",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 15707.963
+    },
+    {
+      "name": "foot_5",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 15707.963
+    },
+    {
+      "name": "sub_bin_1",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 2893327.408
+    },
+    {
+      "name": "blank_label_1",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 330.0
+    },
+    {
+      "name": "sub_bin_2",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 2893327.408
+    },
+    {
+      "name": "blank_label_2",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 330.0
+    },
+    {
+      "name": "sub_bin_3",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 2893327.408
+    },
+    {
+      "name": "blank_label_3",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 330.0
+    },
+    {
+      "name": "sub_bin_4",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 2893327.408
+    },
+    {
+      "name": "blank_label_4",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 330.0
+    },
+    {
+      "name": "rear_mast_mount_flange",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 26688.402
+    },
+    {
+      "name": "rear_hollow_mast",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 728346.841
+    },
+    {
+      "name": "rear_canopy_cleat",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 53238.055
+    },
+    {
+      "name": "display_housing",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 300092.884
+    },
+    {
+      "name": "blank_display_face",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 45764.531
+    },
+    {
+      "name": "rear_display_standoff",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 72793.084
+    },
+    {
+      "name": "canopy",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 1676468.308
+    },
+    {
+      "name": "identification_camera_housing",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 46702.443
+    },
+    {
+      "name": "camera_lens_placeholder",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 874.871
+    },
+    {
+      "name": "camera_canopy_hanger",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 26879.947
+    },
+    {
+      "name": "rear_cantilever_plate_support",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 262257.298
+    },
+    {
+      "name": "fixed_tilt_yoke",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 73451.646
+    },
+    {
+      "name": "two_axis_cross_pin",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 13026.548
+    },
+    {
+      "name": "moving_plate_yoke",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 22285.975
+    },
+    {
+      "name": "single_detection_and_tipping_plate",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 245923.919
+    },
+    {
+      "name": "pitch_actuator_envelope",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 36351.858
+    },
+    {
+      "name": "roll_actuator_envelope",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 31851.858
+    },
+    {
+      "name": "fill_sensor_housing_1",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 14156.708
+    },
+    {
+      "name": "fill_sensor_window_1",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 211.366
+    },
+    {
+      "name": "fill_sensor_housing_2",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 14156.708
+    },
+    {
+      "name": "fill_sensor_window_2",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 211.366
+    },
+    {
+      "name": "fill_sensor_housing_3",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 14156.708
+    },
+    {
+      "name": "fill_sensor_window_3",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 211.366
+    },
+    {
+      "name": "fill_sensor_housing_4",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 14156.708
+    },
+    {
+      "name": "fill_sensor_window_4",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 211.366
+    }
+  ],
+  "positive_volume_intersections": [],
+  "checks": [
+    "Every part is a valid single B-rep solid",
+    "No component pair has positive-volume overlap",
+    "Four separate liners and four blank category plaques"
+  ],
+  "tilt_pose_checks": [
+    {
+      "destination": 1,
+      "fraction": 0.25,
+      "roll_degrees": -6.7021,
+      "pitch_degrees": 6.7484,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 1,
+      "fraction": 0.5,
+      "roll_degrees": -13.3095,
+      "pitch_degrees": 13.6839,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 1,
+      "fraction": 0.75,
+      "roll_degrees": -19.7187,
+      "pitch_degrees": 21.0032,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 1,
+      "fraction": 1.0,
+      "roll_degrees": -25.8068,
+      "pitch_degrees": 28.9186,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 2,
+      "fraction": 0.25,
+      "roll_degrees": -6.7021,
+      "pitch_degrees": -6.7484,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 2,
+      "fraction": 0.5,
+      "roll_degrees": -13.3095,
+      "pitch_degrees": -13.6839,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 2,
+      "fraction": 0.75,
+      "roll_degrees": -19.7187,
+      "pitch_degrees": -21.0032,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 2,
+      "fraction": 1.0,
+      "roll_degrees": -25.8068,
+      "pitch_degrees": -28.9186,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 3,
+      "fraction": 0.25,
+      "roll_degrees": 6.7021,
+      "pitch_degrees": -6.7484,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 3,
+      "fraction": 0.5,
+      "roll_degrees": 13.3095,
+      "pitch_degrees": -13.6839,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 3,
+      "fraction": 0.75,
+      "roll_degrees": 19.7187,
+      "pitch_degrees": -21.0032,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 3,
+      "fraction": 1.0,
+      "roll_degrees": 25.8068,
+      "pitch_degrees": -28.9186,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 4,
+      "fraction": 0.25,
+      "roll_degrees": 6.7021,
+      "pitch_degrees": 6.7484,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 4,
+      "fraction": 0.5,
+      "roll_degrees": 13.3095,
+      "pitch_degrees": 13.6839,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 4,
+      "fraction": 0.75,
+      "roll_degrees": 19.7187,
+      "pitch_degrees": 21.0032,
+      "positive_volume_intersections": []
+    },
+    {
+      "destination": 4,
+      "fraction": 1.0,
+      "roll_degrees": 25.8068,
+      "pitch_degrees": 28.9186,
+      "positive_volume_intersections": []
+    }
+  ],
+  "roundtrip_solid_count": 41,
+  "roundtrip_relative_volume_error": 2.6106296494372265e-13,
+  "cadquery_version": "2.8.0"
+}
