@@ -258,7 +258,7 @@ def build(p):
     return parts, metrics
 
 
-def export(parts, metrics, output):
+def export(parts, metrics, output, names=("rear_mast_tilting_plate_v2", "rear_mast_exploded_v2")):
     output.mkdir(parents=True, exist_ok=True)
     def save_assembly(items, name, filename, exploded=False):
         assembly = cq.Assembly(name=name)
@@ -266,8 +266,8 @@ def export(parts, metrics, output):
             shape = part.shape.translate(part.explode) if exploded else part.shape
             assembly.add(shape, name=part.name, color=cq.Color(*part.color))
         assembly.export(str(output / filename))
-    save_assembly(parts, "rear_mast_tilting_plate_v2", "smart_bin_assembly.step")
-    save_assembly(parts, "rear_mast_exploded_v2", "smart_bin_exploded.step", True)
+    save_assembly(parts, names[0], "smart_bin_assembly.step")
+    save_assembly(parts, names[1], "smart_bin_exploded.step", True)
     checks = []
     # Test intermediate travel as well as every final pose, not just endpoints.
     for destination, direction in enumerate(metrics["destination_directions_degrees"], 1):
