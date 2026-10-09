@@ -1,0 +1,78 @@
+{
+  "revision": "v3",
+  "units": "mm",
+  "body_diameter_mm": 600.0,
+  "rim_height_mm": 1050.0,
+  "overall_height_mm": 1240.0,
+  "footprint_width_mm": 600.0,
+  "footprint_depth_mm": 600.0,
+  "liner_rim_height_mm": 588.0,
+  "liner_height_mm": 508.0,
+  "nominal_brim_capacity_per_liner_l": 30.3,
+  "nominal_total_brim_capacity_l": 121.2,
+  "funnel_mouth_diameter_mm": 550.0,
+  "throat_diameter_mm": 330.0,
+  "funnel_slope_degrees": 51.8,
+  "plate_radius_mm": 160.0,
+  "plate_thickness_mm": 4.0,
+  "plate_level_top_height_mm": 780.0,
+  "plate_below_rim_mm": 270.0,
+  "plate_to_throat_gap_mm": 5.0,
+  "plate_below_throat_lip_mm": 100.0,
+  "throat_lip_bottom_height_mm": 880.0,
+  "skirt_strip_count": 36,
+  "skirt_bottom_height_mm": 776.0,
+  "skirt_gap_at_full_tilt_mm": 99.3,
+  "camera_hidden_plate_edge_mm": 57.7,
+  "tilt_pivot_mm": [
+    0,
+    0,
+    728.0
+  ],
+  "maximum_plate_tilt_degrees": 45.0,
+  "exit_gap_at_full_tilt_mm": 172.2,
+  "destination_directions_degrees": [
+    45,
+    135,
+    225,
+    315
+  ],
+  "fill_sensor_count": 4,
+  "fill_sensor_radial_position_mm": 215.0,
+  "fill_sensor_window_height_mm": 880.0,
+  "provisional_full_level_mm": 488.0,
+  "provisional_full_distance_threshold_mm": 392.0,
+  "receiver_full_fov_degrees_assumed": 15.0,
+  "display_face_corners_mm": [
+    [
+      -102.0,
+      225.784,
+      1113.655
+    ],
+    [
+      102.0,
+      225.784,
+      1113.655
+    ],
+    [
+      102.0,
+      246.575,
+      1211.47
+    ],
+    [
+      -102.0,
+      246.575,
+      1211.47
+    ]
+  ],
+  "category_labels": [
+    "",
+    "",
+    "",
+    ""
+  ],
+  "demo_bottle_height_mm": 160.0,
+  "demo_bottle_diameter_mm": 60.0,
+  "demo_landing_height_mm": 120.0,
+  "status": "Concept geometry; drives, loading limits and fabrication details provisional"
+}
