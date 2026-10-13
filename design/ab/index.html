@@ -296,6 +296,34 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <p><b>IMU không đo được góc xoay</b>, vì trọng lực không đổi khi xoay quanh trục đứng. MG90S chỉ chịu quán tính nên ít khi trượt bước. Nếu thử thực tế thấy hay đổ nhầm ngăn thì thêm AS5600 (khoảng 55k) dưới trục đứng.</p>
     <p class="lead">Dây MG996R và IMU đi qua trục xoay: chừa vòng dây đủ dài cho ±45° xoay và ±47° nghiêng. Dùng dây silicon mềm.</p>
   </div>
+  <div class="card"><h3>Đi dây động cơ (đã vẽ trong CAD)</h3>
+    <p>Hai bó dây vẽ thành ống Ø3,5 mm: <b style="color:#e08a26">cam là dây MG90S</b>, <b style="color:#c83030">đỏ là dây MG996R</b>. Kiểm tra va chạm có tính cả dây, ở mọi tư thế xoay và nghiêng. Bấm dòng <code>motor_cable_…</code> trong bảng bên dưới để làm nổi từng bó dây.</p>
+<pre class="sk">bệ màn hình (giắc cắm, relay, tụ 2200 µF)
+  │ xuống qua lỗ Ø5 ở vành phễu (y = 285, khe giữa phễu côn và vỏ đầu)
+  │ ngang trên mâm, xuống qua lỗ Ø5 ở mâm (y = 236)
+  │ dọc mặt trong thanh treo phía sau
+  ▼ trên mặt cánh sau thanh chữ thập (z ≈ 557)
+  ├─ cam: tới MG90S ở tâm. Không qua khớp nào, dài khoảng 0,79 m
+  └─ đỏ: leo lên cạnh giá chữ C (y = 22) ── kẹp neo trên tay giá
+        └ vòng chùng ¼ vòng quanh trục đứng, bán kính 23,4 mm (z 660–668)
+            └ chui lên qua lỗ ở đế xoay ── kẹp neo trên đế
+                └ chạy trên mặt đế phía −x, xa đai, lên tới đầu dây của MG996R
+                  dài khoảng 0,96 m</pre>
+    <div class="tbl"><table>
+      <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
+      <tr><td>Dây MG90S (đường đi trong CAD)</td><td class="n">787 mm → mua dây nối dài servo 1 m</td></tr>
+      <tr><td>Dây MG996R (đường đi trong CAD)</td><td class="n">959 mm → mua 1,2 m, dây silicon</td></tr>
+      <tr><td>Bán kính vòng chùng quanh trục đứng</td><td class="n">23,4 mm</td></tr>
+      <tr><td>Dây bị kéo thêm khi xoay hết hành trình 90°</td><td class="n">37 mm → chừa dư khoảng 80 mm</td></tr>
+      <tr><td>Lỗ đi dây ở mâm và vành phễu</td><td class="n">2 lỗ Ø5 mỗi chỗ, đã có trong file DXF</td></tr>
+    </table></div>
+    <ul>
+      <li><b>Neo sát trục:</b> dây bị kéo thêm bằng bán kính × góc xoay. Neo ở 23 mm thì chỉ bị kéo thêm 37 mm, còn neo ở mép đế (khoảng 100 mm) sẽ bị kéo thêm khoảng 160 mm.</li>
+      <li><b>Chỉ đoạn giữa 2 kẹp neo được phép cong.</b> Hai kẹp giữ cho dây không cọ vào đâu khác. Trong hình 3D, đoạn trên đế xoay quay theo đế, còn vòng chùng được vẽ ở vị trí giữa hành trình.</li>
+      <li><b>Không có giắc cắm dưới đĩa:</b> mọi mối nối nằm trong bệ màn hình, chỗ cao và khô.</li>
+      <li><b>Dây MG996R đi phía −x của servo,</b> cách mặt phẳng đai và puly (x 57–63 mm) hơn 30 mm.</li>
+    </ul>
+  </div>
   <div class="card"><h3>Lỗi hay gặp</h3><ul>
     <li><b>Đai chùng hoặc quá căng:</b> đai kín không có bộ căng đai, nên khoảng cách tâm 48,58 mm phải đúng. Giá bắt MG996R có lỗ rãnh ±1 mm để chỉnh căng.</li>
     <li><b>Puly 20T không lắp thẳng vào spline 25T của MG996R:</b> cần một miếng nối in 3D bắt vít vào horn tròn.</li>
@@ -304,7 +332,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <li><b>Xoay khi đĩa đang nghiêng:</b> phần mềm phải luôn đưa đĩa về nằm ngang trước, rồi mới xoay sang ngăn khác.</li>
     <li><b>Nghiêng quá nhanh làm rác văng:</b> tăng tốc từ từ, khoảng 1 giây cho 45°.</li>
   </ul></div>
-  <div class="card"><h3>Chi tiết trong CAD</h3><div class="tbl"><table data-parts="b_frame" data-prefix="yaw_,hinge_,plate_lug_,tilt_,tipping_plate"></table></div></div>
+  <div class="card"><h3>Chi tiết trong CAD</h3><div class="tbl"><table data-parts="b_frame" data-prefix="yaw_,hinge_,plate_lug_,tilt_,tipping_plate,motor_cable_,cable_clip_"></table></div></div>
 </section>
 
 <!-- ===================== CƠ CHẾ ĐỔ ===================== -->
@@ -712,14 +740,14 @@ const data={};let body='b_frame',selBody='b_frame',finish='black',cut=false,expl
 try{const s=JSON.parse(localStorage.getItem('aware-ab-view')||'{}');if(canPick(s.b))selBody=body=s.b;if(FINISH[s.f])finish=s.f;}catch(e){}
 
 // Mỗi tab là một góc nhìn: thân nào (bỏ trống = thân đang chọn), và tiền tố tên chi tiết được vẽ đậm
-const TILT_PARTS=["yaw_","hinge_","plate_lug_","tilt_","tipping_plate"];
+const TILT_PARTS=["yaw_","hinge_","plate_lug_","tilt_","tipping_plate","motor_cable_","cable_clip_"];
 const VIEWS={
   overview:{title:'Toàn bộ thùng',tilt:true},
   head:{title:'Cụm đầu & phễu',pre:["head_deck","orientation_pin","head_locating_ring","head_shell_ring","intake_funnel","flexible_throat_skirt","hanger_","joint_beam","spider_foot_"]},
   tilt:{title:'Cơ cấu nghiêng',tilt:true,pre:TILT_PARTS},
   dump:{title:'Đường đổ rác',tilt:true,pre:TILT_PARTS.concat(["intake_funnel","flexible_throat_skirt","divider_","bag_frame_","bin_"])},
   console:{title:'Bệ màn hình & camera',pre:["display_console","tft_screen","camera_window","led_strip"]},
-  elec:{title:'Cảm biến & điện',pre:["fill_sensor_","tilt_imu","lid_switch","drawer_switch_","led_strip","camera_window","tft_screen","tilt_servo","yaw_servo"]},
+  elec:{title:'Cảm biến & điện',pre:["fill_sensor_","tilt_imu","lid_switch","drawer_switch_","led_strip","camera_window","tft_screen","tilt_servo","yaw_servo","motor_cable_","cable_clip_"]},
   bodyA:{title:'Thân A · phuy',body:'a_drum',xray:true,pre:["drum_220l","divider_","bag_frame","orientation_socket","lid_switch","head_latch_"]},
   bodyB:{title:'Thân B · khung',body:'b_frame',xray:true,pre:["post_","rail_","floor_plate","head_seat_plate","side_panel","back_panel","head_panel","top_cover","center_wall","slide_","drawer_","bin_"]}
 };

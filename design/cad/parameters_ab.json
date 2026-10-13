@@ -51,6 +51,13 @@
     "upper_arm_z_offset": 92.0
   },
   "maximum_yaw_degrees": 45.0,
+  "motor_cable": {
+    "radius_mm": 1.75,
+    "offset_x_mm": 8.0,
+    "riser_y_mm": 22.0,
+    "hanger_gap_mm": 4.0,
+    "shell_y_mm": 285.0
+  },
   "tilt_stop_degrees": 47.0,
   "tilt_stop_pad_y_mm": 88.0,
   "orientation_pin_radius_mm": 284.0,

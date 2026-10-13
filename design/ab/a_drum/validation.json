@@ -1,7 +1,7 @@
 {
   "variants": {
     "E1": {
-      "part_count": 77,
+      "part_count": 82,
       "tilt_pose_checks": [
         {
           "pose": "neutral",
@@ -256,6 +256,12 @@
           163.1,
           1058.6
         ],
+        "motor_cable_mm": {
+          "yaw_servo": 787,
+          "tilt_servo": 959,
+          "slack_loop_radius": 23.4,
+          "slack_loop_stretch_over_yaw_travel": 37
+        },
         "camera_hidden_plate_edge_samples_of_72": 0,
         "camera_required_full_fov_degrees": 59.4,
         "bin_landing_radius_mm": 150.0,

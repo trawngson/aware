@@ -24,6 +24,23 @@ def cylinder(radius, length, origin, direction):
     return cq.Solid.makeCylinder(radius, length, cq.Vector(*origin), cq.Vector(*direction))
 
 
+def cable(points, radius):
+    """Round cable along a polyline: one cylinder per leg, a ball at each bend."""
+    shape = None
+    for i, (a, b) in enumerate(zip(points, points[1:])):
+        d = [q - r for q, r in zip(b, a)]
+        n = math.sqrt(sum(x * x for x in d))
+        leg = cylinder(radius, n, a, d)
+        if i:
+            leg = leg.fuse(cq.Solid.makeSphere(radius, cq.Vector(*a), angleDegrees1=-90, angleDegrees2=90))
+        shape = leg if shape is None else shape.fuse(leg)
+    return shape.clean()
+
+
+def path_length(points):
+    return sum(math.dist(a, b) for a, b in zip(points, points[1:]))
+
+
 def revolve(profile):
     """Solid of revolution about Z from a closed (radius, z) outline."""
     return (cq.Workplane("XZ").polyline(profile).close()
@@ -120,8 +137,19 @@ def head(p, add):
     low_edge_z = pivot + plate_h * math.cos(theta) - plate_r * math.sin(theta)
     assert low_edge_z > spider_top + 20
 
+    # Motor cables run from the rear console down the rear hanger: they pass the deck at
+    # cab_hang_y and the funnel collar at cab_shell_y, in the gap between the cone and the shell.
+    mc = p["motor_cable"]
+    cab_r, cab_dx = mc["radius_mm"], mc["offset_x_mm"]
+    cab_hang_y = p["hanger_radius_mm"] - p["hanger_size_mm"] / 2 - mc["hanger_gap_mm"]
+    cab_shell_y = mc["shell_y_mm"]
+    cone_r_at = lambda z: throat_r + fw + (z - lip_top) / slope
+    assert cone_r_at(shell_top) + cab_r < cab_shell_y < deck_ro - p["head_shell_wall_mm"] - cab_r
+    cab_holes = lambda y, z0, h: cylinder(cab_r + .75, h, (-cab_dx, y, z0), (0, 0, 1)).fuse(
+        cylinder(cab_r + .75, h, (cab_dx, y, z0), (0, 0, 1)))
+
     # Deck ring: the one interface every body must carry at deck_z.
-    add("head_deck", tube(deck_ro, deck_ri, deck_z, deck_t), metal, "head", lift,
+    add("head_deck", tube(deck_ro, deck_ri, deck_z, deck_t).cut(cab_holes(cab_hang_y, deck_z, deck_t)), metal, "head", lift,
         "Head deck ring carrying all head loads; rests on the body at the deck height",
         "laser", "Aluminium sheet 3 mm")
     pin_r = p["orientation_pin_radius_mm"]
@@ -141,6 +169,7 @@ def head(p, add):
                       (mouth_r + fw - collar_t / slope, shell_top),
                       (throat_r + fw, lip_top), (throat_r + fw, lip_bottom),
                       (throat_r, lip_bottom), (throat_r, lip_top)])
+    funnel = funnel.cut(cab_holes(cab_shell_y, shell_top - 2, collar_t + 4))
     add("intake_funnel", funnel, (.78, .81, .80), "head", lift,
         "Collar, cone and throat lip; cone, collar and lip band are cut flat and riveted",
         "laser", "PP sheet 2 mm")
@@ -225,7 +254,9 @@ def head(p, add):
     add("yaw_collar", ring_z(8, bore, plat_bot - 8, 8), metal, "yaw", lift,
         "Shaft collar resting on the upper bearing: carries the stage weight", "buy", "Shaft collar 8 mm")
     half_y = p["yaw_platform_half_y_mm"]
-    add("yaw_platform", box(2 * (block_x + 15), 2 * half_y, 5, (0, 0, plat_bot + 2.5)), charcoal, "yaw", lift,
+    loop_r = math.hypot(cab_dx, mc["riser_y_mm"])
+    add("yaw_platform", box(2 * (block_x + 15), 2 * half_y, 5, (0, 0, plat_bot + 2.5)).cut(
+        cylinder(cab_r + .75, 5, (loop_r, 0, plat_bot), (0, 0, 1))), charcoal, "yaw", lift,
         "Turning platform carrying the hinge posts, the tilt servo and the stop pads", "laser",
         "Aluminium sheet 4 mm")
     block_base = pivot - 15
@@ -300,6 +331,41 @@ def head(p, add):
     add("tilt_imu", box(21, 16, 3, (0, 30, plate_z - 1.5)), (.10, .35, .20), "tilt_plate", lift,
         "IMU under the plate: true tilt angle for jam detection and homing after a power cut",
         "buy", "MPU-6050 (GY-521)")
+
+    # Motor cables. Both share the route console -> rear hanger -> beam top. The MG90S cable ends
+    # there; the MG996R cable rises beside the bracket, makes a quarter loop round the yaw axis
+    # close to it (little length change over the 90 degree yaw travel) and climbs onto the platform.
+    on_beam, top_z = spider_top + cab_r + .25, deck_z + deck_t + cab_r + 2
+    common = lambda x: [(x, cab_shell_y, top), (x, cab_shell_y, top_z), (x, cab_hang_y, top_z),
+                        (x, cab_hang_y, on_beam)]
+    yaw_cable = common(-cab_dx) + [(-cab_dx, 0, on_beam), (-cab_dx, 0, y_top - y_hgt + 4.5)]
+    add("motor_cable_yaw_servo", cable(yaw_cable, cab_r), (.93, .55, .15), "tilt_fixed", lift,
+        "MG90S cable: console, rear hanger, beam top to the yaw servo; no moving joint", "buy",
+        "Servo extension 3 x 22 AWG, about 1 m")
+    riser_y = mc["riser_y_mm"]
+    loop_lo, loop_hi = z_of(arm_hi) + 5 + 8, plat_bot - 4
+    a0 = math.atan2(riser_y, cab_dx)
+    arc = [(loop_r * math.cos(a0 * (1 - k / 6)), loop_r * math.sin(a0 * (1 - k / 6)),
+            loop_lo + (loop_hi - loop_lo) * k / 6) for k in range(1, 7)]
+    tilt_fixed_path = common(cab_dx) + [(cab_dx, riser_y, on_beam), (cab_dx, riser_y, loop_lo)] + arc
+    add("motor_cable_tilt_servo", cable(tilt_fixed_path, cab_r), (.85, .18, .18), "tilt_fixed", lift,
+        "MG996R cable, fixed part: console to the bracket, then a quarter slack loop round the yaw axis",
+        "buy", "Servo extension 3 x 22 AWG, silicone, about 1.2 m")
+    # Up the servo's rear end face to where its lead leaves the case.
+    srv_end_y = body_y0 + s_len + cab_r
+    stage_path = [(loop_r, 0, plat_bot - 2), (loop_r, 0, plat_top + cab_r), (loop_r, srv_end_y, plat_top + cab_r),
+                  (loop_r, srv_end_y, shaft_z - 4)]
+    add("motor_cable_tilt_servo_stage", cable(stage_path, cab_r), (.85, .18, .18), "yaw", lift,
+        "MG996R cable on the turning platform: through the platform, on the -x side of the servo, "
+        "clear of the belt", "buy", "Same cable as above")
+    add("cable_clip_fixed", box(8, 4, 8, (cab_dx, 18.2, z_of(arm_hi) + 3 + 4)), charcoal, "tilt_fixed", lift,
+        "Cable anchor on the bracket arm: the slack loop starts here", "print", "PETG clip with a cable tie")
+    add("cable_clip_stage", box(6, 8, 4, (loop_r + cab_r + 3.35, 14, plat_top + 2)), charcoal, "yaw", lift,
+        "Cable anchor on the platform: the slack loop ends here", "print", "PETG clip with a cable tie")
+    cable_lengths = {"yaw_servo": round(path_length(yaw_cable)),
+                     "tilt_servo": round(path_length(tilt_fixed_path) + path_length(stage_path) + 2),
+                     "slack_loop_radius": round(loop_r, 1),
+                     "slack_loop_stretch_over_yaw_travel": round(loop_r * math.radians(2 * p["maximum_yaw_degrees"]))}
 
     # Fill sensors hang off the throat lip, under the funnel and out of the item path.
     pod_w, pod_h = p["fill_sensor_housing_width_mm"], p["fill_sensor_housing_height_mm"]
@@ -378,7 +444,7 @@ def head(p, add):
         v = (plate_r * math.cos(a) - cam[0], plate_r * math.sin(a) - cam[1], plate_z + plate_t - cam[2])
         widest = max(widest, math.degrees(math.acos(sum(x * y for x, y in zip(v, aim)) / math.hypot(*v))))
 
-    return {"camera_required_full_fov_degrees": round(2 * widest, 1), "pivot_z": pivot, "plate_z": plate_z, "spider_bottom": spider_bottom,
+    return {"motor_cable_mm": cable_lengths, "camera_required_full_fov_degrees": round(2 * widest, 1), "pivot_z": pivot, "plate_z": plate_z, "spider_bottom": spider_bottom,
             "spider_top": spider_top, "lip_top": lip_top, "lip_bottom": lip_bottom,
             "throat_r": throat_r, "exit_gap": exit_gap, "skirt_gap": skirt_gap,
             "low_edge_z": low_edge_z, "belt_center_mm": c, "big_r": big_r, "small_r": small_r,
@@ -624,6 +690,7 @@ def build(p, body):
         "tilt_stop_degrees": p["tilt_stop_degrees"],
         "bin_categories": p["bin_categories"],
         "camera_position_mm": [round(v, 1) for v in h["camera"]],
+        "motor_cable_mm": h["motor_cable_mm"],
         "camera_hidden_plate_edge_samples_of_72": h["camera_hidden_edge_samples"],
         "camera_required_full_fov_degrees": h["camera_required_full_fov_degrees"],
         "bin_landing_radius_mm": round(info["bin_center_radius"], 1),
@@ -686,8 +753,11 @@ def funnel_patterns(p, h, out):
           .threePointArc(pts(s_top, half / 2), pts(s_top, half)).lineTo(*pts(s_bot, half))
           .threePointArc(pts(s_bot, half / 2), pts(s_bot, 0)).close())
     pattern_dxf(wp, out / "funnel_cone_half_x2.dxf")
-    pattern_dxf(cq.Workplane("XY").circle(p["deck_outer_radius_mm"]).circle(h["mouth_r"]),
-                out / "funnel_collar_ring.dxf")
+    dx, cr = p["motor_cable"]["offset_x_mm"], p["motor_cable"]["radius_mm"] + .75
+    collar = cq.Workplane("XY").circle(p["deck_outer_radius_mm"]).circle(h["mouth_r"]).extrude(1)
+    collar = collar.faces(">Z").workplane().pushPoints([(-dx, p["motor_cable"]["shell_y_mm"]),
+                                                        (dx, p["motor_cable"]["shell_y_mm"])]).hole(2 * cr)
+    flat_dxf(collar.val(), out / "funnel_collar_ring.dxf")
     strip = lambda length, height: cq.Workplane("XY").rect(length, height)
     pattern_dxf(strip(2 * math.pi * (h["throat_r"] + fw / 2) + tab, p["throat_lip_height_mm"]),
                 out / "funnel_lip_band.dxf")
@@ -701,6 +771,8 @@ def funnel_patterns(p, h, out):
     hr = p["hanger_radius_mm"]
     deck = deck.extrude(1).faces(">Z").workplane().pushPoints(
         [(hr, 0), (0, hr), (-hr, 0), (0, -hr)]).hole(6.5)
+    hang_y = hr - p["hanger_size_mm"] / 2 - p["motor_cable"]["hanger_gap_mm"]
+    deck = deck.faces(">Z").workplane().pushPoints([(-dx, hang_y), (dx, hang_y)]).hole(2 * cr)
     flat_dxf(deck.val(), out / "head_deck.dxf")
     return {"funnel_cone_sector_degrees_each_half": round(math.degrees(half), 2),
             "funnel_cone_inner_outer_radius_mm": [round(s_bot, 1), round(s_top, 1)]}
