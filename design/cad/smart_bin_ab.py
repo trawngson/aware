@@ -31,21 +31,27 @@ def revolve(profile):
 
 
 def angles(tilt_degrees, direction_degrees):
-    """Roll about X, then pitch about Y, that tips the plate normal toward a direction."""
-    tilt, direction = map(math.radians, (tilt_degrees, direction_degrees))
-    roll = math.asin(-math.sin(tilt) * math.sin(direction))
-    pitch = math.atan2(math.sin(tilt) * math.cos(direction), math.cos(tilt))
-    return math.degrees(roll), math.degrees(pitch)
+    """Yaw, then tilt about the hinge (X at zero yaw), that tips the plate toward a direction.
+
+    A positive tilt tips the plate toward -Y. Tilting both ways keeps the yaw within +/-90 degrees,
+    so the four diagonal bins need only +/-45 degrees of yaw.
+    """
+    yaw = (direction_degrees - 270 + 180) % 360 - 180
+    tilt = tilt_degrees
+    if abs(yaw) > 90:
+        yaw = (direction_degrees - 90 + 180) % 360 - 180
+        tilt = -tilt_degrees
+    return yaw, tilt
 
 
-def posed(parts, pivot_z, roll, pitch):
+def posed(parts, pivot_z, yaw, tilt):
     result = []
     for part in parts:
         shape = part.shape
         if part.group == "tilt_plate":
-            shape = shape.rotate((0, 0, pivot_z), (1, 0, pivot_z), roll)
-        if part.group in ("tilt_plate", "tilt_pitch"):
-            shape = shape.rotate((0, 0, pivot_z), (0, 1, pivot_z), pitch)
+            shape = shape.rotate((0, 0, pivot_z), (1, 0, pivot_z), tilt)
+        if part.group in ("tilt_plate", "yaw"):
+            shape = shape.rotate((0, 0, 0), (0, 0, 1), yaw)
         result.append(Part(part.name, shape, part.color, part.group, part.explode, part.description))
     return result
 
@@ -78,24 +84,6 @@ def belt_loop(to3d, extrude, big_r, small_r, center_z, c, gap=.3, thickness=1.2)
 
     face = cq.Face.makeFromWires(wire(gap + thickness), [wire(gap)])
     return cq.Solid.extrudeLinear(face, cq.Vector(*extrude))
-
-
-def servo_body(face_at, axis, shaft_z, body, shaft_from_top):
-    """Standard-size servo envelope: shaft along +/-axis from its face, long side hanging downward."""
-    length, width, height = body
-    top, bottom = shaft_z + shaft_from_top, shaft_z + shaft_from_top - length
-    sign = 1 if face_at > 0 else -1
-    span = (face_at, face_at + sign * height)
-    mid, depth = (span[0] + span[1]) / 2, height
-    if axis == "x":
-        shape = box(depth, width, length, (mid, 0, (top + bottom) / 2))
-        ears = box(2.5, width, 54, (face_at + sign * 12, 0, (top + bottom) / 2))
-        shaft = cylinder(2.5, 7, (face_at - sign * 7, 0, shaft_z), (1, 0, 0))
-    else:
-        shape = box(width, depth, length, (0, mid, (top + bottom) / 2))
-        ears = box(width, 2.5, 54, (0, face_at + sign * 12, (top + bottom) / 2))
-        shaft = cylinder(2.5, 7, (0, face_at - sign * 7, shaft_z), (0, 1, 0))
-    return shape.fuse(ears, shaft).clean(), (top + bottom) / 2 - 27
 
 
 def head(p, add):
@@ -184,98 +172,134 @@ def head(p, add):
             rubber, "head", lift, "Rubber foot under a beam end: the head stands on it when lifted out",
             "buy", "Rubber pad 30 x 30 x 1.5, self-adhesive")
 
-    # GT2 belt reduction: centre distance follows from a stock closed-loop belt.
+    # Option D drive. A small yaw servo turns the tilt stage toward the bin, then one hinge tilts
+    # the plate. The hinge sits just under the plate, near its centre of gravity, and two pillow
+    # blocks carry the plate, so the tilt servo only supplies torque through a GT2 2:1 belt.
     big_r = p["pulley_large_teeth"] * 2 / math.pi / 2
     small_r = p["pulley_small_teeth"] * 2 / math.pi / 2
     c = belt_center_distance(p["belt_loop_length_mm"], big_r, small_r)
     shaft_z = pivot - c
-    sbody, from_top = p["servo_body_mm"], p["servo_shaft_from_top_mm"]
-    bw = p["belt_width_mm"]
+    bw, bore = p["belt_width_mm"], 4.05
+    s_len, s_wid, s_hgt = p["servo_body_mm"]
+    from_top = p["servo_shaft_from_top_mm"]
+    belt_x, block_x = p["tilt_belt_plane_x_mm"], p["hinge_block_x_mm"]
+    ring_x = lambda ro, ri, x0, length, z: cylinder(ro, length, (x0, 0, z), (1, 0, 0)).cut(
+        cylinder(ri, length, (x0, 0, z), (1, 0, 0)))
+    ring_z = lambda ro, ri, z0, h: tube(ro, ri, z0, h)
+    servo_blue = (.12, .32, .58)
 
-    # Fixed fork (Y hinge) with the pitch servo bracket under the servo ears.
-    pitch_servo, srv_bottom = servo_body(44, "y", shaft_z, sbody, from_top)
-    fork = box(20, 80, 8, (0, 0, spider_top + 4))
-    for y in (-30, 30):
-        fork = fork.fuse(box(16, 10, pivot + 6 - spider_top - 8, (0, y, (pivot + 6 + spider_top + 8) / 2)))
-    fork = fork.fuse(box(24, 53, 10, (0, 61.5, srv_bottom - 5)),
-                     box(16, 10, srv_bottom - spider_top - 8, (0, 30, (srv_bottom + spider_top + 8) / 2)))
-    fork = fork.cut(cylinder(4.2, 90, (0, -45, pivot), (0, 1, 0)))
-    add("fixed_fork", fork, charcoal, "tilt_fixed", lift,
-        "Fixed fork for the Y hinge, with the pitch servo bracket", "print", "PETG, 60 % infill")
-    add("pitch_servo", pitch_servo, servo_blue, "tilt_fixed", lift,
-        "DS3218 servo (metal gears) driving the Y hinge through a 2:1 belt", "buy", "DS3218 20 kg cm")
-    add("pitch_pulley_small", cylinder(small_r - .25, bw, (0, 37, shaft_z), (0, 1, 0)).cut(
-        cylinder(2.6, bw, (0, 37, shaft_z), (0, 1, 0))), metal, "tilt_fixed", lift,
-        "GT2 20-tooth pulley on the pitch servo", "buy", "GT2 20T, 6 mm belt")
-    add("pitch_belt", belt_loop(lambda a, z: cq.Vector(a, 37, z), (0, bw, 0), big_r, small_r, pivot, c),
-        (.1, .1, .1), "tilt_fixed", lift, "GT2 closed belt, pitch axis", "buy",
+    # Fixed yaw support on the beam hub: back plate, two bearing arms and the yaw servo shelf.
+    st = p["yaw_stack_mm"]
+    shelf_z, arm_lo, arm_hi = st["servo_shelf_z_offset"], st["lower_arm_z_offset"], st["upper_arm_z_offset"]
+    z_of = lambda off: spider_top + off
+    bracket = box(5, 32, z_of(arm_hi) + 5 - spider_top, (-42.5, 0, (spider_top + z_of(arm_hi) + 5) / 2))
+    for z0 in (z_of(arm_lo), z_of(arm_hi)):
+        bracket = bracket.fuse(box(72, 32, 5, (-4, 0, z0 + 2.5)).cut(cylinder(5, 5, (0, 0, z0), (0, 0, 1))))
+    bracket = bracket.fuse(box(62, 32, 4, (-9, 0, z_of(shelf_z) + 2)).cut(
+        cylinder(3.5, 4, (0, 0, z_of(shelf_z)), (0, 0, 1))))
+    add("yaw_bracket", bracket, charcoal, "tilt_fixed", lift,
+        "Fixed C-bracket on the beam hub: two arms for the yaw bearings and a shelf for the yaw servo",
+        "print", "PETG, 60 % infill (or bent aluminium 3 mm)")
+    for name, z0 in (("lower", z_of(arm_lo) + 5), ("upper", z_of(arm_hi) + 5)):
+        brg = box(60, 30, 4, (0, 0, z0 + 2)).fuse(cylinder(11, 12, (0, 0, z0), (0, 0, 1))).cut(
+            cylinder(bore, 12, (0, 0, z0), (0, 0, 1)))
+        add(f"yaw_bearing_{name}", brg, (.55, .58, .60), "tilt_fixed", lift,
+            "Flanged bearing for the vertical yaw shaft", "buy", "Flanged pillow block KFL08, bore 8 mm")
+    y_len, y_wid, y_hgt = p["yaw_servo_body_mm"]
+    y_top = z_of(shelf_z)
+    yaw_servo = box(y_len, y_wid, y_hgt, (y_len / 2 - 6, 0, y_top - y_hgt / 2)).fuse(
+        box(32.5, y_wid, 2.5, (y_len / 2 - 6, 0, y_top - 6)),
+        cylinder(2.4, 8, (0, 0, y_top), (0, 0, 1)))
+    add("yaw_servo", yaw_servo, servo_blue, "tilt_fixed", lift,
+        "MG90S turning the tilt stage plus or minus 45 degrees toward the bin", "buy", "MG90S, metal gears")
+
+    # Yaw stage: coupling, vertical shaft, collar, platform, hinge posts and blocks, tilt servo.
+    plat_bot = pivot - p["yaw_platform_below_pivot_mm"]
+    plat_top = plat_bot + 5
+    upper_top = z_of(arm_hi) + 5 + 12
+    assert upper_top + 8 <= plat_bot, "collar fits between the upper bearing and the platform"
+    add("yaw_coupling", ring_z(9.5, bore, y_top + 4, 12), metal, "yaw", lift,
+        "Flexible coupling from the yaw servo spline to the 8 mm shaft", "buy", "Flexible coupling 5 x 8 mm")
+    add("yaw_shaft", cylinder(4, plat_bot - (y_top + 10), (0, 0, y_top + 10), (0, 0, 1)), metal, "yaw", lift,
+        "Vertical yaw shaft in the two flanged bearings", "cut", "Stainless 304 rod 8 mm")
+    add("yaw_collar", ring_z(8, bore, plat_bot - 8, 8), metal, "yaw", lift,
+        "Shaft collar resting on the upper bearing: carries the stage weight", "buy", "Shaft collar 8 mm")
+    half_y = p["yaw_platform_half_y_mm"]
+    add("yaw_platform", box(2 * (block_x + 15), 2 * half_y, 5, (0, 0, plat_bot + 2.5)), charcoal, "yaw", lift,
+        "Turning platform carrying the hinge posts, the tilt servo and the stop pads", "laser",
+        "Aluminium sheet 4 mm")
+    block_base = pivot - 15
+    for i, x in enumerate((-block_x, block_x), 1):
+        add(f"hinge_post_{i}", box(13, 30, block_base - plat_top, (x, 0, (block_base + plat_top) / 2)), metal,
+            "yaw", lift, "Post from the platform to a hinge pillow block", "cut", "Aluminium flat bar 30 x 13")
+        blk = box(13, 55, 5, (x, 0, block_base + 2.5)).fuse(ring_x(14, bore, x - 6.5, 13, pivot)).cut(
+            cylinder(bore, 13, (x - 6.5, 0, pivot), (1, 0, 0)))
+        add(f"hinge_block_{i}", blk, (.55, .58, .60), "yaw", lift,
+            "Horizontal pillow block carrying the hinge shaft; takes the plate load off the servo", "buy",
+            "Pillow block KP08, bore 8 mm")
+    face = belt_x - 1
+    body_y0 = -from_top
+    tilt_servo = box(s_hgt, s_len, s_wid, (face - s_hgt / 2, body_y0 + s_len / 2, shaft_z)).fuse(
+        box(2.5, 54, s_wid, (face - 12, body_y0 + s_len / 2, shaft_z)),
+        cylinder(2.5, 7, (face, 0, shaft_z), (1, 0, 0)))
+    add("tilt_servo", tilt_servo, servo_blue, "yaw", lift,
+        "MG996R driving the hinge through the 2:1 belt", "buy", "MG996R, metal gears")
+    ear_x = face - 12 + 1.25
+    srv_bracket = box(5, 68, shaft_z + s_wid / 2 + 6 - plat_top,
+                      (ear_x + 2.5, body_y0 + s_len / 2, (shaft_z + s_wid / 2 + 6 + plat_top) / 2)).cut(
+        box(5, s_len, s_wid, (ear_x + 2.5, body_y0 + s_len / 2, shaft_z)))
+    add("tilt_servo_bracket", srv_bracket, charcoal, "yaw", lift,
+        "Bracket the MG996R ears bolt to; slotted holes set the belt tension", "print", "PETG, 60 % infill")
+    add("tilt_pulley_small", cylinder(small_r - .25, bw, (belt_x, 0, shaft_z), (1, 0, 0)).cut(
+        cylinder(2.6, bw, (belt_x, 0, shaft_z), (1, 0, 0))), metal, "yaw", lift,
+        "GT2 20-tooth pulley on the MG996R (3D-printed adapter to the horn)", "buy", "GT2 20T, 6 mm belt")
+    add("tilt_belt", belt_loop(lambda a, z: cq.Vector(belt_x, a, z), (bw, 0, 0), big_r, small_r, pivot, c),
+        (.1, .1, .1), "yaw", lift, "GT2 closed belt, hinge axis", "buy",
         f"GT2 closed loop {p['belt_loop_length_mm']:.0f} mm")
 
-    # Cross (moves in pitch) with the roll servo bracket.
-    cross = box(20, 20, 20, (0, 0, pivot)).fuse(
-        cylinder(4, 86, (-40, 0, pivot), (1, 0, 0)),
-        cylinder(4, 86, (0, -40, pivot), (0, 1, 0)),
-        box(16, 16, pivot - 10 - (srv_bottom - 10), (0, 0, (pivot - 10 + srv_bottom - 10) / 2)),
-        box(96, 16, 10, (40, 0, srv_bottom - 5)))
-    add("joint_cross", cross, metal, "tilt_pitch", lift,
-        "Joint cross with two 8 mm steel pins and the roll servo bracket",
-        "print", "PETG body with 8 mm steel pins")
-    add("pitch_pulley_large", cylinder(big_r - .25, bw, (0, 37, pivot), (0, 1, 0)).cut(
-        cylinder(4.2, bw, (0, 37, pivot), (0, 1, 0))), metal, "tilt_pitch", lift,
-        "GT2 40-tooth pulley fixed to the Y pin", "buy", "GT2 40T, 8 mm bore")
-    roll_servo, _ = servo_body(45, "x", shaft_z, sbody, from_top)
-    add("roll_servo", roll_servo, servo_blue, "tilt_pitch", lift,
-        "DS3218 servo (metal gears) driving the X hinge through a 2:1 belt", "buy", "DS3218 20 kg cm")
-    add("roll_pulley_small", cylinder(small_r - .25, bw, (38, 0, shaft_z), (1, 0, 0)).cut(
-        cylinder(2.6, bw, (38, 0, shaft_z), (1, 0, 0))), metal, "tilt_pitch", lift,
-        "GT2 20-tooth pulley on the roll servo", "buy", "GT2 20T, 6 mm belt")
-    add("roll_belt", belt_loop(lambda a, z: cq.Vector(38, a, z), (bw, 0, 0), big_r, small_r, pivot, c),
-        (.1, .1, .1), "tilt_pitch", lift, "GT2 closed belt, roll axis", "buy",
-        f"GT2 closed loop {p['belt_loop_length_mm']:.0f} mm")
+    # Hard stop on the turning platform, so it always sits under the edge that goes down: at the stop
+    # angle the plate lands on rubber, and a heavy drop loads the yaw bearings, not the servo gears.
+    stop = math.radians(p["tilt_stop_degrees"])
+    pad_y, pad_hw = p["tilt_stop_pad_y_mm"], 6
+    pad_top = pivot + plate_h / math.cos(stop) - (pad_y + pad_hw) * math.tan(stop)
+    clear_at_max = pivot + plate_h / math.cos(theta) - (pad_y + pad_hw) - pad_top
+    assert clear_at_max > 4, "plate must clear the stop pads at the working tilt"
+    assert pad_y + pad_hw <= half_y
+    for i, y in enumerate((-pad_y, pad_y), 1):
+        add(f"tilt_stop_pad_{i}", box(24, 2 * pad_hw, pad_top - plat_top, (0, y, (pad_top + plat_top) / 2)),
+            rubber, "yaw", lift, f"Stop pad: the plate lands on it at {p['tilt_stop_degrees']:.0f} degrees",
+            "print", "PETG block with a rubber bumper on top")
 
-    # Plate yoke (moves in roll and pitch) and the plate itself.
-    holes = [(x, y) for x in (-15, 15) for y in (-7, 7)]
-    yoke = box(80, 24, 6, (0, 0, plate_z - 3))
-    for x in (-30, 30):
-        yoke = yoke.fuse(box(12, 12, plate_z - pivot + 8, (x, 0, (plate_z + pivot - 8) / 2)))
-    yoke = yoke.fuse(cylinder(8, 2, (36, 0, pivot), (1, 0, 0)))
-    yoke = yoke.cut(cylinder(4.2, 90, (-45, 0, pivot), (1, 0, 0)))
-    for x, y in holes:
-        yoke = yoke.cut(cylinder(2.2, 6, (x, y, plate_z - 6), (0, 0, 1)))
-    add("plate_yoke", yoke, charcoal, "tilt_plate", lift,
-        "Moving fork joining the plate to the X hinge", "print", "PETG, 60 % infill")
-    add("roll_pulley_large", cylinder(big_r - .25, bw, (38, 0, pivot), (1, 0, 0)).cut(
-        cylinder(4.2, bw, (38, 0, pivot), (1, 0, 0))), metal, "tilt_plate", lift,
-        "GT2 40-tooth pulley bolted to the plate yoke", "buy", "GT2 40T, 8 mm bore")
+    # Tilt stage: hinge shaft, collars, lugs under the plate, large pulley, plate and IMU.
+    shaft_len = 2 * (block_x + 15)
+    add("hinge_shaft", cylinder(4, shaft_len, (-shaft_len / 2, 0, pivot), (1, 0, 0)), metal, "tilt_plate", lift,
+        "Hinge shaft 22 mm under the plate surface, turning in the two pillow blocks", "cut",
+        "Stainless 304 rod 8 mm")
+    for i, x in enumerate((-block_x - 6.5 - 8, block_x + 6.5), 1):
+        add(f"hinge_collar_{i}", ring_x(8, bore, x, 8, pivot), metal, "tilt_plate", lift,
+            "Shaft collar holding the hinge shaft in place", "buy", "Shaft collar 8 mm")
+    lug_x = p["plate_lug_x_mm"]
+    holes = [(x, y) for x in (-lug_x, lug_x) for y in (-12, 12)]
+    for i, x in enumerate((-lug_x, lug_x), 1):
+        lug = box(6, 24, plate_z - 4 - (pivot - 10), (x, 0, (plate_z - 4 + pivot - 10) / 2)).fuse(
+            box(20, 40, 4, (x, 0, plate_z - 2))).cut(cylinder(bore, 6, (x - 3, 0, pivot), (1, 0, 0)))
+        for hx, hy in holes:
+            lug = lug.cut(cylinder(2.2, 4, (hx, hy, plate_z - 4), (0, 0, 1)))
+        add(f"plate_lug_{i}", lug, charcoal, "tilt_plate", lift,
+            "Lug under the plate, clamped to the hinge shaft", "print", "PETG, 60 % infill")
+    add("tilt_pulley_large", cylinder(big_r - .25, bw, (belt_x, 0, pivot), (1, 0, 0)).cut(
+        cylinder(bore, bw, (belt_x, 0, pivot), (1, 0, 0))), metal, "tilt_plate", lift,
+        "GT2 40-tooth pulley clamped to the hinge shaft", "buy", "GT2 40T, 8 mm bore (check: some are 5 mm)")
     plate = (cq.Workplane("XY").circle(plate_r).extrude(plate_t).edges().fillet(min(1, plate_t / 3))
              .translate((0, 0, plate_z))).val()
     for x, y in holes:
         plate = plate.cut(cylinder(2.2, plate_t, (x, y, plate_z), (0, 0, 1)))
     add("tipping_plate", plate, pp, "tilt_plate", lift,
-        "320 mm tipping plate bolted to the yoke; does not melt under a hot ember", "laser",
-        "Aluminium sheet 1.5 mm")
-    add("tilt_imu", box(21, 16, 3, (0, 0, plate_z - 7.5)), (.10, .35, .20), "tilt_plate", lift,
-        "IMU under the yoke: true plate angle for jam detection and homing after a power cut",
+        "320 mm tipping plate bolted to the two lugs; does not melt under a hot ember", "laser",
+        "Aluminium sheet 1.5 mm, matt grey powder coat")
+    add("tilt_imu", box(21, 16, 3, (0, 30, plate_z - 1.5)), (.10, .35, .20), "tilt_plate", lift,
+        "IMU under the plate: true tilt angle for jam detection and homing after a power cut",
         "buy", "MPU-6050 (GY-521)")
-
-    # Hard stop: the plate underside lands on this ring at the stop angle, so a heavy drop or a
-    # hand on the plate loads the beam, not the servo gears. Nothing moving reaches it before.
-    stop = math.radians(p["tilt_stop_degrees"])
-    st_ro, st_w, st_t = (p["tilt_stop_ring_outer_radius_mm"], p["tilt_stop_ring_width_mm"],
-                         p["tilt_stop_ring_thickness_mm"])
-    st_top = pivot + plate_h / math.cos(stop) - st_ro * math.tan(stop)
-    at_max = pivot + plate_h / math.cos(theta) - st_ro * math.tan(theta)
-    assert at_max - st_top > 4, "plate must clear the stop ring at the working tilt"
-    assert st_ro < plate_r * math.cos(theta) + plate_h * math.sin(theta) - 8, "ring stays under the plate"
-    add("tilt_stop_ring", tube(st_ro, st_ro - st_w, st_top - st_t, st_t), metal, "head", lift,
-        f"Hard stop ring: the plate lands on it at {p['tilt_stop_degrees']:.0f} degrees; rubber strip on top",
-        "laser", "Aluminium sheet 5 mm")
-    for i, a in enumerate((0, 90, 180, 270), 1):
-        ca, sa = math.cos(math.radians(a)), math.sin(math.radians(a))
-        rc = st_ro - st_w / 2
-        add(f"tilt_stop_leg_{i}", box(10, 10, st_top - st_t - spider_top, (rc * ca, rc * sa, (st_top - st_t + spider_top) / 2)),
-            metal, "head", lift, "Leg carrying the stop ring on the joint beam", "cut",
-            "Aluminium square tube 10 x 10 x 1")
 
     # Fill sensors hang off the throat lip, under the funnel and out of the item path.
     pod_w, pod_h = p["fill_sensor_housing_width_mm"], p["fill_sensor_housing_height_mm"]
@@ -692,12 +716,13 @@ def export_option(p, body, out):
         parts, meta, metrics = build(p, body)
         checks = [{"pose": "neutral", **{k: v for k, v in validate(parts).items() if k == "checks"}}]
         for destination, direction in enumerate(DIRECTIONS, 1):
-            for fraction in (.25, .5, .75, 1.0):
-                roll, pitch = angles(p["maximum_plate_tilt_degrees"] * fraction, direction)
-                items = posed(parts, metrics["tilt_pivot_mm"][2], roll, pitch)
+            # Yaw first with the plate level (half and full turn), then tilt in steps.
+            yaw, tilt = angles(p["maximum_plate_tilt_degrees"], direction)
+            for yaw_f, fraction in ((.5, 0), (1, 0), (1, .25), (1, .5), (1, .75), (1, 1.0)):
+                items = posed(parts, metrics["tilt_pivot_mm"][2], yaw * yaw_f, tilt * fraction)
                 validate(items)
-                checks.append({"destination": destination, "fraction": fraction,
-                               "roll_degrees": round(roll, 3), "pitch_degrees": round(pitch, 3),
+                checks.append({"destination": destination, "yaw_fraction": yaw_f, "tilt_fraction": fraction,
+                               "yaw_degrees": round(yaw * yaw_f, 3), "tilt_degrees": round(tilt * fraction, 3),
                                "positive_volume_intersections": []})
                 if fraction == 1 and brain == "E1":
                     export_assembly(items, f"tilt_to_bin_{destination}", out / f"tilt_to_bin_{destination}.step")
@@ -762,7 +787,7 @@ def main():
     p = json.loads(args.parameters.read_text())
     for body in (("A", "B") if args.body == "both" else (args.body,)):
         folder = args.output / ("a_drum" if body == "A" else "b_frame")
-        print(f"Building option {body} (E1), checking 16 tilt poses…", flush=True)
+        print(f"Building option {body} (E1), checking 24 yaw and tilt poses…", flush=True)
         metrics = export_option(p, body, folder)
         print(json.dumps({k: metrics[k] for k in (
             "capacity_l_each_provisional", "servo_load_fraction_of_stall", "max_item_kg_at_half_stall",

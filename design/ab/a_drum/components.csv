@@ -14,24 +14,32 @@ spider_foot_1,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot und
 spider_foot_2,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
 spider_foot_3,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
 spider_foot_4,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
-fixed_fork,1,print,"PETG, 60 % infill",E1,"Fixed fork for the Y hinge, with the pitch servo bracket"
-pitch_servo,1,buy,DS3218 20 kg cm,E1,DS3218 servo (metal gears) driving the Y hinge through a 2:1 belt
-pitch_pulley_small,1,buy,"GT2 20T, 6 mm belt",E1,GT2 20-tooth pulley on the pitch servo
-pitch_belt,1,buy,GT2 closed loop 122 mm,E1,"GT2 closed belt, pitch axis"
-joint_cross,1,print,PETG body with 8 mm steel pins,E1,Joint cross with two 8 mm steel pins and the roll servo bracket
-pitch_pulley_large,1,buy,"GT2 40T, 8 mm bore",E1,GT2 40-tooth pulley fixed to the Y pin
-roll_servo,1,buy,DS3218 20 kg cm,E1,DS3218 servo (metal gears) driving the X hinge through a 2:1 belt
-roll_pulley_small,1,buy,"GT2 20T, 6 mm belt",E1,GT2 20-tooth pulley on the roll servo
-roll_belt,1,buy,GT2 closed loop 122 mm,E1,"GT2 closed belt, roll axis"
-plate_yoke,1,print,"PETG, 60 % infill",E1,Moving fork joining the plate to the X hinge
-roll_pulley_large,1,buy,"GT2 40T, 8 mm bore",E1,GT2 40-tooth pulley bolted to the plate yoke
-tipping_plate,1,laser,Aluminium sheet 1.5 mm,E1,320 mm tipping plate bolted to the yoke; does not melt under a hot ember
-tilt_imu,1,buy,MPU-6050 (GY-521),E1,IMU under the yoke: true plate angle for jam detection and homing after a power cut
-tilt_stop_ring,1,laser,Aluminium sheet 5 mm,E1,Hard stop ring: the plate lands on it at 47 degrees; rubber strip on top
-tilt_stop_leg_1,1,cut,Aluminium square tube 10 x 10 x 1,E1,Leg carrying the stop ring on the joint beam
-tilt_stop_leg_2,1,cut,Aluminium square tube 10 x 10 x 1,E1,Leg carrying the stop ring on the joint beam
-tilt_stop_leg_3,1,cut,Aluminium square tube 10 x 10 x 1,E1,Leg carrying the stop ring on the joint beam
-tilt_stop_leg_4,1,cut,Aluminium square tube 10 x 10 x 1,E1,Leg carrying the stop ring on the joint beam
+yaw_bracket,1,print,"PETG, 60 % infill (or bent aluminium 3 mm)",E1,Fixed C-bracket on the beam hub: two arms for the yaw bearings and a shelf for the yaw servo
+yaw_bearing_lower,1,buy,"Flanged pillow block KFL08, bore 8 mm",E1,Flanged bearing for the vertical yaw shaft
+yaw_bearing_upper,1,buy,"Flanged pillow block KFL08, bore 8 mm",E1,Flanged bearing for the vertical yaw shaft
+yaw_servo,1,buy,"MG90S, metal gears",E1,MG90S turning the tilt stage plus or minus 45 degrees toward the bin
+yaw_coupling,1,buy,Flexible coupling 5 x 8 mm,E1,Flexible coupling from the yaw servo spline to the 8 mm shaft
+yaw_shaft,1,cut,Stainless 304 rod 8 mm,E1,Vertical yaw shaft in the two flanged bearings
+yaw_collar,1,buy,Shaft collar 8 mm,E1,Shaft collar resting on the upper bearing: carries the stage weight
+yaw_platform,1,laser,Aluminium sheet 4 mm,E1,"Turning platform carrying the hinge posts, the tilt servo and the stop pads"
+hinge_post_1,1,cut,Aluminium flat bar 30 x 13,E1,Post from the platform to a hinge pillow block
+hinge_block_1,1,buy,"Pillow block KP08, bore 8 mm",E1,Horizontal pillow block carrying the hinge shaft; takes the plate load off the servo
+hinge_post_2,1,cut,Aluminium flat bar 30 x 13,E1,Post from the platform to a hinge pillow block
+hinge_block_2,1,buy,"Pillow block KP08, bore 8 mm",E1,Horizontal pillow block carrying the hinge shaft; takes the plate load off the servo
+tilt_servo,1,buy,"MG996R, metal gears",E1,MG996R driving the hinge through the 2:1 belt
+tilt_servo_bracket,1,print,"PETG, 60 % infill",E1,Bracket the MG996R ears bolt to; slotted holes set the belt tension
+tilt_pulley_small,1,buy,"GT2 20T, 6 mm belt",E1,GT2 20-tooth pulley on the MG996R (3D-printed adapter to the horn)
+tilt_belt,1,buy,GT2 closed loop 158 mm,E1,"GT2 closed belt, hinge axis"
+tilt_stop_pad_1,1,print,PETG block with a rubber bumper on top,E1,Stop pad: the plate lands on it at 47 degrees
+tilt_stop_pad_2,1,print,PETG block with a rubber bumper on top,E1,Stop pad: the plate lands on it at 47 degrees
+hinge_shaft,1,cut,Stainless 304 rod 8 mm,E1,"Hinge shaft 22 mm under the plate surface, turning in the two pillow blocks"
+hinge_collar_1,1,buy,Shaft collar 8 mm,E1,Shaft collar holding the hinge shaft in place
+hinge_collar_2,1,buy,Shaft collar 8 mm,E1,Shaft collar holding the hinge shaft in place
+plate_lug_1,1,print,"PETG, 60 % infill",E1,"Lug under the plate, clamped to the hinge shaft"
+plate_lug_2,1,print,"PETG, 60 % infill",E1,"Lug under the plate, clamped to the hinge shaft"
+tilt_pulley_large,1,buy,"GT2 40T, 8 mm bore (check: some are 5 mm)",E1,GT2 40-tooth pulley clamped to the hinge shaft
+tipping_plate,1,laser,"Aluminium sheet 1.5 mm, matt grey powder coat",E1,320 mm tipping plate bolted to the two lugs; does not melt under a hot ember
+tilt_imu,1,buy,MPU-6050 (GY-521),E1,IMU under the plate: true tilt angle for jam detection and homing after a power cut
 fill_sensor_pod_1,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
 fill_sensor_arm_1,1,print,PETG,E1,Sensor arm from the throat lip
 fill_sensor_pod_2,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
