@@ -213,16 +213,16 @@
           686.0,
           686.0
         ],
-        "rim_height_mm": 1050.0,
-        "head_deck_height_mm": 930.0,
-        "bin_rim_height_mm": 500.0,
+        "rim_height_mm": 1170.0,
+        "head_deck_height_mm": 1050.0,
+        "bin_rim_height_mm": 620.0,
         "bin_floor_height_mm": 33.0,
-        "capacity_l_each_provisional": 32.5,
-        "plate_level_top_height_mm": 780.0,
+        "capacity_l_each_provisional": 40.9,
+        "plate_level_top_height_mm": 900.0,
         "tilt_pivot_mm": [
           0,
           0,
-          758.0
+          878.0
         ],
         "maximum_plate_tilt_degrees": 45.0,
         "destination_directions_degrees": [
@@ -231,7 +231,7 @@
           225,
           315
         ],
-        "plate_low_edge_height_at_full_tilt_mm": 659.4,
+        "plate_low_edge_height_at_full_tilt_mm": 779.4,
         "exit_gap_at_full_tilt_mm": 180.9,
         "skirt_gap_at_full_tilt_mm": 109.9,
         "belt_center_distance_mm": 48.58,
@@ -253,8 +253,8 @@
         ],
         "camera_position_mm": [
           0.0,
-          163.1,
-          1058.6
+          154.9,
+          1178.7
         ],
         "motor_cable_mm": {
           "yaw_servo": 787,
@@ -264,7 +264,62 @@
           "fold_travel_over_full_yaw": 45
         },
         "camera_hidden_plate_edge_samples_of_72": 0,
-        "camera_required_full_fov_degrees": 59.4,
+        "camera_required_full_fov_degrees": 60.2,
+        "camera_sight_margin_at_throat_mm": 6.1,
+        "camera_aim_from_vertical_degrees": 29.1,
+        "console_mm": [
+          160.0,
+          156.0,
+          46.0
+        ],
+        "display_slab_mm": [
+          246.0,
+          22.0,
+          162.0
+        ],
+        "display_glass_mm": [
+          230.0,
+          3.0,
+          146.0
+        ],
+        "display_top_height_mm": 1348.5,
+        "console_electronics_envelopes_mm": {
+          "terminal_block": [
+            30.0,
+            20.0,
+            15.0
+          ],
+          "esp32_s3_board": [
+            70.0,
+            30.0,
+            16.0
+          ],
+          "supply_capacitor": [
+            13.0,
+            26.0,
+            13.0
+          ],
+          "servo_buck_xl4015": [
+            54.0,
+            26.0,
+            18.0
+          ],
+          "logic_buck_5v": [
+            45.0,
+            22.0,
+            14.0
+          ],
+          "relay_module": [
+            50.0,
+            26.0,
+            19.0
+          ],
+          "led_mosfet": [
+            34.0,
+            17.0,
+            12.0
+          ]
+        },
         "bin_landing_radius_mm": 224.2,
         "bag_change": "Pull a drawer out: its front and rear bins lift straight up; the back stays against the wall",
         "flat_pieces_mm": {
@@ -293,6 +348,6 @@
       446.7
     ]
   },
-  "profile_total_length_mm": 10600,
+  "profile_total_length_mm": 11080,
   "cadquery_version": "2.8.0"
 }

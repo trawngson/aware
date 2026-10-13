@@ -445,21 +445,42 @@ def head(p, add):
         add(f"fill_sensor_arm_{i}", bracket.rotate((0, 0, 0), (0, 0, 1), a), metal, "head", lift,
             "Sensor arm from the throat lip", "print", "PETG")
 
-    # Rear console as in v3: the display leans back and the camera hides under its chin.
+    # Rear console: a tablet-sized display leaning back on a low base. The display fills the front
+    # of its slab and is big enough to read from across a room; the base carries the boards and
+    # falls away to a half-round back, and the camera hides under its chin.
     # The chin reaches in over the funnel mouth so the camera sees the rear plate edge
     # past the throat lip (v3's rim-mounted camera lost about 16 % of the plate there).
     cw, ch = p["console_width_mm"], p["console_height_mm"]
     y_front, chin_h = p["console_chin_front_y_mm"], p["console_chin_height_mm"]
+    y_back, back_h = p["console_back_y_mm"], p["console_back_height_mm"]
+    edge_r, wall = p["console_edge_radius_mm"], p["console_wall_mm"]
     lean = math.radians(p["display_lean_back_degrees"])
+    (sw, st, sh), (gw, gd, gh) = p["display_slab_mm"], p["display_glass_mm"]
     z_face0, z_top = top + chin_h, top + ch
     y_top = y_front + (z_top - z_face0) * math.tan(lean)
+    assert y_back <= deck_ro, "console stays on the head"
+    upper = cq.selectors.BoxSelector((-cw, 0, top + 1), (cw, y_back + 1, z_top + 1))
     body = (cq.Workplane("YZ").polyline([(y_front, top), (y_front, z_face0), (y_top, z_top),
-                                         (deck_ro + 30, z_top), (deck_ro + 30, top)])
-            .close().extrude(cw / 2, both=True).val())
-    body = body.intersect(tube(deck_ro, 0, top, ch))
-    face_center = (0, y_front + (ch - chin_h) / 2 * math.tan(lean), (z_face0 + z_top) / 2)
+                                         (y_back, top + back_h), (y_back, top)])
+            .close().extrude(cw / 2, both=True).edges("|X").edges(upper).fillet(edge_r).val())
+    # Plan outline of the base: a straight front and a half-round back.
+    round_y = y_back - cw / 2
+    plan = (cq.Workplane("XY").center(0, (y_front + round_y) / 2).rect(cw, round_y - y_front).extrude(ch)
+            .edges("|Z").edges("<Y").fillet(edge_r).val().translate((0, 0, top))
+            .fuse(cylinder(cw / 2, ch, (0, round_y, top), (0, 0, 1))))
+    body = body.intersect(plan)
+    # Saddle: a low arc on the rim collar either side of the base, where the console is screwed down.
+    saddle = tube(deck_ro, mouth_r, top, p["console_saddle_height_mm"]).intersect(
+        box(2 * deck_ro, deck_ro, 40, (0, p["console_saddle_from_y_mm"] + deck_ro / 2, top)))
+    body = body.fuse(saddle)
+    # Display slab: stands on the chin and leans back with the base face, corners rounded like a tablet.
+    face_center = (0, y_front + sh / 2 * math.sin(lean), z_face0 + sh / 2 * math.cos(lean))
     on_face = lambda shape: shape.rotate((0, 0, 0), (1, 0, 0), -math.degrees(lean)).translate(face_center)
-    gw, gh, gd = 90, 60, 3
+    slab = on_face(cq.Workplane("XY").box(sw, st, sh, centered=(True, False, True))
+                   .edges("|Y").fillet(p["display_corner_radius_mm"]).val())
+    body = body.fuse(slab)
+    shell = body
+    assert sw - gw <= 20 and sh - gh <= 20, "the screen fills the front of its slab"
     face = on_face(box(gw, gd, gh, (0, gd / 2, 0)))
     target = (0, 0, plate_z + plate_t)
     lens_at = (0, p["camera_y_mm"], top)
@@ -469,34 +490,51 @@ def head(p, add):
     inward = tuple(-a for a in aim)
     along = lambda d: tuple(l + d * a for l, a in zip(lens_at, inward))
     recess = cylinder(11, 14, along(-2), inward)
-    led = box(120, 8, 2.5, (0, p["camera_y_mm"] + 24, top + 1.25))
+    led_len = p["led_strip_length_mm"]
+    assert led_len <= cw - 12 and y_front <= p["camera_y_mm"] - 16
+    led = box(led_len, 8, 2.5, (0, p["camera_y_mm"] + 24, top + 1.25))
     body = body.cut(face).cut(recess).cut(led)
+
+    # Space check: the boards that live in the console must fit inside it with a printed wall
+    # around each, clear of the screen module, the camera recess, the LED pocket and each other.
+    inside = lambda part, solid: part.intersect(solid).Volume() > part.Volume() * .999
+    tft_module = on_face(box(gw + 4, 16, gh + 4, (0, 8, 0)))
+    assert inside(tft_module, shell), "display module and its controller fit inside the slab"
+    slots = [tft_module]
+    for name, slot in p["console_electronics_mm"].items():
+        (sx, sy, sz), (x, y, z) = slot["size"], slot["at"]
+        room = box(sx + 2 * wall, sy + 2 * wall, sz + 2 * wall, (x, y, top + z))
+        assert inside(room, body), f"{name} fits inside the console"
+        assert all(room.intersect(other).Volume() < 1 for other in slots), f"{name} is clear of the other boards"
+        slots.append(room)
     add("display_console", body, light, "brain", brain_lift,
-        "Rear console, hollow shell: TFT face leaning back, ESP32-S3, servo supply and wiring inside, "
-        "camera and LED strip under the chin, clear of any liquid in the funnel", "print",
-        "PETG, printed in 2 halves")
-    add("tft_screen", face, glass, "brain", brain_lift, "3.5 inch TFT module in the console face", "buy",
-        "TFT 3.5 inch SPI")
+        "Rear console, hollow shell: a tablet-sized display slab leaning back on a low base; ESP32-S3 "
+        "camera board, servo supply and wiring in the base, camera and LED strip under the chin, clear "
+        "of any liquid in the funnel", "print", "PETG, printed in 2 halves")
+    add("tft_screen", face, glass, "brain", brain_lift,
+        "10.1 inch display filling the slab: sorting status, and facts about waste while idle", "buy",
+        "IPS display module 10.1 inch with its own controller board")
     add("camera_window", cylinder(10.5, 2, along(10), inward), (.02, .02, .02), "brain", brain_lift,
         "ESP32-S3 camera behind the chin window, 120 degree lens", "buy",
         "ESP32-S3 camera module, OV2640 with 120 degree lens")
     add("led_strip", led, (.98, .96, .80), "brain", brain_lift,
         "White LED strip under the chin lighting the plate evenly for recognition", "buy",
-        "5 V white LED strip, 120 mm, with diffuser")
+        f"5 V white LED strip, {led_len:.0f} mm, with diffuser")
     cam = along(10)
 
     # Camera sightline: every plate-edge point must pass inside the throat lip and the skirt.
     rings = [(lip_top, throat_r), (lip_bottom, throat_r)]
     rings += [(z, skirt_r) for z in range(int(lip_bottom), int(plate_z + plate_t), -8)]
-    hidden = 0
+    hidden, sight_margin = 0, math.inf
     for k in range(72):
         a = math.radians(k * 5)
         ex, ey, ez = plate_r * math.cos(a), plate_r * math.sin(a), plate_z + plate_t
+        gaps = []
         for zc, rc in rings:
             f = (cam[2] - zc) / (cam[2] - ez)
-            if math.hypot(cam[0] + f * (ex - cam[0]), cam[1] + f * (ey - cam[1])) > rc:
-                hidden += 1
-                break
+            gaps.append(rc - math.hypot(cam[0] + f * (ex - cam[0]), cam[1] + f * (ey - cam[1])))
+        hidden += min(gaps) < 0
+        sight_margin = min(sight_margin, min(gaps))
 
     # Field of view the lens must cover: widest angle from the aim axis to the plate edge.
     widest = 0
@@ -510,6 +548,7 @@ def head(p, add):
             "throat_r": throat_r, "exit_gap": exit_gap, "skirt_gap": skirt_gap,
             "low_edge_z": low_edge_z, "belt_center_mm": c, "big_r": big_r, "small_r": small_r,
             "camera": cam, "camera_hidden_edge_samples": hidden, "slope": slope,
+            "camera_sight_margin": sight_margin, "camera_aim_from_vertical": math.degrees(math.atan2(-dy, -dz)),
             "shell_top": shell_top, "collar_t": collar_t, "mouth_r": mouth_r, "fw": fw}
 
 
@@ -696,6 +735,14 @@ def body_b(p, add, h):
 BIN_COLORS = [(.29, .56, .72), (.79, .53, .23), (.37, .62, .42), (.60, .42, .69)]
 
 
+def for_body(p, body):
+    """Parameters as one body sees them. The drum fixes the deck height of body A; the frame of
+    body B can stand taller, which raises its whole head by frame.extra_height_mm."""
+    extra = p["frame"].get("extra_height_mm", 0) if body == "B" else 0
+    return {**p, "rim_height_mm": p["rim_height_mm"] + extra,
+            "head_deck_height_mm": p["head_deck_height_mm"] + extra}
+
+
 def build(p, body):
     parts, meta = [], {}
 
@@ -754,6 +801,14 @@ def build(p, body):
         "motor_cable_mm": h["motor_cable_mm"],
         "camera_hidden_plate_edge_samples_of_72": h["camera_hidden_edge_samples"],
         "camera_required_full_fov_degrees": h["camera_required_full_fov_degrees"],
+        "camera_sight_margin_at_throat_mm": round(h["camera_sight_margin"], 1),
+        "camera_aim_from_vertical_degrees": round(h["camera_aim_from_vertical"], 1),
+        "console_mm": [p["console_width_mm"], p["console_back_y_mm"] - p["console_chin_front_y_mm"],
+                       p["console_height_mm"]],
+        "display_slab_mm": p["display_slab_mm"], "display_glass_mm": p["display_glass_mm"],
+        "display_top_height_mm": round(p["rim_height_mm"] + p["console_chin_height_mm"]
+                                       + p["display_slab_mm"][2] * math.cos(math.radians(p["display_lean_back_degrees"])), 1),
+        "console_electronics_envelopes_mm": {k: v["size"] for k, v in p["console_electronics_mm"].items()},
         "bin_landing_radius_mm": round(info["bin_center_radius"], 1),
         "bag_change": info["bag_note"],
         "flat_pieces_mm": info.get("flat_pieces", {}),
@@ -921,7 +976,7 @@ def main():
     for body in (("A", "B") if args.body == "both" else (args.body,)):
         folder = args.output / ("a_drum" if body == "A" else "b_frame")
         print(f"Building option {body} (E1), checking 24 yaw and tilt poses…", flush=True)
-        metrics = export_option(p, body, folder)
+        metrics = export_option(for_body(p, body), body, folder)
         print(json.dumps({k: metrics[k] for k in (
             "capacity_l_each_provisional", "servo_load_fraction_of_stall", "max_item_kg_at_half_stall",
             "camera_hidden_plate_edge_samples_of_72", "belt_center_distance_mm")}), flush=True)

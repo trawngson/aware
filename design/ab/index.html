@@ -155,7 +155,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <h2>Đã chốt</h2>
       <ul>
         <li>Làm chi tiết cả hai thân <b>A</b> và <b>B</b>. Cụm đầu dùng chung, chỉ khác phần thân.</li>
-        <li>Bộ não chỉ dùng <b>E1</b> (ESP32-S3 Cam + màn TFT 3,5"). Bỏ E2 nên hết rủi ro pin điện thoại phồng (#38, #39).</li>
+        <li>Bộ não chỉ dùng <b>E1</b> (ESP32-S3 Cam + màn hình 10,1" có bo điều khiển riêng). Bỏ E2 nên hết rủi ro pin điện thoại phồng (#38, #39).</li>
         <li>4 ngăn: <b>1 Nhựa</b> (sau phải), <b>2 Giấy</b> (sau trái), <b>3 Kim loại</b> (trước trái), <b>4 Khác</b> (trước phải). Vật không chắc loại thì vào ngăn 4.</li>
         <li>Cơ cấu nghiêng theo <b>phương án D</b> (chốt 9/10): MG90S xoay ±45°, MG996R nghiêng ±45° qua đai GT2 2:1, bản lề sát mặt đĩa trên 2 gối đỡ. Đĩa nhôm 1,5 mm.</li>
         <li>Đưa các đề xuất T vào CAD, chạy lại kiểm tra va chạm và kiểm tra tầm nhìn camera.</li>
@@ -184,7 +184,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <tr><td><span class="chip alt">Đổi</span> T5 · chụp cao su che khớp</td><td>Nước rời mép đĩa ở bán kính 128–160 mm, còn servo và đai nằm trong khoảng 75 mm dưới đĩa, nên nước rơi thẳng xuống ngăn</td><td>Chỉ cần dời mạch điều khiển từ dưới mâm lên trong bệ màn hình, ra khỏi đường nước</td></tr>
       <tr><td><span class="chip alt">Đổi</span> T1 · cảm biến góc AS5600</td><td>Cần bo mạch và nam châm ở từng trục</td><td>1 IMU MPU-6050 dán dưới đĩa, đọc hướng trọng lực nên biết góc nghiêng thật. Góc xoay thì không đo, thêm AS5600 nếu thử thấy cần</td></tr>
       <tr><td><span class="chip alt">Đổi</span> T8 · vòng định vị có khấc</td><td>Vòng định vị nằm trong lòng phuy, không có chỗ để khoét khấc</td><td>Một chốt thép Ø6 ở mép sau mâm, cắm vào ổ (A) hoặc lỗ trên tấm đỡ (B)</td></tr>
-      <tr><td><span class="chip alt">Đổi</span> Khung B 600 → 680 mm</td><td>Ngăn kéo cần chỗ cho ray trượt 12,7 mm và thành khay 3 mm ở cả hai bên</td><td>Khung ngoài 686 mm tính cả vỏ. Tổng chiều dài nhôm định hình là 10,6 m</td></tr>
+      <tr><td><span class="chip alt">Đổi</span> Khung B 600 → 680 mm</td><td>Ngăn kéo cần chỗ cho ray trượt 12,7 mm và thành khay 3 mm ở cả hai bên</td><td>Khung ngoài 686 mm tính cả vỏ. Tổng chiều dài nhôm định hình là 11,1 m</td></tr>
     </table></div>
   </div>
 </section>
@@ -194,21 +194,21 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   <div class="card">
     <span class="eyebrow">Dùng chung cho A và B</span>
     <h2>Cụm đầu và phễu</h2>
-    <p>Cụm đầu là một khối liền: mâm, phễu, khung treo, cơ cấu nghiêng, đĩa, cảm biến đầy và bệ màn hình. Toàn bộ treo trên <b>một vòng mâm</b> đặt ở cao độ 930 mm. Gom hết vào một khối thì thân A hay B chỉ cần làm đúng một việc: đỡ vòng mâm ở 930 mm.</p>
+    <p>Cụm đầu là một khối liền: mâm, phễu, khung treo, cơ cấu nghiêng, đĩa, cảm biến đầy và bệ màn hình. Toàn bộ treo trên <b>một vòng mâm</b> đặt ở cao độ 1050 mm trên thân B (930 mm trên thân A, vì thân B cao hơn 120 mm). Gom hết vào một khối thì thân A hay B chỉ cần làm đúng một việc: đỡ vòng mâm ở đúng cao độ đó. Các cao độ dưới đây là của thân B.</p>
   </div>
   <div class="vslot" id="slot-head"></div>
   <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
   <div class="cols">
     <div class="card"><h3>Kích thước chính</h3><div class="tbl"><table>
       <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
-      <tr><td>Cao miệng ném (mép trên phễu)</td><td class="n">1050 mm</td></tr>
+      <tr><td>Cao miệng ném (mép trên phễu)</td><td class="n">1170 mm</td></tr>
       <tr><td>Miệng phễu</td><td class="n">Ø550</td></tr>
       <tr><td>Phễu côn: cao / thành dày</td><td class="n">140 / 2 mm</td></tr>
       <tr><td>Cổ phễu: đường kính / cao gờ</td><td class="n">Ø330 / 30 mm</td></tr>
-      <tr><td>Mâm đầu (nhôm 3 mm)</td><td class="n">Ø594 / lỗ Ø400, z = 930</td></tr>
+      <tr><td>Mâm đầu (nhôm 3 mm)</td><td class="n">Ø594 / lỗ Ø400, z = 1050</td></tr>
       <tr><td>Vòng định vị dưới mâm</td><td class="n">Ø556, sâu 20 mm</td></tr>
       <tr><td>4 thanh treo 30×30×2 ở r255</td><td class="n">dài 375 mm</td></tr>
-      <tr><td>Thanh chữ thập 40×30×2</td><td class="n">2 × 540 mm, đáy z = 525</td></tr>
+      <tr><td>Thanh chữ thập 40×30×2</td><td class="n">2 × 540 mm, đáy z = 645</td></tr>
       <tr><td>Diềm cổ phễu</td><td class="n">36 dải PVC mềm × 14 mm</td></tr>
       <tr><td>Chốt định hướng Ø6</td><td class="n">r284, mép sau</td></tr>
       <tr><td>Khối lượng cụm đầu (ước tính)</td><td class="n">khoảng 4–5 kg</td></tr>
@@ -257,9 +257,9 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <tr><td>Mô-men kẹt MG996R ở 6 V (theo shop)</td><td class="n">khoảng 11 kg·cm = 1,08 N·m</td></tr>
       <tr><td>Puly, tỉ số</td><td class="n">GT2 20T → 40T, 2:1</td></tr>
       <tr><td>Đai kín GT2 rộng 6 mm / khoảng cách tâm puly</td><td class="n">158 mm / 48,58 mm</td></tr>
-      <tr><td>Trục bản lề (cách mặt đĩa 22 mm)</td><td class="n">Ø8 × 180 mm, z = 758</td></tr>
+      <tr><td>Trục bản lề (cách mặt đĩa 22 mm)</td><td class="n">Ø8 × 180 mm, z = 878</td></tr>
       <tr><td>Trục đứng</td><td class="n">Ø8 × 72 mm</td></tr>
-      <tr><td>Đế xoay, nhôm 4 mm</td><td class="n">180 × 192 mm, z = 672–677</td></tr>
+      <tr><td>Đế xoay, nhôm 4 mm</td><td class="n">180 × 192 mm, z = 792–797</td></tr>
     </table></div></div>
     <div class="card"><h3>Mô-men và tải</h3><div class="tbl"><table>
       <tr><th>Trường hợp (đĩa nghiêng 45°, vật ở mép)</th><th class="n">Giá trị</th></tr>
@@ -276,14 +276,14 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <div class="card"><h3>Đĩa nghiêng</h3>
       <ul>
         <li>Nhôm 1,5 mm, Ø320, nặng 0,326 kg, bắt vào 2 tai PETG bằng 4 vít M4. Hai tai kẹp chặt vào trục bản lề.</li>
-        <li>Mặt đĩa ở cao độ 780 mm, trục bản lề ở 758 mm. Bản lề sát mặt đĩa nên đĩa nặng hơn PP vẫn nhẹ tải.</li>
+        <li>Mặt đĩa ở cao độ 900 mm, trục bản lề ở 878 mm. Bản lề sát mặt đĩa nên đĩa nặng hơn PP vẫn nhẹ tải.</li>
         <li>Đổi từ PP sang nhôm: không chảy khi gặp tàn thuốc, khó xước, dễ lau.</li>
       </ul>
       <div class="note"><b>Lưu ý:</b> nhôm trần bóng sẽ hắt ánh đèn LED vào camera. Nên <b>sơn tĩnh điện màu xám mờ</b>. Không dán decal, vì decal sẽ chảy khi gặp đồ nóng.</div>
     </div>
     <div class="card"><h3>Cục chặn cứng 47° trên đế xoay</h3>
       <ul>
-        <li>2 cục chặn PETG bọc cao su, đặt trên đế xoay ở y = ±88 mm, mặt trên ở z = 687,3.</li>
+        <li>2 cục chặn PETG bọc cao su, đặt trên đế xoay ở y = ±88 mm, mặt trên ở z = 807,3.</li>
         <li>Đế xoay quay cùng hướng với đĩa, nên cục chặn luôn nằm ngay dưới mép đang hạ xuống.</li>
         <li>Đĩa nghiêng 45° vẫn cách cục chặn 5,7 mm. Tới 47° thì đáp lên cao su.</li>
         <li>Lực va đập hoặc lực tay ấn đi vào ổ của trục đứng, không đi vào bánh răng của cả 2 servo. Lực thẳng đứng không tạo mô-men quanh trục đứng, nên MG90S cũng không phải gánh.</li>
@@ -354,8 +354,8 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <div class="card"><h3>Hình học khi đổ (nghiêng 45°)</h3><div class="tbl"><table>
       <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
       <tr><td>Khe thoát dưới gờ cổ phễu</td><td class="n">180,9 mm</td></tr>
-      <tr><td>Cao độ mép thấp của đĩa</td><td class="n">659,4 mm</td></tr>
-      <tr><td>Cao độ miệng ngăn A / B</td><td class="n">512 / 500 mm</td></tr>
+      <tr><td>Cao độ mép thấp của đĩa A / B</td><td class="n">659,4 / 779,4 mm</td></tr>
+      <tr><td>Cao độ miệng ngăn A / B</td><td class="n">512 / 620 mm</td></tr>
       <tr><td>Bán kính điểm rơi A / B (tâm ngăn)</td><td class="n">150 / 224 mm</td></tr>
       <tr><td>Vật lớn nhất lọt qua khe thoát</td><td class="n">khoảng 170 mm</td></tr>
     </table></div></div>
@@ -370,7 +370,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   <div class="card"><h3>Sức chứa</h3><div class="tbl"><table>
     <tr><th></th><th class="n">Hình học (CAD)</th><th class="n">Dùng được thật (ước tính)</th><th class="n">Cả 4 ngăn</th></tr>
     <tr><td>A · ¼ phuy, cao 507 mm</td><td class="n">32,4 L</td><td class="n">19–25 L</td><td class="n">khoảng 130 L</td></tr>
-    <tr><td>B · thùng 270×270×470</td><td class="n">32,5 L</td><td class="n">20–24 L</td><td class="n">khoảng 130 L</td></tr>
+    <tr><td>B · thùng 270×270×590</td><td class="n">40,9 L</td><td class="n">25–31 L</td><td class="n">khoảng 164 L</td></tr>
   </table></div>
   <p>Rác luôn rơi vào cùng một chỗ nên chất thành hình nón, chỉ dùng được 60–75% thể tích. <b>T17 · rải đều:</b> mỗi lần đổ, đổi góc xoay lệch khoảng ±20° quanh đường chéo ngăn (MG90S làm được, vì xoay tới ±65° vẫn trong 180° của servo) và đổi góc nghiêng trong khoảng 35–45°, để dịch điểm rơi. Cách này có thể nâng phần dùng được lên khoảng 80%, nhưng mới là <i>plausible</i>, phải thử với rác thật. Với A, lệch ±20° vẫn nằm trong ngăn, vì vách ngăn cách đường chéo 45°.</p></div>
   <div class="card"><h3>Khi đầy</h3><div class="tbl"><table>
@@ -389,32 +389,37 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
 <section class="panel" id="p-console" role="tabpanel" hidden>
   <div class="card">
     <h2>Bệ màn hình và camera</h2>
-    <p>Bệ màn hình đặt ở mép sau miệng thùng, giống v3. Mặt màn hình ngả ra sau 12° để người đứng trước dễ nhìn. Phần cằm chìa vào trên miệng phễu tới y = 140 mm, camera giấu dưới cằm. Nhờ vậy camera nhìn được qua gờ cổ phễu tới tận mép sau của đĩa.</p>
+    <p>Bệ màn hình gồm hai phần: một <b>tấm màn hình 10,1 inch</b> ngả ra sau 12°, to cỡ máy tính bảng để người đi ngang cách vài mét vẫn đọc được, và một <b>đế thấp</b> phía sau chứa các bo mạch. Màn hình phủ gần kín mặt tấm (viền 8 mm). Lúc không có rác, màn hình lần lượt hiện các thông tin về rác; khi có vật thì hiện kết quả phân loại. Phần cằm của đế chìa vào trên miệng phễu tới y = 132 mm, camera giấu dưới cằm. Nhờ vậy camera nhìn được qua gờ cổ phễu tới tận mép sau của đĩa.</p>
   </div>
   <div class="vslot" id="slot-console"></div>
   <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
   <div class="cols">
     <div class="card"><h3>Kích thước</h3><div class="tbl"><table>
       <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
-      <tr><td>Bệ: rộng × cao</td><td class="n">260 × 190 mm</td></tr>
-      <tr><td>Cằm: mép trước / cao</td><td class="n">y = 140 / 30 mm</td></tr>
-      <tr><td>Màn TFT 3,5" SPI</td><td class="n">90 × 60 mm, ngả 12°</td></tr>
-      <tr><td>Ống kính camera</td><td class="n">(0; 163,1; 1058,6)</td></tr>
-      <tr><td>Góc nhìn cần có (hình nón)</td><td class="n">59,4° → dùng ống 120°</td></tr>
+      <tr><td>Đế: rộng × sâu × cao</td><td class="n">160 × 156 × 46 mm</td></tr>
+      <tr><td>Cằm: mép trước / cao</td><td class="n">y = 132 / 20 mm</td></tr>
+      <tr><td>Màn hình 10,1": mặt kính / tấm</td><td class="n">230 × 146 / 246 × 162 × 22 mm, ngả 12°</td></tr>
+      <tr><td>Mép trên màn hình (thân B)</td><td class="n">cao 1348,5 mm so với sàn</td></tr>
+      <tr><td>Ống kính camera</td><td class="n">(0; 154,9; 1178,7)</td></tr>
+      <tr><td>Trục camera so với phương thẳng đứng</td><td class="n">29,1°, chĩa vào tâm đĩa</td></tr>
+      <tr><td>Góc nhìn cần có (hình nón)</td><td class="n">60,2° → dùng ống 120°</td></tr>
       <tr><td>Mép đĩa bị khuất</td><td class="n">0 / 72 điểm</td></tr>
-      <tr><td>Khoảng dư của tia nhìn tại gờ cổ phễu</td><td class="n">khoảng 3,6 mm</td></tr>
-      <tr><td>Dải LED trắng</td><td class="n">120 mm, y = 182</td></tr>
+      <tr><td>Khoảng dư của tia nhìn tại gờ cổ phễu</td><td class="n">khoảng 6,1 mm</td></tr>
+      <tr><td>Dải LED trắng</td><td class="n">120 mm, y = 174</td></tr>
+      <tr><td>Vành bắt vít trên mép phễu</td><td class="n">cao 5 mm, từ y = 235 ra sau</td></tr>
     </table></div></div>
     <div class="card"><h3>Bên trong bệ (vỏ in rỗng)</h3><ul>
       <li>Board ESP32-S3 camera, ống kính 120° chĩa qua ô kính dưới cằm, hướng vào tâm đĩa.</li>
-      <li>Màn TFT 3,5" gắn trên mặt bệ.</li>
+      <li>Màn hình 10,1" có bo điều khiển riêng ở mặt sau, nằm gọn trong tấm màn hình, nối với board camera bằng UART.</li>
       <li>Dải LED 5 V có tấm khuếch tán, điều khiển qua MOSFET.</li>
       <li>Cầu đấu nguồn 5 V, tụ 2200 µF, module relay cắt nguồn servo (xem tab Điện).</li>
-      <li>Bệ in PETG làm 2 nửa, ghép bằng vít M3 và đai ốc cấy nhiệt. Bệ nằm trên mép trên của phễu, <b>ra khỏi đường nước</b>.</li>
+      <li>Bệ in PETG làm 2 nửa, ghép bằng vít M3 và đai ốc cấy nhiệt. Bệ nằm trên mép trên của phễu, <b>ra khỏi đường nước</b>, bắt xuống mép phễu qua một vành thấp hai bên.</li>
+      <li><b>Chỗ cho mạch:</b> script kiểm tra 7 khối đặt vừa trong đế, mỗi khối có vách 2,5 mm bao quanh và không chạm màn hình, hốc camera hay nhau: board ESP32-S3 (70×30×16), relay (50×26×19), 2 mạch hạ áp (54×26×18 và 45×22×14), tụ, cầu đấu và MOSFET đèn. Màn hình cùng bo điều khiển của nó (234×150×16) nằm vừa trong tấm. Các kích thước này là số tạm.</li>
     </ul></div>
   </div>
   <div class="card"><h3>Lỗi hay gặp</h3><ul>
-    <li><b>Khoảng dư tia nhìn chỉ khoảng 3,6 mm:</b> lắp camera lệch vài mm là khuất mất mép sau đĩa. In ổ camera có rãnh chỉnh và căn bằng một ảnh mẫu đĩa trống.</li>
+    <li><b>Tấm màn hình dễ bị tì tay hoặc va:</b> mép trên cao hơn miệng thùng khoảng 180 mm, lực bẻ dồn vào vành bắt vít ở mép phễu. Chưa kiểm tra độ bền chỗ này.</li>
+    <li><b>Khoảng dư tia nhìn chỉ khoảng 6,1 mm:</b> lắp camera lệch quá mức đó là khuất mất mép sau đĩa. In ổ camera có rãnh chỉnh và căn bằng một ảnh mẫu đĩa trống.</li>
     <li><b>Ống 120° làm méo ảnh kiểu mắt cá:</b> hiệu chỉnh một lần bằng ảnh bàn cờ, hoặc huấn luyện mô hình nhận dạng luôn trên ảnh đã méo.</li>
     <li><b>LED chiếu thẳng xuống đĩa nhôm bóng gây chói:</b> dùng tấm khuếch tán và mặt đĩa xám mờ.</li>
   </ul></div>
@@ -431,7 +436,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
   <div class="cols">
     <div class="card"><h3>Sơ đồ nguồn</h3>
-<pre class="sk">Adapter 12 V 5 A ──┬── hạ áp 5 V 3 A ── ESP32-S3 cam, TFT, IMU, 4 × HC-SR04, LED
+<pre class="sk">Adapter 12 V 5 A ──┬── hạ áp 5 V 3 A ── ESP32-S3 cam, màn hình, IMU, 4 × HC-SR04, LED
                    └── XL4015 6 V ── cầu chì 3 A ── Relay ── tụ 2200 µF ── MG996R + MG90S
                          ▲
    công tắc đầu (A) hoặc 2 công tắc ngăn kéo (B), nối tiếp</pre>
@@ -444,20 +449,20 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <div class="card"><h3>Gán chân dự kiến</h3><div class="tbl"><table>
       <tr><th>Khối</th><th class="n">Số chân</th></tr>
       <tr><td>Camera (có sẵn trên board)</td><td class="n">không tính</td></tr>
-      <tr><td>TFT SPI: SCK, MOSI, CS, DC, RST</td><td class="n">5</td></tr>
+      <tr><td>Màn hình 10,1" (bo điều khiển riêng): UART TX, RX</td><td class="n">2</td></tr>
       <tr><td>Servo PWM: MG996R, MG90S</td><td class="n">2</td></tr>
       <tr><td>I²C (IMU)</td><td class="n">2</td></tr>
       <tr><td>HC-SR04: 1 TRIG chung + 4 ECHO</td><td class="n">5</td></tr>
       <tr><td>Công tắc (A: 1, B: 2) đọc vào</td><td class="n">1–2</td></tr>
       <tr><td>LED MOSFET</td><td class="n">1</td></tr>
-      <tr><td><b>Tổng</b></td><td class="n"><b>16–17</b></td></tr>
+      <tr><td><b>Tổng</b></td><td class="n"><b>13–14</b></td></tr>
     </table></div>
-    <p class="lead">Mình <b>chưa kiểm tra</b> số chân rảnh trên board ESP32-S3 camera cụ thể. Nếu thiếu thì thêm bộ mở rộng PCF8574 trên I²C (khoảng 30k) cho các công tắc và chân ECHO.</p></div>
+    <p class="lead">Mình <b>chưa kiểm tra</b> số chân rảnh trên board ESP32-S3 camera cụ thể. Nếu thiếu thì thêm bộ mở rộng PCF8574 trên I²C (khoảng 30k) cho các công tắc và chân ECHO. Màn hình 10,1" cần bo điều khiển riêng vì một ESP32-S3 không đủ chân để vừa chạy camera vừa chạy màn hình cỡ này. Đèn nền của nó ăn dòng nhiều hơn màn 3,5" cũ, <b>chưa tính lại</b> dòng cho mạch hạ áp 5 V 3 A.</p></div>
   </div>
   <div class="cols">
     <div class="card"><h3>Cảm biến đầy</h3><ul>
       <li>4 cảm biến siêu âm HC-SR04 trong hộp in, treo dưới gờ cổ phễu ở r215, mỗi cái nằm trên một ngăn, nhìn thẳng xuống.</li>
-      <li>Tầm đo khoảng 850 mm, từ cảm biến xuống đáy ngăn.</li>
+      <li>Tầm đo khoảng 970 mm, từ cảm biến xuống đáy ngăn.</li>
       <li>Nếu túi nilon làm đo sai thì đổi sang VL53L1X (laser, I²C).</li>
       <li>B: khi rút thùng ra, cảm biến đo thấy sàn khay, nên máy biết ngăn đó đang thiếu thùng.</li>
     </ul></div>
@@ -523,18 +528,18 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
 <section class="panel" id="p-bodyB" role="tabpanel" hidden>
   <div class="card">
     <h2>Thân B · khung nhôm, 2 ngăn kéo</h2>
-    <p>Khung nhôm định hình 20×20, kích thước ngoài 680 mm (686 mm tính cả vỏ), cao 1050 mm. Bốn thùng vuông mua sẵn đặt trên <b>2 ngăn kéo</b>, mỗi ngăn kéo chở 1 thùng trước và 1 thùng sau. Mặt sau là tấm cố định nên thùng kê sát tường được. Cụm đầu <b>bắt vít cố định</b> vào tấm đỡ, vì đổ rác không cần nhấc đầu.</p>
+    <p>Khung nhôm định hình 20×20, kích thước ngoài 680 mm (686 mm tính cả vỏ), cao 1170 mm. Bốn thùng vuông mua sẵn đặt trên <b>2 ngăn kéo</b>, mỗi ngăn kéo chở 1 thùng trước và 1 thùng sau. Mặt sau là tấm cố định nên thùng kê sát tường được. Cụm đầu <b>bắt vít cố định</b> vào tấm đỡ, vì đổ rác không cần nhấc đầu.</p>
   </div>
   <div class="vslot" id="slot-bodyB"></div>
   <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
   <div class="cols">
     <div class="card"><h3>Khung và tấm</h3><div class="tbl"><table>
       <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
-      <tr><td>Nhôm 20×20: cột đứng</td><td class="n">4 × 1050 mm</td></tr>
+      <tr><td>Nhôm 20×20: cột đứng</td><td class="n">4 × 1170 mm</td></tr>
       <tr><td>Nhôm 20×20: thanh ngang</td><td class="n">10 × 640 mm</td></tr>
-      <tr><td>Tổng chiều dài nhôm</td><td class="n">10,6 m</td></tr>
+      <tr><td>Tổng chiều dài nhôm</td><td class="n">11,1 m</td></tr>
       <tr><td>Tấm sàn, nhôm composite 4 mm</td><td class="n">680 × 680</td></tr>
-      <tr><td>Tấm đỡ đầu 6 mm, z = 924</td><td class="n">lỗ Ø560 + lỗ chốt</td></tr>
+      <tr><td>Tấm đỡ đầu 6 mm, z = 1044</td><td class="n">lỗ Ø560 + lỗ chốt</td></tr>
       <tr><td>Vách giữa và 2 tấm bắt ray, 6 mm</td><td class="n">640 × 106</td></tr>
       <tr><td>Vỏ: 2 hông, mặt sau, mặt trên, nắp trên</td><td class="n">nhôm composite 3 mm</td></tr>
     </table></div></div>
@@ -545,8 +550,8 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <tr><td>Thành hông khay</td><td class="n">4 × 647 × 60</td></tr>
       <tr><td>Thành sau khay</td><td class="n">2 × 285,6 × 60</td></tr>
       <tr><td>Mặt ngăn kéo, cao hết cửa</td><td class="n">2 tấm, có tay nắm</td></tr>
-      <tr><td>Thùng vuông, tâm ở (±158,5; ±158,5)</td><td class="n">270 × 270 × 470</td></tr>
-      <tr><td>Mép trên thùng / đáy thanh chữ thập</td><td class="n">500 / 525 mm</td></tr>
+      <tr><td>Thùng vuông, tâm ở (±158,5; ±158,5)</td><td class="n">270 × 270 × 590</td></tr>
+      <tr><td>Mép trên thùng / đáy thanh chữ thập</td><td class="n">620 / 645 mm</td></tr>
     </table></div></div>
   </div>
   <div class="card"><h3>Màu vỏ</h3>
@@ -568,12 +573,12 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
         <li>Thùng sau khi kéo ra nằm ngoài vùng của cụm đầu thêm 36,5 mm, nên nhấc thẳng lên được.</li>
         <li>Rút túi ra, buộc lại, lót túi mới, đặt thùng lại. Đẩy ngăn kéo vào rồi xác nhận đã lót túi.</li>
       </ol>
-      <p class="lead">Túi cần rộng ít nhất 55 cm, dài ít nhất 70 cm. Khoan vài lỗ thông khí ở đáy thùng để túi không bị hút dính.</p></div>
+      <p class="lead">Túi cần rộng ít nhất 55 cm, dài ít nhất 82 cm. Khoan vài lỗ thông khí ở đáy thùng để túi không bị hút dính.</p></div>
     <div class="card"><h3>Lỗi hay gặp</h3><ul>
       <li><b>Hai ray không song song:</b> ngăn kéo sẽ bị kẹt. Bắt ray lên tấm phẳng, đo hai đầu lệch nhau không quá 1 mm.</li>
-      <li><b>Ngăn kéo nặng:</b> 2 thùng đầy giấy ướt có thể tới 15–20 kg, nên chọn ray chịu 35 kg trở lên.</li>
+      <li><b>Ngăn kéo nặng:</b> 2 thùng đầy giấy ướt có thể tới 19–25 kg, nên chọn ray chịu 35 kg trở lên.</li>
       <li><b>Khung bị lệch vuông góc:</b> lắp xong đo hai đường chéo của khung, phải bằng nhau.</li>
-      <li><b>Ngân sách:</b> B gần chạm 5 triệu (xem tab Vật tư). Muốn rẻ hơn thì thay vỏ nhôm composite bằng ván MDF phủ sơn.</li>
+      <li><b>Ngân sách:</b> B khoảng 6,7 triệu, vượt ngân sách 5 triệu vì màn hình 10,1" (xem tab Vật tư). Muốn rẻ hơn thì thay vỏ nhôm composite bằng ván MDF phủ sơn.</li>
     </ul></div>
   </div>
   <div class="card"><h3>Chi tiết trong CAD (chỉ phần thân)</h3><div class="tbl"><table data-parts="b_frame" data-prefix="post_,rail_,floor_plate,head_seat_plate,side_panel,back_panel,head_panel,top_cover,center_wall,slide_,drawer_,bin_"></table></div></div>
@@ -587,7 +592,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   </div>
   <div class="card"><h3>Các trạng thái</h3><div class="tbl"><table>
     <tr><th>Trạng thái</th><th>Làm gì</th><th>Chuyển sang</th></tr>
-    <tr><td class="k">IDLE</td><td>Đĩa nằm ngang, LED xanh, chờ có vật</td><td>Camera thấy có thay đổi → SETTLE</td></tr>
+    <tr><td class="k">IDLE</td><td>Đĩa nằm ngang, LED xanh, chờ có vật. Màn hình lần lượt hiện các thông tin về rác, chữ to để người đi ngang đọc được</td><td>Camera thấy có thay đổi → SETTLE</td></tr>
     <tr><td class="k">SETTLE</td><td>Chờ vật nằm yên và miệng phễu không có tay liên tục 0,5 giây</td><td>→ CLASSIFY</td></tr>
     <tr><td class="k">CLASSIFY</td><td>Đếm số vật, đo kích thước, nhận dạng loại</td><td>Nhiều hơn 1 vật hoặc vật quá cỡ → HOLD. Không chắc loại → ngăn 4. Còn lại → CHECK</td></tr>
     <tr><td class="k">CHECK</td><td>Ngăn đích có đang đầy, đầu có đang mở, ngăn kéo có đang rút không</td><td>Bị khoá → HOLD. Được → TILT</td></tr>
@@ -648,6 +653,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <li>Servo MG996R và MG90S thật: kích thước tai, vị trí trục. Đo mô-men MG996R bằng cân treo.</li>
       <li>Puly 40T: lỗ 8 mm hay 5 mm.</li>
       <li>Board ESP32-S3 camera thật: kích thước, số chân rảnh.</li>
+      <li>Màn hình 10,1" thật: kích thước bo, vị trí lỗ bắt, độ dày kèm bo điều khiển.</li>
       <li>Ray trượt thật: độ dày, chiều cao, khoảng cách lỗ bắt.</li>
     </ul></div>
   </div>
@@ -670,7 +676,7 @@ if(renderer){renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));host
   renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;
   controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;}
 // Góc nhìn ban đầu thấy trọn thùng. Khung hẹp (điện thoại) thì lùi camera ra xa hơn
-function homeView(){const k=Math.max(1,1.25/camera.aspect);camera.position.set(1990*k,590+980*k,2220*k);if(controls){controls.target.set(0,590,0);controls.update();}}
+function homeView(){const k=Math.max(1,1.25/camera.aspect);camera.position.set(2110*k,650+1040*k,2350*k);if(controls){controls.target.set(0,650,0);controls.update();}}
 homeView();
 scene.add(new THREE.HemisphereLight(0xffffff,new THREE.Color(0x8a97a0).convertSRGBToLinear(),.45));
 const sun=new THREE.DirectionalLight(0xffffff,.9);sun.position.set(900,2200,1400);scene.add(sun);
@@ -741,6 +747,29 @@ const B_SHELL=['side_panel_','back_panel','head_panel_','top_cover','drawer_fron
 // Miệng phễu, đĩa nghiêng và bệ màn hình tô cùng tông với vỏ, kiểu cụm camera trên lưng điện thoại
 const B_TRIM=['intake_funnel','tipping_plate','display_console'];
 const FOCUS=new THREE.Color(0x8a5a00).convertSRGBToLinear(),NO_GLOW=new THREE.Color(0),WHITE=new THREE.Color(0xffffff);
+// Màn hình chờ mẫu trên màn 10,1": một thông tin về rác, chữ to để người đi ngang đọc được
+function idleScreen(){
+  const c=document.createElement('canvas');c.width=1260;c.height=800;const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;
+  if(renderer)t.anisotropy=renderer.capabilities.getMaxAnisotropy();
+  const draw=()=>{const x=c.getContext('2d'),g=x.createLinearGradient(0,0,0,800);g.addColorStop(0,'#10241f');g.addColorStop(1,'#0a1613');
+    x.fillStyle=g;x.fillRect(0,0,1260,800);
+    x.fillStyle='#5cc2a6';x.font='500 34px "JetBrains Mono",ui-monospace,Menlo,monospace';x.fillText('AWARE  ·  BẠN CÓ BIẾT?',80,112);
+    x.fillStyle='#f2f7f5';x.font='600 132px "Barlow Condensed","Arial Narrow",sans-serif';
+    ['Một chai nhựa có thể','mất khoảng 450 năm','để phân huỷ.'].forEach((l,i)=>x.fillText(l,76,292+i*140));
+    x.font='500 36px "Be Vietnam Pro",system-ui,sans-serif';x.fillStyle='#9fb3ad';x.fillText('Đặt rác lên đĩa, thùng sẽ tự phân loại:',80,676);
+    [['#4a8fb8','Nhựa'],['#c9873a','Giấy'],['#5e9e6a','Kim loại'],['#9a6bb0','Khác']].forEach(([col,n],i)=>{const px=80+i*270;
+      x.fillStyle=col;x.fillRect(px,712,30,30);x.fillStyle='#f2f7f5';x.fillText(n,px+46,741);});
+    t.needsUpdate=true;};
+  draw();
+  // Vẽ lại khi phông chữ của trang tải xong
+  try{Promise.all(['600 132px "Barlow Condensed"','500 36px "Be Vietnam Pro"','500 34px "JetBrains Mono"'].map(f=>document.fonts.load(f))).then(draw,()=>{});}catch(e){}
+  return t;
+}
+const screenTex=idleScreen();
+// Toạ độ ảnh cho mặt kính: trái sang phải theo X, dưới lên trên theo Z của CAD
+function faceUV(g){const p=g.attributes.position,b=new THREE.Box3().setFromBufferAttribute(p),uv=new Float32Array(p.count*2);
+  for(let i=0;i<p.count;i++){uv[2*i]=(p.getX(i)-b.min.x)/(b.max.x-b.min.x);uv[2*i+1]=(p.getZ(i)-b.min.z)/(b.max.z-b.min.z);}
+  g.setAttribute('uv',new THREE.BufferAttribute(uv,2));}
 // Thân nào đang chọn được: nút của nó trong #bodySeg không bị ẩn. Chỉ còn một thân thì ẩn luôn cả nhóm nút
 const bodyBtns=[...document.querySelectorAll('#bodySeg button')].filter(b=>!b.hidden),canPick=k=>bodyBtns.some(b=>b.dataset.k===k);
 document.getElementById('bodyPick').hidden=bodyBtns.length<2;
@@ -786,13 +815,16 @@ async function load(key){
     // Vỏ thân B và các chi tiết cùng tông: kim loại mờ, màu và độ nhám do applyFinish đặt
     const paint=key==='b_frame'&&B_SHELL.concat(B_TRIM).some(s=>p.name.startsWith(s));
     if(paint){m.metalness=1;m.envMapIntensity=1.15;m.toneMapped=true;}
+    // Màn hình tự phát sáng, hiện màn hình chờ mẫu
+    const lit=p.name==='tft_screen';
+    if(lit){faceUV(g);m.color.set(0);m.emissiveMap=screenTex;m.roughness=.2;}
     const mesh3=new THREE.Mesh(g,m);
     const holder=new THREE.Group();holder.add(mesh3);
     if(p.group==='tilt_plate'){tiltG.add(holder);mesh3.position.z=-pivot;}
     else if(p.group==='yaw')yawG.add(holder);
     else root.add(holder);
     mesh3.userData={name:p.name,desc:p.description,meta:meta[p.name]||{}};
-    items.push({p,holder,m,shell,paint});
+    items.push({p,holder,m,shell,paint,glow:lit?WHITE:NO_GLOW});
   }
   const shadow=contactShadow(key==='b_frame',dims.outer_mm);root.add(shadow);
   data[key]={root,yawG,tiltG,items,dims,comp,shadow};applyFinish();return data[key];
@@ -806,7 +838,7 @@ function applyView(){
     if(v.pre){if(!inView(it.p.name))op=ghost?.05:0;else if(v.xray&&(it.p.group==='skin'||it.p.name==='drum_220l'))op=.22;}
     else if(cut&&it.shell)op=.14;
     it.holder.visible=op>0;it.m.transparent=op<1;it.m.opacity=op;it.m.depthWrite=op===1;
-    it.m.emissive.copy(it.p.name===focusName?FOCUS:NO_GLOW);it.m.needsUpdate=true;});
+    it.m.emissive.copy(it.p.name===focusName?FOCUS:it.glow);it.m.needsUpdate=true;});
   d.shadow.visible=!v.pre||!!v.xray;
   const btn=document.getElementById('btnCut');
   if(v.pre){btn.textContent='Hiện phần còn lại';btn.setAttribute('aria-pressed',ghost);}
@@ -1068,17 +1100,17 @@ requestAnimationFrame(loop);fillPartTables();
   var COST=[
     ['Cụm đầu (dùng chung)','MG996R 85k + MG90S 69k (giá đã tra 10/2026)','154k'],['','Puly GT2 20T 10k + 40T 35k, 2 đai kín 158 mm 18k/cái (đã tra)','81k'],
     ['','2 gối đỡ KP08 + 2 gối đỡ KFL08 20k/cái, trục inox Ø8 1 m 75k, 3 khoá trục, khớp nối','207k'],['','ESP32-S3 camera + ống kính 120°','250k'],
-    ['','TFT 3,5" SPI','180k'],['','MPU-6050, 4 × HC-SR04, LED, MOSFET, relay, cáp dẹt 10 sợi, cầu chì 3 A','175k'],
+    ['','Màn hình IPS 10,1" kèm bo điều khiển riêng (mới thấy một mẫu giá khoảng 72 USD)','1,8 triệu'],['','MPU-6050, 4 × HC-SR04, LED, MOSFET, relay, cáp dẹt 10 sợi, cầu chì 3 A','175k'],
     ['','Adapter 12 V 5 A, XL4015 35k (đã tra), hạ áp 5 V, tụ, dây, cầu đấu','260k'],['','Nhôm tấm cắt laser: mâm 3 mm, đĩa 1,5 mm, đế xoay 4 mm','330k'],
     ['','Sơn tĩnh điện đĩa','60k'],['','PP 2 mm và 3 mm (phễu, vòng định vị), PVC dải, vỏ đầu','250k'],
     ['','Nhôm hộp 30×30, 40×30, thanh 30×13','200k'],['','Nhựa PETG in 3D khoảng 1 kg (bệ, giá chữ C, giá servo, tai, hộp cảm biến)','350k'],
-    ['','Rivet, keo, cao su','100k'],['<b>Cộng cụm đầu</b>','','<b>khoảng 2,6 triệu</b>'],
+    ['','Rivet, keo, cao su','100k'],['<b>Cộng cụm đầu</b>','','<b>khoảng 4,2 triệu</b>'],
     ['Thân A','Phuy HDPE 220 L nắp mở','300k'],['','Vách PVC foam 5 mm và nắp vách, cắt laser','230k'],
     ['','4 khung túi gỗ dán 6 mm, cắt laser','120k'],['','2 khoá bật, công tắc, dây néo tường','130k'],
-    ['<b>Tổng A</b>','','<b>khoảng 3,39 triệu</b>'],
-    ['Thân B','Nhôm định hình 20×20, 10,6 m, kèm ke góc và con trượt','1,05 triệu'],['','Tấm nhôm composite 3–6 mm, khoảng 4,5 m², cắt laser','650k'],
-    ['','4 ray bi 600 mm (2 cặp)','360k'],['','4 thùng vuông khoảng 30 L','320k'],['','Tay nắm, rivet, ke, 2 công tắc','100k'],
-    ['<b>Tổng B</b>','','<b>khoảng 5,08 triệu, vượt ngân sách một chút</b>']
+    ['<b>Tổng A</b>','','<b>khoảng 5,0 triệu</b>'],
+    ['Thân B','Nhôm định hình 20×20, 11,1 m, kèm ke góc và con trượt','1,05 triệu'],['','Tấm nhôm composite 3–6 mm, khoảng 4,8 m², cắt laser','650k'],
+    ['','4 ray bi 600 mm (2 cặp)','360k'],['','4 thùng vuông khoảng 40 L','320k'],['','Tay nắm, rivet, ke, 2 công tắc','100k'],
+    ['<b>Tổng B</b>','','<b>khoảng 6,7 triệu, vượt ngân sách khoảng 1,7 triệu</b>']
   ];
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
   var host=document.getElementById('caseGroups');
@@ -1102,7 +1134,7 @@ requestAnimationFrame(loop);fillPartTables();
   if(ct){
     ct.innerHTML='<tr><th>Phần</th><th>Hạng mục</th><th class="n">Ước tính</th></tr>'+
       COST.map(function(c){return '<tr><td>'+c[0]+'</td><td>'+esc(c[1])+'</td><td class="n">'+c[2]+'</td></tr>';}).join('')+
-      '<tr><td colspan="3" class="lead">B vượt khoảng 0,08 triệu so với ngân sách. Cách hạ: thay vỏ nhôm composite bằng ván MDF 6 mm phủ sơn (bớt khoảng 300–400k), dùng thùng rẻ hơn, hoặc in PETG ở nhà thay vì thuê in.</td></tr>';
+      '<tr><td colspan="3" class="lead">B vượt khoảng 1,7 triệu so với ngân sách, chủ yếu vì màn hình 10,1" (đắt hơn màn 3,5" cũ khoảng 1,6 triệu). Cách hạ: dùng màn hình 7 inch (rẻ hơn khoảng 0,4–0,6 triệu), thay vỏ nhôm composite bằng ván MDF 6 mm phủ sơn (bớt khoảng 300–400k), dùng thùng rẻ hơn, hoặc in PETG ở nhà thay vì thuê in.</td></tr>';
   }
 })();
 </script>

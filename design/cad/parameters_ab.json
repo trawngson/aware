@@ -85,12 +85,116 @@
   "fill_sensor_housing_height_mm": 30.0,
   "item_mass_kg": 0.5,
   "item_diameter_mm": 60.0,
-  "console_width_mm": 260.0,
-  "console_height_mm": 190.0,
-  "console_chin_front_y_mm": 140.0,
-  "console_chin_height_mm": 30.0,
+  "console_width_mm": 160.0,
+  "console_height_mm": 46.0,
+  "console_chin_front_y_mm": 132.0,
+  "console_chin_height_mm": 20.0,
+  "console_back_y_mm": 288.0,
+  "console_back_height_mm": 34.0,
+  "console_edge_radius_mm": 4.0,
+  "console_wall_mm": 2.5,
+  "console_saddle_from_y_mm": 235.0,
+  "console_saddle_height_mm": 5.0,
   "display_lean_back_degrees": 12.0,
-  "camera_y_mm": 158.0,
+  "display_slab_mm": [
+    246.0,
+    22.0,
+    162.0
+  ],
+  "display_glass_mm": [
+    230.0,
+    3.0,
+    146.0
+  ],
+  "display_corner_radius_mm": 12.0,
+  "camera_y_mm": 150.0,
+  "led_strip_length_mm": 120.0,
+  "console_electronics_mm": {
+    "terminal_block": {
+      "size": [
+        30.0,
+        20.0,
+        15.0
+      ],
+      "at": [
+        -57.0,
+        182.0,
+        15.5
+      ]
+    },
+    "esp32_s3_board": {
+      "size": [
+        70.0,
+        30.0,
+        16.0
+      ],
+      "at": [
+        0.0,
+        185.0,
+        16.0
+      ]
+    },
+    "supply_capacitor": {
+      "size": [
+        13.0,
+        26.0,
+        13.0
+      ],
+      "at": [
+        62.5,
+        185.0,
+        14.5
+      ]
+    },
+    "servo_buck_xl4015": {
+      "size": [
+        54.0,
+        26.0,
+        18.0
+      ],
+      "at": [
+        -31.0,
+        219.0,
+        17.0
+      ]
+    },
+    "logic_buck_5v": {
+      "size": [
+        45.0,
+        22.0,
+        14.0
+      ],
+      "at": [
+        26.5,
+        217.0,
+        15.0
+      ]
+    },
+    "relay_module": {
+      "size": [
+        50.0,
+        26.0,
+        19.0
+      ],
+      "at": [
+        -15.0,
+        253.0,
+        17.5
+      ]
+    },
+    "led_mosfet": {
+      "size": [
+        34.0,
+        17.0,
+        12.0
+      ],
+      "at": [
+        35.0,
+        246.5,
+        14.0
+      ]
+    }
+  },
   "bin_categories": [
     "Nhựa",
     "Giấy",
@@ -112,6 +216,7 @@
   },
   "frame": {
     "outer_mm": 680.0,
+    "extra_height_mm": 120.0,
     "profile_mm": 20.0,
     "panel_mm": 3.0,
     "floor_plate_mm": 4.0,
@@ -127,7 +232,7 @@
   },
   "bin": {
     "width_mm": 270.0,
-    "height_mm": 470.0,
+    "height_mm": 590.0,
     "wall_mm": 3.0,
     "center_offset_mm": 158.5
   },
@@ -138,5 +243,6 @@
     "pin_r_mm": 4.0,
     "lug_width_mm": 10.0,
     "lug_outer_radius_mm": 62.0
-  }
+  },
+  "console_electronics_status": "Provisional envelopes. Measure the actual ESP32-S3 camera board, converters and relay before printing the console."
 }

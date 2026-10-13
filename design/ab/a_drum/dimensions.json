@@ -47,8 +47,8 @@
   ],
   "camera_position_mm": [
     0.0,
-    163.1,
-    1058.6
+    154.9,
+    1058.7
   ],
   "motor_cable_mm": {
     "yaw_servo": 787,
@@ -58,7 +58,62 @@
     "fold_travel_over_full_yaw": 45
   },
   "camera_hidden_plate_edge_samples_of_72": 0,
-  "camera_required_full_fov_degrees": 59.4,
+  "camera_required_full_fov_degrees": 60.2,
+  "camera_sight_margin_at_throat_mm": 6.1,
+  "camera_aim_from_vertical_degrees": 29.1,
+  "console_mm": [
+    160.0,
+    156.0,
+    46.0
+  ],
+  "display_slab_mm": [
+    246.0,
+    22.0,
+    162.0
+  ],
+  "display_glass_mm": [
+    230.0,
+    3.0,
+    146.0
+  ],
+  "display_top_height_mm": 1228.5,
+  "console_electronics_envelopes_mm": {
+    "terminal_block": [
+      30.0,
+      20.0,
+      15.0
+    ],
+    "esp32_s3_board": [
+      70.0,
+      30.0,
+      16.0
+    ],
+    "supply_capacitor": [
+      13.0,
+      26.0,
+      13.0
+    ],
+    "servo_buck_xl4015": [
+      54.0,
+      26.0,
+      18.0
+    ],
+    "logic_buck_5v": [
+      45.0,
+      22.0,
+      14.0
+    ],
+    "relay_module": [
+      50.0,
+      26.0,
+      19.0
+    ],
+    "led_mosfet": [
+      34.0,
+      17.0,
+      12.0
+    ]
+  },
   "bin_landing_radius_mm": 150.0,
   "bag_change": "Lift the head off (it stands on its beam feet), lift each bag frame out with its bag",
   "flat_pieces_mm": {},
