@@ -41,10 +41,13 @@ tilt_pulley_large,1,buy,"GT2 40T, 8 mm bore (check: some are 5 mm)",E1,GT2 40-to
 tipping_plate,1,laser,"Aluminium sheet 1.5 mm, matt grey powder coat",E1,320 mm tipping plate bolted to the two lugs; does not melt under a hot ember
 tilt_imu,1,buy,MPU-6050 (GY-521),E1,IMU under the plate: true tilt angle for jam detection and homing after a power cut
 motor_cable_yaw_servo,1,buy,"Servo extension 3 x 22 AWG, about 1 m",E1,"MG90S cable: console, rear hanger, beam top to the yaw servo; no moving joint"
-motor_cable_tilt_servo,1,buy,"Servo extension 3 x 22 AWG, silicone, about 1.2 m",E1,"MG996R cable, fixed part: console to the bracket, then a quarter slack loop round the yaw axis"
-motor_cable_tilt_servo_stage,1,buy,Same cable as above,E1,"MG996R cable on the turning platform: through the platform, on the -x side of the servo, clear of the belt"
-cable_clip_fixed,1,print,PETG clip with a cable tie,E1,Cable anchor on the bracket arm: the slack loop starts here
-cable_clip_stage,1,print,PETG clip with a cable tie,E1,Cable anchor on the platform: the slack loop ends here
+yaw_cable_channel,1,print,"PETG, 100 % infill at the stop lugs; rubber pads on the lug faces",E1,"Fixed rolling-loop channel on the upper bearing, with the two yaw stop lugs at +/-70 degrees"
+yaw_cable_drum,1,print,PETG,E1,"Drum under the platform, turning with it: the inner face of the rolling loop"
+yaw_stop_pin,1,buy,M4 steel bolt with an 8 mm sleeve,E1,Stop pin under the platform: hits a lug at the yaw limit even if the coupling slips
+yaw_ribbon_loop,1,buy,"Flat ribbon cable 10 cores, 1.27 mm pitch, high-flex",E1,"10-core ribbon in the rolling loop (drawn at mid travel): 6 V x2, GND x2, PWM, GND, SDA, GND, SCL, 3.3 V"
+motor_cable_tilt_servo,1,buy,"Ribbon cable, same as the loop",E1,"MG996R and IMU cable, fixed part: console to the rolling-loop channel; becomes the ribbon at the wall"
+motor_cable_tilt_servo_stage,1,buy,"Same ribbon, split to the servo plug and the IMU lead",E1,"Cable on the turning platform: up through the platform, on the -x side of the servo, clear of the belt"
+cable_clip_stage,1,print,PETG clip with a cable tie,E1,Clip on the platform: strain relief where the ribbon leaves the loop
 fill_sensor_pod_1,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
 fill_sensor_arm_1,1,print,PETG,E1,Sensor arm from the throat lip
 fill_sensor_pod_2,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"

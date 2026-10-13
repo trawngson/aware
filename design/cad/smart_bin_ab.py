@@ -41,6 +41,15 @@ def path_length(points):
     return sum(math.dist(a, b) for a, b in zip(points, points[1:]))
 
 
+def sector(r_out, r_in, a0, a1, z0, h):
+    """Annular sector from angle a0 to a1 (degrees, counter-clockwise about Z), from z0 up h."""
+    at = lambda r, a: (r * math.cos(math.radians(a)), r * math.sin(math.radians(a)))
+    mid = (a0 + a1) / 2
+    return (cq.Workplane("XY").workplane(offset=z0).moveTo(*at(r_out, a0))
+            .threePointArc(at(r_out, mid), at(r_out, a1)).lineTo(*at(r_in, a1))
+            .threePointArc(at(r_in, mid), at(r_in, a0)).close().extrude(h).val())
+
+
 def revolve(profile):
     """Solid of revolution about Z from a closed (radius, z) outline."""
     return (cq.Workplane("XZ").polyline(profile).close()
@@ -254,9 +263,14 @@ def head(p, add):
     add("yaw_collar", ring_z(8, bore, plat_bot - 8, 8), metal, "yaw", lift,
         "Shaft collar resting on the upper bearing: carries the stage weight", "buy", "Shaft collar 8 mm")
     half_y = p["yaw_platform_half_y_mm"]
-    loop_r = math.hypot(cab_dx, mc["riser_y_mm"])
+    # The ribbon leaves the rolling-loop channel next to the drum and climbs through the platform.
+    drum_ri, drum_ro = mc["drum_radius_mm"]
+    rib_t = mc["ribbon_thickness_mm"]
+    exit_r = drum_ro + .25 + rib_t / 2
+    exit_a = math.radians(mc["exit_angle_degrees"])
+    exit_xy = (exit_r * math.cos(exit_a), exit_r * math.sin(exit_a))
     add("yaw_platform", box(2 * (block_x + 15), 2 * half_y, 5, (0, 0, plat_bot + 2.5)).cut(
-        cylinder(cab_r + .75, 5, (loop_r, 0, plat_bot), (0, 0, 1))), charcoal, "yaw", lift,
+        cylinder(cab_r + .75, 5, (*exit_xy, plat_bot), (0, 0, 1))), charcoal, "yaw", lift,
         "Turning platform carrying the hinge posts, the tilt servo and the stop pads", "laser",
         "Aluminium sheet 4 mm")
     block_base = pivot - 15
@@ -342,30 +356,77 @@ def head(p, add):
     add("motor_cable_yaw_servo", cable(yaw_cable, cab_r), (.93, .55, .15), "tilt_fixed", lift,
         "MG90S cable: console, rear hanger, beam top to the yaw servo; no moving joint", "buy",
         "Servo extension 3 x 22 AWG, about 1 m")
-    riser_y = mc["riser_y_mm"]
-    loop_lo, loop_hi = z_of(arm_hi) + 5 + 8, plat_bot - 4
-    a0 = math.atan2(riser_y, cab_dx)
-    arc = [(loop_r * math.cos(a0 * (1 - k / 6)), loop_r * math.sin(a0 * (1 - k / 6)),
-            loop_lo + (loop_hi - loop_lo) * k / 6) for k in range(1, 7)]
-    tilt_fixed_path = common(cab_dx) + [(cab_dx, riser_y, on_beam), (cab_dx, riser_y, loop_lo)] + arc
+    # Rolling loop under the platform. The ribbon enters through the fixed outer wall, runs along
+    # it, folds back in a U and runs along the drum that turns with the platform. Turning the
+    # platform only rolls the U along the channel, so the ribbon always bends at the same radius.
+    wall_ri, wall_ro = mc["channel_wall_radius_mm"]
+    rib_w = mc["ribbon_width_mm"]
+    floor_z = z_of(arm_hi) + 5 + 4                       # on the upper bearing flange
+    rib_z = floor_z + 2.5
+    assert rib_z + rib_w < plat_bot - .5, "ribbon fits under the platform"
+    assert drum_ri > 11 + 1, "drum clears the upper bearing hub"
+    ent_a, fold_a = mc["entry_angle_degrees"], mc["fold_angle_degrees"]
+    hs_ = p["yaw_hard_stop"]
+    lug_a = (hs_["lug_width_mm"] / 2 + hs_["pin_r_mm"]) / hs_["pin_radius_mm"]
+    lug_angles = [180 + s * (hs_["travel_degrees"] + math.degrees(lug_a)) for s in (-1, 1)]
+    channel = tube(wall_ro, 12, floor_z, 2).fuse(tube(wall_ro, wall_ri, floor_z, plat_bot - .5 - floor_z))
+    for a in lug_angles:
+        lug_len = hs_["lug_outer_radius_mm"] - wall_ri
+        channel = channel.fuse(box(lug_len, hs_["lug_width_mm"], 12, (wall_ri + lug_len / 2, 0, floor_z + 6))
+                               .rotate((0, 0, 0), (0, 0, 1), a))
+    slot = box(10, 7, rib_w + .6, (wall_ri + 1.5, 0, rib_z + rib_w / 2)).rotate((0, 0, 0), (0, 0, 1), ent_a)
+    channel = channel.cut(slot)
+    add("yaw_cable_channel", channel, charcoal, "tilt_fixed", lift,
+        f"Fixed rolling-loop channel on the upper bearing, with the two yaw stop lugs at +/-{hs_['travel_degrees']:.0f} degrees",
+        "print", "PETG, 100 % infill at the stop lugs; rubber pads on the lug faces")
+    add("yaw_cable_drum", tube(drum_ro, drum_ri, floor_z + 2.5, plat_bot - (floor_z + 2.5)), charcoal, "yaw", lift,
+        "Drum under the platform, turning with it: the inner face of the rolling loop", "print", "PETG")
+    pr, pin_r = hs_["pin_radius_mm"], hs_["pin_r_mm"]
+    add("yaw_stop_pin", cylinder(pin_r, plat_bot - (floor_z + 4), (-pr, 0, floor_z + 4), (0, 0, 1)), metal, "yaw", lift,
+        "Stop pin under the platform: hits a lug at the yaw limit even if the coupling slips", "buy",
+        "M4 steel bolt with an 8 mm sleeve")
+
+    # Ribbon in the channel, drawn at mid travel: outer run, U fold, drum run.
+    r_o, r_i = wall_ri - .25 - rib_t / 2, exit_r
+    fold_c, fold_rad = (r_o + r_i) / 2, (r_o - r_i) / 2
+    outer_run = sector(r_o + rib_t / 2, r_o - rib_t / 2, fold_a, ent_a, rib_z, rib_w)
+    inner_run = sector(r_i + rib_t / 2, r_i - rib_t / 2, fold_a, mc["exit_angle_degrees"], rib_z, rib_w)
+    fa = math.radians(fold_a)
+    centre = (fold_c * math.cos(fa), fold_c * math.sin(fa))
+    tangent = math.degrees(math.atan2(-math.cos(fa), math.sin(fa)))     # pointing past the fold
+    fold = tube(fold_rad + rib_t / 2, fold_rad - rib_t / 2, rib_z, rib_w).translate((*centre, 0)).intersect(
+        box(40, 60, rib_w + 2, (20, 0, rib_z + rib_w / 2)).rotate((0, 0, 0), (0, 0, 1), tangent).translate((*centre, 0)))
+    loop = outer_run.fuse(inner_run).fuse(fold).clean()
+    add("yaw_ribbon_loop", loop, (.85, .18, .18), "yaw", lift,
+        f"{mc['ribbon_cores']}-core ribbon in the rolling loop (drawn at mid travel): 6 V x2, GND x2, PWM, GND, SDA, GND, SCL, 3.3 V",
+        "buy", f"Flat ribbon cable {mc['ribbon_cores']} cores, 1.27 mm pitch, high-flex")
+    loop_len = (r_o * math.radians(ent_a - fold_a) + math.pi * fold_rad
+                + r_i * math.radians(mc["exit_angle_degrees"] - fold_a))
+
+    # Fixed run of the MG996R cable: beam top, a riser outside the channel, in through the wall slot.
+    rr, ea = mc["riser_radius_mm"], math.radians(ent_a)
+    riser_xy = (rr * math.cos(ea), rr * math.sin(ea))
+    entry_z = rib_z + rib_w / 2
+    tilt_fixed_path = common(cab_dx) + [(cab_dx, 60, on_beam), (*riser_xy, on_beam), (*riser_xy, entry_z),
+                                        ((wall_ro + 1) * math.cos(ea), (wall_ro + 1) * math.sin(ea), entry_z)]
     add("motor_cable_tilt_servo", cable(tilt_fixed_path, cab_r), (.85, .18, .18), "tilt_fixed", lift,
-        "MG996R cable, fixed part: console to the bracket, then a quarter slack loop round the yaw axis",
-        "buy", "Servo extension 3 x 22 AWG, silicone, about 1.2 m")
-    # Up the servo's rear end face to where its lead leaves the case.
+        "MG996R and IMU cable, fixed part: console to the rolling-loop channel; becomes the ribbon at the wall",
+        "buy", "Ribbon cable, same as the loop")
+    # From the drum up through the platform, then up the servo's rear end face to its lead.
     srv_end_y = body_y0 + s_len + cab_r
-    stage_path = [(loop_r, 0, plat_bot - 2), (loop_r, 0, plat_top + cab_r), (loop_r, srv_end_y, plat_top + cab_r),
-                  (loop_r, srv_end_y, shaft_z - 4)]
+    stage_path = [(*exit_xy, rib_z + rib_w + 1), (*exit_xy, plat_top + cab_r), (exit_xy[0], srv_end_y, plat_top + cab_r),
+                  (exit_xy[0], srv_end_y, shaft_z - 4)]
     add("motor_cable_tilt_servo_stage", cable(stage_path, cab_r), (.85, .18, .18), "yaw", lift,
-        "MG996R cable on the turning platform: through the platform, on the -x side of the servo, "
-        "clear of the belt", "buy", "Same cable as above")
-    add("cable_clip_fixed", box(8, 4, 8, (cab_dx, 18.2, z_of(arm_hi) + 3 + 4)), charcoal, "tilt_fixed", lift,
-        "Cable anchor on the bracket arm: the slack loop starts here", "print", "PETG clip with a cable tie")
-    add("cable_clip_stage", box(6, 8, 4, (loop_r + cab_r + 3.35, 14, plat_top + 2)), charcoal, "yaw", lift,
-        "Cable anchor on the platform: the slack loop ends here", "print", "PETG clip with a cable tie")
+        "Cable on the turning platform: up through the platform, on the -x side of the servo, clear of the belt",
+        "buy", "Same ribbon, split to the servo plug and the IMU lead")
+    add("cable_clip_stage", box(6, 8, 4, (exit_xy[0] + cab_r + 3.35, 18, plat_top + 2)), charcoal, "yaw", lift,
+        "Clip on the platform: strain relief where the ribbon leaves the loop", "print", "PETG clip with a cable tie")
+    travel = math.radians(2 * hs_["travel_degrees"])
     cable_lengths = {"yaw_servo": round(path_length(yaw_cable)),
-                     "tilt_servo": round(path_length(tilt_fixed_path) + path_length(stage_path) + 2),
-                     "slack_loop_radius": round(loop_r, 1),
-                     "slack_loop_stretch_over_yaw_travel": round(loop_r * math.radians(2 * p["maximum_yaw_degrees"]))}
+                     "tilt_servo": round(path_length(tilt_fixed_path) + loop_len + path_length(stage_path)),
+                     "rolling_loop_length": round(loop_len),
+                     "rolling_loop_bend_radius": round(fold_rad, 1),
+                     "fold_travel_over_full_yaw": round(math.degrees(travel * r_i / (r_o + r_i)))}
 
     # Fill sensors hang off the throat lip, under the funnel and out of the item path.
     pod_w, pod_h = p["fill_sensor_housing_width_mm"], p["fill_sensor_housing_height_mm"]

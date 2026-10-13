@@ -296,33 +296,40 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <p><b>IMU không đo được góc xoay</b>, vì trọng lực không đổi khi xoay quanh trục đứng. MG90S chỉ chịu quán tính nên ít khi trượt bước. Nếu thử thực tế thấy hay đổ nhầm ngăn thì thêm AS5600 (khoảng 55k) dưới trục đứng.</p>
     <p class="lead">Dây MG996R và IMU đi qua trục xoay: chừa vòng dây đủ dài cho ±45° xoay và ±47° nghiêng. Dùng dây silicon mềm.</p>
   </div>
-  <div class="card"><h3>Đi dây động cơ (đã vẽ trong CAD)</h3>
-    <p>Hai bó dây vẽ thành ống Ø3,5 mm: <b style="color:#e08a26">cam là dây MG90S</b>, <b style="color:#c83030">đỏ là dây MG996R</b>. Kiểm tra va chạm có tính cả dây, ở mọi tư thế xoay và nghiêng. Bấm dòng <code>motor_cable_…</code> trong bảng bên dưới để làm nổi từng bó dây.</p>
-<pre class="sk">bệ màn hình (giắc cắm, relay, tụ 2200 µF)
-  │ xuống qua lỗ Ø5 ở vành phễu (y = 285, khe giữa phễu côn và vỏ đầu)
-  │ ngang trên mâm, xuống qua lỗ Ø5 ở mâm (y = 236)
-  │ dọc mặt trong thanh treo phía sau
-  ▼ trên mặt cánh sau thanh chữ thập (z ≈ 557)
-  ├─ cam: tới MG90S ở tâm. Không qua khớp nào, dài khoảng 0,79 m
-  └─ đỏ: leo lên cạnh giá chữ C (y = 22) ── kẹp neo trên tay giá
-        └ vòng chùng ¼ vòng quanh trục đứng, bán kính 23,4 mm (z 660–668)
-            └ chui lên qua lỗ ở đế xoay ── kẹp neo trên đế
-                └ chạy trên mặt đế phía −x, xa đai, lên tới đầu dây của MG996R
-                  dài khoảng 0,96 m</pre>
+  <div class="card"><h3>Đi dây động cơ qua khớp xoay (đã vẽ trong CAD)</h3>
+    <p>Dây MG996R và IMU phải đi qua khớp xoay. Khớp này uốn khoảng 36.000 lần mỗi năm (ước tính 100 lần đổ mỗi ngày), nên không thả vòng chùng tự do mà dùng <b>vòng lăn trong rãnh tròn</b>: cáp dẹt gập chữ U, nằm giữa một thành cố định và một trống quay theo đế. Khi đế xoay, chỗ gập chỉ lăn dọc theo rãnh, nên cáp luôn uốn ở cùng một bán kính và không bị kéo căng.</p>
+<pre class="sk">Nhìn từ trên xuống, dưới đế xoay (z 658–671):
+
+        thành ngoài cố định (r 40–43), có 2 vấu chặn ở ±70°
+      ╭─────────────────────────╮
+     │  cáp ─ chạy áp thành ngoài │ ← cáp vào qua rãnh ở 60°
+     │    ╭─────────╮             │
+     │    │ trống   │  ◯ trục Ø8  │   chốt chặn M4 dưới đế, ở r 55
+     │    │ quay    │             │
+     │    ╰────┬────╯             │
+     │         ⊃ chỗ gập U, bán kính uốn 10,2 mm, lăn theo khi xoay
+      ╰─────────────────────────╯
+  cáp ra áp trống quay, đi lên qua lỗ ở đế (30°)</pre>
     <div class="tbl"><table>
       <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
-      <tr><td>Dây MG90S (đường đi trong CAD)</td><td class="n">787 mm → mua dây nối dài servo 1 m</td></tr>
-      <tr><td>Dây MG996R (đường đi trong CAD)</td><td class="n">959 mm → mua 1,2 m, dây silicon</td></tr>
-      <tr><td>Bán kính vòng chùng quanh trục đứng</td><td class="n">23,4 mm</td></tr>
-      <tr><td>Dây bị kéo thêm khi xoay hết hành trình 90°</td><td class="n">37 mm → chừa dư khoảng 80 mm</td></tr>
-      <tr><td>Lỗ đi dây ở mâm và vành phễu</td><td class="n">2 lỗ Ø5 mỗi chỗ, đã có trong file DXF</td></tr>
+      <tr><td>Cáp</td><td class="n">cáp dẹt 10 sợi, bước 1,27 mm, loại chịu uốn</td></tr>
+      <tr><td>Thứ tự sợi</td><td class="n">6 V, 6 V, GND, GND, PWM, GND, SDA, GND, SCL, 3,3 V</td></tr>
+      <tr><td>Chiều dài cáp trong rãnh</td><td class="n">134 mm</td></tr>
+      <tr><td>Bán kính uốn ở chỗ gập</td><td class="n">10,2 mm, khoảng 10 lần bề dày cáp</td></tr>
+      <tr><td>Chỗ gập lăn đi khi xoay hết ±70°</td><td class="n">khoảng 46° quanh trục</td></tr>
+      <tr><td>Dây MG996R và IMU, cả đường từ bệ</td><td class="n">khoảng 1,04 m → mua 1,2 m</td></tr>
+      <tr><td>Dây MG90S (không qua khớp)</td><td class="n">787 mm → dây nối dài servo 1 m</td></tr>
     </table></div>
-    <ul>
-      <li><b>Neo sát trục:</b> dây bị kéo thêm bằng bán kính × góc xoay. Neo ở 23 mm thì chỉ bị kéo thêm 37 mm, còn neo ở mép đế (khoảng 100 mm) sẽ bị kéo thêm khoảng 160 mm.</li>
-      <li><b>Chỉ đoạn giữa 2 kẹp neo được phép cong.</b> Hai kẹp giữ cho dây không cọ vào đâu khác. Trong hình 3D, đoạn trên đế xoay quay theo đế, còn vòng chùng được vẽ ở vị trí giữa hành trình.</li>
-      <li><b>Không có giắc cắm dưới đĩa:</b> mọi mối nối nằm trong bệ màn hình, chỗ cao và khô.</li>
-      <li><b>Dây MG996R đi phía −x của servo,</b> cách mặt phẳng đai và puly (x 57–63 mm) hơn 30 mm.</li>
-    </ul>
+  </div>
+  <div class="card"><h3>Khi trục xoay quay quá tầm hoặc quay mãi</h3>
+    <p>MG90S chuẩn chỉ quay trong 180°. Trục xoay vẫn có thể quay tự do nếu <b>khớp nối trượt</b>, <b>tuốt răng servo</b>, <b>lắp nhầm bản MG90S 360°</b>, hoặc có người lấy tay xoay đĩa. Khi đó dây có thể bị quấn quanh trục và giật đứt. Có 4 lớp bảo vệ:</p>
+    <ol>
+      <li><b>Chặn cứng ±70° (đã vẽ):</b> chốt M4 có ống lót dưới đế xoay, chạm vào 2 vấu trên rãnh. Dù servo hay khớp nối hỏng thì cụm vẫn không quay quá ±70°, đúng tầm rãnh được thiết kế. Đã kiểm tra: ở 68° chốt chưa chạm, ở 72° thì đã chạm. Tay ấn mạnh ở mép đĩa (khoảng 8 N·m) tạo khoảng 150 N lên chốt, nên vấu phải in đặc 100% và dán cao su.</li>
+      <li><b>Chống trượt khớp nối:</b> mài mặt phẳng (mặt D) trên trục ở chỗ vít hãm, bôi keo khoá ren.</li>
+      <li><b>Phần mềm phát hiện:</b> con quay trong IMU đo được <b>tốc độ</b> xoay quanh trục đứng. Thấy xoay khi không có lệnh, hoặc xoay quá xa so với lệnh, thì ngắt relay servo và báo lỗi. Ngắt xung PWM khi đứng yên để servo không rung làm mỏi dây. Lệnh xoay luôn giới hạn trong ±65°.</li>
+      <li><b>Khoanh vùng hỏng:</b> cầu chì tự phục hồi 3 A trên đường 6 V, để dây có chập thì cũng không cháy mạch. Kẹp neo giữ vỏ cáp, để lực kéo không truyền vào mối hàn.</li>
+    </ol>
+    <p class="lead">Khi lắp: cấp xung 1500 µs cho MG90S. Nếu servo cứ quay mãi thì đó là bản 360°, lắp nhầm hàng. Mình chưa thử tuổi thọ của cáp dẹt bán ở VN với bán kính uốn 10 mm. Nên in thử rãnh, cho chạy vài nghìn lần rồi đo thông mạch.</p>
   </div>
   <div class="card"><h3>Lỗi hay gặp</h3><ul>
     <li><b>Đai chùng hoặc quá căng:</b> đai kín không có bộ căng đai, nên khoảng cách tâm 48,58 mm phải đúng. Giá bắt MG996R có lỗ rãnh ±1 mm để chỉnh căng.</li>
@@ -425,7 +432,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   <div class="cols">
     <div class="card"><h3>Sơ đồ nguồn</h3>
 <pre class="sk">Adapter 12 V 5 A ──┬── hạ áp 5 V 3 A ── ESP32-S3 cam, TFT, IMU, 4 × HC-SR04, LED
-                   └── XL4015 6 V ── Relay ── tụ 2200 µF ── MG996R + MG90S
+                   └── XL4015 6 V ── cầu chì 3 A ── Relay ── tụ 2200 µF ── MG996R + MG90S
                          ▲
    công tắc đầu (A) hoặc 2 công tắc ngăn kéo (B), nối tiếp</pre>
       <ul>
@@ -588,6 +595,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <tr><td class="k">DWELL / RETURN</td><td>Giữ 0,8 giây, rồi về nằm ngang trong 1 giây</td><td>→ VERIFY</td></tr>
     <tr><td class="k">VERIFY</td><td>Chụp xem đĩa đã trống chưa, chưa trống thì lắc 2 lần</td><td>Trống → IDLE. Vẫn còn → HOLD</td></tr>
     <tr><td class="k">HOLD</td><td>Đĩa nằm ngang, LED đỏ, màn hình báo lý do</td><td>Hết lý do → IDLE</td></tr>
+    <tr><td class="k">YAW_FAULT</td><td>Con quay của IMU thấy trục xoay quay khi không có lệnh, hoặc quay quá xa so với lệnh: ngắt relay servo, báo “Lỏng hoặc kẹt trục xoay”</td><td>Kiểm tra xong, người dùng xác nhận → BOOT</td></tr>
     <tr><td class="k">JAM</td><td>Đưa đĩa về, khoá ngăn đích, báo kẹt</td><td>Người dùng xác nhận đã gỡ → IDLE</td></tr>
     <tr><td class="k">BOOT</td><td>Đọc góc IMU, đưa đĩa về nằm ngang thật chậm, tự kiểm tra 4 cảm biến</td><td>→ IDLE</td></tr>
   </table></div></div>
@@ -614,7 +622,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <div class="tbl"><table id="fixTable"></table></div>
   </div>
   <div class="card">
-    <h2>44 bad case và cách đối phó</h2>
+    <h2>45 bad case và cách đối phó</h2>
     <p>Các con số dựa trên thiết kế hiện tại: miệng phễu Ø550, cổ phễu Ø330, đĩa nhôm Ø320, khe giữa đĩa và cổ phễu 5 mm, xoay ±45° rồi nghiêng 45°, chặn cứng ở 47°, servo MG996R và MG90S (phương án D).</p>
     <div id="caseGroups"></div>
   </div>
@@ -747,7 +755,7 @@ const VIEWS={
   tilt:{title:'Cơ cấu nghiêng',tilt:true,pre:TILT_PARTS},
   dump:{title:'Đường đổ rác',tilt:true,pre:TILT_PARTS.concat(["intake_funnel","flexible_throat_skirt","divider_","bag_frame_","bin_"])},
   console:{title:'Bệ màn hình & camera',pre:["display_console","tft_screen","camera_window","led_strip"]},
-  elec:{title:'Cảm biến & điện',pre:["fill_sensor_","tilt_imu","lid_switch","drawer_switch_","led_strip","camera_window","tft_screen","tilt_servo","yaw_servo","motor_cable_","cable_clip_"]},
+  elec:{title:'Cảm biến & điện',pre:["fill_sensor_","tilt_imu","lid_switch","drawer_switch_","led_strip","camera_window","tft_screen","tilt_servo","yaw_servo","motor_cable_","cable_clip_","yaw_ribbon_loop","yaw_cable_channel","yaw_stop_pin"]},
   bodyA:{title:'Thân A · phuy',body:'a_drum',xray:true,pre:["drum_220l","divider_","bag_frame","orientation_socket","lid_switch","head_latch_"]},
   bodyB:{title:'Thân B · khung',body:'b_frame',xray:true,pre:["post_","rail_","floor_plate","head_seat_plate","side_panel","back_panel","head_panel","top_cover","center_wall","slide_","drawer_","bin_"]}
 };
@@ -1030,6 +1038,7 @@ requestAnimationFrame(loop);fillPartTables();
       [37,'Camera mờ do ẩm, bụi','So với ảnh mẫu, lệch nhiều thì báo lau',1,'T11'],
       [38,'Pin điện thoại cũ phồng','Đã bỏ E2',3,'Hết'],
       [39,'App điện thoại bị tắt','Đã bỏ E2',1,'Hết'],
+      [45,'Trục xoay quay tự do hoặc quá tầm (khớp nối trượt, tuốt răng, nhầm MG90S 360°, xoay tay)','Chốt chặn cứng ±70° giữ dây trong tầm của rãnh vòng lăn. Con quay của IMU phát hiện, ngắt servo. Cầu chì 3 A nếu dây bị chập',2,'Chặn cứng · IMU · cầu chì'],
       [40,'Mất wifi','Nhận dạng chạy ngay trên ESP32-S3, wifi chỉ để báo tin',0,'Chạy offline']]],
     ['Lót túi và thay túi',[
       [41,'Quên lót túi mới','Hỏi xác nhận trên màn hình khi đóng đầu hoặc ngăn kéo',1,'Logic đầy'],
@@ -1059,17 +1068,17 @@ requestAnimationFrame(loop);fillPartTables();
   var COST=[
     ['Cụm đầu (dùng chung)','MG996R 85k + MG90S 69k (giá đã tra 10/2026)','154k'],['','Puly GT2 20T 10k + 40T 35k, 2 đai kín 158 mm 18k/cái (đã tra)','81k'],
     ['','2 gối đỡ KP08 + 2 gối đỡ KFL08 20k/cái, trục inox Ø8 1 m 75k, 3 khoá trục, khớp nối','207k'],['','ESP32-S3 camera + ống kính 120°','250k'],
-    ['','TFT 3,5" SPI','180k'],['','MPU-6050, 4 × HC-SR04, LED, MOSFET, relay','140k'],
+    ['','TFT 3,5" SPI','180k'],['','MPU-6050, 4 × HC-SR04, LED, MOSFET, relay, cáp dẹt 10 sợi, cầu chì 3 A','175k'],
     ['','Adapter 12 V 5 A, XL4015 35k (đã tra), hạ áp 5 V, tụ, dây, cầu đấu','260k'],['','Nhôm tấm cắt laser: mâm 3 mm, đĩa 1,5 mm, đế xoay 4 mm','330k'],
     ['','Sơn tĩnh điện đĩa','60k'],['','PP 2 mm và 3 mm (phễu, vòng định vị), PVC dải, vỏ đầu','250k'],
     ['','Nhôm hộp 30×30, 40×30, thanh 30×13','200k'],['','Nhựa PETG in 3D khoảng 1 kg (bệ, giá chữ C, giá servo, tai, hộp cảm biến)','350k'],
-    ['','Rivet, keo, cao su','100k'],['<b>Cộng cụm đầu</b>','','<b>khoảng 2,56 triệu</b>'],
+    ['','Rivet, keo, cao su','100k'],['<b>Cộng cụm đầu</b>','','<b>khoảng 2,6 triệu</b>'],
     ['Thân A','Phuy HDPE 220 L nắp mở','300k'],['','Vách PVC foam 5 mm và nắp vách, cắt laser','230k'],
     ['','4 khung túi gỗ dán 6 mm, cắt laser','120k'],['','2 khoá bật, công tắc, dây néo tường','130k'],
-    ['<b>Tổng A</b>','','<b>khoảng 3,35 triệu</b>'],
+    ['<b>Tổng A</b>','','<b>khoảng 3,39 triệu</b>'],
     ['Thân B','Nhôm định hình 20×20, 10,6 m, kèm ke góc và con trượt','1,05 triệu'],['','Tấm nhôm composite 3–6 mm, khoảng 4,5 m², cắt laser','650k'],
     ['','4 ray bi 600 mm (2 cặp)','360k'],['','4 thùng vuông khoảng 30 L','320k'],['','Tay nắm, rivet, ke, 2 công tắc','100k'],
-    ['<b>Tổng B</b>','','<b>khoảng 5,05 triệu, vượt ngân sách một chút</b>']
+    ['<b>Tổng B</b>','','<b>khoảng 5,08 triệu, vượt ngân sách một chút</b>']
   ];
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
   var host=document.getElementById('caseGroups');
@@ -1093,7 +1102,7 @@ requestAnimationFrame(loop);fillPartTables();
   if(ct){
     ct.innerHTML='<tr><th>Phần</th><th>Hạng mục</th><th class="n">Ước tính</th></tr>'+
       COST.map(function(c){return '<tr><td>'+c[0]+'</td><td>'+esc(c[1])+'</td><td class="n">'+c[2]+'</td></tr>';}).join('')+
-      '<tr><td colspan="3" class="lead">B vượt khoảng 0,05 triệu so với ngân sách. Cách hạ: thay vỏ nhôm composite bằng ván MDF 6 mm phủ sơn (bớt khoảng 300–400k), dùng thùng rẻ hơn, hoặc in PETG ở nhà thay vì thuê in.</td></tr>';
+      '<tr><td colspan="3" class="lead">B vượt khoảng 0,08 triệu so với ngân sách. Cách hạ: thay vỏ nhôm composite bằng ván MDF 6 mm phủ sơn (bớt khoảng 300–400k), dùng thùng rẻ hơn, hoặc in PETG ở nhà thay vì thuê in.</td></tr>';
   }
 })();
 </script>

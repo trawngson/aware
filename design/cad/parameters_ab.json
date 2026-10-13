@@ -54,9 +54,23 @@
   "motor_cable": {
     "radius_mm": 1.75,
     "offset_x_mm": 8.0,
-    "riser_y_mm": 22.0,
     "hanger_gap_mm": 4.0,
-    "shell_y_mm": 285.0
+    "shell_y_mm": 285.0,
+    "ribbon_cores": 10,
+    "ribbon_width_mm": 12.7,
+    "ribbon_thickness_mm": 1.0,
+    "drum_radius_mm": [
+      15.0,
+      18.0
+    ],
+    "channel_wall_radius_mm": [
+      40.0,
+      43.0
+    ],
+    "entry_angle_degrees": 60.0,
+    "fold_angle_degrees": -50.0,
+    "exit_angle_degrees": 30.0,
+    "riser_radius_mm": 46.0
   },
   "tilt_stop_degrees": 47.0,
   "tilt_stop_pad_y_mm": 88.0,
@@ -117,5 +131,12 @@
     "wall_mm": 3.0,
     "center_offset_mm": 158.5
   },
-  "purchased_dimensions_status": "Provisional. Measure the actual 220 L drum and the four square bins, then update drum and bin before cutting anything."
+  "purchased_dimensions_status": "Provisional. Measure the actual 220 L drum and the four square bins, then update drum and bin before cutting anything.",
+  "yaw_hard_stop": {
+    "travel_degrees": 70.0,
+    "pin_radius_mm": 55.0,
+    "pin_r_mm": 4.0,
+    "lug_width_mm": 10.0,
+    "lug_outer_radius_mm": 62.0
+  }
 }

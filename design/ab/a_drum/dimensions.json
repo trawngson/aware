@@ -52,9 +52,10 @@
   ],
   "motor_cable_mm": {
     "yaw_servo": 787,
-    "tilt_servo": 959,
-    "slack_loop_radius": 23.4,
-    "slack_loop_stretch_over_yaw_travel": 37
+    "tilt_servo": 1043,
+    "rolling_loop_length": 134,
+    "rolling_loop_bend_radius": 10.2,
+    "fold_travel_over_full_yaw": 45
   },
   "camera_hidden_plate_edge_samples_of_72": 0,
   "camera_required_full_fov_degrees": 59.4,
