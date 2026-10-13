@@ -1,0 +1,70 @@
+component,quantity,process,material,variant,description
+head_deck,1,laser,Aluminium sheet 3 mm,E1,Head deck ring carrying all head loads; rests on the body at the deck height
+orientation_pin,1,buy,Steel dowel 6 x 25,E1,Single pin at the rear of the deck; the head seats in one orientation only
+head_locating_ring,1,laser,"PP sheet 3 mm, rolled and riveted",E1,Spigot under the deck that centres the head in the body
+head_shell_ring,1,laser,"Aluminium composite 3 mm, rolled",E1,Raised wall between deck and funnel collar
+intake_funnel,1,laser,PP sheet 2 mm,E1,"Collar, cone and throat lip; cone, collar and lip band are cut flat and riveted"
+flexible_throat_skirt,1,laser,Soft PVC strip curtain 2 mm,E1,Flexible strip fringe under the throat lip
+hanger_1,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
+hanger_2,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
+hanger_3,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
+hanger_4,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
+joint_beam,1,cut,"Aluminium rectangular tube 40 x 30 x 2, two pieces crossed and bolted through a 3 mm plate",E1,Cross beam carrying the joint; its arms lie above the bin dividers
+spider_foot_1,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
+spider_foot_2,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
+spider_foot_3,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
+spider_foot_4,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
+fixed_fork,1,print,"PETG, 60 % infill",E1,"Fixed fork for the Y hinge, with the pitch servo bracket"
+pitch_servo,1,buy,DS3218 20 kg cm,E1,DS3218 servo (metal gears) driving the Y hinge through a 2:1 belt
+pitch_pulley_small,1,buy,"GT2 20T, 6 mm belt",E1,GT2 20-tooth pulley on the pitch servo
+pitch_belt,1,buy,GT2 closed loop 122 mm,E1,"GT2 closed belt, pitch axis"
+joint_cross,1,print,PETG body with 8 mm steel pins,E1,Joint cross with two 8 mm steel pins and the roll servo bracket
+pitch_pulley_large,1,buy,"GT2 40T, 8 mm bore",E1,GT2 40-tooth pulley fixed to the Y pin
+roll_servo,1,buy,DS3218 20 kg cm,E1,DS3218 servo (metal gears) driving the X hinge through a 2:1 belt
+roll_pulley_small,1,buy,"GT2 20T, 6 mm belt",E1,GT2 20-tooth pulley on the roll servo
+roll_belt,1,buy,GT2 closed loop 122 mm,E1,"GT2 closed belt, roll axis"
+plate_yoke,1,print,"PETG, 60 % infill",E1,Moving fork joining the plate to the X hinge
+roll_pulley_large,1,buy,"GT2 40T, 8 mm bore",E1,GT2 40-tooth pulley bolted to the plate yoke
+tipping_plate,1,laser,Aluminium sheet 1.5 mm,E1,320 mm tipping plate bolted to the yoke; does not melt under a hot ember
+tilt_imu,1,buy,MPU-6050 (GY-521),E1,IMU under the yoke: true plate angle for jam detection and homing after a power cut
+tilt_stop_ring,1,laser,Aluminium sheet 5 mm,E1,Hard stop ring: the plate lands on it at 47 degrees; rubber strip on top
+tilt_stop_leg_1,1,cut,Aluminium square tube 10 x 10 x 1,E1,Leg carrying the stop ring on the joint beam
+tilt_stop_leg_2,1,cut,Aluminium square tube 10 x 10 x 1,E1,Leg carrying the stop ring on the joint beam
+tilt_stop_leg_3,1,cut,Aluminium square tube 10 x 10 x 1,E1,Leg carrying the stop ring on the joint beam
+tilt_stop_leg_4,1,cut,Aluminium square tube 10 x 10 x 1,E1,Leg carrying the stop ring on the joint beam
+fill_sensor_pod_1,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
+fill_sensor_arm_1,1,print,PETG,E1,Sensor arm from the throat lip
+fill_sensor_pod_2,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
+fill_sensor_arm_2,1,print,PETG,E1,Sensor arm from the throat lip
+fill_sensor_pod_3,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
+fill_sensor_arm_3,1,print,PETG,E1,Sensor arm from the throat lip
+fill_sensor_pod_4,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
+fill_sensor_arm_4,1,print,PETG,E1,Sensor arm from the throat lip
+display_console,1,print,"PETG, printed in 2 halves",E1,"Rear console, hollow shell: TFT face leaning back, ESP32-S3, servo supply and wiring inside, camera and LED strip under the chin, clear of any liquid in the funnel"
+tft_screen,1,buy,TFT 3.5 inch SPI,E1,3.5 inch TFT module in the console face
+camera_window,1,buy,"ESP32-S3 camera module, OV2640 with 120 degree lens",E1,"ESP32-S3 camera behind the chin window, 120 degree lens"
+led_strip,1,buy,"5 V white LED strip, 120 mm, with diffuser",E1,White LED strip under the chin lighting the plate evenly for recognition
+drum_220l,1,buy,HDPE open-top drum 220 L,E1,Open-top 220 L HDPE drum used as the body; dimensions provisional
+divider_x,1,laser,PVC foam board 5 mm,E1,"Divider plate, slot from the top; half-laps with divider_y"
+divider_y,1,laser,PVC foam board 5 mm,E1,"Divider plate, slot from the bottom"
+divider_cap,1,laser,Aluminium composite 5 mm,E1,Cross cap on the divider tops: a ledge for the bag frames on both sides
+bag_frame_1,1,laser,"Plywood 6 mm, sealed",E1,Quarter bag frame: lift it out with the full bag
+bag_frame_tab_11,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_tab_12,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_tab_13,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_2,1,laser,"Plywood 6 mm, sealed",E1,Quarter bag frame: lift it out with the full bag
+bag_frame_tab_21,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_tab_22,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_tab_23,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_3,1,laser,"Plywood 6 mm, sealed",E1,Quarter bag frame: lift it out with the full bag
+bag_frame_tab_31,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_tab_32,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_tab_33,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_4,1,laser,"Plywood 6 mm, sealed",E1,Quarter bag frame: lift it out with the full bag
+bag_frame_tab_41,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_tab_42,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+bag_frame_tab_43,1,print,"PETG, bonded with MS polymer",E1,Tab bonded to the drum wall under the frame arc
+orientation_socket,1,print,PETG,E1,Block bonded inside the rear rim; the deck pin drops into it
+lid_switch,1,buy,"Microswitch with lever, KW11",E1,Microswitch at the front rim: servos stay unpowered unless the head is seated
+head_latch_1,1,buy,"Toggle latch 40 mm, stainless",E1,"Toggle latch on the drum side, hooking over the deck rim"
+head_latch_2,1,buy,"Toggle latch 40 mm, stainless",E1,"Toggle latch on the drum side, hooking over the deck rim"

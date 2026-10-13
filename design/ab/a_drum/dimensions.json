@@ -1,0 +1,60 @@
+{
+  "revision": "ab-A-E1",
+  "units": "mm",
+  "body": "A",
+  "brain": "E1",
+  "outer_mm": [
+    585.0,
+    585.0
+  ],
+  "rim_height_mm": 1050.0,
+  "head_deck_height_mm": 930.0,
+  "bin_rim_height_mm": 547.5,
+  "bin_floor_height_mm": 5.0,
+  "capacity_l_each_provisional": 34.7,
+  "plate_level_top_height_mm": 780.0,
+  "tilt_pivot_mm": [
+    0,
+    0,
+    730.5
+  ],
+  "maximum_plate_tilt_degrees": 45.0,
+  "destination_directions_degrees": [
+    45,
+    135,
+    225,
+    315
+  ],
+  "plate_low_edge_height_at_full_tilt_mm": 651.3,
+  "exit_gap_at_full_tilt_mm": 172.9,
+  "skirt_gap_at_full_tilt_mm": 101.8,
+  "belt_center_distance_mm": 30.33,
+  "plate_mass_kg": 0.326,
+  "hinge_torque_needed_nm": 0.941,
+  "servo_torque_needed_nm": 0.523,
+  "servo_stall_torque_nm": 1.86,
+  "servo_load_fraction_of_stall": 0.281,
+  "design_item_mass_kg": 0.5,
+  "max_item_kg_at_half_stall": 0.94,
+  "max_item_kg_at_stall": 1.95,
+  "max_plate_edge_force_n": 20.9,
+  "tilt_stop_degrees": 47.0,
+  "bin_categories": [
+    "Nh\u1ef1a",
+    "Gi\u1ea5y",
+    "Kim lo\u1ea1i",
+    "Kh\u00e1c"
+  ],
+  "camera_position_mm": [
+    0.0,
+    163.1,
+    1058.6
+  ],
+  "camera_hidden_plate_edge_samples_of_72": 0,
+  "camera_required_full_fov_degrees": 59.4,
+  "bin_landing_radius_mm": 150.0,
+  "bag_change": "Lift the head off (it stands on its beam feet), lift each bag frame out with its bag",
+  "flat_pieces_mm": {},
+  "purchased_dimensions_status": "Provisional. Measure the actual 220 L drum and the four square bins, then update drum and bin before cutting anything.",
+  "status": "Prototype CAD; fasteners, wiring and hinges are not modelled"
+}
