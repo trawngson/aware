@@ -465,7 +465,11 @@ def head(p, add):
             .close().extrude(cw / 2, both=True).edges("|X").edges(upper).fillet(edge_r).val())
     # Plan outline of the base: a straight front and a half-round back.
     round_y = y_back - cw / 2
-    plan = (cq.Workplane("XY").center(0, (y_front + round_y) / 2).rect(cw, round_y - y_front).extrude(ch)
+    # The motor cables leave through the console floor, so their collar holes must open inside
+    # the half-round back, clear of its wall.
+    assert math.hypot(cab_dx, cab_shell_y - round_y) + cab_r + .75 <= cw / 2 - wall, \
+        "motor cable holes open inside the console"
+    plan =(cq.Workplane("XY").center(0, (y_front + round_y) / 2).rect(cw, round_y - y_front).extrude(ch)
             .edges("|Z").edges("<Y").fillet(edge_r).val().translate((0, 0, top))
             .fuse(cylinder(cw / 2, ch, (0, round_y, top), (0, 0, 1))))
     body = body.intersect(plan)

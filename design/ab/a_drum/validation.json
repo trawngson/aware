@@ -257,8 +257,8 @@
           1058.7
         ],
         "motor_cable_mm": {
-          "yaw_servo": 787,
-          "tilt_servo": 1043,
+          "yaw_servo": 780,
+          "tilt_servo": 1036,
           "rolling_loop_length": 134,
           "rolling_loop_bend_radius": 10.2,
           "fold_travel_over_full_yaw": 45
