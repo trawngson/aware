@@ -67,14 +67,14 @@
     46.0
   ],
   "display_slab_mm": [
-    246.0,
+    268.0,
     22.0,
     162.0
   ],
   "display_glass_mm": [
-    230.0,
+    235.0,
     3.0,
-    146.0
+    143.0
   ],
   "display_top_height_mm": 1348.5,
   "console_electronics_envelopes_mm": {
@@ -129,6 +129,120 @@
       285.6,
       60.0
     ]
+  },
+  "shell": {
+    "material": "Stainless 304 sheet 1 mm",
+    "sheet_mm": 1.0,
+    "hem_mm": 10.0,
+    "top_skirt_mm": 15.0,
+    "k_factor": 0.44,
+    "folds": {
+      "hem": {
+        "blank_past_outline": 9.38,
+        "bend_line_from_edge": 9.69,
+        "corner_relief": 10.38
+      },
+      "skirt": {
+        "blank_past_outline": 13.26,
+        "bend_line_from_edge": 14.13,
+        "corner_relief": 15.26
+      }
+    },
+    "blanks": {
+      "side_panel_left": {
+        "finished_mm": [
+          684.0,
+          1170.0
+        ],
+        "fold": "hem",
+        "blank_mm": [
+          702.8,
+          1188.8
+        ]
+      },
+      "side_panel_right": {
+        "finished_mm": [
+          684.0,
+          1170.0
+        ],
+        "fold": "hem",
+        "blank_mm": [
+          702.8,
+          1188.8
+        ]
+      },
+      "back_panel": {
+        "finished_mm": [
+          680.0,
+          1170.0
+        ],
+        "fold": "hem",
+        "blank_mm": [
+          698.8,
+          1188.8
+        ]
+      },
+      "head_panel_front": {
+        "finished_mm": [
+          680.0,
+          144.0
+        ],
+        "fold": "hem",
+        "blank_mm": [
+          698.8,
+          162.8
+        ]
+      },
+      "top_cover": {
+        "finished_mm": [
+          686.0,
+          686.0
+        ],
+        "fold": "skirt",
+        "blank_mm": [
+          712.5,
+          712.5
+        ],
+        "hole_d": 596.0
+      },
+      "drawer_front_left": {
+        "finished_mm": [
+          339.0,
+          1022.0
+        ],
+        "fold": "hem",
+        "blank_mm": [
+          357.8,
+          1040.8
+        ]
+      },
+      "drawer_front_right": {
+        "finished_mm": [
+          339.0,
+          1022.0
+        ],
+        "fold": "hem",
+        "blank_mm": [
+          357.8,
+          1040.8
+        ]
+      }
+    },
+    "stiffener": {
+      "quantity": 4,
+      "section_mm": "8-18-20-18-8",
+      "blank_mm": [
+        65.04,
+        979.0
+      ],
+      "bends_from_edge_mm": [
+        7.13,
+        23.39,
+        41.65,
+        57.91
+      ]
+    },
+    "stainless_mass_kg": 30.7
   },
   "purchased_dimensions_status": "Provisional. Measure the actual 220 L drum and the four square bins, then update drum and bin before cutting anything.",
   "status": "Prototype CAD; fasteners, wiring and hinges are not modelled"

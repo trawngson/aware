@@ -57,7 +57,7 @@ fill_sensor_arm_3,1,print,PETG,E1,Sensor arm from the throat lip
 fill_sensor_pod_4,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
 fill_sensor_arm_4,1,print,PETG,E1,Sensor arm from the throat lip
 display_console,1,print,"PETG, printed in 2 halves",E1,"Rear console, hollow shell: a tablet-sized display slab leaning back on a low base; ESP32-S3 camera board, servo supply and wiring in the base, camera and LED strip under the chin, clear of any liquid in the funnel"
-tft_screen,1,buy,IPS display module 10.1 inch with its own controller board,E1,"10.1 inch display filling the slab: sorting status, and facts about waste while idle"
+tft_screen,1,buy,"TJC X5 10.1 inch TJC1060X5101, no touch: IPS 1024x600, 300 nit, UART TTL, own controller board 258 x 152 x 11.5 mm",E1,"10.1 inch display filling the slab: sorting status, and facts about waste while idle"
 camera_window,1,buy,"ESP32-S3 camera module, OV2640 with 120 degree lens",E1,"ESP32-S3 camera behind the chin window, 120 degree lens"
 led_strip,1,buy,"5 V white LED strip, 120 mm, with diffuser",E1,White LED strip under the chin lighting the plate evenly for recognition
 drum_220l,1,buy,HDPE open-top drum 220 L,E1,Open-top 220 L HDPE drum used as the body; dimensions provisional

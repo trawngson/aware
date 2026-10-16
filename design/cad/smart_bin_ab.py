@@ -445,8 +445,8 @@ def head(p, add):
         add(f"fill_sensor_arm_{i}", bracket.rotate((0, 0, 0), (0, 0, 1), a), metal, "head", lift,
             "Sensor arm from the throat lip", "print", "PETG")
 
-    # Rear console: a tablet-sized display leaning back on a low base. The display fills the front
-    # of its slab and is big enough to read from across a room; the base carries the boards and
+    # Rear console: a tablet-sized display leaning back on a low base. The slab is a thin frame
+    # around the display board, big enough to read from across a room; the base carries the boards and
     # falls away to a half-round back, and the camera hides under its chin.
     # The chin reaches in over the funnel mouth so the camera sees the rear plate edge
     # past the throat lip (v3's rim-mounted camera lost about 16 % of the plate there).
@@ -456,6 +456,7 @@ def head(p, add):
     edge_r, wall = p["console_edge_radius_mm"], p["console_wall_mm"]
     lean = math.radians(p["display_lean_back_degrees"])
     (sw, st, sh), (gw, gd, gh) = p["display_slab_mm"], p["display_glass_mm"]
+    mw, md, mh = p["display_module_mm"]
     z_face0, z_top = top + chin_h, top + ch
     y_top = y_front + (z_top - z_face0) * math.tan(lean)
     assert y_back <= deck_ro, "console stays on the head"
@@ -484,7 +485,8 @@ def head(p, add):
                    .edges("|Y").fillet(p["display_corner_radius_mm"]).val())
     body = body.fuse(slab)
     shell = body
-    assert sw - gw <= 20 and sh - gh <= 20, "the screen fills the front of its slab"
+    # The glass is the module's visible area; the frame only has to cover the board around it.
+    assert gw < mw and gh < mh and sw - mw <= 12 and sh - mh <= 12, "the slab is a thin frame around the display board"
     face = on_face(box(gw, gd, gh, (0, gd / 2, 0)))
     target = (0, 0, plate_z + plate_t)
     lens_at = (0, p["camera_y_mm"], top)
@@ -502,7 +504,7 @@ def head(p, add):
     # Space check: the boards that live in the console must fit inside it with a printed wall
     # around each, clear of the screen module, the camera recess, the LED pocket and each other.
     inside = lambda part, solid: part.intersect(solid).Volume() > part.Volume() * .999
-    tft_module = on_face(box(gw + 4, 16, gh + 4, (0, 8, 0)))
+    tft_module = on_face(box(mw, md, mh, (0, md / 2, 0)))
     assert inside(tft_module, shell), "display module and its controller fit inside the slab"
     slots = [tft_module]
     for name, slot in p["console_electronics_mm"].items():
@@ -517,7 +519,8 @@ def head(p, add):
         "of any liquid in the funnel", "print", "PETG, printed in 2 halves")
     add("tft_screen", face, glass, "brain", brain_lift,
         "10.1 inch display filling the slab: sorting status, and facts about waste while idle", "buy",
-        "IPS display module 10.1 inch with its own controller board")
+        f"TJC X5 10.1 inch TJC1060X5101, no touch: IPS 1024x600, 300 nit, UART TTL, "
+        f"own controller board {mw:g} x {mh:g} x {md:g} mm")
     add("camera_window", cylinder(10.5, 2, along(10), inward), (.02, .02, .02), "brain", brain_lift,
         "ESP32-S3 camera behind the chin window, 120 degree lens", "buy",
         "ESP32-S3 camera module, OV2640 with 120 degree lens")
@@ -629,9 +632,29 @@ def body_a(p, add, h):
             "bag_note": "Lift the head off (it stands on its beam feet), lift each bag frame out with its bag"}
 
 
+def fold_allowance(leg, t, k, hem=False):
+    """Flat-pattern numbers for one folded edge of sheet t: a leg of outer length `leg` bent 90
+    degrees on an inside radius t, or closed back on itself as a hem (inside radius about 0).
+    All three are measured from the blank edge: how far the blank reaches past the finished
+    outline, where the bend centre line lies, and the square corner relief that keeps two
+    folded edges from meeting."""
+    r = 0 if hem else t
+    ba = (math.pi if hem else math.pi / 2) * (r + k * t)
+    straight = leg - (r + t)
+    return {"blank_past_outline": round(straight + ba - (r + t), 2),
+            "bend_line_from_edge": round(straight + ba / 2, 2), "corner_relief": round(straight + ba, 2)}
+
+
+def hemmed_panel(w, h, t, hem):
+    """Sheet panel w x h with a closed hem folded back along all four edges. Local frame: outer
+    face on y = 0, the hem behind it (y = t to 2t), centred on x and z."""
+    face = box(w, t, h, (0, t / 2, 0))
+    return face.fuse(box(w, t, h, (0, 1.5 * t, 0)).cut(box(w - 2 * hem, t, h - 2 * hem, (0, 1.5 * t, 0))))
+
+
 def body_b(p, add, h):
     f, b = p["frame"], p["bin"]
-    half, prof, panel = f["outer_mm"] / 2, f["profile_mm"], f["panel_mm"]
+    half, prof, sheet = f["outer_mm"] / 2, f["profile_mm"], f["panel_mm"]
     deck = p["head_deck_height_mm"]
     top = p["rim_height_mm"]
     pc = half - prof / 2
@@ -655,6 +678,9 @@ def body_b(p, add, h):
             if "y" in sides:
                 add(f"rail_{label}_x{'p' if s > 0 else 'n'}", box(inner * 2, prof, prof, (0, s, z)), alu,
                     "frame", (0, 0, 0), f"{label.title()} rail along X", "cut", "Aluminium profile 20 x 20")
+    # The back has no drawer in the way, so a mid rail holds its 1 mm sheet flat like the sides.
+    add("rail_mid_xp", box(inner * 2, prof, prof, (0, pc, 450)), alu, "frame", (0, 0, 0),
+        "Mid rail along X behind the back panel", "cut", "Aluminium profile 20 x 20")
     notched = lambda t, z: box(half * 2, half * 2, t, (0, 0, z + t / 2)).cut(
         box(prof, prof, t, (pc, pc, z + t / 2)).fuse(box(prof, prof, t, (-pc, pc, z + t / 2)),
                                                      box(prof, prof, t, (pc, -pc, z + t / 2)),
@@ -667,21 +693,43 @@ def body_b(p, add, h):
         (.55, .58, .57), "frame", (0, 0, 0),
         "Plate the head deck is bolted to; the rear hole takes the deck orientation pin", "laser",
         "Aluminium composite 6 mm (or plywood 6 mm)")
+    # Shell: 1 mm stainless sheet with a closed hem on every edge, hem side against the frame, so
+    # no cut edge is left exposed. The side panels run past the back and front panels to cover
+    # their edges, and the top cover's skirt folds down over the top edges of all four sides.
     skin = (.94, .95, .94)
+    hem, k, mat = f["panel_hem_mm"], f["bend_k_factor"], f["panel_material"]
+    folds = {"hem": fold_allowance(hem, sheet, k, hem=True), "skirt": fold_allowance(f["top_skirt_mm"], sheet, k)}
+    skin_out = half + 2 * sheet
+    shell = {"material": mat, "sheet_mm": sheet, "hem_mm": hem, "top_skirt_mm": f["top_skirt_mm"],
+             "k_factor": k, "folds": folds, "blanks": {}, "volume": 0.0}
+
+    def add_skin(name, shape, color, group, explode, description, w, hgt, fold="hem", **extra):
+        add(name, shape, color, group, explode, description, "bend", mat)
+        past = folds[fold]["blank_past_outline"]
+        shell["blanks"][name] = {"finished_mm": [round(w, 1), round(hgt, 1)], "fold": fold,
+                                 "blank_mm": [round(w + 2 * past, 1), round(hgt + 2 * past, 1)], **extra}
+        shell["volume"] += shape.Volume()
+
     for s, name in ((-1, "left"), (1, "right")):
-        add(f"side_panel_{name}", box(panel, half * 2, top, (s * (half + panel / 2), 0, top / 2)), skin,
-            "skin", (s * 250, 0, 0), "Side skin", "laser", "Aluminium composite 3 mm")
+        side = hemmed_panel(2 * skin_out, top, sheet, hem).rotate((0, 0, 0), (0, 0, 1), 90 * s)
+        add_skin(f"side_panel_{name}", side.translate((s * skin_out, 0, top / 2)), skin, "skin", (s * 250, 0, 0),
+                 "Side skin; covers the edges of the back and front panels", 2 * skin_out, top)
     door_top, head_bottom = rail_z, rail_z + 2
     door_h = door_top - 2
-    back_y = half + panel / 2
-    add("back_panel", box(half * 2, panel, top, (0, back_y, top / 2)), skin, "skin", (0, 250, 0),
-        "Fixed back skin: the bin can stand against a wall", "laser", "Aluminium composite 3 mm")
-    add("head_panel_front", box(half * 2, panel, top - head_bottom, (0, -back_y, (top + head_bottom) / 2)),
-        skin, "skin", (0, -250, 0), "Front panel around the head", "laser", "Aluminium composite 3 mm")
-    cover = box(half * 2 + panel * 2, half * 2 + panel * 2, 3, (0, 0, top + 1.5)).cut(
-        tube(p["deck_outer_radius_mm"] + 1, 0, top, 3))
-    add("top_cover", cover, (.82, .85, .84), "skin", (0, 0, 450),
-        "Top cover with the funnel opening, screwed to the frame", "laser", "Aluminium composite 3 mm")
+    back = hemmed_panel(half * 2, top, sheet, hem).rotate((0, 0, 0), (0, 0, 1), 180)
+    add_skin("back_panel", back.translate((0, skin_out, top / 2)), skin, "skin", (0, 250, 0),
+             "Fixed back skin: the bin can stand against a wall", half * 2, top)
+    add_skin("head_panel_front", hemmed_panel(half * 2, top - head_bottom, sheet, hem).translate(
+        (0, -skin_out, (top + head_bottom) / 2)), skin, "skin", (0, -250, 0), "Front panel around the head",
+        half * 2, top - head_bottom)
+    co, skirt = skin_out + sheet, f["top_skirt_mm"]
+    hole_r = p["deck_outer_radius_mm"] + 1
+    cover = box(2 * co, 2 * co, sheet, (0, 0, top + sheet / 2)).cut(tube(hole_r, 0, top, sheet)).fuse(
+        box(2 * co, 2 * co, skirt, (0, 0, top + sheet - skirt / 2)).cut(
+            box(2 * co - 2 * sheet, 2 * co - 2 * sheet, skirt, (0, 0, top + sheet - skirt / 2))))
+    add_skin("top_cover", cover, (.82, .85, .84), "skin", (0, 0, 450),
+             "Top cover with the funnel opening; its skirt folds down over the panels, screwed to the frame",
+             2 * co, 2 * co, fold="skirt", hole_d=2 * hole_r)
 
     # Two drawers, left and right, each carrying a front and a rear bin on full-extension slides.
     w, bh, bt, off = b["width_mm"], b["height_mm"], b["wall_mm"], b["center_offset_mm"]
@@ -695,6 +743,16 @@ def body_b(p, add, h):
     tray_y0, tray_y1 = -half, inner - 13
     assert off + w / 2 < tray_y1 - dw, "rear bin fits in the tray"
     steel = (.50, .52, .55)
+    sc, sd, sf = (f["drawer_stiffener_mm"][key] for key in ("crown", "depth", "flange"))
+
+    def hat(xc, z_lo, z_hi):
+        """Top-hat stiffener on the back of a drawer front: flanges on the sheet, crown inside."""
+        y0, length, zc = -(half + sheet), z_hi - z_lo, (z_lo + z_hi) / 2
+        channel = box(sc, sd, length, (xc, y0 + sd / 2, zc)).cut(
+            box(sc - 2 * sheet, sd - sheet, length, (xc, y0 + (sd - sheet) / 2, zc)))
+        return channel.fuse(*[box(sf, sheet, length, (xc + d * (sc + sf) / 2, y0 + sheet / 2, zc)) for d in (-1, 1)])
+
+    stiffener_z = (z0 + 1, door_top - hem - 4)
     add("center_wall", box(cw, inner * 2, 106, (0, 0, base + 53)), (.55, .58, .57), "frame", (0, 0, 0),
         "Centre wall carrying both inner slides", "laser", "Aluminium composite 6 mm")
     for s, name in ((-1, "left"), (1, "right")):
@@ -707,9 +765,16 @@ def body_b(p, add, h):
         tray = tray.fuse(box(out_x1 - in_x0, dw, dwh, (s * (in_x0 + out_x1) / 2, tray_y1 - dw / 2, z0 + dwh / 2)))
         add(f"drawer_{name}", tray, (.62, .65, .64), "drawers", (0, -420, 0),
             "Drawer tray holding the front and the rear bin", "laser", "Aluminium composite 4 mm, riveted angles")
-        add(f"drawer_front_{name}", box(half - 1, panel, door_h, (s * (half + 1) / 2, -back_y, 2 + door_h / 2)),
-            skin, "drawers", (0, -420, 0), "Drawer front, full height, with a pull handle", "laser",
-            "Aluminium composite 3 mm")
+        add_skin(f"drawer_front_{name}", hemmed_panel(half - 1, door_h, sheet, hem).translate(
+            (s * (half + 1) / 2, -skin_out, 2 + door_h / 2)), skin, "drawers", (0, -420, 0),
+            "Drawer front, full height, with a pull handle; two stiffeners keep the sheet flat", half - 1, door_h)
+        # One stiffener just inside each tray wall, clear of the hems, the tray floor and the frame.
+        for i, xc in enumerate((in_x0 + dw + 1 + sc / 2 + sf, out_x1 - dw - 1 - sc / 2 - sf), 1):
+            stiff = hat(s * xc, *stiffener_z)
+            add(f"drawer_stiffener_{name}_{i}", stiff, (.70, .72, .74), "drawers", (0, -420, 0),
+                "Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall",
+                "bend", f"{mat}, top-hat {sc:.0f} x {sd:.0f} with {sf:.0f} mm flanges")
+            shell["volume"] += stiff.Volume()
         for x, tag in ((in_x0 - st / 2, "inner"), (out_x1 + st / 2, "outer")):
             add(f"slide_{name}_{tag}", box(st, sl, sh, (s * x, -inner + sl / 2, z0 + 8 + sh / 2)), steel,
                 "frame", (0, 0, 0), f"Full-extension ball slide {sl:.0f} mm", "buy",
@@ -726,7 +791,15 @@ def body_b(p, add, h):
     assert z0 + bh < h["spider_bottom"] - 20
     # The rear bin must leave the head's footprint when the drawer is fully out, so it lifts free.
     assert off + w / 2 - sl < -(p["spider_reach_mm"] + 10), "rear bin clears the head when pulled out"
-    return {"body": "B", "outer_mm": [half * 2 + panel * 2, half * 2 + panel * 2],
+    # The stiffener's flat strip: flange, web, crown, web, flange with four 90 degree bends.
+    bend = fold_allowance(sd, sheet, k)
+    ba = bend["corner_relief"] - (sd - 2 * sheet)
+    legs = [sf - 2 * sheet, sd - 4 * sheet, sc - 4 * sheet, sd - 4 * sheet, sf - 2 * sheet]
+    edges = [sum(legs[:i + 1]) + ba * i for i in range(4)]
+    shell["stiffener"] = {"quantity": 4, "section_mm": f"{sf:.0f}-{sd:.0f}-{sc:.0f}-{sd:.0f}-{sf:.0f}", "blank_mm": [round(sum(legs) + 4 * ba, 2), round(stiffener_z[1] - stiffener_z[0], 1)],
+                          "bends_from_edge_mm": [round(e + ba / 2, 2) for e in edges]}
+    shell["stainless_mass_kg"] = round(shell.pop("volume") * f["panel_density_kg_m3"] / 1e9, 1)
+    return {"body": "B", "outer_mm": [2 * co, 2 * co], "shell": shell,
             "bin_rim_z": z0 + bh, "bin_floor_z": z0 + bt,
             "capacity_l_each": round((w - 2 * bt) ** 2 * (bh - bt) / 1e6, 1),
             "bin_center_radius": off * math.sqrt(2),
@@ -816,6 +889,7 @@ def build(p, body):
         "bin_landing_radius_mm": round(info["bin_center_radius"], 1),
         "bag_change": info["bag_note"],
         "flat_pieces_mm": info.get("flat_pieces", {}),
+        **({"shell": info["shell"]} if "shell" in info else {}),
         "purchased_dimensions_status": p["purchased_dimensions_status"],
         "status": "Prototype CAD; fasteners, wiring and hinges are not modelled",
     }
@@ -852,6 +926,49 @@ def flat_dxf(shape, path):
     shape = shape.translate((-bb.xmin, -bb.ymin, -(bb.zmin + bb.zmax) / 2))
     section = cq.Workplane("XY").add(shape).section()
     cq.exporters.export(section, str(path), exportType="DXF")
+
+
+def sheet_dxf(path, outline, bends, note, hole=None):
+    """Flat blank of a folded sheet part for a laser-and-bend shop: outline (and hole) on layer
+    CUT, dashed bend centre lines on layer BEND, the fold note under the blank on layer NOTE."""
+    import ezdxf
+    doc = ezdxf.new("R2010", setup=True, units=4)
+    for layer, color in (("CUT", 7), ("BEND", 1), ("NOTE", 3)):
+        doc.layers.add(layer, color=color)
+    msp = doc.modelspace()
+    msp.add_lwpolyline(outline, close=True, dxfattribs={"layer": "CUT"})
+    if hole:
+        msp.add_circle(hole[0], hole[1], dxfattribs={"layer": "CUT"})
+    for a, b in bends:
+        msp.add_line(a, b, dxfattribs={"layer": "BEND", "linetype": "DASHED"})
+    for i, line in enumerate(note):
+        msp.add_text(line, height=6, dxfattribs={"layer": "NOTE"}).set_placement((0, -14 - 10 * i))
+    doc.saveas(path)
+
+
+def shell_dxfs(shell, out):
+    """Blanks for the stainless shell: each panel folded on all four edges, and the stiffener strip."""
+    t, k = shell["sheet_mm"], shell["k_factor"]
+    for name, blank in shell["blanks"].items():
+        fold = shell["folds"][blank["fold"]]
+        b, c = fold["bend_line_from_edge"], fold["corner_relief"]
+        W, H = blank["blank_mm"]
+        outline = [(c, 0), (W - c, 0), (W - c, c), (W, c), (W, H - c), (W - c, H - c), (W - c, H), (c, H),
+                   (c, H - c), (0, H - c), (0, c), (c, c)]
+        bends = [((c, b), (W - c, b)), ((c, H - b), (W - c, H - b)), ((b, c), (b, H - c)), ((W - b, c), (W - b, H - c))]
+        how = (f"closed hem {shell['hem_mm']:.0f} mm folded back on all 4 edges" if blank["fold"] == "hem" else
+               f"skirt {shell['top_skirt_mm']:.0f} mm bent 90 deg down on all 4 edges, inside radius {t:.0f} mm")
+        hole = ((W / 2, H / 2), blank["hole_d"] / 2) if "hole_d" in blank else None
+        sheet_dxf(out / f"{name}.dxf", outline, bends, [
+            f"{name}: stainless 304, {t:.1f} mm. Finished {blank['finished_mm'][0]} x {blank['finished_mm'][1]} mm, {how}.",
+            f"Blank {W} x {H} mm. Dashed = bend centre lines, K {k}. Confirm the allowance with the shop before cutting."], hole)
+    st = shell["stiffener"]
+    W, L = st["blank_mm"]
+    sheet_dxf(out / "drawer_stiffener_x4.dxf", [(0, 0), (W, 0), (W, L), (0, L)],
+              [((x, 0), (x, L)) for x in st["bends_from_edge_mm"]], [
+                  f"drawer_stiffener x{st['quantity']}: stainless 304, {t:.1f} mm, top-hat {st['section_mm']} mm outside "
+                  "(flange, web, crown, web, flange). Bends 1 and 4 go one way, 2 and 3 the other.",
+                  f"Blank {W} x {L} mm. Dashed = bend centre lines, K {k}, inside radius {t:.0f} mm. Confirm with the shop."])
 
 
 def pattern_dxf(workplane_2d, path):
@@ -941,6 +1058,8 @@ def export_option(p, body, out):
             flat_dxf(part.shape, out / "dxf" / f"{name}.dxf")
     for name, (x, y) in metrics["flat_pieces_mm"].items():
         pattern_dxf(cq.Workplane("XY").rect(x, y), out / "dxf" / f"{name}.dxf")
+    if "shell" in metrics:
+        shell_dxfs(metrics["shell"], out / "dxf")
     metrics_e1 = metrics
     h = head(p, lambda *a, **k: None)
     report["flat_patterns"] = funnel_patterns(p, h, out / "dxf")

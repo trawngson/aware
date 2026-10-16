@@ -57,7 +57,7 @@ fill_sensor_arm_3,1,print,PETG,E1,Sensor arm from the throat lip
 fill_sensor_pod_4,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
 fill_sensor_arm_4,1,print,PETG,E1,Sensor arm from the throat lip
 display_console,1,print,"PETG, printed in 2 halves",E1,"Rear console, hollow shell: a tablet-sized display slab leaning back on a low base; ESP32-S3 camera board, servo supply and wiring in the base, camera and LED strip under the chin, clear of any liquid in the funnel"
-tft_screen,1,buy,IPS display module 10.1 inch with its own controller board,E1,"10.1 inch display filling the slab: sorting status, and facts about waste while idle"
+tft_screen,1,buy,"TJC X5 10.1 inch TJC1060X5101, no touch: IPS 1024x600, 300 nit, UART TTL, own controller board 258 x 152 x 11.5 mm",E1,"10.1 inch display filling the slab: sorting status, and facts about waste while idle"
 camera_window,1,buy,"ESP32-S3 camera module, OV2640 with 120 degree lens",E1,"ESP32-S3 camera behind the chin window, 120 degree lens"
 led_strip,1,buy,"5 V white LED strip, 120 mm, with diffuser",E1,White LED strip under the chin lighting the plate evenly for recognition
 post_1,1,cut,Aluminium profile 20 x 20,E1,Corner post
@@ -74,23 +74,28 @@ rail_seat_yp,1,cut,Aluminium profile 20 x 20,E1,Seat rail along Y
 rail_seat_xp,1,cut,Aluminium profile 20 x 20,E1,Seat rail along X
 rail_mid_yn,1,cut,Aluminium profile 20 x 20,E1,Mid rail along Y
 rail_mid_yp,1,cut,Aluminium profile 20 x 20,E1,Mid rail along Y
+rail_mid_xp,1,cut,Aluminium profile 20 x 20,E1,Mid rail along X behind the back panel
 floor_plate,1,laser,Aluminium composite 4 mm,E1,Floor the bins stand on
 head_seat_plate,1,laser,Aluminium composite 6 mm (or plywood 6 mm),E1,Plate the head deck is bolted to; the rear hole takes the deck orientation pin
-side_panel_left,1,laser,Aluminium composite 3 mm,E1,Side skin
-side_panel_right,1,laser,Aluminium composite 3 mm,E1,Side skin
-back_panel,1,laser,Aluminium composite 3 mm,E1,Fixed back skin: the bin can stand against a wall
-head_panel_front,1,laser,Aluminium composite 3 mm,E1,Front panel around the head
-top_cover,1,laser,Aluminium composite 3 mm,E1,"Top cover with the funnel opening, screwed to the frame"
+side_panel_left,1,bend,Stainless 304 sheet 1 mm,E1,Side skin; covers the edges of the back and front panels
+side_panel_right,1,bend,Stainless 304 sheet 1 mm,E1,Side skin; covers the edges of the back and front panels
+back_panel,1,bend,Stainless 304 sheet 1 mm,E1,Fixed back skin: the bin can stand against a wall
+head_panel_front,1,bend,Stainless 304 sheet 1 mm,E1,Front panel around the head
+top_cover,1,bend,Stainless 304 sheet 1 mm,E1,"Top cover with the funnel opening; its skirt folds down over the panels, screwed to the frame"
 center_wall,1,laser,Aluminium composite 6 mm,E1,Centre wall carrying both inner slides
 slide_mount_left,1,laser,Aluminium composite 6 mm,E1,Plate on the bottom rail carrying the outer slide
 drawer_left,1,laser,"Aluminium composite 4 mm, riveted angles",E1,Drawer tray holding the front and the rear bin
-drawer_front_left,1,laser,Aluminium composite 3 mm,E1,"Drawer front, full height, with a pull handle"
+drawer_front_left,1,bend,Stainless 304 sheet 1 mm,E1,"Drawer front, full height, with a pull handle; two stiffeners keep the sheet flat"
+drawer_stiffener_left_1,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
+drawer_stiffener_left_2,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
 slide_left_inner,1,buy,"Ball-bearing drawer slide 600 mm, full extension, 35 kg",E1,Full-extension ball slide 600 mm
 slide_left_outer,1,buy,"Ball-bearing drawer slide 600 mm, full extension, 35 kg",E1,Full-extension ball slide 600 mm
 drawer_switch_left,1,buy,"Microswitch with lever, KW11",E1,Microswitch the closed drawer presses; open drawer locks its two bins
 slide_mount_right,1,laser,Aluminium composite 6 mm,E1,Plate on the bottom rail carrying the outer slide
 drawer_right,1,laser,"Aluminium composite 4 mm, riveted angles",E1,Drawer tray holding the front and the rear bin
-drawer_front_right,1,laser,Aluminium composite 3 mm,E1,"Drawer front, full height, with a pull handle"
+drawer_front_right,1,bend,Stainless 304 sheet 1 mm,E1,"Drawer front, full height, with a pull handle; two stiffeners keep the sheet flat"
+drawer_stiffener_right_1,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
+drawer_stiffener_right_2,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
 slide_right_inner,1,buy,"Ball-bearing drawer slide 600 mm, full extension, 35 kg",E1,Full-extension ball slide 600 mm
 slide_right_outer,1,buy,"Ball-bearing drawer slide 600 mm, full extension, 35 kg",E1,Full-extension ball slide 600 mm
 drawer_switch_right,1,buy,"Microswitch with lever, KW11",E1,Microswitch the closed drawer presses; open drawer locks its two bins
