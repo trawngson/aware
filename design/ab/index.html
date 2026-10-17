@@ -1140,7 +1140,7 @@ requestAnimationFrame(loop);fillPartTables();
   ];
   // Bảng vật tư, mỗi dòng một món: [phần, tên, quy cách, SL, đơn vị, đơn giá, nơi bán [[tên, link], …], tình trạng, nhóm].
   // SL và đơn giá là số hoặc [thấp, cao]. Tình trạng: ok = đã tra trên trang bán, ref = bảng giá chung hoặc giá tuỳ biến thể,
-  // est = ước tính chưa tra, none = chưa tìm thấy hàng. Nhóm (shell, frame) chỉ để cộng nhanh ở đoạn tóm tắt dưới bảng.
+  // est = ước tính chưa tra, none = chưa tìm thấy hàng, free = in ở trường, không mất tiền. Nhóm (shell, frame) chỉ để cộng nhanh ở đoạn tóm tắt dưới bảng.
   var ITEMS=[
     ['head','Servo MG996R','Servo nghiêng đĩa (khoẻ, kéo qua đai 2:1). Bánh răng kim loại',1,'cái',85000,[['Linh Kiện 3M, Tạ Quang Bửu','https://chotroihn.vn/dong-co-servo-mg996']],'ok'],
     ['head','Servo MG90S','Servo xoay đĩa ±45° về phía ngăn cần đổ. Bánh răng kim loại',1,'cái',39000,[['Linh Kiện 3M','https://chotroihn.vn/dong-co-servo-mg90s']],'ok'],
@@ -1178,7 +1178,7 @@ requestAnimationFrame(loop);fillPartTables();
     ['head','Nhôm hộp 30×30×2','1,5 m (4 thanh treo 375 mm), khoảng 0,9 kg. Ước theo giá nhôm/kg',0.9,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
     ['head','Nhôm hộp 40×30×2','1,1 m (2 thanh chữ thập 540 mm), khoảng 0,8 kg. Ước theo giá nhôm/kg',0.8,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
     ['head','Nhôm thanh dẹt 30×13','0,15 m (2 trụ bản lề), khoảng 0,2 kg. Ước theo giá nhôm/kg',0.2,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
-    ['head','In 3D PETG','0,7–0,9 kg: bệ màn hình rỗng, giá chữ C, giá servo, tai, hộp cảm biến. Tự in: chỉ mua 1 cuộn eSUN 1 kg, 317k. Thuê in: 0,7–0,9 kg × 800–1.500đ/g = 0,56–1,35 triệu, có nơi tính tối thiểu 50k mỗi chi tiết',1,'lô',[317000,1350000],[['NGE 3D Printer, eSUN PETG 1 kg (Shopee)','https://shopee.vn/product/1458987144/28924391297'],['3DMaster, Hà Nội (thuê in)','https://3dmaster.com.vn/dich-vu-in-3d-theo-yeu-cau-ha-noi-o-dau-gia-tot-in-dep/']],'ok'],
+    ['head','In 3D PETG','0,7–0,9 kg: bệ màn hình rỗng, giá chữ C, giá servo, tai, hộp cảm biến. In ở trường nên không mất tiền. Nếu phải tự trả: mua 1 cuộn eSUN 1 kg 317k để tự in, hoặc thuê in 0,7–0,9 kg × 800–1.500đ/g = 0,56–1,35 triệu, có nơi tính tối thiểu 50k mỗi chi tiết',1,'lô',0,[['NGE 3D Printer, eSUN PETG 1 kg (Shopee)','https://shopee.vn/product/1458987144/28924391297'],['3DMaster, Hà Nội (thuê in)','https://3dmaster.com.vn/dich-vu-in-3d-theo-yeu-cau-ha-noi-o-dau-gia-tot-in-dep/']],'free'],
     ['head','Keo dán Alteco 110','',1,'tuýp',18000,[['Linh Kiện 3M','https://chotroihn.vn/keo-dan-alteco-110-japan']],'ok'],
     ['head','Rivet nhôm, đệm cao su tự dính 30×30','',1,'bộ',80000,[],'est'],
     ['b','Nhôm định hình 20×20','4 cột 1170 mm và 11 thanh 640 mm',11.72,'m',[45000,70000],[['Leanway, 16 Phan Trọng Tuệ, Thanh Trì (Lazada, đang hết hàng)','https://www.lazada.vn/products/nhom-dinh-hinh-20x20-lwa-221461400-mien-phi-cat-theo-kich-thuoc-yeu-cau-gia-da-bao-gom-vat-i2359442557.html'],['Vimetco','https://www.vimetco.com.vn/nhom-thanh-nhom-dinh-hinh-20x20']],'ok','frame'],
@@ -1230,7 +1230,7 @@ requestAnimationFrame(loop);fillPartTables();
     var mil=function(v){return (v/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1});};
     var milR=function(a,b){return Math.round(a/1e5)===Math.round(b/1e5)?mil(a):mil(a)+'–'+mil(b);};
     var host=function(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return u;}};
-    var ST={ok:['st-ok','Đã tra 10/2026'],ref:['st-ref','Tham khảo'],est:['st-est','Ước tính'],none:['st-none','Chưa tìm thấy']};
+    var ST={ok:['st-ok','Đã tra 10/2026'],ref:['st-ref','Tham khảo'],est:['st-est','Ước tính'],none:['st-none','Chưa tìm thấy'],free:['st-ok','In ở trường']};
     var SEC={head:'Cụm đầu · dùng chung cho thân A và B',b:'Thân B · khung nhôm, vỏ inox',a:'Thân A · phuy (đang ẩn trên trang)'};
     var SUB={head:'Cộng cụm đầu',b:'Cộng riêng thân B',a:'Cộng riêng thân A'};
     var sum={},grp={},no=0,rows='';
@@ -1251,14 +1251,14 @@ requestAnimationFrame(loop);fillPartTables();
       rows+='<tr class="sub"><td colspan="5">'+SUB[k]+'</td><td class="n">'+rng(s[0],s[1])+'</td><td colspan="3"></td></tr>';
       if(k!=='head'){
         var t=[sum.head[0]+s[0],sum.head[1]+s[1]],nm=k==='b'?'thân B':'thân A';sum['all_'+k]=t;
-        var over=t[0]>=5e6?'Vượt ngân sách 5 triệu khoảng '+milR(t[0]-5e6,t[1]-5e6)+' triệu':t[1]>5e6?'Có thể vượt ngân sách 5 triệu tới '+mil(t[1]-5e6)+' triệu':'Trong ngân sách 5 triệu';
+        var over=t[0]>=5e6?'Vượt ngân sách 5 triệu khoảng '+milR(t[0]-5e6,t[1]-5e6)+' triệu':t[1]>5e6?'Có thể vượt ngân sách 5 triệu tới '+(t[1]-5e6<1e5?Math.round((t[1]-5e6)/1e3)+'k':mil(t[1]-5e6)+' triệu'):'Trong ngân sách 5 triệu';
         rows+='<tr class="tot"><td colspan="5">Tổng '+nm+' (cụm đầu + '+nm+')</td><td class="n">'+rng(t[0],t[1])+'</td><td colspan="3">'+over+'</td></tr>';
       }
     });
     ct.innerHTML='<tr><th class="n">#</th><th>Hạng mục</th><th>Quy cách, ghi chú</th><th class="n">SL</th><th class="n">Đơn giá (₫)</th><th class="n">Thành tiền (₫)</th><th>Nơi bán</th><th>Link</th><th>Tình trạng</th></tr>'+rows;
     var b=sum.all_b,hd=sum.head,sh=grp.shell,fr=grp.frame;
     var cl=document.getElementById('costLead');
-    if(cl)cl.textContent='Thân B khoảng '+milR(b[0],b[1])+' triệu, vượt ngân sách 5 triệu khoảng '+milR(b[0]-5e6,b[1]-5e6)+' triệu. Tốn nhất là vỏ inox (tấm, cắt, chấn, phun cát, băng keo, vít: '+milR(sh[0],sh[1])+' triệu), rồi đến cụm đầu ('+milR(hd[0],hd[1])+' triệu, trong đó màn hình 1,17 triệu), khung nhôm và các tấm bên trong ('+milR(fr[0],fr[1])+' triệu). Cách hạ: không phun cát mà để mặt 2B (bớt 0,5–1,7 triệu), tự in 3D thay vì thuê (bớt tới khoảng 1 triệu), mua inox cắt theo kích thước thay vì nguyên tấm (bớt khoảng 1,1 triệu), dùng inox 0,8 mm (bớt khoảng 20% tiền tấm). Màu xám, xanh lá đậm hoặc đen cần mạ PVD, thêm khoảng 1,7–3,7 triệu (giá một xưởng ở TP.HCM).';
+    if(cl)cl.textContent='Thân B khoảng '+milR(b[0],b[1])+' triệu, vượt ngân sách 5 triệu khoảng '+milR(b[0]-5e6,b[1]-5e6)+' triệu. Tốn nhất là vỏ inox (tấm, cắt, chấn, phun cát, băng keo, vít: '+milR(sh[0],sh[1])+' triệu), rồi đến cụm đầu ('+milR(hd[0],hd[1])+' triệu, trong đó màn hình 1,17 triệu), khung nhôm và các tấm bên trong ('+milR(fr[0],fr[1])+' triệu). Cách hạ: không phun cát mà để mặt 2B (bớt 0,5–1,7 triệu), mua inox cắt theo kích thước thay vì nguyên tấm (bớt khoảng 1,1 triệu), dùng inox 0,8 mm (bớt khoảng 20% tiền tấm). Màu xám, xanh lá đậm hoặc đen cần mạ PVD, thêm khoảng 1,7–3,7 triệu (giá một xưởng ở TP.HCM).';
     var bb=document.getElementById('budgetB');if(bb)bb.textContent='B khoảng '+milR(b[0],b[1])+' triệu';
   }
 })();
