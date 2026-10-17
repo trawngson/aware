@@ -428,7 +428,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <div class="card"><h3>Bên trong bệ (vỏ in rỗng)</h3><ul>
       <li>Board ESP32-S3 camera, ống kính 120° chĩa qua ô kính dưới cằm, hướng vào tâm đĩa.</li>
       <li>Màn hình TJC X5 10,1" có bo điều khiển riêng ở mặt sau (cả cụm 258 × 152 × 11,5 mm), nằm gọn trong tấm màn hình, nối với board camera bằng UART TTL 4 chân. Giao diện màn hình làm bằng phần mềm của TJC, có thể chỉ có tiếng Trung.</li>
-      <li>Dải LED 5 V có tấm khuếch tán, điều khiển qua MOSFET.</li>
+      <li>Dải LED 5 V có tấm khuếch tán, bật tắt qua module 2 MOSFET XY-MOS. Module nhận tín hiệu từ 3,3 V nên chân GPIO của ESP32 mở hết MOSFET, đèn sáng tối đa. Lúc camera chụp thì bật 100%, không làm mờ bằng PWM để ảnh không bị sọc.</li>
       <li>Cầu đấu nguồn 5 V, tụ 2200 µF, module relay cắt nguồn servo (xem tab Điện).</li>
       <li>Bệ in PETG làm 2 nửa, ghép bằng vít M3 và đai ốc cấy nhiệt. Bệ nằm trên mép trên của phễu, <b>ra khỏi đường nước</b>, bắt xuống mép phễu qua một vành thấp hai bên.</li>
       <li><b>Chỗ cho mạch:</b> script kiểm tra 7 khối đặt vừa trong đế, mỗi khối có vách 2,5 mm bao quanh và không chạm màn hình, hốc camera hay nhau: board ESP32-S3 (70×30×16), relay (50×26×19), 2 mạch hạ áp (54×26×18 và 45×22×14), tụ, cầu đấu và MOSFET đèn. Màn hình cùng bo điều khiển của nó (258×152×11,5, theo datasheet) nằm vừa trong tấm. Kích thước các bo trong đế là số tạm.</li>
@@ -1120,11 +1120,11 @@ requestAnimationFrame(loop);fillPartTables();
     ['head','Màn hình TJC X5 10,1"','TJC1060X5101, không cảm ứng, IPS 1024×600, UART',1,'cái',1172000,[['Thế Giới Tech (Shopee)','https://shopee.vn/product/658464304/52117992790'],['Thế Giới Tech Automation (Shopee)','https://shopee.vn/product/1220096432/26383863672']],'ok'],
     ['head','Cảm biến góc MPU-6050','GY-521, gắn trên đĩa',1,'cái',40000,[['Linh Kiện 3M','https://chotroihn.vn/module-cam-bien-gia-toc-goc-tai-linh-kien-dien-tu-3m']],'ok'],
     ['head','Cảm biến siêu âm HC-SR04','Đo mức đầy, mỗi ngăn 1 cái',4,'cái',25000,[['Linh Kiện 3M','https://chotroihn.vn/cam-bien-sieu-am-srf04']],'ok'],
-    ['head','Module MOSFET','Bật tắt dải LED',1,'cái',15000,[['Linh Kiện 3M','https://chotroihn.vn/module-mosfet-mos-hieu-ung-truong']],'ok'],
+    ['head','Module 2 MOSFET XY-MOS','Bật tắt dải LED. 2 con D4184 song song, không cách ly quang, tín hiệu 3,3–20 V nên ESP32 mở hết được. VIN lấy 5 V từ mạch hạ áp, LED nối OUT+ và OUT−. Tên listing không ghi XY-MOS hay D4184 và chưa xem được đánh giá shop: nhận hàng xem 2 con MOSFET có chữ D4184. Không dùng module cách ly quang của Linh Kiện 3M: nguồn 5 V chỉ cho cổng MOSFET khoảng 2,3 V',1,'cái',[18000,40000],[['Linh kiện điện tử Hưng Yên (Shopee)','https://shopee.vn/product/119714962/27855010200'],['Linhkien888, Hà Nội (Shopee)','https://shopee.vn/product/81293376/26745330889']],'ok'],
     ['head','Module relay 5 V','Cắt nguồn servo khi mở nắp hoặc kéo ngăn',1,'cái',15000,[['Linh Kiện 3M','https://chotroihn.vn/module-relay-5vdc']],'ok'],
     ['head','Cầu chì ống 5×20 mm','3 A',1,'cái',1000,[['Linh Kiện 3M','https://chotroihn.vn/cau-chi-ong-5x20mm-250v']],'ok'],
     ['head','Đế cầu chì ống','',1,'cái',3990,[['Linh Kiện 3M','https://chotroihn.vn/de-cau-chi-ong']],'ok'],
-    ['head','LED dây 5 V trắng','Chip 2835, cuộn 1 m, dùng 120 mm dưới cằm bệ màn hình',1,'cuộn',61600,[['Topick_Lifestyle (Shopee)','https://shopee.vn/product/1613056660/48319016543']],'ok'],
+    ['head','LED dây 5 V trắng','Chip 2835, cuộn 1 m, đầu cắm USB, dùng 120 mm dưới cằm bệ màn hình. Cắt đoạn ở đầu có dây, bỏ phích USB, nối dây + và − vào OUT+ và OUT− của module MOSFET. Không cắm vào cổng USB của board ESP32',1,'cuộn',61600,[['Topick_Lifestyle (Shopee)','https://shopee.vn/product/1613056660/48319016543']],'ok'],
     ['head','Cáp dẹt 10 sợi','Bước 1,27 mm, dài 1 m, cho vòng cáp xoay',1,'m',15750,[['Linh Kiện SMD, Hà Nội (Shopee, đang hết hàng)','https://shopee.vn/product/134796651/25204950254']],'ok'],
     ['head','Adapter 12 V 5 A','Jack 5,5 × 2,1 mm',1,'cái',95000,[['Linh Kiện 3M','https://chotroihn.vn/nguon-adapter-12v-5a-5-5-2-1mm']],'ok'],
     ['head','Mạch hạ áp XL4015 5 A','Hạ 12 V xuống 6 V cho 2 servo',1,'cái',35000,[['Linh Kiện 3M','https://chotroihn.vn/module-buck-dc-dc-5a-xl4015']],'ok'],
