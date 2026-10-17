@@ -1,0 +1,106 @@
+component,quantity,process,material,variant,description
+head_deck,1,laser,Aluminium sheet 3 mm,E1,Head deck ring carrying all head loads; rests on the body at the deck height
+orientation_pin,1,buy,Steel dowel 6 x 25,E1,Single pin at the rear of the deck; the head seats in one orientation only
+head_locating_ring,1,laser,"PP sheet 3 mm, rolled and riveted",E1,Spigot under the deck that centres the head in the body
+head_shell_ring,1,laser,"Aluminium composite 3 mm, rolled",E1,Raised wall between deck and funnel collar
+intake_funnel,1,laser,PP sheet 2 mm,E1,"Collar, cone and throat lip; cone, collar and lip band are cut flat and riveted"
+flexible_throat_skirt,1,laser,Soft PVC strip curtain 2 mm,E1,Flexible strip fringe under the throat lip
+hanger_1,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
+hanger_2,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
+hanger_3,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
+hanger_4,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
+joint_beam,1,cut,"Aluminium rectangular tube 40 x 30 x 2, two pieces crossed and bolted through a 3 mm plate",E1,Cross beam carrying the joint; its arms lie above the bin dividers
+spider_foot_1,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
+spider_foot_2,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
+spider_foot_3,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
+spider_foot_4,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
+yaw_bracket,1,print,"PETG, 60 % infill (or bent aluminium 3 mm)",E1,Fixed C-bracket on the beam hub: two arms for the yaw bearings and a shelf for the yaw servo
+yaw_bearing_lower,1,buy,"Flanged pillow block KFL08, bore 8 mm",E1,Flanged bearing for the vertical yaw shaft
+yaw_bearing_upper,1,buy,"Flanged pillow block KFL08, bore 8 mm",E1,Flanged bearing for the vertical yaw shaft
+yaw_servo,1,buy,"MG90S, metal gears",E1,MG90S turning the tilt stage plus or minus 45 degrees toward the bin
+yaw_servo_horn,1,buy,Comes with the servo,E1,"Round horn that ships with the MG90S, screwed to the hub"
+yaw_hub,1,print,"PETG, 100 % infill",E1,"Hub from the yaw servo horn to the 8 mm shaft: horn screws below, M3 set screw and nut on the shaft flat"
+yaw_shaft,1,cut,Stainless 304 rod 8 mm,E1,Vertical yaw shaft in the two flanged bearings
+yaw_collar,1,buy,Shaft collar 8 mm,E1,Shaft collar resting on the upper bearing: carries the stage weight
+yaw_platform,1,laser,Aluminium sheet 4 mm,E1,"Turning platform carrying the hinge posts, the tilt servo and the stop pads"
+hinge_post_1,1,cut,Aluminium flat bar 30 x 13,E1,Post from the platform to a hinge pillow block
+hinge_block_1,1,buy,"Pillow block KP08, bore 8 mm",E1,Horizontal pillow block carrying the hinge shaft; takes the plate load off the servo
+hinge_post_2,1,cut,Aluminium flat bar 30 x 13,E1,Post from the platform to a hinge pillow block
+hinge_block_2,1,buy,"Pillow block KP08, bore 8 mm",E1,Horizontal pillow block carrying the hinge shaft; takes the plate load off the servo
+tilt_servo,1,buy,"MG996R, metal gears",E1,MG996R driving the hinge through the 2:1 belt
+tilt_servo_bracket,1,print,"PETG, 60 % infill",E1,Bracket the MG996R ears bolt to; slotted holes set the belt tension
+tilt_pulley_small,1,buy,"GT2 20T, 6 mm belt",E1,GT2 20-tooth pulley on the MG996R (3D-printed adapter to the horn)
+tilt_belt,1,buy,GT2 closed loop 158 mm,E1,"GT2 closed belt, hinge axis"
+tilt_stop_pad_1,1,print,PETG block with a rubber bumper on top,E1,Stop pad: the plate lands on it at 47 degrees
+tilt_stop_pad_2,1,print,PETG block with a rubber bumper on top,E1,Stop pad: the plate lands on it at 47 degrees
+hinge_shaft,1,cut,Stainless 304 rod 8 mm,E1,"Hinge shaft 22 mm under the plate surface, turning in the two pillow blocks"
+hinge_collar_1,1,buy,Shaft collar 8 mm,E1,Shaft collar holding the hinge shaft in place
+hinge_collar_2,1,buy,Shaft collar 8 mm,E1,Shaft collar holding the hinge shaft in place
+plate_lug_1,1,print,"PETG, 60 % infill",E1,"Lug under the plate, clamped to the hinge shaft"
+plate_lug_2,1,print,"PETG, 60 % infill",E1,"Lug under the plate, clamped to the hinge shaft"
+tilt_pulley_large,1,buy,"GT2 40T, 8 mm bore (check: some are 5 mm)",E1,GT2 40-tooth pulley clamped to the hinge shaft
+tipping_plate,1,laser,"Aluminium sheet 1.5 mm, matt grey powder coat",E1,320 mm tipping plate bolted to the two lugs; does not melt under a hot ember
+tilt_imu,1,buy,MPU-6050 (GY-521),E1,IMU under the plate: true tilt angle for jam detection and homing after a power cut
+motor_cable_yaw_servo,1,buy,"Servo extension 3 x 22 AWG, about 1 m",E1,"MG90S cable: console, rear hanger, beam top to the yaw servo; no moving joint"
+yaw_cable_channel,1,print,"PETG, 100 % infill at the stop lugs; rubber pads on the lug faces",E1,"Fixed rolling-loop channel on the upper bearing, with the two yaw stop lugs at +/-70 degrees"
+yaw_cable_drum,1,print,PETG,E1,"Drum under the platform, turning with it: the inner face of the rolling loop"
+yaw_stop_pin,1,buy,M4 steel bolt with an 8 mm sleeve,E1,Stop pin under the platform: hits a lug at the yaw limit even if the hub slips
+yaw_ribbon_loop,1,buy,"Flat ribbon cable 10 cores, 1.27 mm pitch, high-flex",E1,"10-core ribbon in the rolling loop (drawn at mid travel): 6 V x2, GND x2, PWM, GND, SDA, GND, SCL, 3.3 V"
+motor_cable_tilt_servo,1,buy,"Ribbon cable, same as the loop",E1,"MG996R and IMU cable, fixed part: console to the rolling-loop channel; becomes the ribbon at the wall"
+motor_cable_tilt_servo_stage,1,buy,"Same ribbon, split to the servo plug and the IMU lead",E1,"Cable on the turning platform: up through the platform, on the -x side of the servo, clear of the belt"
+cable_clip_stage,1,print,PETG clip with a cable tie,E1,Clip on the platform: strain relief where the ribbon leaves the loop
+fill_sensor_pod_1,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
+fill_sensor_arm_1,1,print,PETG,E1,Sensor arm from the throat lip
+fill_sensor_pod_2,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
+fill_sensor_arm_2,1,print,PETG,E1,Sensor arm from the throat lip
+fill_sensor_pod_3,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
+fill_sensor_arm_3,1,print,PETG,E1,Sensor arm from the throat lip
+fill_sensor_pod_4,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
+fill_sensor_arm_4,1,print,PETG,E1,Sensor arm from the throat lip
+display_console,1,print,"PETG, printed in 2 halves",E1,"Rear console, hollow shell: a tablet-sized display slab leaning back on a low base; ESP32-S3 camera board, servo supply and wiring in the base, camera and LED strip under the chin, clear of any liquid in the funnel"
+tft_screen,1,buy,"TJC X5 10.1 inch TJC1060X5101, no touch: IPS 1024x600, 300 nit, UART TTL, own controller board 258 x 152 x 11.5 mm",E1,"10.1 inch display filling the slab: sorting status, and facts about waste while idle"
+camera_window,1,buy,"ESP32-S3 camera module, OV2640 with 120 degree lens",E1,"ESP32-S3 camera behind the chin window, 120 degree lens"
+led_strip,1,buy,"5 V white LED strip, 120 mm, with diffuser",E1,White LED strip under the chin lighting the plate evenly for recognition
+post_1,1,cut,Aluminium profile 20 x 20,E1,Corner post
+post_2,1,cut,Aluminium profile 20 x 20,E1,Corner post
+post_3,1,cut,Aluminium profile 20 x 20,E1,Corner post
+post_4,1,cut,Aluminium profile 20 x 20,E1,Corner post
+rail_bottom_yn,1,cut,Aluminium profile 20 x 20,E1,Bottom rail along Y
+rail_bottom_xn,1,cut,Aluminium profile 20 x 20,E1,Bottom rail along X
+rail_bottom_yp,1,cut,Aluminium profile 20 x 20,E1,Bottom rail along Y
+rail_bottom_xp,1,cut,Aluminium profile 20 x 20,E1,Bottom rail along X
+rail_seat_yn,1,cut,Aluminium profile 20 x 20,E1,Seat rail along Y
+rail_seat_xn,1,cut,Aluminium profile 20 x 20,E1,Seat rail along X
+rail_seat_yp,1,cut,Aluminium profile 20 x 20,E1,Seat rail along Y
+rail_seat_xp,1,cut,Aluminium profile 20 x 20,E1,Seat rail along X
+rail_mid_yn,1,cut,Aluminium profile 20 x 20,E1,Mid rail along Y
+rail_mid_yp,1,cut,Aluminium profile 20 x 20,E1,Mid rail along Y
+rail_mid_xp,1,cut,Aluminium profile 20 x 20,E1,Mid rail along X behind the back panel
+floor_plate,1,laser,Aluminium composite 4 mm,E1,Floor the bins stand on
+head_seat_plate,1,laser,Aluminium composite 6 mm (or plywood 6 mm),E1,Plate the head deck is bolted to; the rear hole takes the deck orientation pin
+side_panel_left,1,bend,Stainless 304 sheet 1 mm,E1,Side skin; covers the edges of the back and front panels
+side_panel_right,1,bend,Stainless 304 sheet 1 mm,E1,Side skin; covers the edges of the back and front panels
+back_panel,1,bend,Stainless 304 sheet 1 mm,E1,Fixed back skin: the bin can stand against a wall
+head_panel_front,1,bend,Stainless 304 sheet 1 mm,E1,Front panel around the head
+top_cover,1,bend,Stainless 304 sheet 1 mm,E1,"Top cover with the funnel opening; its skirt folds down over the panels, screwed to the frame"
+center_wall,1,laser,Aluminium composite 6 mm,E1,Centre wall carrying both inner slides
+slide_mount_left,1,laser,Aluminium composite 6 mm,E1,Plate on the bottom rail carrying the outer slide
+drawer_left,1,laser,"Aluminium composite 4 mm, riveted angles",E1,Drawer tray holding the front and the rear bin
+drawer_front_left,1,bend,Stainless 304 sheet 1 mm,E1,"Drawer front, full height, with a pull handle; two stiffeners keep the sheet flat"
+drawer_stiffener_left_1,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
+drawer_stiffener_left_2,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
+slide_left_inner,1,buy,"Ball-bearing drawer slide 600 mm, full extension, 35 kg",E1,Full-extension ball slide 600 mm
+slide_left_outer,1,buy,"Ball-bearing drawer slide 600 mm, full extension, 35 kg",E1,Full-extension ball slide 600 mm
+drawer_switch_left,1,buy,"Microswitch with lever, KW11",E1,Microswitch the closed drawer presses; open drawer locks its two bins
+slide_mount_right,1,laser,Aluminium composite 6 mm,E1,Plate on the bottom rail carrying the outer slide
+drawer_right,1,laser,"Aluminium composite 4 mm, riveted angles",E1,Drawer tray holding the front and the rear bin
+drawer_front_right,1,bend,Stainless 304 sheet 1 mm,E1,"Drawer front, full height, with a pull handle; two stiffeners keep the sheet flat"
+drawer_stiffener_right_1,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
+drawer_stiffener_right_2,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
+slide_right_inner,1,buy,"Ball-bearing drawer slide 600 mm, full extension, 35 kg",E1,Full-extension ball slide 600 mm
+slide_right_outer,1,buy,"Ball-bearing drawer slide 600 mm, full extension, 35 kg",E1,Full-extension ball slide 600 mm
+drawer_switch_right,1,buy,"Microswitch with lever, KW11",E1,Microswitch the closed drawer presses; open drawer locks its two bins
+bin_1,1,buy,Square bin 25-30 L,E1,Purchased square bin 1 (Nhựa); dimensions provisional
+bin_2,1,buy,Square bin 25-30 L,E1,Purchased square bin 2 (Giấy); dimensions provisional
+bin_3,1,buy,Square bin 25-30 L,E1,Purchased square bin 3 (Kim loại); dimensions provisional
+bin_4,1,buy,Square bin 25-30 L,E1,Purchased square bin 4 (Khác); dimensions provisional

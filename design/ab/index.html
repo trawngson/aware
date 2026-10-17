@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Mở qua server: cd design/ab && python3 -m http.server 8000. Mở bằng file:// thì fetch dữ liệu bị chặn. -->
+<style>[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>CAD thùng phân loại</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Trang thiết kế chi tiết: mỗi phần một tab; tab đầu có khung xem CAD 3D */
+:root{
+  --bg:#eef1ef; --paper:#fff; --ink:#1c2523; --muted:#5b6965; --line:#cbd5d1;
+  --accent:#1f6f5c; --accent-soft:#dcece6; --viewer:#dfe5e2; --floor:#cfd7d3; --warn:#9a5b00; --warn-soft:#fbefd9;
+  --bad:#a3352b; --bad-soft:#f8e3e0;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121816; --paper:#1a2220; --ink:#e2eae7; --muted:#95a49f; --line:#2e3a37;
+  --accent:#5cc2a6; --accent-soft:#1c3530; --viewer:#1b2422; --floor:#26312e; --warn:#e3a54a; --warn-soft:#3a2c14;
+  --bad:#ef8a7e; --bad-soft:#3a1d1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121816; --paper:#1a2220; --ink:#e2eae7; --muted:#95a49f; --line:#2e3a37;
+  --accent:#5cc2a6; --accent-soft:#1c3530; --viewer:#1b2422; --floor:#26312e; --warn:#e3a54a; --warn-soft:#3a2c14;
+  --bad:#ef8a7e; --bad-soft:#3a1d1a; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--f-body);padding-inline:16px;padding-block:28px 64px}
+main{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.15;margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,4.5vw,2.6rem)} h2{font-size:1.55rem} h3{font-size:1.2rem}
+p{margin:0;max-width:76ch}
+.eyebrow{font:500 .74rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lead{color:var(--muted)}
+#costTable{min-width:980px;font-size:.8rem}
+#costTable th,#costTable td{border:1px solid var(--line);padding:5px 7px}
+#costTable td.item{font-weight:500;min-width:120px}
+#costTable td.spec{color:var(--muted);min-width:170px}
+#costTable td.shop{min-width:120px}
+#costTable td.n{white-space:normal}
+#costTable .nw{white-space:nowrap}
+#costTable td a{color:var(--accent)}
+#costTable td.q,#costTable td.lk{white-space:nowrap}
+#costTable tr.sec td{background:var(--accent-soft);color:var(--accent);font-weight:600}
+#costTable tr.sub td{background:var(--bg);font-weight:500}
+#costTable tr.tot td{background:var(--warn-soft);font-weight:600}
+.st{display:inline-block;font:500 .7rem var(--f-mono);padding:2px 7px;border-radius:3px;white-space:nowrap}
+.st-ok{background:var(--accent-soft);color:var(--accent)}
+.st-ref{background:var(--warn-soft);color:var(--warn)}
+.st-est{border:1px solid var(--line);color:var(--muted)}
+.st-none{background:var(--warn);color:var(--paper)}
+/* Thanh tab cuộn ngang trên điện thoại */
+.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:6px;scrollbar-width:thin}
+.tabs button{flex:0 0 auto;border:1px solid transparent;border-bottom:0;border-radius:6px 6px 0 0;background:none;color:var(--muted);padding:9px 13px;font:500 .86rem var(--f-body);cursor:pointer;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{background:var(--paper);color:var(--ink);border-color:var(--line);border-bottom:1px solid var(--paper)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.panel{display:flex;flex-direction:column;gap:18px}
+.panel[hidden]{display:none}
+.bar{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end}
+.pick{display:flex;flex-direction:column;gap:6px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+button{font:500 .88rem var(--f-body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:8px 12px;cursor:pointer}
+button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stage{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--viewer)}
+#viewer{height:min(640px,74vh);min-height:380px;touch-action:none}
+#viewer canvas{display:block}
+.tool{position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
+.tool>*{pointer-events:auto}
+.tool .sp{flex:1}
+.tool button{font-size:.8rem;padding:7px 10px}
+.tool button.bin i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+/* Chấm màu trên nút chọn màu vỏ B */
+.seg button i.sw{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:7px;vertical-align:-2px;box-shadow:0 0 0 1px var(--line)}
+.hud{position:absolute;top:12px;left:12px;font:500 .78rem var(--f-mono);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:8px 10px;max-width:calc(100% - 24px)}
+.hud b{color:var(--accent);font-weight:500}
+#tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font:500 .78rem var(--f-body);padding:6px 9px;border-radius:4px;max-width:280px;line-height:1.4}
+#tip small{display:block;opacity:.75;font-family:var(--f-mono);font-size:.7rem}
+#loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:500 .9rem var(--f-mono);color:var(--muted)}
+#loading[hidden]{display:none}
+.grid{display:grid;grid-template-columns:1fr 1.4fr;gap:16px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:6px 14px;font-size:.9rem}
+dt{color:var(--muted)} dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.85rem;min-width:520px}
+th,td{text-align:left;vertical-align:top;padding:7px 10px;border-bottom:1px solid var(--line)}
+th{font:500 .72rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+th.n{text-align:right}
+td.n{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+td.k{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);white-space:nowrap}
+.chip{display:inline-block;font:500 .72rem var(--f-mono);padding:2px 7px;border-radius:3px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.chip.drop{background:var(--bad-soft);color:var(--bad)}
+.chip.alt{background:var(--warn-soft);color:var(--warn)}
+.note{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 14px;border-radius:0 6px 6px 0;font-size:.9rem}
+.note.ok{border-left-color:var(--accent);background:var(--accent-soft)}
+code{font-family:var(--f-mono);font-size:.86em}
+ul,ol{margin:0;padding-left:20px}
+li+li{margin-top:3px}
+.sev{display:inline-block;font:500 .7rem var(--f-mono);padding:2px 7px;border-radius:3px;white-space:nowrap;border:1px solid var(--line);color:var(--muted)}
+.sev.s3{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.sev.s2{border-color:var(--warn);color:var(--warn)}
+.sev.s1{color:var(--ink)}
+.fix{font-family:var(--f-mono);font-size:.78rem;color:var(--accent)}
+details{border-top:1px solid var(--line);padding-top:8px}
+details:first-of-type{border-top:0;padding-top:0}
+summary{cursor:pointer;font-weight:600;padding:4px 0}
+summary span{font-weight:400;color:var(--muted);font-size:.85rem;margin-left:6px}
+tr.pick{cursor:pointer} tr.pick:hover td{background:var(--bg)} tr.pick.on td{background:var(--accent-soft)}
+.vcap{font-size:.85rem}
+pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow-x:auto;margin:0}
+@media (max-width:820px){.grid,.cols{grid-template-columns:1fr}}
+</style>
+
+<main>
+<header style="display:flex;flex-direction:column;gap:8px">
+  <span class="eyebrow">aware · design/ab · thiết kế chi tiết · E1</span>
+  <h1>Thùng phân loại: phương án B (khung nhôm, vỏ inox)</h1>
+  <p class="lead">Mỗi phần thiết kế nằm ở một tab. Lưới 3D, số đo và danh sách chi tiết lấy thẳng từ CAD ở <code>aware/design/ab/</code>, sinh bởi <code>cad/smart_bin_ab.py</code>. Giá tiền phần lớn đã tra tháng 10/2026, xem tab Vật tư.</p>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Các phần thiết kế">
+  <button role="tab" data-tab="overview">Tổng quan · 3D</button>
+  <button role="tab" data-tab="head">Cụm đầu &amp; phễu</button>
+  <button role="tab" data-tab="tilt">Động cơ &amp; cơ cấu nghiêng</button>
+  <button role="tab" data-tab="dump">Cơ chế đổ &amp; khi đầy</button>
+  <button role="tab" data-tab="console">Bệ màn hình &amp; camera</button>
+  <button role="tab" data-tab="elec">Cảm biến &amp; điện</button>
+  <button role="tab" data-tab="bodyB">Thân B · khung</button>
+  <button role="tab" data-tab="soft">Phần mềm</button>
+  <button role="tab" data-tab="cases">Bad case</button>
+  <button role="tab" data-tab="bom">Vật tư &amp; chi phí</button>
+</nav>
+
+<!-- ===================== TỔNG QUAN ===================== -->
+<section class="panel" id="p-overview" role="tabpanel">
+  <div class="bar">
+    <div class="pick" id="bodyPick"><span class="eyebrow">Thân</span><div class="seg" id="bodySeg">
+      <button type="button" data-k="b_frame">B · Khung nhôm</button></div></div>
+    <div class="pick" id="finishPick"><span class="eyebrow">Màu vỏ B · inox mờ</span><div class="seg finish"></div></div>
+  </div>
+  <div class="vslot" id="slot-overview">
+  <div class="stage">
+    <div id="viewer"></div>
+    <div id="loading">Đang tải lưới CAD…</div>
+    <div class="hud" id="hud">Sẵn sàng</div>
+    <div id="tip" hidden></div>
+    <div class="tool">
+      <button type="button" class="bin" data-bin="1"><i style="background:#4a8fb8"></i>1 · Nhựa</button>
+      <button type="button" class="bin" data-bin="2"><i style="background:#c9873a"></i>2 · Giấy</button>
+      <button type="button" class="bin" data-bin="3"><i style="background:#5e9e6a"></i>3 · Kim loại</button>
+      <button type="button" class="bin" data-bin="4"><i style="background:#9a6bb0"></i>4 · Khác</button>
+      <span class="sp"></span>
+      <button type="button" id="btnCut" aria-pressed="false">Nhìn xuyên vỏ</button>
+      <button type="button" id="btnExp" aria-pressed="false">Tách rời</button>
+      <button type="button" id="btnView">Góc nhìn ban đầu</button>
+    </div>
+  </div>
+  </div>
+  <div class="grid">
+    <div class="card"><h2>Số đo chính</h2><dl id="metrics"></dl></div>
+    <div class="card"><h2>Chi tiết theo cách gia công</h2><div class="tbl"><table id="parts"></table></div></div>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <h2>Đã chốt</h2>
+      <ul>
+        <li>Chỉ làm thân <b>B</b> (khung nhôm, vỏ inox). Thân A (phuy 220 L) bỏ hẳn ngày 17/10.</li>
+        <li>Bộ não chỉ dùng <b>E1</b> (ESP32-S3 Cam + màn hình 10,1" có bo điều khiển riêng). Bỏ E2 nên hết rủi ro pin điện thoại phồng (#38, #39).</li>
+        <li>4 ngăn: <b>1 Nhựa</b> (sau phải), <b>2 Giấy</b> (sau trái), <b>3 Kim loại</b> (trước trái), <b>4 Khác</b> (trước phải). Vật không chắc loại thì vào ngăn 4.</li>
+        <li>Cơ cấu nghiêng theo <b>phương án D</b> (chốt 9/10): MG90S xoay ±45°, MG996R nghiêng ±45° qua đai GT2 2:1, bản lề sát mặt đĩa trên 2 gối đỡ. Đĩa nhôm 1,5 mm.</li>
+        <li>Đưa các đề xuất T vào CAD, chạy lại kiểm tra va chạm và kiểm tra tầm nhìn camera.</li>
+        <li>Vỏ B làm bằng <b>inox 304 dày 1 mm</b>, gấp mép (chốt 16/10), thay cho nhôm composite. Vỏ inox nặng khoảng 30,7 kg.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Kết quả kiểm tra</h2>
+      <ul>
+        <li>Không có chi tiết nào chồng lên nhau ở 25 tư thế: 1 tư thế đứng yên và 4 ngăn × (xoay nửa, xoay hết, rồi nghiêng 25/50/75/100%).</li>
+        <li>Mép thấp nhất của đĩa nằm đúng hướng của từng ngăn: 45°, 135°, 225°, 315°.</li>
+        <li>Camera thấy đủ <b>72/72</b> điểm mép đĩa.</li>
+        <li>Đĩa nghiêng 45° với vật 0,5 kg nằm ở mép: MG996R chịu <b>40%</b> sức kéo tối đa.</li>
+        <li>Mở file lắp ráp STEP ra lại, đếm thấy đủ số chi tiết.</li>
+      </ul>
+      <div class="note">Chưa kiểm tra: độ võng, chuyển động liên tục giữa các tư thế, bu lông và dây điện. Kích thước các món mua sẵn vẫn là số tạm.</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Đề xuất bị đổi hoặc bỏ sau khi tính lại</h2>
+    <div class="tbl"><table>
+      <tr><th>Đề xuất</th><th>Số tính lại</th><th>Thay bằng</th></tr>
+      <tr><td><span class="chip alt">Sửa</span> Khớp các-đăng 2 trục, 2 servo</td><td>Bản CAD trước dùng khớp 2 trục, không đúng với phương án D đã chốt ngày 9/10</td><td>Làm lại theo phương án D: MG90S xoay ±45°, MG996R nghiêng ±45° qua đai GT2 158 mm (tâm puly 48,58 mm), bản lề cách mặt đĩa 22 mm trên 2 gối đỡ KP08</td></tr>
+      <tr><td><span class="chip drop">Bỏ</span> T14 · đầu lật bản lề</td><td>Cụm đầu thòng sâu khoảng 370 mm dưới mâm. Lật 10° đã quét lùi 64 mm, lật 30° quét lùi 185 mm vào thành thân</td><td>Nhấc đầu thẳng lên. Đầu <b>tự đứng trên 4 chân cao su</b> ở đầu thanh chữ thập, vì đây là điểm thấp nhất của cụm đầu. Đầu bắt vít vào tấm đỡ</td></tr>
+      <tr><td><span class="chip drop">Bỏ</span> T4 · đối trọng</td><td>Với phương án D, bản lề chỉ cách mặt đĩa 22 mm, nên trọng tâm đĩa nằm trên trục có khoảng 21 mm: đĩa gần cân bằng, không cần đối trọng</td><td>Cục chặn 47° trên đế xoay (T3): mất điện thì đĩa cùng lắm đổ tới cục chặn. Khi có điện lại, IMU đọc góc rồi đưa đĩa về nằm ngang</td></tr>
+      <tr><td><span class="chip drop">Bỏ</span> T7 · diềm cao su chồm lên mép đĩa</td><td>Khi nghiêng, góc đĩa quét ra tới r168,7, mà diềm thì ở r166. Khe 5 mm là bắt buộc khi trục xoay nằm dưới đĩa</td><td>Giữ diềm bằng các dải PVC mềm sẵn có: kẹp tay vào thì chỉ chạm nhựa mềm. Vật nhỏ hơn 5 mm lọt khe sẽ rơi vào một ngăn bất kỳ, chấp nhận được</td></tr>
+      <tr><td><span class="chip alt">Đổi</span> T5 · chụp cao su che khớp</td><td>Nước rời mép đĩa ở bán kính 128–160 mm, còn servo và đai nằm trong khoảng 75 mm dưới đĩa, nên nước rơi thẳng xuống ngăn</td><td>Chỉ cần dời mạch điều khiển từ dưới mâm lên trong bệ màn hình, ra khỏi đường nước</td></tr>
+      <tr><td><span class="chip alt">Đổi</span> T1 · cảm biến góc AS5600</td><td>Cần bo mạch và nam châm ở từng trục</td><td>1 IMU MPU-6050 dán dưới đĩa, đọc hướng trọng lực nên biết góc nghiêng thật. Góc xoay thì không đo, thêm AS5600 nếu thử thấy cần</td></tr>
+      <tr><td><span class="chip alt">Đổi</span> T8 · vòng định vị có khấc</td><td>Vòng định vị nằm trong lòng thân, không có chỗ để khoét khấc</td><td>Một chốt thép Ø6 ở mép sau mâm, cắm vào lỗ trên tấm đỡ đầu</td></tr>
+      <tr><td><span class="chip alt">Đổi</span> Khung B 600 → 680 mm</td><td>Ngăn kéo cần chỗ cho ray trượt 12,7 mm và thành khay 3 mm ở cả hai bên</td><td>Khung ngoài 686 mm tính cả vỏ. Tổng chiều dài nhôm định hình là 11,7 m (thêm thanh giữa phía sau để đỡ tấm inox)</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<!-- ===================== CỤM ĐẦU ===================== -->
+<section class="panel" id="p-head" role="tabpanel" hidden>
+  <div class="card">
+    <h2>Cụm đầu và phễu</h2>
+    <p>Cụm đầu là một khối liền: mâm, phễu, khung treo, cơ cấu nghiêng, đĩa, cảm biến đầy và bệ màn hình. Toàn bộ treo trên <b>một vòng mâm</b> đặt ở cao độ 1050 mm. Gom hết vào một khối thì thân chỉ cần làm đúng một việc: đỡ vòng mâm ở đúng cao độ đó.</p>
+  </div>
+  <div class="vslot" id="slot-head"></div>
+  <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
+  <div class="cols">
+    <div class="card"><h3>Kích thước chính</h3><div class="tbl"><table>
+      <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
+      <tr><td>Cao miệng ném (mép trên phễu)</td><td class="n">1170 mm</td></tr>
+      <tr><td>Miệng phễu</td><td class="n">Ø550</td></tr>
+      <tr><td>Phễu côn: cao / thành dày</td><td class="n">140 / 2 mm</td></tr>
+      <tr><td>Cổ phễu: đường kính / cao gờ</td><td class="n">Ø330 / 30 mm</td></tr>
+      <tr><td>Mâm đầu (nhôm 3 mm)</td><td class="n">Ø594 / lỗ Ø400, z = 1050</td></tr>
+      <tr><td>Vòng định vị dưới mâm</td><td class="n">Ø556, sâu 20 mm</td></tr>
+      <tr><td>4 thanh treo 30×30×2 ở r255</td><td class="n">dài 375 mm</td></tr>
+      <tr><td>Thanh chữ thập 40×30×2</td><td class="n">2 × 540 mm, đáy z = 645</td></tr>
+      <tr><td>Diềm cổ phễu</td><td class="n">36 dải PVC mềm × 14 mm</td></tr>
+      <tr><td>Chốt định hướng Ø6</td><td class="n">r284, mép sau</td></tr>
+      <tr><td>Khối lượng cụm đầu (ước tính)</td><td class="n">khoảng 4–5 kg</td></tr>
+    </table></div></div>
+    <div class="card"><h3>Gia công phễu (file DXF cắt laser)</h3>
+      <ul>
+        <li><code>funnel_cone_half_x2.dxf</code>: phễu côn gồm <b>2 nửa hình quạt</b>, mỗi nửa 113,13°, bán kính trong và ngoài 268,7 / 446,7 mm, có mép chồng 15 mm để tán rivet. Vật liệu PP 2 mm.</li>
+        <li><code>funnel_collar_ring.dxf</code>: vành miệng phễu. <code>funnel_lip_band.dxf</code>: băng gờ cổ phễu, uốn tròn.</li>
+        <li><code>head_shell_ring_strip.dxf</code>: dải vỏ đầu (nhôm composite 3 mm, uốn tròn). <code>head_locating_ring_strip.dxf</code>: dải vòng định vị (PP 3 mm).</li>
+        <li><code>head_deck.dxf</code>: mâm đầu, có sẵn 4 lỗ bắt thanh treo.</li>
+      </ul>
+      <div class="note"><b>Lỗi hay gặp:</b> PP gần như không dán được bằng keo thường. Phải nối bằng <b>rivet nhựa hoặc rivet nhôm kèm long đền</b>, hoặc hàn nhựa. Mặt ngoài của mép chồng phải nằm <b>xuôi theo chiều rác trượt xuống</b>, nếu không rác sẽ vướng vào mép.</div>
+    </div>
+  </div>
+  <div class="card"><h3>Trình tự lắp</h3><ol>
+    <li>Cuộn dải vòng định vị thành vòng tròn, tán rivet rồi bắt vào mặt dưới mâm.</li>
+    <li>Bắt 4 thanh treo vào mâm (4 lỗ có sẵn). Bắt thanh chữ thập vào đầu dưới các thanh treo, chỗ hai thanh bắt chéo nhau có kẹp tấm 3 mm.</li>
+    <li>Dán 4 chân cao su dưới đầu thanh chữ thập. Đóng chốt định hướng vào lỗ ở mép sau mâm.</li>
+    <li>Cuộn và tán phễu côn, vành và gờ cổ. Đặt phễu lên mâm, dựng vỏ đầu bao quanh.</li>
+    <li>Treo diềm PVC dưới gờ cổ phễu. Lắp cơ cấu nghiêng (tab tiếp theo), 4 hộp cảm biến và bệ màn hình.</li>
+  </ol></div>
+  <div class="card"><h3>Chi tiết trong CAD</h3><div class="tbl"><table data-parts="b_frame" data-prefix="head_deck,orientation_pin,head_locating_ring,head_shell_ring,intake_funnel,flexible_throat_skirt,hanger_,joint_beam,spider_foot_"></table></div></div>
+</section>
+
+<!-- ===================== CƠ CẤU NGHIÊNG ===================== -->
+<section class="panel" id="p-tilt" role="tabpanel" hidden>
+  <div class="card">
+    <span class="eyebrow">Phương án D · đã chốt ngày 9/10</span>
+    <h2>Động cơ và cơ cấu nghiêng: xoay rồi nghiêng</h2>
+    <p>Đĩa chạy theo <b>2 bước nối tiếp</b>. Bước 1: servo nhỏ <b>MG90S xoay</b> cả cụm nghiêng quanh một trục đứng, để mép đĩa quay về phía ngăn cần đổ. Bước 2: <b>MG996R nghiêng</b> đĩa quanh một bản lề nằm ngang, qua đai GT2 tỉ số 2:1. Đĩa nghiêng được cả 2 chiều, nên chỉ cần xoay ±45° là tới đủ 4 ngăn chéo.</p>
+    <p>Hai điểm giúp motor nhỏ vẫn đủ sức: <b>bản lề nằm sát mặt đĩa</b> (cách 22 mm, gần trọng tâm đĩa) nên đĩa gần như cân bằng, và <b>2 gối đỡ ổ bi chịu trọng lượng đĩa</b>, servo chỉ việc tạo mô-men xoay.</p>
+  </div>
+  <div class="vslot" id="slot-tilt"></div>
+  <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
+  <div class="cols">
+    <div class="card"><h3>Truyền động</h3>
+<pre class="sk">giá chữ C (trên thanh chữ thập)
+  └ MG90S ─ horn tròn ─ miếng nối in ─ trục đứng Ø8 trong 2 gối đỡ KFL08 ─ đế xoay
+đế xoay
+  ├ 2 trụ ─ 2 gối đỡ KP08 ─ trục bản lề Ø8 ─ 2 tai ─ đĩa nhôm
+  └ MG996R ─ puly 20T ═ đai GT2 158 ═ puly 40T trên trục bản lề</pre>
+      <div class="tbl"><table>
+      <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
+      <tr><td>Servo nghiêng / xoay</td><td class="n">MG996R / MG90S</td></tr>
+      <tr><td>Góc nghiêng / góc xoay</td><td class="n">±45° / ±45°</td></tr>
+      <tr><td>Mô-men kẹt MG996R ở 6 V (số thận trọng, shop ghi 15 kg·cm)</td><td class="n">khoảng 11 kg·cm = 1,08 N·m</td></tr>
+      <tr><td>Puly, tỉ số</td><td class="n">GT2 20T → 40T, 2:1</td></tr>
+      <tr><td>Đai kín GT2 rộng 6 mm / khoảng cách tâm puly</td><td class="n">158 mm / 48,58 mm</td></tr>
+      <tr><td>Trục bản lề (cách mặt đĩa 22 mm)</td><td class="n">Ø8 × 180 mm, z = 878</td></tr>
+      <tr><td>Trục đứng</td><td class="n">Ø8 × 70 mm</td></tr>
+      <tr><td>Đế xoay, nhôm 4 mm</td><td class="n">180 × 192 mm, z = 792–797</td></tr>
+    </table></div></div>
+    <div class="card"><h3>Mô-men và tải</h3><div class="tbl"><table>
+      <tr><th>Trường hợp (đĩa nghiêng 45°, vật ở mép)</th><th class="n">Giá trị</th></tr>
+      <tr><td>Mô-men cần ở bản lề, vật 0,5 kg</td><td class="n">0,783 N·m</td></tr>
+      <tr><td>Mô-men cần ở MG996R (qua 2:1, hiệu suất 90%)</td><td class="n">0,435 N·m (40%)</td></tr>
+      <tr><td>Vật nặng nhất ở mức 50% sức servo</td><td class="n">0,63 kg</td></tr>
+      <tr><td>Vật nặng nhất trước khi servo chết máy</td><td class="n">1,29 kg</td></tr>
+      <tr><td>Lực lớn nhất đĩa ép lên tay ở mép</td><td class="n">khoảng 12 N</td></tr>
+      <tr><td>Tải của MG90S (trục xoay)</td><td class="n">chỉ có quán tính, trọng lực không tạo mô-men quanh trục đứng</td></tr>
+    </table></div>
+    <p class="lead">Quy tắc thiết kế: servo không làm việc quá 50% sức kéo tối đa. Script dừng hẳn nếu vượt mức này. Ngày 9/10 phương án D tính được vật ở mép khoảng 0,6 kg cho đĩa Ø280. CAD mới cho đĩa Ø320 bằng nhôm ra 0,63 kg, khớp với số cũ.</p></div>
+  </div>
+  <div class="cols">
+    <div class="card"><h3>Đĩa nghiêng</h3>
+      <ul>
+        <li>Nhôm 1,5 mm, Ø320, nặng 0,326 kg, bắt vào 2 tai PETG bằng 4 vít M4. Hai tai kẹp chặt vào trục bản lề.</li>
+        <li>Mặt đĩa ở cao độ 900 mm, trục bản lề ở 878 mm. Bản lề sát mặt đĩa nên đĩa nặng hơn PP vẫn nhẹ tải.</li>
+        <li>Đổi từ PP sang nhôm: không chảy khi gặp tàn thuốc, khó xước, dễ lau.</li>
+      </ul>
+      <div class="note"><b>Lưu ý:</b> nhôm trần bóng sẽ hắt ánh đèn LED vào camera. Nên <b>sơn tĩnh điện màu xám mờ</b>. Không dán decal, vì decal sẽ chảy khi gặp đồ nóng.</div>
+    </div>
+    <div class="card"><h3>Cục chặn cứng 47° trên đế xoay</h3>
+      <ul>
+        <li>2 cục chặn PETG bọc cao su, đặt trên đế xoay ở y = ±88 mm, mặt trên ở z = 807,3.</li>
+        <li>Đế xoay quay cùng hướng với đĩa, nên cục chặn luôn nằm ngay dưới mép đang hạ xuống.</li>
+        <li>Đĩa nghiêng 45° vẫn cách cục chặn 5,7 mm. Tới 47° thì đáp lên cao su.</li>
+        <li>Lực va đập hoặc lực tay ấn đi vào ổ của trục đứng, không đi vào bánh răng của cả 2 servo. Lực thẳng đứng không tạo mô-men quanh trục đứng, nên MG90S cũng không phải gánh.</li>
+        <li>Mép thấp của đĩa ra tới bán kính khoảng 128 mm, còn đế xoay chỉ dài 96 mm mỗi bên, nên rác rơi ra không chạm đế.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card"><h3>Đo góc</h3>
+    <p>MPU-6050 dán dưới đĩa đo được <b>góc nghiêng thật</b>, nên phát hiện được kẹt (ra lệnh nghiêng sau 1,5 giây mà góc vẫn lệch quá 5°) và biết đĩa đang nghiêng bao nhiêu khi có điện lại.</p>
+    <p><b>IMU không đo được góc xoay</b>, vì trọng lực không đổi khi xoay quanh trục đứng. MG90S chỉ chịu quán tính nên ít khi trượt bước. Nếu thử thực tế thấy hay đổ nhầm ngăn thì thêm AS5600 (khoảng 55k) dưới trục đứng.</p>
+    <p class="lead">Dây MG996R và IMU đi qua trục xoay: chừa vòng dây đủ dài cho ±45° xoay và ±47° nghiêng. Dùng dây silicon mềm.</p>
+  </div>
+  <div class="card"><h3>Đi dây động cơ qua khớp xoay (đã vẽ trong CAD)</h3>
+    <p>Dây MG996R và IMU phải đi qua khớp xoay. Khớp này uốn khoảng 36.000 lần mỗi năm (ước tính 100 lần đổ mỗi ngày), nên không thả vòng chùng tự do mà dùng <b>vòng lăn trong rãnh tròn</b>: cáp dẹt gập chữ U, nằm giữa một thành cố định và một trống quay theo đế. Khi đế xoay, chỗ gập chỉ lăn dọc theo rãnh, nên cáp luôn uốn ở cùng một bán kính và không bị kéo căng.</p>
+<pre class="sk">Nhìn từ trên xuống, dưới đế xoay (z 658–671):
+
+        thành ngoài cố định (r 40–43), có 2 vấu chặn ở ±70°
+      ╭─────────────────────────╮
+     │  cáp ─ chạy áp thành ngoài │ ← cáp vào qua rãnh ở 60°
+     │    ╭─────────╮             │
+     │    │ trống   │  ◯ trục Ø8  │   chốt chặn M4 dưới đế, ở r 55
+     │    │ quay    │             │
+     │    ╰────┬────╯             │
+     │         ⊃ chỗ gập U, bán kính uốn 10,2 mm, lăn theo khi xoay
+      ╰─────────────────────────╯
+  cáp ra áp trống quay, đi lên qua lỗ ở đế (30°)</pre>
+    <div class="tbl"><table>
+      <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
+      <tr><td>Cáp</td><td class="n">cáp dẹt 10 sợi, bước 1,27 mm, loại chịu uốn</td></tr>
+      <tr><td>Thứ tự sợi</td><td class="n">6 V, 6 V, GND, GND, PWM, GND, SDA, GND, SCL, 3,3 V</td></tr>
+      <tr><td>Chiều dài cáp trong rãnh</td><td class="n">134 mm</td></tr>
+      <tr><td>Bán kính uốn ở chỗ gập</td><td class="n">10,2 mm, khoảng 10 lần bề dày cáp</td></tr>
+      <tr><td>Chỗ gập lăn đi khi xoay hết ±70°</td><td class="n">khoảng 46° quanh trục</td></tr>
+      <tr><td>Dây MG996R và IMU, cả đường từ bệ</td><td class="n">khoảng 1,04 m → mua 1,2 m</td></tr>
+      <tr><td>Dây MG90S (không qua khớp)</td><td class="n">780 mm → dây nối dài servo 1 m</td></tr>
+    </table></div>
+  </div>
+  <div class="card"><h3>Khi trục xoay quay quá tầm hoặc quay mãi</h3>
+    <p>MG90S chuẩn chỉ quay trong 180°. Trục xoay vẫn có thể quay tự do nếu <b>miếng nối trượt trên trục</b>, <b>tuốt răng servo</b>, <b>lắp nhầm bản MG90S 360°</b>, hoặc có người lấy tay xoay đĩa. Khi đó dây có thể bị quấn quanh trục và giật đứt. Có 4 lớp bảo vệ:</p>
+    <ol>
+      <li><b>Chặn cứng ±70° (đã vẽ):</b> chốt M4 có ống lót dưới đế xoay, chạm vào 2 vấu trên rãnh. Dù servo hay miếng nối hỏng thì cụm vẫn không quay quá ±70°, đúng tầm rãnh được thiết kế. Đã kiểm tra: ở 68° chốt chưa chạm, ở 72° thì đã chạm. Tay ấn mạnh ở mép đĩa (khoảng 8 N·m) tạo khoảng 150 N lên chốt, nên vấu phải in đặc 100% và dán cao su.</li>
+      <li><b>Miếng nối servo xoay:</b> không dùng khớp nối mềm. Khớp 5 × 8 mm dài 25 mm, không lọt dưới tay gối dưới, mà nửa 5 mm chỉ ôm được đầu then hoa ngắn của MG90S. Thay bằng một miếng nối in PETG đặc 100%, Ø20 × 11 mm: bắt vào horn tròn đi kèm servo bằng 2 vít của horn (khoan lỗ mồi theo horn thật), kẹp trục bằng vít trí M3 và đai ốc thả từ trên xuống. Mài mặt phẳng (mặt D) trên trục ở chỗ vít trí, bôi keo khoá ren. Miếng nối không bù được lệch tâm, nên căn servo thẳng trục trước khi siết. Trước khi in giá chữ C, đo MG90S thật: CAD giả định đầu then hoa nhô 4 mm trên mặt kệ để lắp horn.</li>
+      <li><b>Phần mềm phát hiện:</b> con quay trong IMU đo được <b>tốc độ</b> xoay quanh trục đứng. Thấy xoay khi không có lệnh, hoặc xoay quá xa so với lệnh, thì ngắt relay servo và báo lỗi. Ngắt xung PWM khi đứng yên để servo không rung làm mỏi dây. Lệnh xoay luôn giới hạn trong ±65°.</li>
+      <li><b>Khoanh vùng hỏng:</b> cầu chì tự phục hồi 3 A trên đường 6 V, để dây có chập thì cũng không cháy mạch. Kẹp neo giữ vỏ cáp, để lực kéo không truyền vào mối hàn.</li>
+    </ol>
+    <p class="lead">Khi lắp: cấp xung 1500 µs cho MG90S. Nếu servo cứ quay mãi thì đó là bản 360°, lắp nhầm hàng. Mình chưa thử tuổi thọ của cáp dẹt bán ở VN với bán kính uốn 10 mm. Nên in thử rãnh, cho chạy vài nghìn lần rồi đo thông mạch.</p>
+  </div>
+  <div class="card"><h3>Lỗi hay gặp</h3><ul>
+    <li><b>Đai chùng hoặc quá căng:</b> đai kín không có bộ căng đai, nên khoảng cách tâm 48,58 mm phải đúng. Giá bắt MG996R có lỗ rãnh ±1 mm để chỉnh căng.</li>
+    <li><b>Puly 20T không lắp thẳng vào spline 25T của MG996R:</b> cần một miếng nối in 3D bắt vít vào horn tròn.</li>
+    <li><b>Puly 40T</b> có shop ghi lỗ 8 mm nhưng đường link lại ghi 5 mm. Hỏi shop trước, nếu là lỗ 5 mm thì khoan lên 8 mm.</li>
+    <li><b>MG996R giá rẻ hay là hàng nhái:</b> mua 1 con, đo mô-men bằng cân treo rồi mới mua thêm. Gắn tay đòn 2,5 cm ở 6 V: cân phải lên tới khoảng 3,5 kg servo mới chịu thua (tức 9 kg·cm, đủ để tải 0,435 N·m chỉ chiếm 50%). Tháo đáy xem mọi bánh răng đều là kim loại. Shop đang chọn có bán cả bản MG996R-360: cấp xung 1500 µs, servo phải đứng yên ở giữa chứ không quay mãi.</li>
+    <li><b>Xoay khi đĩa đang nghiêng:</b> phần mềm phải luôn đưa đĩa về nằm ngang trước, rồi mới xoay sang ngăn khác.</li>
+    <li><b>Nghiêng quá nhanh làm rác văng:</b> tăng tốc từ từ, khoảng 1 giây cho 45°.</li>
+  </ul></div>
+  <div class="card"><h3>Chi tiết trong CAD</h3><div class="tbl"><table data-parts="b_frame" data-prefix="yaw_,hinge_,plate_lug_,tilt_,tipping_plate,motor_cable_,cable_clip_"></table></div></div>
+</section>
+
+<!-- ===================== CƠ CHẾ ĐỔ ===================== -->
+<section class="panel" id="p-dump" role="tabpanel" hidden>
+  <div class="card">
+    <h2>Cơ chế đổ</h2>
+    <p>Rác không bị đẩy. Đĩa chỉ <b>nghiêng</b> về hướng của ngăn đích, và vật tự trượt khỏi mép thấp, qua khe giữa mép đĩa và gờ cổ phễu rồi rơi vào ngăn.</p>
+  </div>
+  <div class="vslot" id="slot-dump"></div>
+  <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
+  <div class="cols">
+    <div class="card"><h3>Hình học khi đổ (nghiêng 45°)</h3><div class="tbl"><table>
+      <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
+      <tr><td>Khe thoát dưới gờ cổ phễu</td><td class="n">180,9 mm</td></tr>
+      <tr><td>Cao độ mép thấp của đĩa</td><td class="n">779,4 mm</td></tr>
+      <tr><td>Cao độ miệng ngăn</td><td class="n">620 mm</td></tr>
+      <tr><td>Bán kính điểm rơi (tâm ngăn)</td><td class="n">224 mm</td></tr>
+      <tr><td>Vật lớn nhất lọt qua khe thoát</td><td class="n">khoảng 170 mm</td></tr>
+    </table></div></div>
+    <div class="card"><h3>Một lần đổ</h3><ol>
+      <li>Vật nằm yên trên đĩa, miệng phễu không có tay: camera nhận dạng và chọn ngăn.</li>
+      <li>Kiểm tra ngăn đó: còn chỗ chưa, có đang khoá không (đầy, hay ngăn kéo đang rút).</li>
+      <li>Xoay cụm nghiêng tới hướng ngăn (±45°, khoảng 0,7 giây), rồi nghiêng 45° trong khoảng 1 giây, tăng tốc và giảm tốc êm. Theo dõi IMU suốt lúc nghiêng.</li>
+      <li>Giữ 0,8 giây cho vật trượt hết.</li>
+      <li>Nghiêng về nằm ngang trong khoảng 1 giây, rồi mới xoay về 0°. Camera chụp lại xem đĩa đã trống chưa. Còn vật thì lắc nhẹ 2 lần, vẫn còn thì báo.</li>
+    </ol></div>
+  </div>
+  <div class="card"><h3>Sức chứa</h3><div class="tbl"><table>
+    <tr><th></th><th class="n">Hình học (CAD)</th><th class="n">Dùng được thật (ước tính)</th><th class="n">Cả 4 ngăn</th></tr>
+    <tr><td>B · thùng 270×270×590</td><td class="n">40,9 L</td><td class="n">25–31 L</td><td class="n">khoảng 164 L</td></tr>
+  </table></div>
+  <p>Rác luôn rơi vào cùng một chỗ nên chất thành hình nón, chỉ dùng được 60–75% thể tích. <b>T17 · rải đều:</b> mỗi lần đổ, đổi góc xoay lệch khoảng ±20° quanh đường chéo ngăn (MG90S làm được, vì xoay tới ±65° vẫn trong 180° của servo) và đổi góc nghiêng trong khoảng 35–45°, để dịch điểm rơi. Cách này có thể nâng phần dùng được lên khoảng 80%, nhưng mới là <i>plausible</i>, phải thử với rác thật.</p></div>
+  <div class="card"><h3>Khi đầy</h3><div class="tbl"><table>
+    <tr><th>Mức</th><th>Điều kiện (chỉnh lại khi thử)</th><th>Máy làm gì</th></tr>
+    <tr><td>Bình thường</td><td>Còn nhiều chỗ</td><td>Nhận rác</td></tr>
+    <tr><td>Gần đầy</td><td>khoảng 80%</td><td>Vẫn nhận. Màn hình hiện thanh vàng cho ngăn đó. E1 báo lên điện thoại qua wifi (tuỳ chọn)</td></tr>
+    <tr><td>Đầy</td><td>khoảng 90%, hoặc đỉnh rác cách đường rơi khoảng 80 mm</td><td>Khoá ngăn. Vật thuộc loại đó được giữ lại trên đĩa, màn hình báo “Ngăn X đầy”</td></tr>
+    <tr><td>Kẹt dù cảm biến chưa báo đầy</td><td>IMU thấy đĩa không tới được góc lệnh</td><td>Quay về, khoá ngăn, báo kẹt</td></tr>
+    <tr><td>Vừa đổ rác xong</td><td>Ngăn kéo đóng lại, cảm biến đo thấy ngăn trống</td><td>Hỏi “Đã lót túi chưa?”. Người dùng xác nhận thì mở khoá</td></tr>
+    <tr><td>Đo được dưới 200 mm</td><td>Rác không thể cao tới đó: đĩa nghiêng hết cỡ thì mép thấp ở 779 mm, cách cảm biến 216 mm. Đây là tiếng vọng từ diềm hoặc mép đĩa</td><td>Coi như cảm biến lỗi. Khoá ngăn, báo “Kiểm tra cảm biến ngăn X”</td></tr>
+    <tr><td>Nhảy từ gần trống lên đầy sau 1 lần đổ</td><td>Một vật không thể lấp gần hết ngăn. Thường là cảm biến nghe thấy mép túi hoặc khung</td><td>Khoá ngăn, báo kiểm tra cảm biến</td></tr>
+    <tr><td>Không có tiếng vọng</td><td>ECHO giữ mức cao quá 30 ms</td><td>Coi là không đọc được, <b>không</b> coi là trống. Khoá ngăn, báo kiểm tra</td></tr>
+  </table></div>
+  <p class="lead">Đọc mỗi cảm biến 5 lần rồi lấy trung vị. Chỉ chuyển mức khi kết quả giữ nguyên 3 chu kỳ liền, để túi nilon phồng lên không làm máy báo đầy sai. Chỉ đo khi đĩa nằm ngang và đứng yên, vì lúc đổ thì rác rơi ngang qua chùm sóng.</p></div>
+  <div class="card"><h3>Chi tiết trong CAD (đường đổ rác, thân B)</h3><div class="tbl"><table data-parts="b_frame" data-prefix="tipping_plate,tilt_stop_,intake_funnel,flexible_throat_skirt,bin_"></table></div></div>
+</section>
+
+<!-- ===================== BỆ MÀN HÌNH ===================== -->
+<section class="panel" id="p-console" role="tabpanel" hidden>
+  <div class="card">
+    <h2>Bệ màn hình và camera</h2>
+    <p>Bệ màn hình gồm hai phần: một <b>tấm màn hình 10,1 inch</b> ngả ra sau 12°, to cỡ máy tính bảng để người đi ngang cách vài mét vẫn đọc được, và một <b>đế thấp</b> phía sau chứa các bo mạch. Màn hình là <b>TJC X5 10,1" (TJC1060X5101), loại không cảm ứng</b>: tấm IPS 1024×600, 300 nit, có bo điều khiển riêng. Tấm in chỉ là một khung mỏng 5 mm quanh bo màn hình 258 × 152 mm. Mặt kính lộ ra 235 × 143 mm, trong đó vùng sáng 222,7 × 125,3 mm, quanh là viền đen của chính tấm LCD. Lúc không có rác, màn hình lần lượt hiện các thông tin về rác; khi có vật thì hiện kết quả phân loại. Phần cằm của đế chìa vào trên miệng phễu tới y = 132 mm, camera giấu dưới cằm. Nhờ vậy camera nhìn được qua gờ cổ phễu tới tận mép sau của đĩa.</p>
+  </div>
+  <div class="vslot" id="slot-console"></div>
+  <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
+  <div class="cols">
+    <div class="card"><h3>Kích thước</h3><div class="tbl"><table>
+      <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
+      <tr><td>Đế: rộng × sâu × cao</td><td class="n">160 × 156 × 46 mm</td></tr>
+      <tr><td>Cằm: mép trước / cao</td><td class="n">y = 132 / 20 mm</td></tr>
+      <tr><td>Màn hình 10,1": mặt kính / tấm</td><td class="n">235 × 143 / 268 × 162 × 22 mm, ngả 12°</td></tr>
+      <tr><td>Mép trên màn hình (thân B)</td><td class="n">cao 1348,5 mm so với sàn</td></tr>
+      <tr><td>Ống kính camera</td><td class="n">(0; 154,9; 1178,7)</td></tr>
+      <tr><td>Trục camera so với phương thẳng đứng</td><td class="n">29,1°, chĩa vào tâm đĩa</td></tr>
+      <tr><td>Góc nhìn cần có (hình nón)</td><td class="n">60,2° → dùng ống 120°</td></tr>
+      <tr><td>Mép đĩa bị khuất</td><td class="n">0 / 72 điểm</td></tr>
+      <tr><td>Khoảng dư của tia nhìn tại gờ cổ phễu</td><td class="n">khoảng 6,1 mm</td></tr>
+      <tr><td>Dải LED trắng</td><td class="n">120 mm, y = 174</td></tr>
+      <tr><td>Vành bắt vít trên mép phễu</td><td class="n">cao 5 mm, từ y = 235 ra sau</td></tr>
+    </table></div></div>
+    <div class="card"><h3>Bên trong bệ (vỏ in rỗng)</h3><ul>
+      <li>Board ESP32-S3 camera, ống kính 120° chĩa qua ô kính dưới cằm, hướng vào tâm đĩa.</li>
+      <li>Màn hình TJC X5 10,1" có bo điều khiển riêng ở mặt sau (cả cụm 258 × 152 × 11,5 mm), nằm gọn trong tấm màn hình, nối với board camera bằng UART TTL 4 chân. Giao diện màn hình làm bằng phần mềm của TJC, có thể chỉ có tiếng Trung.</li>
+      <li>Dải LED 5 V có tấm khuếch tán, bật tắt qua module 2 MOSFET XY-MOS. Module nhận tín hiệu từ 3,3 V nên chân GPIO của ESP32 mở hết MOSFET, đèn sáng tối đa. Lúc camera chụp thì bật 100%, không làm mờ bằng PWM để ảnh không bị sọc.</li>
+      <li>Cầu đấu nguồn 5 V, tụ 2200 µF, module relay cắt nguồn servo (xem tab Điện).</li>
+      <li>Bệ in PETG làm 2 nửa, ghép bằng vít M3 và đai ốc cấy nhiệt. Bệ nằm trên mép trên của phễu, <b>ra khỏi đường nước</b>, bắt xuống mép phễu qua một vành thấp hai bên.</li>
+      <li><b>Chỗ cho mạch:</b> script kiểm tra 7 khối đặt vừa trong đế, mỗi khối có vách 2,5 mm bao quanh và không chạm màn hình, hốc camera hay nhau: board ESP32-S3 (70×30×16), relay (50×26×19), 2 mạch hạ áp (54×26×18 và 45×22×14), tụ, cầu đấu và MOSFET đèn. Màn hình cùng bo điều khiển của nó (258×152×11,5, theo datasheet) nằm vừa trong tấm. Kích thước các bo trong đế là số tạm.</li>
+    </ul></div>
+  </div>
+  <div class="card"><h3>Lỗi hay gặp</h3><ul>
+    <li><b>Tấm màn hình dễ bị tì tay hoặc va:</b> mép trên cao hơn miệng thùng khoảng 180 mm, lực bẻ dồn vào vành bắt vít ở mép phễu. Chưa kiểm tra độ bền chỗ này.</li>
+    <li><b>Khoảng dư tia nhìn chỉ khoảng 6,1 mm:</b> lắp camera lệch quá mức đó là khuất mất mép sau đĩa. In ổ camera có rãnh chỉnh và căn bằng một ảnh mẫu đĩa trống.</li>
+    <li><b>Ống 120° làm méo ảnh kiểu mắt cá:</b> hiệu chỉnh một lần bằng ảnh bàn cờ, hoặc huấn luyện mô hình nhận dạng luôn trên ảnh đã méo.</li>
+    <li><b>LED chiếu thẳng xuống đĩa nhôm bóng gây chói:</b> dùng tấm khuếch tán và mặt đĩa xám mờ.</li>
+  </ul></div>
+  <div class="card"><h3>Chi tiết trong CAD</h3><div class="tbl"><table data-parts="b_frame" data-prefix="display_console,tft_screen,camera_window,led_strip"></table></div></div>
+</section>
+
+<!-- ===================== ĐIỆN ===================== -->
+<section class="panel" id="p-elec" role="tabpanel" hidden>
+  <div class="card">
+    <h2>Cảm biến và điện</h2>
+    <p>Dùng một adapter <b>12 V 5 A</b>. Mạch hạ áp XL4015 hạ xuống <b>6 V cho 2 servo</b>: phương án D tính mô-men của MG996R ở 6 V. Một mạch hạ áp khác hạ xuống <b>5 V cho ESP32-S3</b>, màn hình và cảm biến. Nguồn servo đi qua công tắc an toàn bằng phần cứng, nên dù phần mềm treo thì ngăn kéo rút ra cũng không làm đĩa chuyển động được.</p>
+  </div>
+  <div class="vslot" id="slot-elec"></div>
+  <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
+  <div class="cols">
+    <div class="card"><h3>Sơ đồ nguồn</h3>
+<pre class="sk">Adapter 12 V 5 A ──┬── hạ áp 5 V 3 A ── ESP32-S3 cam, màn hình, IMU, 4 × HC-SR04, LED
+                   └── XL4015 6 V ── cầu chì 3 A ── Relay ── tụ 2200 µF ── MG996R + MG90S
+                         ▲
+   2 công tắc ngăn kéo, nối tiếp</pre>
+      <ul>
+        <li>Cuộn hút của relay được cấp điện <b>qua các công tắc mắc nối tiếp</b>. Chỉ cần một công tắc mở là relay nhả, servo mất nguồn. Chân GPIO đọc thêm trạng thái để báo lên màn hình.</li>
+        <li>Dây servo cỡ 18–20 AWG, đi riêng một đường từ cầu đấu.</li>
+        <li>Nối chung mass cho mọi khối.</li>
+      </ul></div>
+    <div class="card"><h3>Gán chân dự kiến</h3><div class="tbl"><table>
+      <tr><th>Khối</th><th class="n">Số chân</th></tr>
+      <tr><td>Camera (có sẵn trên board)</td><td class="n">không tính</td></tr>
+      <tr><td>Màn hình 10,1" (bo điều khiển riêng): UART TX, RX</td><td class="n">2</td></tr>
+      <tr><td>Servo PWM: MG996R, MG90S</td><td class="n">2</td></tr>
+      <tr><td>I²C (IMU)</td><td class="n">2</td></tr>
+      <tr><td>HC-SR04: 4 TRIG + 4 ECHO, mỗi cái một cặp riêng</td><td class="n">8</td></tr>
+      <tr><td>2 công tắc ngăn kéo đọc vào</td><td class="n">2</td></tr>
+      <tr><td>LED MOSFET</td><td class="n">1</td></tr>
+      <tr><td><b>Tổng</b></td><td class="n"><b>17</b></td></tr>
+    </table></div>
+    <p class="lead">Mình <b>chưa kiểm tra</b> số chân rảnh trên board ESP32-S3 camera cụ thể. Nếu thiếu thì thêm bộ mở rộng PCF8574 trên I²C (khoảng 30k) cho các công tắc, LED và 4 chân TRIG: TRIG chỉ cần một xung ngắn nên đi qua I²C được. 4 chân ECHO thì phải nối thẳng vào GPIO của ESP32, vì phải đo độ rộng xung chính xác tới micro giây. Màn hình 10,1" cần bo điều khiển riêng vì một ESP32-S3 không đủ chân để vừa chạy camera vừa chạy màn hình cỡ này. Màn hình ăn khoảng 800 mA ở 5 V khi sáng tối đa (theo datasheet). Cộng ESP32-S3 camera, LED, relay và cảm biến thì nhánh 5 V khoảng 1,6–1,7 A (ước tính), còn dư so với mạch hạ áp 5 V 3 A.</p></div>
+  </div>
+  <div class="cols">
+    <div class="card"><h3>Cảm biến đầy</h3><ul>
+      <li>4 cảm biến siêu âm HC-SR04 (25k một cái), mỗi cái trong một hộp in treo dưới gờ cổ phễu ở r215, úp mặt nhìn thẳng xuống một ngăn.</li>
+      <li>Hộp ôm board 45 × 20 mm. Đầu dây quay ra ngoài, dây đi lên qua miệng hộp để hở. In với miệng loa úp xuống bàn in: có vạt nghiêng 45° đỡ phần chứa đầu dây nên không cần support.</li>
+      <li><b>Mỗi đầu phát và đầu thu có một loa in</b>: dài 15 mm, loe từ Ø16 ra Ø24. Miệng rộng hơn thì chùm sóng hẹp hơn: theo ước tính, sóng yếu đi một nửa ở ±11° thay vì ±16°. In ở trường nên không tốn thêm tiền.</li>
+      <li>Thân B: miệng loa ở cao 995 mm. Ngăn trống đo ra khoảng 962 mm, đầy 90% khoảng 434 mm.</li>
+      <li>B: khi rút thùng ra, cảm biến đo xa hơn mốc ngăn trống, nên máy biết ngăn đó đang thiếu thùng.</li>
+      <li>Khoảng cách giữa 2 đầu (26 mm) là số tạm. Mua 1 board, đo lại rồi sửa <code>fill_sensor</code> trước khi in.</li>
+      <li>Nếu thử thật vẫn đo sai thì đổi sang VL53L1X (laser, khoảng 200k một cái) và in lại hộp.</li>
+    </ul></div>
+    <div class="card"><h3>Lỗi hay gặp</h3><ul>
+      <li><b>Chân ECHO của HC-SR04 ra 5 V</b>, nối thẳng vào ESP32 (chỉ chịu 3,3 V) sẽ hỏng chân. Dùng cầu chia áp 1 kΩ / 2 kΩ.</li>
+      <li><b>ESP32 tự khởi động lại khi servo bắt đầu chạy</b>, do sụt áp. Cần tụ lớn và đường dây servo đi riêng.</li>
+      <li><b>Dùng chung 1 chân TRIG</b> thì cả 4 cái phát cùng lúc, nghe nhầm tiếng vọng của nhau. Mỗi cái một chân TRIG, đo lần lượt, cách nhau ít nhất 60 ms (datasheet khuyên chu kỳ đo trên 60 ms).</li>
+      <li><b>Đưa chân ECHO qua PCF8574</b> thì đo sai: đọc qua I²C quá chậm, mà mỗi 1 mm chỉ chênh khoảng 6 µs.</li>
+    </ul></div>
+  </div>
+  <div class="card"><h3>Vật nằm gần hơn mặt rác lúc đầy (thân B)</h3>
+    <p>HC-SR04 trả về <b>tiếng vọng đầu tiên</b> nó nghe được. Vật nào gần hơn 434 mm mà nó nghe thấy thì máy sẽ tưởng ngăn đã đầy. CAD tìm các cạnh như vậy và đo góc lệch khỏi trục cảm biến (ghi trong <code>dimensions.json</code>, mục <code>fill_sensor</code>). Cột dB là mức nghe ước tính, tính cả đường đi lẫn đường về: càng âm thì càng khó nghe thấy.</p>
+    <div class="tbl"><table>
+      <tr><th>Vật</th><th class="n">Lệch khỏi trục</th><th class="n">Cách cảm biến</th><th class="n">Không loa</th><th class="n">Có loa</th></tr>
+      <tr><td>Mép thùng, chỗ túi trùm qua</td><td class="n">18,5°</td><td class="n">396 mm</td><td class="n">−8 dB</td><td class="n">−21 dB</td></tr>
+      <tr><td>Thanh chữ thập</td><td class="n">20,6°</td><td class="n">374 mm</td><td class="n">−10 dB</td><td class="n">−28 dB</td></tr>
+      <tr><td>Đế xoay dưới đĩa</td><td class="n">22,3°</td><td class="n">220 mm</td><td class="n">−12 dB</td><td class="n">dưới −35 dB</td></tr>
+      <tr><td>Dây servo</td><td class="n">24,2°</td><td class="n">351 mm</td><td class="n">−15 dB</td><td class="n">dưới −35 dB</td></tr>
+      <tr><td>Đầu dưới diềm PVC</td><td class="n">26,2°</td><td class="n">108 mm</td><td class="n">−17 dB</td><td class="n">dưới −35 dB</td></tr>
+      <tr><td>Mép đĩa</td><td class="n">29,7°</td><td class="n">111 mm</td><td class="n">−24 dB</td><td class="n">dưới −35 dB</td></tr>
+    </table></div>
+    <p class="lead">Cột dB tính theo mô hình đơn giản, coi miệng loa như một màng rung phẳng, <b>chưa đo</b>. Phép tìm cạnh cũng không tính chuyện vật này che vật kia. Datasheet chỉ hứa góc đo 15° với vật phẳng rộng ít nhất 0,5 m², mà miệng thùng chỉ khoảng 0,07 m². Phải thử 1 cái trên thùng thật trước khi in cả 4 hộp.</p></div>
+  <div class="card"><h3>Chi tiết trong CAD</h3><div class="tbl"><table data-parts="b_frame" data-prefix="fill_sensor_,tilt_imu,tilt_servo,yaw_servo,drawer_switch_"></table></div></div>
+</section>
+
+<!-- ===================== THÂN B ===================== -->
+<section class="panel" id="p-bodyB" role="tabpanel" hidden>
+  <div class="card">
+    <h2>Thân B · khung nhôm, 2 ngăn kéo</h2>
+    <p>Khung nhôm định hình 20×20, kích thước ngoài 680 mm (686 mm tính cả vỏ inox), cao 1170 mm. Bốn thùng vuông mua sẵn đặt trên <b>2 ngăn kéo</b>, mỗi ngăn kéo chở 1 thùng trước và 1 thùng sau. Mặt sau là tấm cố định nên thùng kê sát tường được. Cụm đầu <b>bắt vít cố định</b> vào tấm đỡ, vì đổ rác không cần nhấc đầu.</p>
+  </div>
+  <div class="vslot" id="slot-bodyB"></div>
+  <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
+  <div class="cols">
+    <div class="card"><h3>Khung và tấm</h3><div class="tbl"><table>
+      <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
+      <tr><td>Nhôm 20×20: cột đứng</td><td class="n">4 × 1170 mm</td></tr>
+      <tr><td>Nhôm 20×20: thanh ngang (có thanh giữa phía sau)</td><td class="n">11 × 640 mm</td></tr>
+      <tr><td>Tổng chiều dài nhôm</td><td class="n">11,7 m</td></tr>
+      <tr><td>Tấm sàn, nhôm composite 4 mm</td><td class="n">680 × 680</td></tr>
+      <tr><td>Tấm đỡ đầu 6 mm, z = 1044</td><td class="n">lỗ Ø560 + lỗ chốt</td></tr>
+      <tr><td>Vách giữa và 2 tấm bắt ray, 6 mm</td><td class="n">640 × 106</td></tr>
+      <tr><td>Vỏ: 2 hông, mặt sau, mặt trên, nắp trên</td><td class="n">inox 304 dày 1 mm, gấp mép</td></tr>
+      <tr><td>Hông / mặt sau (đã gấp)</td><td class="n">684 / 680 × 1170</td></tr>
+      <tr><td>Nắp trên, mép gập xuống 15 mm</td><td class="n">686 × 686, lỗ Ø596</td></tr>
+      <tr><td>Khối lượng vỏ inox, kể cả 2 mặt ngăn kéo và 4 nẹp gân</td><td class="n">30,7 kg</td></tr>
+    </table></div></div>
+    <div class="card"><h3>Ngăn kéo</h3><div class="tbl"><table>
+      <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
+      <tr><td>Ray bi trượt hết cỡ, chịu 35 kg</td><td class="n">4 × 600 mm (2 cặp)</td></tr>
+      <tr><td>Đáy khay, nhôm composite 4 mm</td><td class="n">2 × 285,6 × 647</td></tr>
+      <tr><td>Thành hông khay</td><td class="n">4 × 647 × 60</td></tr>
+      <tr><td>Thành sau khay</td><td class="n">2 × 285,6 × 60</td></tr>
+      <tr><td>Mặt ngăn kéo inox, cao hết cửa, có tay nắm</td><td class="n">2 × 339 × 1022</td></tr>
+      <tr><td>Nẹp gân mũ dán sau mặt ngăn kéo</td><td class="n">4 × 979 mm</td></tr>
+      <tr><td>Thùng vuông, tâm ở (±158,5; ±158,5)</td><td class="n">270 × 270 × 590</td></tr>
+      <tr><td>Mép trên thùng / đáy thanh chữ thập</td><td class="n">620 / 645 mm</td></tr>
+    </table></div></div>
+  </div>
+  <div class="card"><h3>Màu vỏ</h3>
+    <p>Vỏ ngoài gồm 2 hông, mặt sau, mặt trên, nắp trên và 2 mặt ngăn kéo, tất cả bằng <b>inox 304 dày 1 mm</b>, phun cát cho mờ, mặt mịn không vân. Miệng phễu, đĩa nghiêng và bệ màn hình tô cùng tông với vỏ, giống cụm camera trên lưng điện thoại; miệng phễu và đĩa nhạt hơn vỏ một chút. Có 4 màu để chọn:</p>
+    <div class="seg finish"></div>
+    <p class="lead">Bạc là inox phun cát để nguyên màu thép. Xám, xanh lá đậm và đen là lớp mạ PVD mờ lên inox đã phun cát; cần hỏi xưởng xem có mạ được xanh lá đậm không. Bảng giá ở tab Vật tư tính theo màu bạc, không mạ. Ba màu kia cần mạ PVD, thêm khoảng 1,7–3,7 triệu. Màu trên hình 3D ước lượng bằng mắt, chưa phải mã màu của xưởng. Ở tab này vỏ được vẽ trong suốt để thấy bên trong. Mở tab “Tổng quan · 3D” để xem vỏ đặc.</p>
+  </div>
+  <div class="card"><h3>Vỏ inox: gấp mép và lắp</h3><ul>
+    <li><b>Gấp mép:</b> mọi cạnh của các tấm đứng được gấp ép kín 10 mm vào mặt trong, nên không còn mép cắt sắc lộ ra và tấm cứng hơn. Nắp trên có mép gập xuống 15 mm, trùm lên mép trên của 4 mặt.</li>
+    <li><b>Che mép:</b> 2 tấm hông sâu 684 mm, chìa ra che mép của mặt sau và mặt trước, nên ở góc chỉ thấy đường gấp tròn.</li>
+    <li><b>Bắt vào khung:</b> mặt có mép gấp áp vào nhôm định hình, bắt vít M4 đầu tròn vào con trượt qua phần mép gấp. Lót long đền nhựa giữa inox và nhôm để chỗ ướt không bị ăn mòn. Thanh giữa mới ở phía sau (z = 450) đỡ tấm sau cho phẳng, giống thanh giữa ở 2 hông.</li>
+    <li><b>Mặt ngăn kéo:</b> tấm inox chỉ bắt vào khay ở đáy, nên dán 2 nẹp gân hình mũ (inox 1 mm, 20 × 18 mm) bằng băng keo VHB ở mặt sau. Chân nẹp bắt vít vào thành khay.</li>
+    <li><b>Thứ tự gia công:</b> cắt laser, chấn, khoan hết các lỗ rồi mới phun cát, để mép gấp và quanh lỗ cũng mờ đều. Nếu sau này chọn màu mạ PVD thì mạ sau cùng: mạ trước rồi mới gấp thì lớp mạ nứt ở mép gấp.</li>
+  </ul>
+  <div class="note">Chưa có: lỗ bắt vít và lỗ tay nắm trong các file DXF của vỏ. Phải thêm trước khi gửi xưởng.</div></div>
+  <div class="cols">
+    <div class="card"><h3>Thay túi</h3>
+<pre class="sk"> ┌─────────┬─────────┐
+ │ 2 Giấy  │ 1 Nhựa  │ ← sát tường
+ ├─────────┼─────────┤
+ │ 3 K.loại│ 4 Khác  │ ← phía trước
+ └────↓────┴────↓────┘
+  ngăn kéo   ngăn kéo
+    trái       phải</pre>
+      <ol>
+        <li>Kéo ngăn kéo ra hết. Công tắc ở cuối ngăn kéo cắt nguồn servo và khoá 2 ngăn của nó.</li>
+        <li>Thùng sau khi kéo ra nằm ngoài vùng của cụm đầu thêm 36,5 mm, nên nhấc thẳng lên được.</li>
+        <li>Rút túi ra, buộc lại, lót túi mới, đặt thùng lại. Đẩy ngăn kéo vào rồi xác nhận đã lót túi.</li>
+      </ol>
+      <p class="lead">Túi cần rộng ít nhất 55 cm, dài ít nhất 82 cm. Khoan vài lỗ thông khí ở đáy thùng để túi không bị hút dính.</p></div>
+    <div class="card"><h3>Lỗi hay gặp</h3><ul>
+      <li><b>Hai ray không song song:</b> ngăn kéo sẽ bị kẹt. Bắt ray lên tấm phẳng, đo hai đầu lệch nhau không quá 1 mm.</li>
+      <li><b>Ngăn kéo nặng:</b> 2 thùng đầy giấy ướt có thể tới 19–25 kg, nên chọn ray chịu 35 kg trở lên.</li>
+      <li><b>Khung bị lệch vuông góc:</b> lắp xong đo hai đường chéo của khung, phải bằng nhau.</li>
+      <li><b>Vết xước:</b> bạc phun cát giấu vết xước tốt. Nếu chọn màu mạ PVD thì lớp mạ rất mỏng, chìa khoá hay khoá thắt lưng quẹt vào là lộ vệt bạc.</li>
+      <li><b>Dấu vân tay:</b> inox phun cát dễ in vân tay. Có thể phủ thêm lớp chống vân tay (AFP).</li>
+      <li><b>Thùng nặng:</b> vỏ inox nặng hơn vỏ nhôm composite khoảng 17 kg. Cần 2 người khiêng, hoặc lắp chân tăng chỉnh có bánh xe khoá.</li>
+      <li><b>Ngân sách:</b> <span id="budgetB">B khoảng 9–14 triệu</span>, vượt ngân sách 5 triệu chủ yếu vì vỏ inox và cụm đầu (xem tab Vật tư).</li>
+    </ul></div>
+  </div>
+  <div class="card"><h3>Chi tiết trong CAD (chỉ phần thân)</h3><div class="tbl"><table data-parts="b_frame" data-prefix="post_,rail_,floor_plate,head_seat_plate,side_panel,back_panel,head_panel,top_cover,center_wall,slide_,drawer_,bin_"></table></div></div>
+</section>
+
+<!-- ===================== PHẦN MỀM ===================== -->
+<section class="panel" id="p-soft" role="tabpanel" hidden>
+  <div class="card">
+    <h2>Phần mềm và an toàn</h2>
+    <p>Phần mềm chạy trên ESP32-S3 dưới dạng một <b>máy trạng thái</b>: tại mỗi thời điểm máy chỉ ở đúng một trạng thái, và chỉ chuyển sang trạng thái khác khi thoả điều kiện. Cách viết này giúp không bao giờ lỡ tay ra lệnh nghiêng khi chưa đủ điều kiện an toàn.</p>
+  </div>
+  <div class="card"><h3>Các trạng thái</h3><div class="tbl"><table>
+    <tr><th>Trạng thái</th><th>Làm gì</th><th>Chuyển sang</th></tr>
+    <tr><td class="k">IDLE</td><td>Đĩa nằm ngang, LED xanh, chờ có vật. Màn hình lần lượt hiện các thông tin về rác, chữ to để người đi ngang đọc được</td><td>Camera thấy có thay đổi → SETTLE</td></tr>
+    <tr><td class="k">SETTLE</td><td>Chờ vật nằm yên và miệng phễu không có tay liên tục 0,5 giây</td><td>→ CLASSIFY</td></tr>
+    <tr><td class="k">CLASSIFY</td><td>Đếm số vật, đo kích thước, nhận dạng loại</td><td>Nhiều hơn 1 vật hoặc vật quá cỡ → HOLD. Không chắc loại → ngăn 4. Còn lại → CHECK</td></tr>
+    <tr><td class="k">CHECK</td><td>Ngăn đích có đang đầy, ngăn kéo có đang rút không</td><td>Bị khoá → HOLD. Được → TILT</td></tr>
+    <tr><td class="k">TILT</td><td>Nghiêng trong 0,8–1 giây theo T17, theo dõi IMU</td><td>Sau 1,5 giây mà lệch quá 5° → JAM. Tới góc → DWELL</td></tr>
+    <tr><td class="k">DWELL / RETURN</td><td>Giữ 0,8 giây, rồi về nằm ngang trong 1 giây</td><td>→ VERIFY</td></tr>
+    <tr><td class="k">VERIFY</td><td>Chụp xem đĩa đã trống chưa, chưa trống thì lắc 2 lần</td><td>Trống → IDLE. Vẫn còn → HOLD</td></tr>
+    <tr><td class="k">HOLD</td><td>Đĩa nằm ngang, LED đỏ, màn hình báo lý do</td><td>Hết lý do → IDLE</td></tr>
+    <tr><td class="k">YAW_FAULT</td><td>Con quay của IMU thấy trục xoay quay khi không có lệnh, hoặc quay quá xa so với lệnh: ngắt relay servo, báo “Lỏng hoặc kẹt trục xoay”</td><td>Kiểm tra xong, người dùng xác nhận → BOOT</td></tr>
+    <tr><td class="k">JAM</td><td>Đưa đĩa về, khoá ngăn đích, báo kẹt</td><td>Người dùng xác nhận đã gỡ → IDLE</td></tr>
+    <tr><td class="k">BOOT</td><td>Đọc góc IMU, đưa đĩa về nằm ngang thật chậm, tự kiểm tra 4 cảm biến</td><td>→ IDLE</td></tr>
+  </table></div></div>
+  <div class="cols">
+    <div class="card"><h3>Nhận dạng</h3><ul>
+      <li>Mô hình nhỏ chạy ngay trên ESP32-S3, ví dụ MobileNet ảnh 96×96, phân 4 lớp: Nhựa, Giấy, Kim loại, Khác.</li>
+      <li>Độ tin dưới ngưỡng (khởi đầu đặt 0,7) thì cho vào ngăn 4 “Khác”.</li>
+      <li>Tự chụp khoảng 200 ảnh mỗi lớp <b>ngay trên đĩa thật, dưới đèn LED thật</b> để huấn luyện.</li>
+      <li>Khả năng chạy được trên ESP32-S3 là <i>plausible</i>, độ chính xác chưa biết. Phải thử mới có số.</li>
+    </ul></div>
+    <div class="card"><h3>Hiệu chỉnh lần đầu</h3><ol>
+      <li>Đặt thước thuỷ lên đĩa, chỉnh servo cho đĩa nằm ngang, lưu giá trị IMU làm mốc 0.</li>
+      <li>Nghiêng thử từng ngăn, kiểm tra hướng có đúng ngăn không. Nếu ngược thì đảo chiều servo.</li>
+      <li>Chụp ảnh đĩa trống làm ảnh mẫu, dùng để kiểm tra đĩa trống và phát hiện camera bẩn.</li>
+      <li>Đo khoảng cách tới đáy từng ngăn khi trống, lấy làm mốc 0% đầy. Thân B phải ra khoảng 960 mm. Ra khoảng 400 mm là cảm biến đang nghe mép túi hoặc thanh chữ thập, khoảng 110 mm là nghe diềm hoặc mép đĩa: chỉnh lại hộp cho thẳng rồi đo lại.</li>
+    </ol></div>
+  </div>
+</section>
+
+<!-- ===================== BAD CASE ===================== -->
+<section class="panel" id="p-cases" role="tabpanel" hidden>
+  <div class="card">
+    <h2>Các giải pháp T: trạng thái cuối</h2>
+    <div class="tbl"><table id="fixTable"></table></div>
+  </div>
+  <div class="card">
+    <h2>45 bad case và cách đối phó</h2>
+    <p>Các con số dựa trên thiết kế hiện tại: miệng phễu Ø550, cổ phễu Ø330, đĩa nhôm Ø320, khe giữa đĩa và cổ phễu 5 mm, xoay ±45° rồi nghiêng 45°, chặn cứng ở 47°, servo MG996R và MG90S (phương án D).</p>
+    <div id="caseGroups"></div>
+  </div>
+</section>
+
+<!-- ===================== VẬT TƯ ===================== -->
+<section class="panel" id="p-bom" role="tabpanel" hidden>
+  <div class="card">
+    <h2>Vật tư và chi phí ước tính</h2>
+    <div class="note"><b>Giá tra tháng 10/2026</b> trên Shopee và ở cửa hàng, xưởng tại Hà Nội, ưu tiên chỗ gần Times City. Mỗi dòng là một món cần mua, số lượng theo CAD. Dòng có 2 nơi bán (“hoặc”) là 2 chỗ mua cùng một món, chọn một. Bấm cột Link để mở trang bán. Cột Tình trạng: “Đã tra” là giá trên trang bán, “Tham khảo” là bảng giá chung hoặc giá tuỳ biến thể, “Ước tính” là chưa tra. Tổng cộng tự tính từ các dòng. Giá xưởng là giá niêm yết trên web, nên gửi file DXF cho xưởng để xin báo giá chốt.</div>
+    <div class="tbl"><table id="costTable"></table></div>
+    <p class="lead" id="costLead"></p>
+  </div>
+  <div class="cols">
+    <div class="card"><h3>Gửi đi gia công</h3><ul>
+      <li><b>Cắt laser hoặc CNC:</b> lấy các file trong <code>dxf/</code>, tỉ lệ 1:1, đơn vị mm. Gồm mâm, đĩa, đế xoay, phễu trải phẳng, các tấm và khay ngăn kéo.</li>
+      <li><b>Cắt laser + chấn (vỏ inox B):</b> gửi xưởng gia công inox các file <code>side_panel_left/right</code>, <code>back_panel</code>, <code>head_panel_front</code>, <code>top_cover</code>, <code>drawer_front_left/right</code> và <code>drawer_stiffener_x4</code>. Mỗi file có đường viền cắt (lớp CUT), đường chấn nét đứt (lớp BEND) và ghi chú cách gấp (lớp NOTE).</li>
+      <li><b>In 3D:</b> lấy các file trong <code>parts/*.stl</code>: giá chữ C, giá MG996R, miếng nối servo xoay (<code>yaw_hub</code>, đặc 100%), 2 tai đĩa, 2 cục chặn, hộp cảm biến, bệ màn hình.</li>
+      <li><b>Cắt thanh:</b> nhôm hộp 30×30 và 40×30, thanh nhôm 30×13, trục inox Ø8 (180 mm và 70 mm). Có thêm danh sách cắt nhôm định hình <code>cut_list_profile_20x20.csv</code>.</li>
+      <li><b>File cho xưởng:</b> <code>assembly_e1.step</code>, <code>exploded_e1.step</code>, <code>tilt_to_bin_1..4.step</code>, <code>components.csv</code>.</li>
+    </ul></div>
+    <div class="card"><h3>Phải đo trước khi cắt</h3><ul>
+      <li>Thùng vuông thật: rộng, cao, độ côn thành (thùng thường loe miệng).</li>
+      <li>Servo MG996R và MG90S thật: kích thước tai, vị trí trục. Đo mô-men MG996R bằng cân treo.</li>
+      <li>Puly 40T: lỗ 8 mm hay 5 mm.</li>
+      <li>Board ESP32-S3 camera thật: kích thước, số chân rảnh.</li>
+      <li>Màn hình TJC X5 10,1" thật: vị trí lỗ bắt, và vùng hiển thị có nằm giữa bo không (CAD đang giả sử nằm giữa).</li>
+      <li>Ray trượt thật: độ dày, chiều cao, khoảng cách lỗ bắt.</li>
+      <li>Vỏ inox: hỏi xưởng chấn lượng bù khi gấp mép inox 1 mm của máy họ, rồi chỉnh kích thước tấm phôi cho khớp (file đang tính theo K = 0,44).</li>
+    </ul></div>
+  </div>
+</section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const PROC={laser:'Cắt laser',bend:'Cắt laser + chấn',print:'In 3D',buy:'Mua sẵn',cut:'Cắt thanh'};
+const DIRS=[45,135,225,315], D2R=Math.PI/180;
+const host=document.getElementById('viewer');
+let renderer=null;
+try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){document.getElementById('loading').textContent='Trình duyệt không mở được WebGL, nên không xem được 3D. Các tab khác vẫn đọc bình thường.';}
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(32,1,10,20000);
+let controls=null;
+if(renderer){renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));host.appendChild(renderer.domElement);
+  // Xuất màu sRGB. Đường cong tông ACES chỉ áp cho vỏ kim loại để vùng sáng không cháy trắng; chi tiết khác tắt toneMapped để giữ đúng màu CAD
+  renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;}
+// Góc nhìn ban đầu thấy trọn thùng. Khung hẹp (điện thoại) thì lùi camera ra xa hơn
+function homeView(){const k=Math.max(1,1.25/camera.aspect);camera.position.set(2110*k,650+1040*k,2350*k);if(controls){controls.target.set(0,650,0);controls.update();}}
+homeView();
+scene.add(new THREE.HemisphereLight(0xffffff,new THREE.Color(0x8a97a0).convertSRGBToLinear(),.45));
+const sun=new THREE.DirectionalLight(0xffffff,.9);sun.position.set(900,2200,1400);scene.add(sun);
+
+// Phòng chụp ảo cho mặt kim loại phản chiếu. Độ sáng của vòm theo hướng (x,y,z) tính bằng công thức
+function studioLight(x,y,z){
+  const lobe=(dx,dy,dz,n)=>Math.pow(Math.max(0,x*dx+y*dy+z*dz),n),az=Math.atan2(x,z)/D2R;
+  let v=y<0?.24+.3*(1+y)*(1+y):.54-.5*y;   // sàn sáng dần tới chân trời, tường tối dần lên trần
+  v+=.45*lobe(-.63,-.15,.76,3);            // softbox chính ở trước trái, soi mặt ngăn kéo
+  v+=.2*lobe(.67,-.15,-.73,3);             // đèn phụ ở sau phải, soi hông phải
+  v+=.15*lobe(-.62,.3,-.72,5);             // đèn viền ở sau trái, soi nắp trên
+  v+=.6*lobe(0,1,0,2);                     // softbox trần
+  v+=.5*Math.exp(-Math.pow((az+38)/14,2))*Math.max(0,1-Math.abs(y)/.7);   // đèn dải đứng rộng, tạo vùng sáng dịu trên mặt trước
+  return v;
+}
+function studioEnv(){
+  const R=40,geo=new THREE.SphereGeometry(R,128,64),p=geo.attributes.position,col=new Float32Array(p.count*3);
+  for(let i=0;i<p.count;i++)col[3*i]=col[3*i+1]=col[3*i+2]=studioLight(p.getX(i)/R,p.getY(i)/R,p.getZ(i)/R);
+  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const room=new THREE.Scene();room.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.BackSide})));
+  const pm=new THREE.PMREMGenerator(renderer),tex=pm.fromScene(room,.03).texture;pm.dispose();return tex;
+}
+if(renderer)scene.environment=studioEnv();
+
+// Sàn: một vũng màu tròn mờ dần ra mép để hoà vào nền
+function fadeDisc(){const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d'),g=x.createRadialGradient(128,128,0,128,128,128);
+  g.addColorStop(0,'#fff');g.addColorStop(.45,'#fff');g.addColorStop(1,'#000');x.fillStyle=g;x.fillRect(0,0,256,256);return new THREE.CanvasTexture(c);}
+const floorMat=new THREE.MeshBasicMaterial({color:0xcfd7d3,alphaMap:fadeDisc(),transparent:true,depthWrite:false,toneMapped:false});
+const floor=new THREE.Mesh(new THREE.CircleGeometry(1600,64),floorMat);floor.rotation.x=-Math.PI/2;floor.renderOrder=-2;scene.add(floor);
+// Bóng đổ dưới chân thùng: vẽ hình chân đế rồi làm nhoè hai lớp, lớp rộng nhạt và lớp sát chân đậm
+const SHADOW=.5;
+function contactShadow(square,outer){
+  const pad=300,size=Math.max(outer[0],outer[1])+2*pad,N=512,k=N/size,c=document.createElement('canvas');c.width=c.height=N;const x=c.getContext('2d');
+  x.fillStyle='#000';x.fillRect(0,0,N,N);
+  const blur=(mm,alpha,grow)=>{const w=(outer[0]+grow)*k,d=(outer[1]+grow)*k;
+    // Hình thật vẽ lệch ra ngoài canvas, chỉ có bóng nhoè của nó rơi vào trong
+    x.save();x.shadowColor='rgba(255,255,255,'+alpha+')';x.shadowBlur=mm*k;x.shadowOffsetX=2*N;x.fillStyle='#fff';x.beginPath();
+    if(square)x.rect(N/2-w/2-2*N,N/2-d/2,w,d);else x.ellipse(N/2-2*N,N/2,w/2,d/2,0,0,2*Math.PI);
+    x.fill();x.restore();};
+  blur(220,.5,60);blur(50,.7,-20);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(size,size),new THREE.MeshBasicMaterial({color:0x000000,alphaMap:new THREE.CanvasTexture(c),transparent:true,opacity:SHADOW,depthWrite:false,toneMapped:false}));
+  m.position.z=.5;m.renderOrder=-1;return m;
+}
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#dfe5e2';}
+function applyTheme(){if(renderer)renderer.setClearColor(new THREE.Color(cssVar('--viewer')));floorMat.color.set(cssVar('--floor')).convertSRGBToLinear();}
+applyTheme();
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);}catch(e){}
+new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+function parseCSV(text){
+  const rows=[];let row=[],cell='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c=='"'){if(text[i+1]=='"'){cell+='"';i++;}else q=false;}else cell+=c;}
+    else if(c=='"')q=true;else if(c==','){row.push(cell);cell='';}
+    else if(c=='\n'){row.push(cell);rows.push(row);row=[];cell='';}else if(c!='\r')cell+=c;}
+  if(cell||row.length){row.push(cell);rows.push(row);}
+  const head=rows.shift();return rows.filter(r=>r.length>1).map(r=>Object.fromEntries(head.map((h,i)=>[h,r[i]])));
+}
+
+// Danh mục chi tiết của cả hai thân, dùng cho bảng ở từng tab
+const compCache={};
+function loadComp(key){if(!compCache[key])compCache[key]=fetch(key+'/components.csv').then(r=>{if(!r.ok)throw new Error(r.status);return r.text();}).then(parseCSV);return compCache[key];}
+
+const SHELL_GROUPS=['body','skin'], SHELL_NAMES=['head_shell_ring','top_cover','intake_funnel'];
+// Màu vỏ thân B: inox 304 phun cát (bạc) hoặc mạ PVD mờ (xám, xanh lá đậm, đen), mịn như lưng điện thoại, [tên, màu, độ nhám].
+// Màu ước lượng bằng mắt, chưa phải mã màu của xưởng
+const FINISH={silver:['Bạc',0xd0d2d5,.42],gray:['Xám',0x8a8c90,.42],green:['Xanh lá đậm',0x55664f,.45],black:['Đen',0x3a3a3d,.42]};
+const B_SHELL=['side_panel_','back_panel','head_panel_','top_cover','drawer_front_'];
+// Miệng phễu, đĩa nghiêng và bệ màn hình tô cùng tông với vỏ, kiểu cụm camera trên lưng điện thoại
+const B_TRIM=['intake_funnel','tipping_plate','display_console'];
+const FOCUS=new THREE.Color(0x8a5a00).convertSRGBToLinear(),NO_GLOW=new THREE.Color(0),WHITE=new THREE.Color(0xffffff);
+// Màn hình chờ mẫu trên màn 10,1": một thông tin về rác, chữ to để người đi ngang đọc được
+function idleScreen(){
+  const c=document.createElement('canvas');c.width=1260;c.height=767;const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;
+  if(renderer)t.anisotropy=renderer.capabilities.getMaxAnisotropy();
+  const draw=()=>{const x=c.getContext('2d');x.setTransform(1,0,0,1,0,0);x.fillStyle='#000';x.fillRect(0,0,1260,767);
+    // Mặt kính 235 × 143 mm là vùng nhìn thấy của tấm LCD; chỉ vùng 222,7 × 125,3 mm ở giữa sáng, quanh là viền đen
+    const g=x.createLinearGradient(0,48,0,719);g.addColorStop(0,'#10241f');g.addColorStop(1,'#0a1613');
+    x.fillStyle=g;x.fillRect(33,48,1194,671);
+    // Bố cục bên dưới vẽ cho khung 1260 × 800, thu nhỏ cho vừa vùng sáng
+    x.setTransform(.84,0,0,.84,101,48);
+    x.fillStyle='#5cc2a6';x.font='500 34px "JetBrains Mono",ui-monospace,Menlo,monospace';x.fillText('AWARE  ·  BẠN CÓ BIẾT?',80,112);
+    x.fillStyle='#f2f7f5';x.font='600 132px "Barlow Condensed","Arial Narrow",sans-serif';
+    ['Một chai nhựa có thể','mất khoảng 450 năm','để phân huỷ.'].forEach((l,i)=>x.fillText(l,76,292+i*140));
+    x.font='500 36px "Be Vietnam Pro",system-ui,sans-serif';x.fillStyle='#9fb3ad';x.fillText('Đặt rác lên đĩa, thùng sẽ tự phân loại:',80,676);
+    [['#4a8fb8','Nhựa'],['#c9873a','Giấy'],['#5e9e6a','Kim loại'],['#9a6bb0','Khác']].forEach(([col,n],i)=>{const px=80+i*270;
+      x.fillStyle=col;x.fillRect(px,712,30,30);x.fillStyle='#f2f7f5';x.fillText(n,px+46,741);});
+    t.needsUpdate=true;};
+  draw();
+  // Vẽ lại khi phông chữ của trang tải xong
+  try{Promise.all(['600 132px "Barlow Condensed"','500 36px "Be Vietnam Pro"','500 34px "JetBrains Mono"'].map(f=>document.fonts.load(f))).then(draw,()=>{});}catch(e){}
+  return t;
+}
+const screenTex=idleScreen();
+// Toạ độ ảnh cho mặt kính: trái sang phải theo X, dưới lên trên theo Z của CAD
+function faceUV(g){const p=g.attributes.position,b=new THREE.Box3().setFromBufferAttribute(p),uv=new Float32Array(p.count*2);
+  for(let i=0;i<p.count;i++){uv[2*i]=(p.getX(i)-b.min.x)/(b.max.x-b.min.x);uv[2*i+1]=(p.getZ(i)-b.min.z)/(b.max.z-b.min.z);}
+  g.setAttribute('uv',new THREE.BufferAttribute(uv,2));}
+// Thân nào đang chọn được: nút của nó trong #bodySeg không bị ẩn. Chỉ còn một thân thì ẩn luôn cả nhóm nút
+const bodyBtns=[...document.querySelectorAll('#bodySeg button')].filter(b=>!b.hidden),canPick=k=>bodyBtns.some(b=>b.dataset.k===k);
+document.getElementById('bodyPick').hidden=bodyBtns.length<2;
+const data={};let body='b_frame',selBody='b_frame',finish='silver',cut=false,exploded=false,expT=0,tilt=null;
+try{const s=JSON.parse(localStorage.getItem('aware-ab-view-2')||'{}');if(canPick(s.b))selBody=body=s.b;if(FINISH[s.f])finish=s.f;}catch(e){}
+
+// Mỗi tab là một góc nhìn: thân nào (bỏ trống = thân đang chọn), và tiền tố tên chi tiết được vẽ đậm
+const TILT_PARTS=["yaw_","hinge_","plate_lug_","tilt_","tipping_plate","motor_cable_","cable_clip_"];
+const VIEWS={
+  overview:{title:'Toàn bộ thùng',tilt:true},
+  head:{title:'Cụm đầu & phễu',pre:["head_deck","orientation_pin","head_locating_ring","head_shell_ring","intake_funnel","flexible_throat_skirt","hanger_","joint_beam","spider_foot_"]},
+  tilt:{title:'Cơ cấu nghiêng',tilt:true,pre:TILT_PARTS},
+  dump:{title:'Đường đổ rác',tilt:true,pre:TILT_PARTS.concat(["intake_funnel","flexible_throat_skirt","bin_"])},
+  console:{title:'Bệ màn hình & camera',pre:["display_console","tft_screen","camera_window","led_strip"]},
+  elec:{title:'Cảm biến & điện',pre:["fill_sensor_","tilt_imu","drawer_switch_","led_strip","camera_window","tft_screen","tilt_servo","yaw_servo","motor_cable_","cable_clip_","yaw_ribbon_loop","yaw_cable_channel","yaw_stop_pin"]},
+  bodyB:{title:'Thân B · khung',body:'b_frame',xray:true,pre:["post_","rail_","floor_plate","head_seat_plate","side_panel","back_panel","head_panel","top_cover","center_wall","slide_","drawer_","bin_"]}
+};
+let view='overview',ghost=true,focusName=null;
+const stage=document.querySelector('.stage');
+function inView(name){const v=VIEWS[view];return !v.pre||v.pre.some(p=>name===p||name.startsWith(p));}
+
+async function load(key){
+  if(data[key])return data[key];
+  const [mesh,comp,dims]=await Promise.all([
+    fetch(key+'/mesh.json').then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}),
+    loadComp(key),
+    fetch(key+'/dimensions.json').then(r=>r.json())]);
+  const meta=Object.fromEntries(comp.map(c=>[c.component,c]));
+  const pivot=dims.tilt_pivot_mm[2];
+  // CAD dùng trục Z hướng lên; xoay cả cụm để khớp trục Y hướng lên của three.js
+  const root=new THREE.Group();root.rotation.x=-Math.PI/2;scene.add(root);
+  // Phương án D: cụm xoay quay quanh trục đứng, đĩa nghiêng quanh bản lề nằm trên cụm xoay
+  const yawG=new THREE.Group();root.add(yawG);
+  const tiltG=new THREE.Group();tiltG.position.set(0,0,pivot);yawG.add(tiltG);
+  const items=[];
+  for(const p of mesh){
+    const g=new THREE.BufferGeometry();
+    g.setAttribute('position',new THREE.Float32BufferAttribute(p.vertices.flat(),3));
+    g.setIndex(p.triangles.flat());g.computeVertexNormals();
+    const shell=SHELL_GROUPS.includes(p.group)||SHELL_NAMES.includes(p.name);
+    const m=new THREE.MeshStandardMaterial({color:new THREE.Color(...p.color).convertSRGBToLinear(),roughness:.6,metalness:.05,side:THREE.DoubleSide,envMapIntensity:.18,toneMapped:false});
+    // Vỏ thân B và các chi tiết cùng tông: kim loại mờ, màu và độ nhám do applyFinish đặt
+    const paint=key==='b_frame'&&B_SHELL.concat(B_TRIM).some(s=>p.name.startsWith(s));
+    if(paint){m.metalness=1;m.envMapIntensity=1.15;m.toneMapped=true;}
+    // Màn hình tự phát sáng, hiện màn hình chờ mẫu
+    const lit=p.name==='tft_screen';
+    if(lit){faceUV(g);m.color.set(0);m.emissiveMap=screenTex;m.roughness=.2;}
+    const mesh3=new THREE.Mesh(g,m);
+    const holder=new THREE.Group();holder.add(mesh3);
+    if(p.group==='tilt_plate'){tiltG.add(holder);mesh3.position.z=-pivot;}
+    else if(p.group==='yaw')yawG.add(holder);
+    else root.add(holder);
+    mesh3.userData={name:p.name,desc:p.description,meta:meta[p.name]||{}};
+    items.push({p,holder,m,shell,paint,glow:lit?WHITE:NO_GLOW});
+  }
+  const shadow=contactShadow(key==='b_frame',dims.outer_mm);root.add(shadow);
+  data[key]={root,yawG,tiltG,items,dims,comp,shadow};applyFinish();return data[key];
+}
+
+// Độ đậm của từng chi tiết theo góc nhìn: chi tiết của tab vẽ đậm, phần còn lại mờ hoặc ẩn
+function applyView(){
+  const d=data[body];if(!d)return;const v=VIEWS[view];
+  d.items.forEach(it=>{let op=1;
+    // Tab thân: vỏ của chính nó trong suốt để thấy khung, vách, ngăn kéo bên trong
+    if(v.pre){if(!inView(it.p.name))op=ghost?.05:0;else if(v.xray&&it.p.group==='skin')op=.22;}
+    else if(cut&&it.shell)op=.14;
+    it.holder.visible=op>0;it.m.transparent=op<1;it.m.opacity=op;it.m.depthWrite=op===1;
+    it.m.emissive.copy(it.p.name===focusName?FOCUS:it.glow);it.m.needsUpdate=true;});
+  d.shadow.visible=!v.pre||!!v.xray;
+  const btn=document.getElementById('btnCut');
+  if(v.pre){btn.textContent='Hiện phần còn lại';btn.setAttribute('aria-pressed',ghost);}
+  else{btn.textContent='Nhìn xuyên vỏ';btn.setAttribute('aria-pressed',cut);}
+  document.querySelectorAll('.tool .bin').forEach(b=>b.hidden=!v.tilt);
+}
+// Đặt màu và độ nhám cho các tấm vỏ thân B theo màu đang chọn
+function applyFinish(){
+  const f=FINISH[finish],d=data.b_frame;
+  // Nắp trên và đĩa nhám hơn các tấm đứng: nhìn xiên từ trên xuống vẫn ra màu, không loá thành xám bạc.
+  // Miệng phễu và đĩa pha thêm trắng cho nhạt hơn vỏ một chút, miệng phễu cũng nhám hơn để không loé sáng
+  if(d)d.items.forEach(it=>{if(!it.paint)return;const n=it.p.name,mouth=n==='intake_funnel',plate=n==='tipping_plate';
+    it.m.color.setHex(f[1]).lerp(WHITE,mouth?.18:plate?.25:0).convertSRGBToLinear();
+    it.m.roughness=f[2]+(n==='top_cover'||plate?.2:mouth?.18:0);});
+  document.querySelectorAll('.finish button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.f===finish));
+}
+function saveView(){try{localStorage.setItem('aware-ab-view-2',JSON.stringify({b:selBody,f:finish}));}catch(e){}}
+function setCut(){if(VIEWS[view].pre)ghost=!ghost;else cut=!cut;applyView();}
+// Đưa camera tới khối bao của các chi tiết được chọn
+function frameOn(pick){
+  const d=data[body];if(!d||!controls)return false;d.root.updateMatrixWorld(true);
+  const box=new THREE.Box3();d.items.forEach(it=>{if(pick(it))box.expandByObject(it.holder);});
+  if(box.isEmpty())return false;
+  const c=box.getCenter(new THREE.Vector3()),size=Math.max(box.getSize(new THREE.Vector3()).length(),80);
+  const dist=size/2/Math.tan(camera.fov*D2R/2)*1.15;
+  camera.position.copy(c).add(new THREE.Vector3(.62,.5,.6).normalize().multiplyScalar(dist));
+  controls.target.copy(c);controls.update();return true;
+}
+function frameView(){if(!VIEWS[view].pre||!frameOn(it=>inView(it.p.name)))homeView();}
+async function show(){
+  bodyBtns.forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===selBody));
+  document.getElementById('finishPick').hidden=selBody!=='b_frame';
+  saveView();
+  if(!renderer)return;
+  const ld=document.getElementById('loading');ld.hidden=false;ld.textContent='Đang tải lưới CAD…';
+  body=VIEWS[view].body||selBody;
+  try{const d=await load(body);ld.hidden=true;Object.entries(data).forEach(([k,x])=>x.root.visible=(k===body));applyView();
+    hud.textContent='Đang xem: '+VIEWS[view].title;
+    if(view==='overview')renderInfo(d);}
+  catch(e){ld.textContent='Không tải được lưới CAD ('+e.message+'). Tải lại trang để thử lại.';}
+}
+
+// Giống hàm angles() trong smart_bin_ab.py: nghiêng dương làm đĩa chúc về phía -Y,
+// nghiêng được 2 chiều nên chỉ cần xoay ±45° cho 4 ngăn chéo
+function angles(t,dir){let yaw=((dir-270+180)%360+360)%360-180,tl=t;
+  if(Math.abs(yaw)>90){yaw=((dir-90+180)%360+360)%360-180;tl=-t;}
+  return{yaw:yaw*D2R,tilt:tl*D2R};}
+function startTilt(n){if(!data[body]||tilt)return;if(exploded)toggleExp();tilt={n,t0:performance.now()};}
+const hud=document.getElementById('hud');
+const NAMES=['Nhựa','Giấy','Kim loại','Khác'];
+function stepTilt(now){
+  // Xoay trước (0,7 s), nghiêng (1 s), giữ, nghiêng về, rồi xoay về
+  const d=data[body];const t=(now-tilt.t0)/1000;
+  const ease=f=>{f=Math.min(Math.max(f,0),1);return f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;};
+  const fy=t<3.6?ease(t/.7):1-ease((t-3.6)/.7), ft=t<2.6?ease((t-.7)/1):1-ease((t-2.6)/1);
+  const a=angles(45,DIRS[tilt.n-1]);d.yawG.rotation.z=a.yaw*fy;d.tiltG.rotation.x=a.tilt*ft;
+  hud.innerHTML=(ft>0?'Nghiêng <b>'+Math.round(45*ft)+'°</b>':'Xoay <b>'+Math.round(a.yaw*fy/D2R)+'°</b>')+' về ngăn '+tilt.n+' ('+NAMES[tilt.n-1]+') · xoay '+(a.yaw*fy/D2R).toFixed(0)+'° · nghiêng '+(a.tilt*ft/D2R).toFixed(0)+'°';
+  if(t>=4.3){tilt=null;d.yawG.rotation.z=0;d.tiltG.rotation.x=0;hud.textContent='Đang xem: '+VIEWS[view].title;}
+}
+function toggleExp(){exploded=!exploded;document.getElementById('btnExp').setAttribute('aria-pressed',exploded);}
+function stepExp(){const tgt=exploded?1:0;expT+=(tgt-expT)*.12;if(Math.abs(tgt-expT)<.001)expT=tgt;
+  const d=data[body];if(!d)return;d.items.forEach(it=>{const e=it.p.explode;it.holder.position.set(e[0]*expT,e[1]*expT,e[2]*expT);});
+  d.shadow.material.opacity=SHADOW*(1-expT);}
+
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(),tip=document.getElementById('tip');
+if(renderer){
+renderer.domElement.addEventListener('pointermove',ev=>{
+  const r=renderer.domElement.getBoundingClientRect();mouse.set((ev.clientX-r.left)/r.width*2-1,-(ev.clientY-r.top)/r.height*2+1);
+  ray.setFromCamera(mouse,camera);let hit=null;
+  for(const h of ray.intersectObjects(scene.children,true)){let o=h.object,vis=true;while(o){if(!o.visible){vis=false;break;}o=o.parent;}
+    if(vis&&h.object.userData.name&&h.object.material.opacity>.5){hit=h.object.userData;break;}}
+  if(hit){const m=hit.meta;tip.innerHTML='';const t=document.createElement('div');t.textContent=hit.name+' — '+hit.desc;
+    const s=document.createElement('small');s.textContent=(PROC[m.process]||m.process||'')+(m.material?' · '+m.material:'');
+    tip.append(t,s);tip.hidden=false;const sr=host.getBoundingClientRect();
+    tip.style.left=Math.min(ev.clientX-sr.left+14,sr.width-290)+'px';tip.style.top=(ev.clientY-sr.top+14)+'px';}
+  else tip.hidden=true;});
+renderer.domElement.addEventListener('pointerleave',()=>tip.hidden=true);
+}
+
+function renderInfo(d){
+  const m=d.dims;
+  const rows=[['Kích thước ngoài',m.outer_mm.map(v=>Math.round(v)).join(' × ')+' mm'],['Cao miệng ném',m.rim_height_mm+' mm'],
+    ['Cao mặt đĩa',m.plate_level_top_height_mm+' mm'],['Cao miệng ngăn',m.bin_rim_height_mm+' mm'],
+    ['Dung tích mỗi ngăn (tạm)',m.capacity_l_each_provisional+' L'],['Mép thấp của đĩa khi nghiêng 45°',m.plate_low_edge_height_at_full_tilt_mm+' mm'],
+    ['Khe thoát dưới gờ cổ phễu',m.exit_gap_at_full_tilt_mm+' mm'],['Khoảng cách tâm puly (đai GT2 158)',m.belt_center_distance_mm+' mm'],
+    ['Khối lượng đĩa nhôm',m.plate_mass_kg+' kg'],['Mô-men cần ở bản lề (vật '+m.design_item_mass_kg+' kg)',m.hinge_torque_needed_nm+' N·m'],
+    ['Mô-men cần ở servo (qua 2:1)',m.servo_torque_needed_nm+' N·m'],['So với mô-men kẹt MG996R (6 V)',Math.round(m.servo_load_fraction_of_stall*100)+' %'],
+    ['Vật nặng nhất ở mức 50% sức servo',m.max_item_kg_at_half_stall+' kg'],['Lực lớn nhất ở mép đĩa',m.max_plate_edge_force_n+' N'],
+    ['Góc chặn cứng',m.tilt_stop_degrees+'°'],
+    ['Mép đĩa bị khuất khỏi camera',m.camera_hidden_plate_edge_samples_of_72+' / 72 điểm'],
+    ['Góc nhìn camera cần có (hình nón)',m.camera_required_full_fov_degrees+'°']];
+  const dl=document.getElementById('metrics');dl.innerHTML='';
+  rows.forEach(([a,b])=>{const dt=document.createElement('dt');dt.textContent=a;const dd=document.createElement('dd');dd.textContent=b;dl.append(dt,dd);});
+  const cnt={};d.comp.forEach(c=>{const k=c.process+'|'+c.material;
+    (cnt[k]=cnt[k]||{proc:c.process,mat:c.material,n:0,names:[]}).n++;cnt[k].names.push(c.component);});
+  const order=['laser','cut','print','buy'];
+  const list=Object.values(cnt).sort((a,b)=>order.indexOf(a.proc)-order.indexOf(b.proc)||b.n-a.n);
+  const tb=document.getElementById('parts');tb.innerHTML='<thead><tr><th>Cách làm</th><th>Vật liệu</th><th class="n">SL</th><th>Chi tiết</th></tr></thead>';
+  const tbody=document.createElement('tbody');
+  list.forEach(r=>{const tr=document.createElement('tr');
+    const c1=document.createElement('td');const chip=document.createElement('span');chip.className='chip';chip.textContent=PROC[r.proc]||r.proc;c1.append(chip);
+    const c2=document.createElement('td');c2.textContent=r.mat;const c3=document.createElement('td');c3.className='n';c3.textContent=r.n;
+    const c4=document.createElement('td');c4.textContent=r.names.join(', ');c4.style.fontSize='.78rem';c4.style.color='var(--muted)';
+    tr.append(c1,c2,c3,c4);tbody.append(tr);});
+  tb.append(tbody);
+}
+
+// Bảng chi tiết theo từng tab: lọc danh mục CAD theo tiền tố tên
+function fillPartTables(){
+  document.querySelectorAll('table[data-parts]').forEach(t=>{
+    const pre=t.dataset.prefix.split(',');
+    loadComp(t.dataset.parts).then(comp=>{
+      const rows=comp.filter(c=>pre.some(p=>c.component===p||c.component.startsWith(p)));
+      t.innerHTML='<thead><tr><th>Tên trong CAD</th><th>Cách làm</th><th>Vật liệu</th><th>Mô tả (từ CAD)</th></tr></thead>';
+      const tb=document.createElement('tbody');
+      rows.forEach(c=>{const tr=document.createElement('tr');
+        const a=document.createElement('td');a.className='k';a.textContent=c.component;
+        const b=document.createElement('td');const ch=document.createElement('span');ch.className='chip';ch.textContent=PROC[c.process]||c.process;b.append(ch);
+        const m=document.createElement('td');m.textContent=c.material;
+        const d=document.createElement('td');d.textContent=c.description;d.style.color='var(--muted)';d.style.fontSize='.8rem';
+        tr.append(a,b,m,d);tb.append(tr);
+        if(VIEWS[t.closest('.panel').id.slice(2)]){tr.className='pick';tr.title='Bấm để làm nổi chi tiết này trong hình 3D';
+          tr.onclick=()=>focusPart(c.component,tr);}});
+      t.append(tb);
+    }).catch(e=>{t.innerHTML='<tr><td>Không tải được danh mục chi tiết ('+e.message+').</td></tr>';});
+  });
+}
+
+function focusPart(name,row){
+  focusName=focusName===name?null:name;
+  document.querySelectorAll('tr.pick.on').forEach(r=>r.classList.remove('on'));
+  if(focusName)row.classList.add('on');
+  applyView();
+  if(focusName){if(!frameOn(it=>it.p.name===focusName))hud.textContent=name+' không có trong thân đang xem';else hud.textContent='Chi tiết: '+name;}
+  else frameView();
+  stage.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+function resize(){if(!renderer)return;const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}
+
+// Tab: nhớ tab đang mở theo từng người xem, khung 3D chỉ vẽ khi tab Tổng quan đang mở
+const tabs=[...document.querySelectorAll('.tabs button')].filter(b=>!b.hidden);
+let activeTab='overview';
+function openTab(id){
+  if(!tabs.some(b=>b.dataset.tab===id))id='overview';
+  activeTab=id;
+  tabs.forEach(b=>{const on=b.dataset.tab===id;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;
+    if(on)try{b.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}});
+  document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+id);
+  try{localStorage.setItem('aware-ab-tab',id);}catch(e){}
+  if(VIEWS[id]){
+    document.getElementById('slot-'+id).append(stage);
+    const changed=view!==id;view=id;
+    if(changed){focusName=null;tilt=null;document.querySelectorAll('tr.pick.on').forEach(r=>r.classList.remove('on'));
+      Object.values(data).forEach(d=>{d.tiltG.rotation.x=0;d.yawG.rotation.z=0;});}
+    requestAnimationFrame(()=>{resize();show().then(()=>{if(changed)frameView();});});
+  }
+}
+tabs.forEach((b,i)=>{b.onclick=()=>openTab(b.dataset.tab);
+  b.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];n.focus();openTab(n.dataset.tab);}};});
+let startTab='overview';try{startTab=localStorage.getItem('aware-ab-tab')||'overview';}catch(e){}
+openTab(startTab);
+
+// Nút chọn màu vỏ B: dựng cho mọi nhóm .finish, chấm màu tô chuyển sắc từ sáng sang tối cho giống mặt kim loại
+document.querySelectorAll('.finish').forEach(seg=>Object.entries(FINISH).forEach(([k,f])=>{
+  const b=document.createElement('button'),i=document.createElement('i'),c=new THREE.Color(f[1]);
+  b.type='button';b.dataset.f=k;i.className='sw';
+  i.style.background='linear-gradient(135deg,'+c.clone().lerp(WHITE,.5).getStyle()+','+c.getStyle()+' 55%,'+c.clone().multiplyScalar(.7).getStyle()+')';
+  b.append(i,f[0]);b.onclick=()=>{finish=k;applyFinish();saveView();};seg.append(b);}));
+applyFinish();
+bodyBtns.forEach(b=>b.onclick=()=>{tilt=null;Object.values(data).forEach(d=>{d.tiltG.rotation.x=0;d.yawG.rotation.z=0;});selBody=b.dataset.k;show();});
+document.querySelectorAll('.tool .bin').forEach(b=>b.onclick=()=>startTilt(+b.dataset.bin));
+document.getElementById('btnCut').onclick=setCut;
+document.getElementById('btnExp').onclick=()=>{if(tilt)return;toggleExp();};
+document.getElementById('btnView').onclick=()=>{focusName=null;applyView();frameView();};
+addEventListener('resize',resize);resize();homeView();
+function loop(now){requestAnimationFrame(loop);if(!renderer||!VIEWS[activeTab])return;if(tilt)stepTilt(now);stepExp();controls.update();renderer.render(scene,camera);}
+requestAnimationFrame(loop);fillPartTables();
+</script>
+
+<script>
+// Bad case, trạng thái các giải pháp T, và bảng chi phí. Chạy độc lập với phần 3D.
+(function(){
+  var SEV={3:'Rất cao',2:'Cao',1:'Trung bình',0:'Thấp'};
+  var GROUPS=[
+    ['Đồ nặng và va đập',[
+      [1,'Đồ rất nặng (gạch, chai 1,5 L đầy nước)','MG996R qua đai 2:1 chịu vật 0,63 kg ở mép trong mức 50% sức, chết máy ở 1,29 kg. Vật nặng hơn thì IMU phát hiện đĩa không tới góc, máy dừng và báo. Gối đỡ chịu trọng lượng nên servo không bị đè',2,'T1 T2 T11'],
+      [2,'Ném mạnh từ trên cao','Lực va đập vào gối đỡ bản lề và cục chặn 47°, đi xuống ổ trục đứng, không vào bánh răng servo',2,'T2 T3'],
+      [3,'Chống tay, tì người lên đĩa','Đĩa nhôm cứng gấp khoảng 2,5 lần đĩa PP, nghiêng tối đa tới cục chặn',1,'T3 T6'],
+      [4,'Đặt cả túi rác lên','Quá cỡ hoặc nhiều vật thì giữ lại và báo, quá nặng thì báo kẹt',2,'T1 T11']]],
+    ['Đồ to, dài, sai kích thước',[
+      [5,'To hơn miệng phễu (lớn hơn Ø550)','Nằm vắt trên miệng, che camera. Máy báo “lấy ra”',1,'T11'],
+      [6,'To hơn cổ phễu Ø330','Nằm lại trên thành phễu, không tới đĩa. Thùng bị chặn chứ không hỏng',1,'T11 T1'],
+      [7,'Đồ dài (cán ô, ống, que)','Camera thấy vật dài hơn đĩa nên từ chối nghiêng. Nếu vẫn kẹt khi nghiêng thì IMU phát hiện',2,'T11 T1 T3'],
+      [8,'Đồ dẹt rộng (bìa, báo)','Phủ kín đĩa. Máy báo “gấp nhỏ lại”',0,'T11'],
+      [9,'Đồ rất nhỏ (đầu lọc, nắp, ghim)','Khe 5 mm là bắt buộc (góc đĩa quét tới r168,7). Vật nhỏ hơn 5 mm lọt khe rơi vào 1 ngăn bất kỳ',1,'Chấp nhận']]],
+    ['Thả rác sai cách',[
+      [10,'Thả nhiều món một lúc','Đếm được hơn 1 vật thì giữ lại, báo “bỏ từng món”',2,'T11'],
+      [11,'Thả thêm trong lúc đĩa đang nghiêng','LED và màn hình chuyển đỏ “đợi”',1,'T11 T10'],
+      [12,'Đổ cả túi hoặc cả thùng nhỏ vào','Gộp cả #4, #6 và #10',2,'T11'],
+      [13,'Lấy tay giữ đồ trên đĩa','Thấy tay trong miệng phễu thì không nghiêng',2,'T11']]],
+    ['Tính chất của vật',[
+      [14,'Chất lỏng','Nước rời đĩa ở bán kính 147–160 mm, còn servo và đai nằm trong 110 mm. Mạch đã dời lên bệ màn hình',3,'T5 (đổi)'],
+      [15,'Đồ ướt, dính','Lắc nhẹ 2 lần sau khi đổ, vẫn còn thì báo lau đĩa',1,'T6 T11'],
+      [16,'Đồ tròn hay lăn','Chờ vật nằm yên rồi mới nhận dạng',0,'T11'],
+      [17,'Đồ rất nhẹ (giấy ăn, nilon)','Kiểm tra lại đĩa sau khi đổ, lắc nếu còn dính',1,'T11'],
+      [18,'Đồ trong suốt hoặc phản quang','Đèn LED khuếch tán, mặt đĩa xám mờ',1,'T10'],
+      [19,'Đồ nóng (tàn thuốc, than)','Đĩa nhôm không chảy. Phễu PP vẫn có thể bị cháy xém',3,'T6 · MLX90614 (tuỳ chọn)'],
+      [20,'Đồ sắc nhọn','Đĩa nhôm chịu xước tốt hơn',1,'T6'],
+      [21,'Chai thuỷ tinh','Có thể vỡ khi rơi xuống ngăn',1,'Lót mút đáy ngăn 3'],
+      [22,'Đồ có mùi','Đĩa nhôm dễ lau. Không có ngăn rác thức ăn',0,'T6 T11']]],
+    ['Người, trẻ em, vật nuôi',[
+      [23,'Thò tay vào phễu lúc đĩa nghiêng','Không nghiêng khi có tay. Khe là diềm PVC mềm, lực lớn nhất ở mép đĩa khoảng 12 N',3,'T11 · diềm mềm'],
+      [24,'Trẻ con trèo hoặc ngồi lên','Đầu bắt vít, khung vuông vững',2,'T13'],
+      [25,'Che hoặc dán lên camera','So với ảnh mẫu thì phát hiện, máy báo',0,'T11'],
+      [26,'Va hoặc đá vào thùng','Khung vuông vững',0,'Khung B'],
+      [27,'Mèo, chó chui vào miệng phễu','Giống #23',2,'T11 · diềm mềm']]],
+    ['Ngăn chứa và thân thùng',[
+      [28,'Ngăn đã đầy vẫn đổ thêm','Khoá ngăn đầy. IMU phát hiện kẹt nếu cảm biến đo sai',2,'T1 · logic đầy'],
+      [29,'Cảm biến báo đầy sai','Lấy trung vị 5 lần đo, giữ 3 chu kỳ mới đổi mức. Loa in thu hẹp chùm sóng. Đo dưới 200 mm, hoặc nhảy lên đầy sau 1 lần đổ, thì báo kiểm tra',1,'Logic đầy · loa in · T1'],
+      [30,'B: ngăn kéo đang rút ra','Công tắc cắt nguồn servo bằng phần cứng',1,'T9 T15'],
+      [31,'B: lắp nhầm thùng vào ô khác','Dán nhãn màu trên thùng và trên khay',0,'Nhãn màu'],
+      [32,'Tháo đầu ra khi còn điện','Đầu bắt vít vào tấm đỡ, chỉ tháo khi bảo trì. Rút điện trước khi tháo vít',1,'T13'],
+      [33,'Lắp đầu xoay lệch','Chốt Ø6 ở mép sau chỉ lọt lỗ tấm đỡ ở đúng một hướng',2,'T8 (đổi)']]],
+    ['Điện, phần mềm, môi trường',[
+      [34,'Mất điện giữa lúc nghiêng','Bản lề sát trọng tâm nên đĩa gần cân bằng, cùng lắm đổ tới cục chặn 47°. Có điện lại thì IMU đọc góc nghiêng, đưa đĩa về chậm rồi mới xoay về 0°',2,'T1 T3'],
+      [35,'Không nhận ra loại','Cho vào ngăn 4 “Khác” (đã chốt)',2,'Đã chốt'],
+      [36,'Ánh sáng yếu hoặc chói','Dải LED trắng khuếch tán dưới cằm bệ',1,'T10'],
+      [37,'Camera mờ do ẩm, bụi','So với ảnh mẫu, lệch nhiều thì báo lau',1,'T11'],
+      [38,'Pin điện thoại cũ phồng','Đã bỏ E2',3,'Hết'],
+      [39,'App điện thoại bị tắt','Đã bỏ E2',1,'Hết'],
+      [45,'Trục xoay quay tự do hoặc quá tầm (miếng nối trượt, tuốt răng, nhầm MG90S 360°, xoay tay)','Chốt chặn cứng ±70° giữ dây trong tầm của rãnh vòng lăn. Con quay của IMU phát hiện, ngắt servo. Cầu chì 3 A nếu dây bị chập',2,'Chặn cứng · IMU · cầu chì'],
+      [40,'Mất wifi','Nhận dạng chạy ngay trên ESP32-S3, wifi chỉ để báo tin',0,'Chạy offline']]],
+    ['Lót túi và thay túi',[
+      [41,'Quên lót túi mới','Hỏi xác nhận trên màn hình khi đóng ngăn kéo',1,'Logic đầy'],
+      [42,'Túi tuột vào trong','Gấp túi qua mép thùng',1,'Mép thùng'],
+      [43,'Túi rách, rác rơi ra đáy','Nhấc thùng con ra rửa được',0,'Thùng con'],
+      [44,'Túi quá nặng, rách khi nhấc','Không có ngăn rác thức ăn. Có thể hạ ngưỡng đầy cho ngăn Giấy',1,'Logic đầy']]]
+  ];
+  var FIXES=[
+    ['T1','IMU MPU-6050 dưới đĩa (thay cho AS5600)','Đổi','Đo góc nghiêng: phát hiện kẹt, về nằm ngang sau khi mất điện. Không đo được góc xoay','tilt_imu'],
+    ['T2','Servo khoẻ hơn (DS3218)','Đổi','Giữ MG996R + MG90S theo phương án D. Bản lề sát mặt đĩa và 2 gối đỡ nên vẫn chịu vật 0,63 kg ở mép','tilt_servo, yaw_servo'],
+    ['T3','Cục chặn cứng 47° trên đế xoay','Vào CAD','Ở 45° còn hở 5,7 mm. Vòng chặn cố định bị bỏ vì mép đĩa D chỉ ra tới r128','tilt_stop_pad_1, tilt_stop_pad_2'],
+    ['T4','Đối trọng dưới tâm xoay','Bỏ','Cần 0,4 kg ở 40 mm dưới tâm, chỗ đó đã có khớp và servo. T3 và T1 thay thế',''],
+    ['T5','Chụp cao su che khớp','Đổi','Nước rời mép đĩa ở r128–160, servo nằm trong khoảng r75 dưới đĩa. Chỉ dời mạch lên bệ','display_console (bỏ controller_box)'],
+    ['T6','Đĩa nhôm 1,5 mm','Vào CAD','0,326 kg, sơn tĩnh điện xám mờ','tipping_plate'],
+    ['T7','Diềm cao su chồm lên mép đĩa','Bỏ','Góc đĩa quét tới r168,7. Giữ diềm PVC mềm sẵn có','flexible_throat_skirt'],
+    ['T8','Chốt định hướng Ø6 (thay cho khấc)','Đổi','Đầu chỉ lắp được theo một hướng','orientation_pin, head_seat_plate'],
+    ['T9','2 công tắc ngăn kéo','Vào CAD','Cắt nguồn servo bằng phần cứng','drawer_switch_*'],
+    ['T10','Dải LED trắng dưới cằm','Vào CAD','Ánh sáng đều cho camera','led_strip'],
+    ['T11','Quy tắc an toàn trong phần mềm','Phần mềm','Xem tab Phần mềm',''],
+    ['T12','Dây néo tường','Bỏ','Chỉ thân A (phuy nhẹ, nặng ở trên) cần. Thân B khung vuông vững',''],
+    ['T13','Bắt vít đầu vào tấm đỡ','Vào CAD','Trèo lên cũng không làm bung đầu','head_seat_plate'],
+    ['T14','Đầu lật bản lề','Bỏ','Lật 30° quét lùi 185 mm vào thành thân. Thay bằng 4 chân cao su để đầu đứng được','spider_foot_1..4'],
+    ['T15','B: 2 ngăn kéo, bỏ cửa sau','Vào CAD','Khung nới lên 680 mm, ray 600 mm','drawer_*, slide_*, center_wall'],
+    ['T16','Nắp vách và khung miệng túi','Bỏ','Chỉ dùng cho thân A (phuy). Thân B gấp túi qua mép thùng',''],
+    ['T17','Rải đều điểm rơi','Phần mềm','Nâng phần dùng được lên khoảng 80% (plausible)','']
+  ];
+  // Bảng vật tư, mỗi dòng một món: [phần, tên, quy cách, SL, đơn vị, đơn giá, nơi bán [[tên, link], …], tình trạng, nhóm].
+  // SL và đơn giá là số hoặc [thấp, cao]. Tình trạng: ok = đã tra trên trang bán, ref = bảng giá chung hoặc giá tuỳ biến thể,
+  // est = ước tính chưa tra, none = chưa tìm thấy hàng, free = in ở trường, không mất tiền. Nhóm (shell, frame) chỉ để cộng nhanh ở đoạn tóm tắt dưới bảng.
+  var ITEMS=[
+    ['head','Servo MG996R','Servo nghiêng đĩa, kéo qua đai 2:1. Chọn mẫu Mg996r. Shop ghi full 100% bánh răng kim loại, 0–180°, 15 kg·cm ở 6 V (thông số ghi cho MG995), thiết kế vẫn tính 11 kg·cm. Shop có bán cả bản MG996R-360, nhận hàng phải thử',1,'cái',89000,[['Shopee, MG995/MG996R full kim loại (4,7★, đã bán 40k+, có hoả tốc)','https://shopee.vn/%C4%90%E1%BB%99ng-C%C6%A1-Servo-MG995-MG996-MG996R-Full-100-b%C3%A1nh-r%C4%83ng-kim-lo%E1%BA%A1i-g%C3%B3c-quay-180-%C4%91%E1%BB%99-i.81431289.16762476269?extraParams=%7B%22display_model_id%22%3A144254823331%2C%22model_selection_logic%22%3A3%7D&rModelId=144254823331&vItemId=51759213760&vModelId=425816630006&vShopId=1506174776']],'ok'],
+    ['head','Servo MG90S','Servo xoay đĩa ±45° về phía ngăn cần đổ. Trang bán không ghi bánh răng kim loại hay nhựa, nhận hàng mở ra xem',1,'cái',39000,[['Linh Kiện 3M','https://chotroihn.vn/dong-co-servo-mg90s']],'ok'],
+    ['head','Puly GT2 20 răng','Puly nhỏ, gắn trên servo nghiêng. Lỗ 6 mm, đai bản 6 mm',1,'cái',22000,[['Linh Kiện 3M','https://chotroihn.vn/pulley-gt2-puly-20-rang-lo-lap-truc-phi-6-mm-co-dai-rong-6mm']],'ok'],
+    ['head','Puly GT2 40 răng','Puly lớn, gắn trên trục nghiêng. Cùng puly 20 răng tạo tỉ số 2:1, gấp đôi lực của servo. Lỗ 8 mm, chọn mẫu "40 răng lỗ 8mm" (listing có cả bản lỗ 5 mm cùng giá)',1,'cái',49000,[['Tôi Thích Điện Tử (Lazada)','https://www.lazada.vn/products/puly-gt2-cac-loai-16-20-30-36-40-60-rang-lo-5mm-va-8mm-i2101394822-s9874495920.html']],'ok'],
+    ['head','Đai GT2 vòng kín','Nối puly 20 và 40 răng. Chọn mẫu 158mm: GT2 vòng kín, bản 6 mm, phải đúng chiều dài vì giá servo chỉ chỉnh được ±1 mm. Shop không ghi lõi thép hay sợi thủy tinh, mới có 3 đánh giá, giao khoảng 5 ngày',1,'cái',39505,[['Shopee, đai GT2 vòng kín 2GT rộng 6 mm','https://shopee.vn/%C4%90ai-%C4%91%E1%BB%8Bnh-gi%E1%BB%9D-v%C3%B2ng-k%C3%ADn-GT2-%C4%90ai-%C4%91%E1%BB%93ng-b%E1%BB%99-cao-su-2GT-Chi%E1%BB%81u-r%E1%BB%99ng-6mm-110-160-200-280-400-610-690-852-1220mm-Ph%E1%BB%A5-ki%E1%BB%87n-m%C3%A1y-in-3D-i.1251647761.45518070160?extraParams=%7B%22display_model_id%22%3A292968735584%2C%22model_selection_logic%22%3A3%7D']],'ok'],
+    ['head','Gối đỡ KP08','Đỡ 2 đầu trục nghiêng. Cùng listing với KFL08 bên dưới: link mở sẵn mẫu KFL08, đổi sang mẫu KP08 - Phi 8mm, mua 2 cái',2,'cái',12000,[['Shopee, gối đỡ KP/KFL (Yêu thích, 4,9★, 391 đánh giá, có hoả tốc)','https://shopee.vn/G%E1%BB%91i-%C4%91%E1%BB%A1-tr%E1%BB%A5c-KP-KFL-D%C3%B9ng-cho-tr%E1%BB%A5c-phi-8-10-12%E2%80%A6-25mm-i.145382920.40672303340?extraParams=%7B%22display_model_id%22%3A296814233306%2C%22model_selection_logic%22%3A3%7D']],'ok'],
+    ['head','Gối đỡ KFL08','Đỡ trục xoay, 1 trên 1 dưới. Chọn mẫu KFL08 - Phi 8mm, mua 2 cái. Giá chữ C trong CAD chưa có lỗ bắt vít gối: đo khoảng cách lỗ trên gối thật rồi mới khoan hoặc sửa CAD',2,'cái',12000,[['Shopee, gối đỡ KP/KFL (Yêu thích, 4,9★, 391 đánh giá, có hoả tốc)','https://shopee.vn/G%E1%BB%91i-%C4%91%E1%BB%A1-tr%E1%BB%A5c-KP-KFL-D%C3%B9ng-cho-tr%E1%BB%A5c-phi-8-10-12%E2%80%A6-25mm-i.145382920.40672303340?extraParams=%7B%22display_model_id%22%3A296814233306%2C%22model_selection_logic%22%3A3%7D']],'ok'],
+    ['head','Trục inox 304 Ø8','Dài 0,5 m, cắt 2 đoạn 180 và 70 mm',1,'cây',52000,[['Hải Minh Stainless Steel (Shopee)','https://shopee.vn/product/1847029796/47361778054']],'ok'],
+    ['head','Khoá trục 8 mm','Bộ 3 cái: 2 cho trục nghiêng, 1 cho trục xoay',1,'bộ',19800,[['STEM ROBOCON SHOP (Shopee)','https://shopee.vn/product/1536807761/54464444015']],'ok'],
+    ['head','Vít trí M3 và đai ốc M3','Kẹp miếng nối in của servo xoay vào mặt D của trục 8 mm. Vít bắt horn đi kèm servo',1,'bộ',5000,[],'est'],
+    ['head','Board ESP32-S3 N16R8 CAM','Kèm camera OV2640',1,'cái',[213000,275000],[['Daves.vn (Shopee)','https://shopee.vn/product/1670553084/51715729345'],['TL Quantum (Shopee)','https://shopee.vn/product/1887340926/49667269628']],'ok'],
+    ['head','Camera OV2640 góc rộng','Ống kính 120°, chọn bản lọc hồng ngoại 650 nm cho màu đúng; giá tuỳ biến thể; shop nước ngoài',1,'cái',[136000,250000],[['YILIN_TECH (Shopee)','https://shopee.vn/product/934626898/18070874823']],'ref'],
+    ['head','Màn hình TJC X5 10,1"','TJC1060X5101, không cảm ứng, IPS 1024×600, UART',1,'cái',1172000,[['Thế Giới Tech (Shopee)','https://shopee.vn/product/658464304/52117992790'],['Thế Giới Tech Automation (Shopee)','https://shopee.vn/product/1220096432/26383863672']],'ok'],
+    ['head','Cảm biến góc MPU-6050','GY-521, gắn trên đĩa',1,'cái',40000,[['Linh Kiện 3M','https://chotroihn.vn/module-cam-bien-gia-toc-goc-tai-linh-kien-dien-tu-3m']],'ok'],
+    ['head','Cảm biến siêu âm HC-SR04','Đo mức đầy, mỗi ngăn 1 cái',4,'cái',25000,[['Linh Kiện 3M','https://chotroihn.vn/cam-bien-sieu-am-srf04']],'ok'],
+    ['head','Module 2 MOSFET XY-MOS','Bật tắt dải LED. 2 con D4184 song song, không cách ly quang, tín hiệu 3,3–20 V nên ESP32 mở hết được. VIN lấy 5 V từ mạch hạ áp, LED nối OUT+ và OUT−. Tên listing không ghi XY-MOS hay D4184 và chưa xem được đánh giá shop: nhận hàng xem 2 con MOSFET có chữ D4184. Không dùng module cách ly quang của Linh Kiện 3M: nguồn 5 V chỉ cho cổng MOSFET khoảng 2,3 V',1,'cái',[18000,40000],[['Linh kiện điện tử Hưng Yên (Shopee)','https://shopee.vn/product/119714962/27855010200'],['Linhkien888, Hà Nội (Shopee)','https://shopee.vn/product/81293376/26745330889']],'ok'],
+    ['head','Module relay 5 V','Cắt nguồn servo khi mở nắp hoặc kéo ngăn',1,'cái',15000,[['Linh Kiện 3M','https://chotroihn.vn/module-relay-5vdc']],'ok'],
+    ['head','Cầu chì ống 5×20 mm','3 A',1,'cái',1000,[['Linh Kiện 3M','https://chotroihn.vn/cau-chi-ong-5x20mm-250v']],'ok'],
+    ['head','Đế cầu chì ống','',1,'cái',3990,[['Linh Kiện 3M','https://chotroihn.vn/de-cau-chi-ong']],'ok'],
+    ['head','LED dây 5 V trắng','Chip 2835, cuộn 1 m, đầu cắm USB, dùng 120 mm dưới cằm bệ màn hình. Cắt đoạn ở đầu có dây, bỏ phích USB, nối dây + và − vào OUT+ và OUT− của module MOSFET. Không cắm vào cổng USB của board ESP32',1,'cuộn',61600,[['Topick_Lifestyle (Shopee)','https://shopee.vn/product/1613056660/48319016543']],'ok'],
+    ['head','Cáp dẹt 10 sợi','Bước 1,27 mm, dài 1 m, cho vòng cáp xoay',1,'m',15750,[['Linh Kiện SMD, Hà Nội (Shopee, đang hết hàng)','https://shopee.vn/product/134796651/25204950254']],'ok'],
+    ['head','Adapter 12 V 5 A','Jack 5,5 × 2,1 mm',1,'cái',95000,[['Linh Kiện 3M','https://chotroihn.vn/nguon-adapter-12v-5a-5-5-2-1mm']],'ok'],
+    ['head','Mạch hạ áp XL4015 5 A','Hạ 12 V xuống 6 V cho 2 servo',1,'cái',35000,[['Linh Kiện 3M','https://chotroihn.vn/module-buck-dc-dc-5a-xl4015']],'ok'],
+    ['head','Mạch hạ áp 5 V 3 A','Cho ESP32-S3, màn hình, cảm biến, LED',1,'cái',19000,[['Linh Kiện 3M','https://chotroihn.vn/module-buck-dc-dc-3a-2-dau-ra-v1']],'ok'],
+    ['head','Tụ hoá 2200 µF 16 V','Giá trên trang là giá thấp nhất của dòng tụ 16 V',1,'cái',[1000,5000],[['Linh Kiện 3M','https://chotroihn.vn/tu-hoa-16v']],'ref'],
+    ['head','Cầu đấu điện 12P','',1,'cái',15000,[['Linh Kiện 3M','https://chotroihn.vn/cau-dau-dien-12p-trang']],'ok'],
+    ['head','Dây điện, đầu cos, ống co nhiệt','',1,'bộ',30000,[],'est'],
+    ['head','Nhôm tấm A5052 cắt lẻ','Phôi mâm 594×594×3, đĩa 320×320×1,5, đế xoay 192×180×4 mm. 118–121k/kg cộng 10–20% phí cắt lẻ',3.6,'kg',[130000,145000],[['Nhôm Đông Đô, 486 Ngọc Hồi','https://nhomhopkim.net/product/nhom-tam-3mm/']],'ref'],
+    ['head','Cắt laser nhôm','Mâm, đĩa, đế xoay, khoảng 5 m đường cắt',5,'m',[6000,9000],[['Xưởng laser 32–36 Tam Trinh, 96 Kim Ngưu','https://khaclaserhanoi.com.vn/8-co-so-cat-laser-kim-loai-inox-dong-nhom-uy-tin-tai-ha-noi-sai-gon.html']],'ref'],
+    ['head','Sơn tĩnh điện đĩa','Xám mờ. Có thể bỏ, phun cát đĩa nhôm cùng vỏ',1,'cái',60000,[],'est'],
+    ['head','Tấm nhựa PP 2 mm','Khổ 1000×2000, cắt phễu và vành cổ phễu. Chưa tìm được nơi bán ở Hà Nội',1,'tấm',[250000,450000],[['Tân Đại Phong (bảng giá chung)','https://tandaiphong.com.vn/san-pham/bang-gia-tam-nhua-pp/']],'ref'],
+    ['head','Dải PP 3 mm cắt lẻ','1,8 m × 20 mm, cuộn thành vòng định vị',1,'dải',50000,[],'est'],
+    ['head','Rèm PVC dải 2 mm','Khoảng 1,1 m, làm diềm cổ phễu',1,'m',50000,[],'est'],
+    ['head','Nhôm hộp 30×30×2','1,5 m (4 thanh treo 375 mm), khoảng 0,9 kg. Ước theo giá nhôm/kg',0.9,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
+    ['head','Nhôm hộp 40×30×2','1,1 m (2 thanh chữ thập 540 mm), khoảng 0,8 kg. Ước theo giá nhôm/kg',0.8,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
+    ['head','Nhôm thanh dẹt 30×13','0,15 m (2 trụ bản lề), khoảng 0,2 kg. Ước theo giá nhôm/kg',0.2,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
+    ['head','In 3D PETG','0,8–1,0 kg: bệ màn hình rỗng, giá chữ C, giá servo, miếng nối servo xoay, tai, 4 hộp cảm biến có loa (khoảng 38 cm³ mỗi hộp). In ở trường nên không mất tiền. Nếu phải tự trả: mua 1 cuộn eSUN 1 kg 317k để tự in, hoặc thuê in 0,8–1,0 kg × 800–1.500đ/g = 0,64–1,5 triệu, có nơi tính tối thiểu 50k mỗi chi tiết',1,'lô',0,[['NGE 3D Printer, eSUN PETG 1 kg (Shopee)','https://shopee.vn/product/1458987144/28924391297'],['3DMaster, Hà Nội (thuê in)','https://3dmaster.com.vn/dich-vu-in-3d-theo-yeu-cau-ha-noi-o-dau-gia-tot-in-dep/']],'free'],
+    ['head','Keo dán Alteco 110','',1,'tuýp',18000,[['Linh Kiện 3M','https://chotroihn.vn/keo-dan-alteco-110-japan']],'ok'],
+    ['head','Rivet nhôm, đệm cao su tự dính 30×30','',1,'bộ',80000,[],'est'],
+    ['b','Nhôm định hình 20×20','4 cột 1170 mm và 11 thanh 640 mm',11.72,'m',[45000,70000],[['Leanway, 16 Phan Trọng Tuệ, Thanh Trì (Lazada, đang hết hàng)','https://www.lazada.vn/products/nhom-dinh-hinh-20x20-lwa-221461400-mien-phi-cat-theo-kich-thuoc-yeu-cau-gia-da-bao-gom-vat-i2359442557.html'],['Vimetco','https://www.vimetco.com.vn/nhom-thanh-nhom-dinh-hinh-20x20']],'ok','frame'],
+    ['b','Ke góc 20×20','',30,'cái',[4000,6000],[['Vimetco','https://www.vimetco.com.vn/nhom-thanh-nhom-dinh-hinh-20x20']],'ok','frame'],
+    ['b','Con trượt rãnh (T-nut)','Cho rãnh nhôm 20×20',60,'cái',[2000,3000],[['Vimetco','https://www.vimetco.com.vn/nhom-thanh-nhom-dinh-hinh-20x20']],'ok','frame'],
+    ['b','Vít M5 cho khung','Khoảng 60 con',1,'bộ',50000,[],'est','frame'],
+    ['b','Tấm nhôm composite Alcorest','1220×2440, trong nhà: 5 mm lớp nhôm 0,10 mm (640k) hoặc 6 mm lớp nhôm 0,18 mm (925k). Đủ cho sàn, tấm đỡ đầu, vách giữa, khay',1,'tấm',[640000,925000],[['Nhôm Việt Dũng, bảng giá 4/2026','https://vietdung.com.vn/goc-tham-khao/gia-tam-nhua-alu.html']],'ok','frame'],
+    ['b','Cắt CNC tấm alu','',1,'lô',[100000,150000],[],'est','frame'],
+    ['b','Inox 304 tấm 1 mm','28,5 kg nếu mua cắt theo kích thước, 47,2 kg nếu kho chỉ bán 2 tấm 1220×2440',[28.5,47.2],'kg',58500,[['Inox Cường Thịnh, kho Thanh Trì (bảng giá 17/7/2026)','https://cuongthinhinox.com/bang-bao-gia-inox-tam-cuon-304-re-nhat-mien-bac.html']],'ok','shell'],
+    ['b','Cắt laser vỏ inox','7 tấm và 4 nẹp gân, 31,7 m đường cắt',31.7,'m',[3000,6000],[['Xưởng laser 32–36 Tam Trinh, 96 Kim Ngưu','https://khaclaserhanoi.com.vn/8-co-so-cat-laser-kim-loai-inox-dong-nhom-uy-tin-tai-ha-noi-sai-gon.html']],'ok','shell'],
+    ['b','Chấn vỏ inox','Khoảng 55 m vì mỗi viền gấp kín 10 mm chấn 2 lần. 5–8k/m, cộng 10–30% với cạnh dài trên 1 m',55,'m',[5000,10400],[['Inox Hòa Phát, cảng Khuyến Lương, Hoàng Mai','https://inoxhoaphat.vn/chan-gap-inox-gia-cong-tam-inox-304-201-tai-ha-noi/']],'ok','shell'],
+    ['b','Phun hạt thủy tinh','Cho màu bạc mờ. Không phun thì để nguyên mặt 2B và bỏ dòng này',2,'tấm',[250000,850000],[['Jie Chu, KCN Chàng Sơn','https://phuncat.com.vn/dich-vu/dich-vu-phun-cat-inox/']],'ok','shell'],
+    ['b','Băng keo 3M VHB 5952','10 mm × 33 m, dán nẹp gân mặt ngăn kéo',1,'cuộn',320000,[['Hoàng Linh, Hà Nội (Shopee)','https://shopee.vn/product/91088729/1808170458']],'ok','shell'],
+    ['b','Vít M4 inox đầu tròn, long đền nhựa','Bắt vỏ vào khung',1,'bộ',70000,[],'est','shell'],
+    ['b','Ray bi 3 tầng 600 mm','First Slide, tải 45 kg/cặp, mở toàn phần',2,'cặp',106000,[['CSPS','https://www.csps.vn/products/ray-truot-3-tang-ri-ve-tai-trong-45-kg'],['Bếp Hoàng Cường (Shopee)','https://shopee.vn/product/1627491863/55607663401']],'ok'],
+    ['b','Thùng vuông 270×270×590 mm','Chưa tìm thấy mẫu bán sẵn đúng cỡ. Chọn thùng thật rồi sửa CAD',4,'cái',80000,[],'none'],
+    ['b','Tay nắm ngăn kéo','',2,'cái',30000,[],'est'],
+    ['b','Rivet, ke nhôm cho khay','',1,'bộ',40000,[],'est'],
+    ['b','Công tắc hành trình','Báo ngăn kéo đang mở',2,'cái',2000,[['Linh Kiện 3M','https://chotroihn.vn/cong-tac-hanh-trinh-tiaihua-1a-125vac']],'ok']
+  ];
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  var host=document.getElementById('caseGroups');
+  if(host){
+    host.innerHTML=GROUPS.map(function(g,gi){
+      var hi=g[1].filter(function(r){return r[3]>=2;}).length;
+      var rows=g[1].map(function(r){
+        return '<tr><td class="n">#'+r[0]+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td><span class="sev s'+r[3]+'">'+SEV[r[3]]+'</span></td><td class="fix">'+esc(r[4])+'</td></tr>';
+      }).join('');
+      return '<details'+(gi<2?' open':'')+'><summary>'+esc(g[0])+'<span>'+g[1].length+' case · '+hi+' mức cao trở lên</span></summary>'+
+        '<div class="tbl"><table><tr><th>#</th><th>Bad case</th><th>Thiết kế hiện tại xử lý thế nào</th><th>Mức</th><th>Giải pháp</th></tr>'+rows+'</table></div></details>';
+    }).join('');
+  }
+  var KIND={'Vào CAD':'chip','Đổi':'chip alt','Bỏ':'chip drop','Phần mềm':'chip','Mua':'chip'};
+  var ft=document.getElementById('fixTable');
+  if(ft){
+    ft.innerHTML='<tr><th>Mã</th><th>Giải pháp</th><th>Trạng thái</th><th>Lý do hoặc số liệu</th><th>Tên trong CAD</th></tr>'+
+      FIXES.map(function(f){return '<tr><td class="fix">'+f[0]+'</td><td>'+esc(f[1])+'</td><td><span class="'+KIND[f[2]]+'">'+esc(f[2])+'</span></td><td>'+esc(f[3])+'</td><td class="k">'+esc(f[4])+'</td></tr>';}).join('');
+  }
+  var ct=document.getElementById('costTable');
+  if(ct){
+    var lo=function(v){return Array.isArray(v)?v[0]:v;}, hi=function(v){return Array.isArray(v)?v[1]:v;};
+    var num=function(v){return Number(v).toLocaleString('vi-VN',{maximumFractionDigits:2});};
+    // Khoảng giá được xuống dòng sau dấu gạch để bảng vừa khung trang, từng số thì không bị ngắt
+    var rng=function(a,b){return a===b?'<span class="nw">'+num(a)+'</span>':'<span class="nw">'+num(a)+'–</span><wbr><span class="nw">'+num(b)+'</span>';};
+    var mil=function(v){return (v/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1});};
+    var milR=function(a,b){return Math.round(a/1e5)===Math.round(b/1e5)?mil(a):mil(a)+'–'+mil(b);};
+    var host=function(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return u;}};
+    var ST={ok:['st-ok','Đã tra 10/2026'],ref:['st-ref','Tham khảo'],est:['st-est','Ước tính'],none:['st-none','Chưa tìm thấy'],free:['st-ok','In ở trường']};
+    var SEC={head:'Cụm đầu',b:'Thân B · khung nhôm, vỏ inox'};
+    var SUB={head:'Cộng cụm đầu',b:'Cộng riêng thân B'};
+    var sum={},grp={},no=0,rows='';
+    ['head','b'].forEach(function(k){
+      var s=[0,0];
+      rows+='<tr class="sec"><td colspan="9">'+SEC[k]+'</td></tr>';
+      ITEMS.filter(function(it){return it[0]===k;}).forEach(function(it){
+        var q=it[3],p=it[5],t0=Math.round(lo(q)*lo(p)),t1=Math.round(hi(q)*hi(p)),L=it[6]||[],st=ST[it[7]];
+        s[0]+=t0;s[1]+=t1;
+        if(it[8]){grp[it[8]]=grp[it[8]]||[0,0];grp[it[8]][0]+=t0;grp[it[8]][1]+=t1;}
+        rows+='<tr><td class="n">'+(++no)+'</td><td class="item">'+esc(it[1])+'</td><td class="spec">'+esc(it[2])+'</td>'+
+          '<td class="n q">'+rng(lo(q),hi(q))+' '+it[4]+'</td><td class="n">'+rng(lo(p),hi(p))+'</td><td class="n">'+rng(t0,t1)+'</td>'+
+          '<td class="shop">'+(L.length?L.map(function(l,i){return (i?'hoặc ':'')+esc(l[0]);}).join('<br>'):'—')+'</td>'+
+          '<td class="lk">'+(L.length?L.map(function(l){return '<a href="'+l[1]+'" target="_blank" rel="noopener">'+host(l[1])+' ↗</a>';}).join('<br>'):'—')+'</td>'+
+          '<td><span class="st '+st[0]+'">'+st[1]+'</span></td></tr>';
+      });
+      sum[k]=s;
+      rows+='<tr class="sub"><td colspan="5">'+SUB[k]+'</td><td class="n">'+rng(s[0],s[1])+'</td><td colspan="3"></td></tr>';
+      if(k!=='head'){
+        var t=[sum.head[0]+s[0],sum.head[1]+s[1]],nm='thân B';sum['all_'+k]=t;
+        var over=t[0]>=5e6?'Vượt ngân sách 5 triệu khoảng '+milR(t[0]-5e6,t[1]-5e6)+' triệu':t[1]>5e6?'Có thể vượt ngân sách 5 triệu tới '+(t[1]-5e6<1e5?Math.round((t[1]-5e6)/1e3)+'k':mil(t[1]-5e6)+' triệu'):'Trong ngân sách 5 triệu';
+        rows+='<tr class="tot"><td colspan="5">Tổng '+nm+' (cụm đầu + '+nm+')</td><td class="n">'+rng(t[0],t[1])+'</td><td colspan="3">'+over+'</td></tr>';
+      }
+    });
+    ct.innerHTML='<tr><th class="n">#</th><th>Hạng mục</th><th>Quy cách, ghi chú</th><th class="n">SL</th><th class="n">Đơn giá (₫)</th><th class="n">Thành tiền (₫)</th><th>Nơi bán</th><th>Link</th><th>Tình trạng</th></tr>'+rows;
+    var b=sum.all_b,hd=sum.head,sh=grp.shell,fr=grp.frame;
+    var cl=document.getElementById('costLead');
+    if(cl)cl.textContent='Thân B khoảng '+milR(b[0],b[1])+' triệu, vượt ngân sách 5 triệu khoảng '+milR(b[0]-5e6,b[1]-5e6)+' triệu. Tốn nhất là vỏ inox (tấm, cắt, chấn, phun cát, băng keo, vít: '+milR(sh[0],sh[1])+' triệu), rồi đến cụm đầu ('+milR(hd[0],hd[1])+' triệu, trong đó màn hình 1,17 triệu), khung nhôm và các tấm bên trong ('+milR(fr[0],fr[1])+' triệu). Cách hạ: không phun cát mà để mặt 2B (bớt 0,5–1,7 triệu), mua inox cắt theo kích thước thay vì nguyên tấm (bớt khoảng 1,1 triệu), dùng inox 0,8 mm (bớt khoảng 20% tiền tấm). Màu xám, xanh lá đậm hoặc đen cần mạ PVD, thêm khoảng 1,7–3,7 triệu (giá một xưởng ở TP.HCM).';
+    var bb=document.getElementById('budgetB');if(bb)bb.textContent='B khoảng '+milR(b[0],b[1])+' triệu';
+  }
+})();
+</script>
+
+</body>
+</html>

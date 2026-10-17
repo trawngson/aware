@@ -1,0 +1,626 @@
+{
+  "variants": {
+    "E1": {
+      "part_count": 105,
+      "tilt_pose_checks": [
+        {
+          "pose": "neutral",
+          "checks": [
+            "Every part is a valid single B-rep solid",
+            "No component pair has positive-volume overlap",
+            "Four separate liners and four blank category plaques"
+          ]
+        },
+        {
+          "destination": 1,
+          "yaw_fraction": 0.5,
+          "tilt_fraction": 0,
+          "yaw_degrees": -22.5,
+          "tilt_degrees": -0.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 1,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0,
+          "yaw_degrees": -45,
+          "tilt_degrees": -0.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 1,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.25,
+          "yaw_degrees": -45,
+          "tilt_degrees": -11.25,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 1,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.5,
+          "yaw_degrees": -45,
+          "tilt_degrees": -22.5,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 1,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.75,
+          "yaw_degrees": -45,
+          "tilt_degrees": -33.75,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 1,
+          "yaw_fraction": 1,
+          "tilt_fraction": 1.0,
+          "yaw_degrees": -45,
+          "tilt_degrees": -45.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 2,
+          "yaw_fraction": 0.5,
+          "tilt_fraction": 0,
+          "yaw_degrees": 22.5,
+          "tilt_degrees": -0.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 2,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0,
+          "yaw_degrees": 45,
+          "tilt_degrees": -0.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 2,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.25,
+          "yaw_degrees": 45,
+          "tilt_degrees": -11.25,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 2,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.5,
+          "yaw_degrees": 45,
+          "tilt_degrees": -22.5,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 2,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.75,
+          "yaw_degrees": 45,
+          "tilt_degrees": -33.75,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 2,
+          "yaw_fraction": 1,
+          "tilt_fraction": 1.0,
+          "yaw_degrees": 45,
+          "tilt_degrees": -45.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 3,
+          "yaw_fraction": 0.5,
+          "tilt_fraction": 0,
+          "yaw_degrees": -22.5,
+          "tilt_degrees": 0.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 3,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0,
+          "yaw_degrees": -45,
+          "tilt_degrees": 0.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 3,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.25,
+          "yaw_degrees": -45,
+          "tilt_degrees": 11.25,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 3,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.5,
+          "yaw_degrees": -45,
+          "tilt_degrees": 22.5,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 3,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.75,
+          "yaw_degrees": -45,
+          "tilt_degrees": 33.75,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 3,
+          "yaw_fraction": 1,
+          "tilt_fraction": 1.0,
+          "yaw_degrees": -45,
+          "tilt_degrees": 45.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 4,
+          "yaw_fraction": 0.5,
+          "tilt_fraction": 0,
+          "yaw_degrees": 22.5,
+          "tilt_degrees": 0.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 4,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0,
+          "yaw_degrees": 45,
+          "tilt_degrees": 0.0,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 4,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.25,
+          "yaw_degrees": 45,
+          "tilt_degrees": 11.25,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 4,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.5,
+          "yaw_degrees": 45,
+          "tilt_degrees": 22.5,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 4,
+          "yaw_fraction": 1,
+          "tilt_fraction": 0.75,
+          "yaw_degrees": 45,
+          "tilt_degrees": 33.75,
+          "positive_volume_intersections": []
+        },
+        {
+          "destination": 4,
+          "yaw_fraction": 1,
+          "tilt_fraction": 1.0,
+          "yaw_degrees": 45,
+          "tilt_degrees": 45.0,
+          "positive_volume_intersections": []
+        }
+      ],
+      "metrics": {
+        "revision": "ab-B-E1",
+        "units": "mm",
+        "body": "B",
+        "brain": "E1",
+        "outer_mm": [
+          686.0,
+          686.0
+        ],
+        "rim_height_mm": 1170.0,
+        "head_deck_height_mm": 1050.0,
+        "bin_rim_height_mm": 620.0,
+        "bin_floor_height_mm": 33.0,
+        "capacity_l_each_provisional": 40.9,
+        "plate_level_top_height_mm": 900.0,
+        "tilt_pivot_mm": [
+          0,
+          0,
+          878.0
+        ],
+        "maximum_plate_tilt_degrees": 45.0,
+        "destination_directions_degrees": [
+          45,
+          135,
+          225,
+          315
+        ],
+        "plate_low_edge_height_at_full_tilt_mm": 779.4,
+        "exit_gap_at_full_tilt_mm": 180.9,
+        "skirt_gap_at_full_tilt_mm": 109.9,
+        "belt_center_distance_mm": 48.58,
+        "plate_mass_kg": 0.326,
+        "hinge_torque_needed_nm": 0.783,
+        "servo_torque_needed_nm": 0.435,
+        "servo_stall_torque_nm": 1.08,
+        "servo_load_fraction_of_stall": 0.403,
+        "design_item_mass_kg": 0.5,
+        "max_item_kg_at_half_stall": 0.63,
+        "max_item_kg_at_stall": 1.29,
+        "max_plate_edge_force_n": 12.2,
+        "tilt_stop_degrees": 47.0,
+        "bin_categories": [
+          "Nh\u1ef1a",
+          "Gi\u1ea5y",
+          "Kim lo\u1ea1i",
+          "Kh\u00e1c"
+        ],
+        "camera_position_mm": [
+          0.0,
+          154.9,
+          1178.7
+        ],
+        "motor_cable_mm": {
+          "yaw_servo": 780,
+          "tilt_servo": 1036,
+          "rolling_loop_length": 134,
+          "rolling_loop_bend_radius": 10.2,
+          "fold_travel_over_full_yaw": 45
+        },
+        "camera_hidden_plate_edge_samples_of_72": 0,
+        "camera_required_full_fov_degrees": 60.2,
+        "camera_sight_margin_at_throat_mm": 6.1,
+        "camera_aim_from_vertical_degrees": 29.1,
+        "console_mm": [
+          160.0,
+          156.0,
+          46.0
+        ],
+        "display_slab_mm": [
+          268.0,
+          22.0,
+          162.0
+        ],
+        "display_glass_mm": [
+          235.0,
+          3.0,
+          143.0
+        ],
+        "display_top_height_mm": 1348.5,
+        "console_electronics_envelopes_mm": {
+          "terminal_block": [
+            30.0,
+            20.0,
+            15.0
+          ],
+          "esp32_s3_board": [
+            70.0,
+            30.0,
+            16.0
+          ],
+          "supply_capacitor": [
+            13.0,
+            26.0,
+            13.0
+          ],
+          "servo_buck_xl4015": [
+            54.0,
+            26.0,
+            18.0
+          ],
+          "logic_buck_5v": [
+            45.0,
+            22.0,
+            14.0
+          ],
+          "relay_module": [
+            50.0,
+            26.0,
+            19.0
+          ],
+          "led_mosfet": [
+            34.0,
+            17.0,
+            12.0
+          ]
+        },
+        "bin_landing_radius_mm": 224.2,
+        "fill_sensor": {
+          "window_height_mm": 995.4,
+          "radial_position_mm": 215.0,
+          "empty_distance_mm": 962,
+          "full_fraction": 0.9,
+          "full_distance_mm": 434,
+          "nearer_than_full": [
+            {
+              "part": "bin",
+              "off_axis_degrees": 18.5,
+              "distance_mm": 396
+            },
+            {
+              "part": "joint_beam",
+              "off_axis_degrees": 20.6,
+              "distance_mm": 374
+            },
+            {
+              "part": "yaw_platform",
+              "off_axis_degrees": 22.3,
+              "distance_mm": 220
+            },
+            {
+              "part": "motor_cable_yaw_servo",
+              "off_axis_degrees": 24.2,
+              "distance_mm": 351
+            },
+            {
+              "part": "motor_cable_tilt_servo",
+              "off_axis_degrees": 24.2,
+              "distance_mm": 351
+            },
+            {
+              "part": "spider_foot",
+              "off_axis_degrees": 24.8,
+              "distance_mm": 388
+            },
+            {
+              "part": "flexible_throat_skirt",
+              "off_axis_degrees": 26.2,
+              "distance_mm": 108
+            },
+            {
+              "part": "hanger",
+              "off_axis_degrees": 26.9,
+              "distance_mm": 359
+            },
+            {
+              "part": "drawer_stiffener_right",
+              "off_axis_degrees": 27.6,
+              "distance_mm": 432
+            },
+            {
+              "part": "drawer_stiffener_left",
+              "off_axis_degrees": 27.6,
+              "distance_mm": 432
+            },
+            {
+              "part": "yaw_bracket",
+              "off_axis_degrees": 28.4,
+              "distance_mm": 364
+            },
+            {
+              "part": "tipping_plate",
+              "off_axis_degrees": 29.7,
+              "distance_mm": 111
+            },
+            {
+              "part": "yaw_servo",
+              "off_axis_degrees": 32.4,
+              "distance_mm": 372
+            },
+            {
+              "part": "drawer_front_right",
+              "off_axis_degrees": 33.0,
+              "distance_mm": 432
+            },
+            {
+              "part": "drawer_front_left",
+              "off_axis_degrees": 33.0,
+              "distance_mm": 432
+            },
+            {
+              "part": "post",
+              "off_axis_degrees": 33.3,
+              "distance_mm": 433
+            },
+            {
+              "part": "yaw_bearing_lower",
+              "off_axis_degrees": 35.4,
+              "distance_mm": 317
+            },
+            {
+              "part": "yaw_servo_horn",
+              "off_axis_degrees": 36.5,
+              "distance_mm": 345
+            },
+            {
+              "part": "back_panel",
+              "off_axis_degrees": 36.6,
+              "distance_mm": 434
+            },
+            {
+              "part": "yaw_hub",
+              "off_axis_degrees": 36.7,
+              "distance_mm": 343
+            },
+            {
+              "part": "tilt_servo_bracket",
+              "off_axis_degrees": 36.8,
+              "distance_mm": 248
+            },
+            {
+              "part": "yaw_cable_channel",
+              "off_axis_degrees": 36.8,
+              "distance_mm": 274
+            },
+            {
+              "part": "side_panel_right",
+              "off_axis_degrees": 37.1,
+              "distance_mm": 432
+            },
+            {
+              "part": "side_panel_left",
+              "off_axis_degrees": 37.1,
+              "distance_mm": 432
+            },
+            {
+              "part": "tilt_stop_pad",
+              "off_axis_degrees": 37.4,
+              "distance_mm": 250
+            },
+            {
+              "part": "yaw_shaft",
+              "off_axis_degrees": 37.7,
+              "distance_mm": 345
+            },
+            {
+              "part": "hinge_post",
+              "off_axis_degrees": 37.8,
+              "distance_mm": 251
+            },
+            {
+              "part": "yaw_ribbon_loop",
+              "off_axis_degrees": 38.9,
+              "distance_mm": 279
+            },
+            {
+              "part": "yaw_stop_pin",
+              "off_axis_degrees": 39.3,
+              "distance_mm": 278
+            },
+            {
+              "part": "yaw_bearing_upper",
+              "off_axis_degrees": 39.4,
+              "distance_mm": 289
+            }
+          ]
+        },
+        "bag_change": "Pull a drawer out: its front and rear bins lift straight up; the back stays against the wall",
+        "flat_pieces_mm": {
+          "drawer_bottom_x2": [
+            285.6,
+            647.0
+          ],
+          "drawer_side_wall_x4": [
+            647.0,
+            60.0
+          ],
+          "drawer_back_wall_x2": [
+            285.6,
+            60.0
+          ]
+        },
+        "shell": {
+          "material": "Stainless 304 sheet 1 mm",
+          "sheet_mm": 1.0,
+          "hem_mm": 10.0,
+          "top_skirt_mm": 15.0,
+          "k_factor": 0.44,
+          "folds": {
+            "hem": {
+              "blank_past_outline": 9.38,
+              "bend_line_from_edge": 9.69,
+              "corner_relief": 10.38
+            },
+            "skirt": {
+              "blank_past_outline": 13.26,
+              "bend_line_from_edge": 14.13,
+              "corner_relief": 15.26
+            }
+          },
+          "blanks": {
+            "side_panel_left": {
+              "finished_mm": [
+                684.0,
+                1170.0
+              ],
+              "fold": "hem",
+              "blank_mm": [
+                702.8,
+                1188.8
+              ]
+            },
+            "side_panel_right": {
+              "finished_mm": [
+                684.0,
+                1170.0
+              ],
+              "fold": "hem",
+              "blank_mm": [
+                702.8,
+                1188.8
+              ]
+            },
+            "back_panel": {
+              "finished_mm": [
+                680.0,
+                1170.0
+              ],
+              "fold": "hem",
+              "blank_mm": [
+                698.8,
+                1188.8
+              ]
+            },
+            "head_panel_front": {
+              "finished_mm": [
+                680.0,
+                144.0
+              ],
+              "fold": "hem",
+              "blank_mm": [
+                698.8,
+                162.8
+              ]
+            },
+            "top_cover": {
+              "finished_mm": [
+                686.0,
+                686.0
+              ],
+              "fold": "skirt",
+              "blank_mm": [
+                712.5,
+                712.5
+              ],
+              "hole_d": 596.0
+            },
+            "drawer_front_left": {
+              "finished_mm": [
+                339.0,
+                1022.0
+              ],
+              "fold": "hem",
+              "blank_mm": [
+                357.8,
+                1040.8
+              ]
+            },
+            "drawer_front_right": {
+              "finished_mm": [
+                339.0,
+                1022.0
+              ],
+              "fold": "hem",
+              "blank_mm": [
+                357.8,
+                1040.8
+              ]
+            }
+          },
+          "stiffener": {
+            "quantity": 4,
+            "section_mm": "8-18-20-18-8",
+            "blank_mm": [
+              65.04,
+              979.0
+            ],
+            "bends_from_edge_mm": [
+              7.13,
+              23.39,
+              41.65,
+              57.91
+            ]
+          },
+          "stainless_mass_kg": 30.7
+        },
+        "purchased_dimensions_status": "Provisional. Measure the four square bins and one HC-SR04 board (transducer pitch), then update bin and fill_sensor before cutting or printing anything.",
+        "status": "Prototype CAD; fasteners, wiring and hinges are not modelled"
+      }
+    }
+  },
+  "flat_patterns": {
+    "funnel_cone_sector_degrees_each_half": 113.13,
+    "funnel_cone_inner_outer_radius_mm": [
+      268.7,
+      446.7
+    ]
+  },
+  "profile_total_length_mm": 11720,
+  "cadquery_version": "2.8.0"
+}
