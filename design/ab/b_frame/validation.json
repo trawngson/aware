@@ -1,7 +1,7 @@
 {
   "variants": {
     "E1": {
-      "part_count": 104,
+      "part_count": 105,
       "tilt_pose_checks": [
         {
           "pose": "neutral",
@@ -410,18 +410,23 @@
             },
             {
               "part": "yaw_bearing_lower",
-              "off_axis_degrees": 34.9,
-              "distance_mm": 321
+              "off_axis_degrees": 35.4,
+              "distance_mm": 317
             },
             {
-              "part": "yaw_coupling",
-              "off_axis_degrees": 36.1,
-              "distance_mm": 348
+              "part": "yaw_servo_horn",
+              "off_axis_degrees": 36.5,
+              "distance_mm": 345
             },
             {
               "part": "back_panel",
               "off_axis_degrees": 36.6,
               "distance_mm": 434
+            },
+            {
+              "part": "yaw_hub",
+              "off_axis_degrees": 36.7,
+              "distance_mm": 343
             },
             {
               "part": "tilt_servo_bracket",
@@ -450,8 +455,8 @@
             },
             {
               "part": "yaw_shaft",
-              "off_axis_degrees": 37.5,
-              "distance_mm": 347
+              "off_axis_degrees": 37.7,
+              "distance_mm": 345
             },
             {
               "part": "hinge_post",

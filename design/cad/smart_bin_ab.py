@@ -251,15 +251,33 @@ def head(p, add):
     add("yaw_servo", yaw_servo, servo_blue, "tilt_fixed", lift,
         "MG90S turning the tilt stage plus or minus 45 degrees toward the bin", "buy", "MG90S, metal gears")
 
-    # Yaw stage: coupling, vertical shaft, collar, platform, hinge posts and blocks, tilt servo.
+    # Yaw stage: horn hub, vertical shaft, collar, platform, hinge posts and blocks, tilt servo.
     plat_bot = pivot - p["yaw_platform_below_pivot_mm"]
     plat_top = plat_bot + 5
     upper_top = z_of(arm_hi) + 5 + 12
     assert upper_top + 8 <= plat_bot, "collar fits between the upper bearing and the platform"
-    add("yaw_coupling", ring_z(9.5, bore, y_top + 4, 12), metal, "yaw", lift,
-        "Flexible coupling from the yaw servo spline to the 8 mm shaft", "buy", "Flexible coupling 5 x 8 mm")
-    add("yaw_shaft", cylinder(4, plat_bot - (y_top + 10), (0, 0, y_top + 10), (0, 0, 1)), metal, "yaw", lift,
-        "Vertical yaw shaft in the two flanged bearings", "cut", "Stainless 304 rod 8 mm")
+    # The servo turns the shaft through its round horn and a printed hub. A 5 x 8 flexible coupling
+    # is 25 mm long, does not fit under the lower arm, and its 5 mm half would grip only the spline tip.
+    hb = p["yaw_hub_mm"]
+    horn_d, horn_t = hb["horn_disc"]
+    horn_z = y_top + 8                                  # on the spline tip drawn above
+    hub_z, hub_r, depth = horn_z + horn_t, hb["diameter"] / 2, hb["shaft_depth"]
+    hub_top = hub_z + hb["height"]
+    assert hub_top + 1 <= z_of(arm_lo), "hub clears the lower bearing arm"
+    add("yaw_servo_horn", cylinder(horn_d / 2, horn_t, (0, 0, horn_z), (0, 0, 1)), pp, "yaw", lift,
+        "Round horn that ships with the MG90S, screwed to the hub", "buy", "Comes with the servo")
+    screw_z = hub_top - depth / 2
+    hub = cylinder(hub_r, hb["height"], (0, 0, hub_z), (0, 0, 1)).cut(
+        cylinder(bore, depth, (0, 0, hub_top - depth), (0, 0, 1))).cut(
+        cylinder(1.6, hub_r, (0, 0, screw_z), (1, 0, 0))).cut(               # M3 set screw onto the shaft flat
+        box(2.6, 5.8, hub_top - screw_z + 3, (7, 0, (hub_top + screw_z - 3) / 2)))  # M3 nut drops in from the top
+    for y in (-hb["horn_screw_radius"], hb["horn_screw_radius"]):
+        hub = hub.cut(cylinder(.9, 4, (0, y, hub_z), (0, 0, 1)))           # pilot holes for the horn screws
+    add("yaw_hub", hub, light, "yaw", lift,
+        "Hub from the yaw servo horn to the 8 mm shaft: horn screws below, M3 set screw and nut on the shaft "
+        "flat", "print", "PETG, 100 % infill")
+    add("yaw_shaft", cylinder(4, plat_bot - (hub_top - depth), (0, 0, hub_top - depth), (0, 0, 1)), metal, "yaw",
+        lift, "Vertical yaw shaft in the two flanged bearings", "cut", "Stainless 304 rod 8 mm")
     add("yaw_collar", ring_z(8, bore, plat_bot - 8, 8), metal, "yaw", lift,
         "Shaft collar resting on the upper bearing: carries the stage weight", "buy", "Shaft collar 8 mm")
     half_y = p["yaw_platform_half_y_mm"]
@@ -383,7 +401,7 @@ def head(p, add):
         "Drum under the platform, turning with it: the inner face of the rolling loop", "print", "PETG")
     pr, pin_r = hs_["pin_radius_mm"], hs_["pin_r_mm"]
     add("yaw_stop_pin", cylinder(pin_r, plat_bot - (floor_z + 4), (-pr, 0, floor_z + 4), (0, 0, 1)), metal, "yaw", lift,
-        "Stop pin under the platform: hits a lug at the yaw limit even if the coupling slips", "buy",
+        "Stop pin under the platform: hits a lug at the yaw limit even if the hub slips", "buy",
         "M4 steel bolt with an 8 mm sleeve")
 
     # Ribbon in the channel, drawn at mid travel: outer run, U fold, drum run.

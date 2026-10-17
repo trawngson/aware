@@ -261,7 +261,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   <div class="cols">
     <div class="card"><h3>Truyền động</h3>
 <pre class="sk">giá chữ C (trên thanh chữ thập)
-  └ MG90S ─ khớp nối ─ trục đứng Ø8 trong 2 gối đỡ KFL08 ─ đế xoay
+  └ MG90S ─ horn tròn ─ miếng nối in ─ trục đứng Ø8 trong 2 gối đỡ KFL08 ─ đế xoay
 đế xoay
   ├ 2 trụ ─ 2 gối đỡ KP08 ─ trục bản lề Ø8 ─ 2 tai ─ đĩa nhôm
   └ MG996R ─ puly 20T ═ đai GT2 158 ═ puly 40T trên trục bản lề</pre>
@@ -273,7 +273,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <tr><td>Puly, tỉ số</td><td class="n">GT2 20T → 40T, 2:1</td></tr>
       <tr><td>Đai kín GT2 rộng 6 mm / khoảng cách tâm puly</td><td class="n">158 mm / 48,58 mm</td></tr>
       <tr><td>Trục bản lề (cách mặt đĩa 22 mm)</td><td class="n">Ø8 × 180 mm, z = 878</td></tr>
-      <tr><td>Trục đứng</td><td class="n">Ø8 × 72 mm</td></tr>
+      <tr><td>Trục đứng</td><td class="n">Ø8 × 70 mm</td></tr>
       <tr><td>Đế xoay, nhôm 4 mm</td><td class="n">180 × 192 mm, z = 792–797</td></tr>
     </table></div></div>
     <div class="card"><h3>Mô-men và tải</h3><div class="tbl"><table>
@@ -337,10 +337,10 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     </table></div>
   </div>
   <div class="card"><h3>Khi trục xoay quay quá tầm hoặc quay mãi</h3>
-    <p>MG90S chuẩn chỉ quay trong 180°. Trục xoay vẫn có thể quay tự do nếu <b>khớp nối trượt</b>, <b>tuốt răng servo</b>, <b>lắp nhầm bản MG90S 360°</b>, hoặc có người lấy tay xoay đĩa. Khi đó dây có thể bị quấn quanh trục và giật đứt. Có 4 lớp bảo vệ:</p>
+    <p>MG90S chuẩn chỉ quay trong 180°. Trục xoay vẫn có thể quay tự do nếu <b>miếng nối trượt trên trục</b>, <b>tuốt răng servo</b>, <b>lắp nhầm bản MG90S 360°</b>, hoặc có người lấy tay xoay đĩa. Khi đó dây có thể bị quấn quanh trục và giật đứt. Có 4 lớp bảo vệ:</p>
     <ol>
-      <li><b>Chặn cứng ±70° (đã vẽ):</b> chốt M4 có ống lót dưới đế xoay, chạm vào 2 vấu trên rãnh. Dù servo hay khớp nối hỏng thì cụm vẫn không quay quá ±70°, đúng tầm rãnh được thiết kế. Đã kiểm tra: ở 68° chốt chưa chạm, ở 72° thì đã chạm. Tay ấn mạnh ở mép đĩa (khoảng 8 N·m) tạo khoảng 150 N lên chốt, nên vấu phải in đặc 100% và dán cao su.</li>
-      <li><b>Chống trượt khớp nối:</b> mài mặt phẳng (mặt D) trên trục ở chỗ vít hãm, bôi keo khoá ren.</li>
+      <li><b>Chặn cứng ±70° (đã vẽ):</b> chốt M4 có ống lót dưới đế xoay, chạm vào 2 vấu trên rãnh. Dù servo hay miếng nối hỏng thì cụm vẫn không quay quá ±70°, đúng tầm rãnh được thiết kế. Đã kiểm tra: ở 68° chốt chưa chạm, ở 72° thì đã chạm. Tay ấn mạnh ở mép đĩa (khoảng 8 N·m) tạo khoảng 150 N lên chốt, nên vấu phải in đặc 100% và dán cao su.</li>
+      <li><b>Miếng nối servo xoay:</b> không dùng khớp nối mềm. Khớp 5 × 8 mm dài 25 mm, không lọt dưới tay gối dưới, mà nửa 5 mm chỉ ôm được đầu then hoa ngắn của MG90S. Thay bằng một miếng nối in PETG đặc 100%, Ø20 × 11 mm: bắt vào horn tròn đi kèm servo bằng 2 vít của horn (khoan lỗ mồi theo horn thật), kẹp trục bằng vít trí M3 và đai ốc thả từ trên xuống. Mài mặt phẳng (mặt D) trên trục ở chỗ vít trí, bôi keo khoá ren. Miếng nối không bù được lệch tâm, nên căn servo thẳng trục trước khi siết. Trước khi in giá chữ C, đo MG90S thật: CAD giả định đầu then hoa nhô 4 mm trên mặt kệ để lắp horn.</li>
       <li><b>Phần mềm phát hiện:</b> con quay trong IMU đo được <b>tốc độ</b> xoay quanh trục đứng. Thấy xoay khi không có lệnh, hoặc xoay quá xa so với lệnh, thì ngắt relay servo và báo lỗi. Ngắt xung PWM khi đứng yên để servo không rung làm mỏi dây. Lệnh xoay luôn giới hạn trong ±65°.</li>
       <li><b>Khoanh vùng hỏng:</b> cầu chì tự phục hồi 3 A trên đường 6 V, để dây có chập thì cũng không cháy mạch. Kẹp neo giữ vỏ cáp, để lực kéo không truyền vào mối hàn.</li>
     </ol>
@@ -643,8 +643,8 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <div class="card"><h3>Gửi đi gia công</h3><ul>
       <li><b>Cắt laser hoặc CNC:</b> lấy các file trong <code>dxf/</code>, tỉ lệ 1:1, đơn vị mm. Gồm mâm, đĩa, đế xoay, phễu trải phẳng, các tấm và khay ngăn kéo.</li>
       <li><b>Cắt laser + chấn (vỏ inox B):</b> gửi xưởng gia công inox các file <code>side_panel_left/right</code>, <code>back_panel</code>, <code>head_panel_front</code>, <code>top_cover</code>, <code>drawer_front_left/right</code> và <code>drawer_stiffener_x4</code>. Mỗi file có đường viền cắt (lớp CUT), đường chấn nét đứt (lớp BEND) và ghi chú cách gấp (lớp NOTE).</li>
-      <li><b>In 3D:</b> lấy các file trong <code>parts/*.stl</code>: giá chữ C, giá MG996R, 2 tai đĩa, 2 cục chặn, hộp cảm biến, bệ màn hình.</li>
-      <li><b>Cắt thanh:</b> nhôm hộp 30×30 và 40×30, thanh nhôm 30×13, trục inox Ø8 (180 mm và 72 mm). Có thêm danh sách cắt nhôm định hình <code>cut_list_profile_20x20.csv</code>.</li>
+      <li><b>In 3D:</b> lấy các file trong <code>parts/*.stl</code>: giá chữ C, giá MG996R, miếng nối servo xoay (<code>yaw_hub</code>, đặc 100%), 2 tai đĩa, 2 cục chặn, hộp cảm biến, bệ màn hình.</li>
+      <li><b>Cắt thanh:</b> nhôm hộp 30×30 và 40×30, thanh nhôm 30×13, trục inox Ø8 (180 mm và 70 mm). Có thêm danh sách cắt nhôm định hình <code>cut_list_profile_20x20.csv</code>.</li>
       <li><b>File cho xưởng:</b> <code>assembly_e1.step</code>, <code>exploded_e1.step</code>, <code>tilt_to_bin_1..4.step</code>, <code>components.csv</code>.</li>
     </ul></div>
     <div class="card"><h3>Phải đo trước khi cắt</h3><ul>
@@ -1074,7 +1074,7 @@ requestAnimationFrame(loop);fillPartTables();
       [37,'Camera mờ do ẩm, bụi','So với ảnh mẫu, lệch nhiều thì báo lau',1,'T11'],
       [38,'Pin điện thoại cũ phồng','Đã bỏ E2',3,'Hết'],
       [39,'App điện thoại bị tắt','Đã bỏ E2',1,'Hết'],
-      [45,'Trục xoay quay tự do hoặc quá tầm (khớp nối trượt, tuốt răng, nhầm MG90S 360°, xoay tay)','Chốt chặn cứng ±70° giữ dây trong tầm của rãnh vòng lăn. Con quay của IMU phát hiện, ngắt servo. Cầu chì 3 A nếu dây bị chập',2,'Chặn cứng · IMU · cầu chì'],
+      [45,'Trục xoay quay tự do hoặc quá tầm (miếng nối trượt, tuốt răng, nhầm MG90S 360°, xoay tay)','Chốt chặn cứng ±70° giữ dây trong tầm của rãnh vòng lăn. Con quay của IMU phát hiện, ngắt servo. Cầu chì 3 A nếu dây bị chập',2,'Chặn cứng · IMU · cầu chì'],
       [40,'Mất wifi','Nhận dạng chạy ngay trên ESP32-S3, wifi chỉ để báo tin',0,'Chạy offline']]],
     ['Lót túi và thay túi',[
       [41,'Quên lót túi mới','Hỏi xác nhận trên màn hình khi đóng ngăn kéo',1,'Logic đầy'],
@@ -1112,9 +1112,9 @@ requestAnimationFrame(loop);fillPartTables();
     ['head','Đai GT2 vòng kín','Nối puly 20 và 40 răng. Chọn mẫu 158mm: GT2 vòng kín, bản 6 mm, phải đúng chiều dài vì giá servo chỉ chỉnh được ±1 mm. Shop không ghi lõi thép hay sợi thủy tinh, mới có 3 đánh giá, giao khoảng 5 ngày',1,'cái',39505,[['Shopee, đai GT2 vòng kín 2GT rộng 6 mm','https://shopee.vn/%C4%90ai-%C4%91%E1%BB%8Bnh-gi%E1%BB%9D-v%C3%B2ng-k%C3%ADn-GT2-%C4%90ai-%C4%91%E1%BB%93ng-b%E1%BB%99-cao-su-2GT-Chi%E1%BB%81u-r%E1%BB%99ng-6mm-110-160-200-280-400-610-690-852-1220mm-Ph%E1%BB%A5-ki%E1%BB%87n-m%C3%A1y-in-3D-i.1251647761.45518070160?extraParams=%7B%22display_model_id%22%3A292968735584%2C%22model_selection_logic%22%3A3%7D']],'ok'],
     ['head','Gối đỡ KP08','Đỡ 2 đầu trục nghiêng. Cùng listing với KFL08 bên dưới: link mở sẵn mẫu KFL08, đổi sang mẫu KP08 - Phi 8mm, mua 2 cái',2,'cái',12000,[['Shopee, gối đỡ KP/KFL (Yêu thích, 4,9★, 391 đánh giá, có hoả tốc)','https://shopee.vn/G%E1%BB%91i-%C4%91%E1%BB%A1-tr%E1%BB%A5c-KP-KFL-D%C3%B9ng-cho-tr%E1%BB%A5c-phi-8-10-12%E2%80%A6-25mm-i.145382920.40672303340?extraParams=%7B%22display_model_id%22%3A296814233306%2C%22model_selection_logic%22%3A3%7D']],'ok'],
     ['head','Gối đỡ KFL08','Đỡ trục xoay, 1 trên 1 dưới. Chọn mẫu KFL08 - Phi 8mm, mua 2 cái. Giá chữ C trong CAD chưa có lỗ bắt vít gối: đo khoảng cách lỗ trên gối thật rồi mới khoan hoặc sửa CAD',2,'cái',12000,[['Shopee, gối đỡ KP/KFL (Yêu thích, 4,9★, 391 đánh giá, có hoả tốc)','https://shopee.vn/G%E1%BB%91i-%C4%91%E1%BB%A1-tr%E1%BB%A5c-KP-KFL-D%C3%B9ng-cho-tr%E1%BB%A5c-phi-8-10-12%E2%80%A6-25mm-i.145382920.40672303340?extraParams=%7B%22display_model_id%22%3A296814233306%2C%22model_selection_logic%22%3A3%7D']],'ok'],
-    ['head','Trục inox 304 Ø8','Dài 0,5 m, cắt 2 đoạn 180 và 72 mm',1,'cây',52000,[['Hải Minh Stainless Steel (Shopee)','https://shopee.vn/product/1847029796/47361778054']],'ok'],
+    ['head','Trục inox 304 Ø8','Dài 0,5 m, cắt 2 đoạn 180 và 70 mm',1,'cây',52000,[['Hải Minh Stainless Steel (Shopee)','https://shopee.vn/product/1847029796/47361778054']],'ok'],
     ['head','Khoá trục 8 mm','Bộ 3 cái: 2 cho trục nghiêng, 1 cho trục xoay',1,'bộ',19800,[['STEM ROBOCON SHOP (Shopee)','https://shopee.vn/product/1536807761/54464444015']],'ok'],
-    ['head','Khớp nối mềm','Nối trục servo xoay với trục 8 mm. 5 × 8 mm',1,'cái',[19000,45000],[['Phụ kiện 3D máy in CNC Laser (Shopee)','https://shopee.vn/product/14731236/1348115662'],['3DT Store, Hà Nội (Shopee, đang hết hàng)','https://shopee.vn/product/141407517/2404596442']],'ok'],
+    ['head','Vít trí M3 và đai ốc M3','Kẹp miếng nối in của servo xoay vào mặt D của trục 8 mm. Vít bắt horn đi kèm servo',1,'bộ',5000,[],'est'],
     ['head','Board ESP32-S3 N16R8 CAM','Kèm camera OV2640',1,'cái',[213000,275000],[['Daves.vn (Shopee)','https://shopee.vn/product/1670553084/51715729345'],['TL Quantum (Shopee)','https://shopee.vn/product/1887340926/49667269628']],'ok'],
     ['head','Camera OV2640 góc rộng','Ống kính 120°, chọn bản lọc hồng ngoại 650 nm cho màu đúng; giá tuỳ biến thể; shop nước ngoài',1,'cái',[136000,250000],[['YILIN_TECH (Shopee)','https://shopee.vn/product/934626898/18070874823']],'ref'],
     ['head','Màn hình TJC X5 10,1"','TJC1060X5101, không cảm ứng, IPS 1024×600, UART',1,'cái',1172000,[['Thế Giới Tech (Shopee)','https://shopee.vn/product/658464304/52117992790'],['Thế Giới Tech Automation (Shopee)','https://shopee.vn/product/1220096432/26383863672']],'ok'],
@@ -1141,7 +1141,7 @@ requestAnimationFrame(loop);fillPartTables();
     ['head','Nhôm hộp 30×30×2','1,5 m (4 thanh treo 375 mm), khoảng 0,9 kg. Ước theo giá nhôm/kg',0.9,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
     ['head','Nhôm hộp 40×30×2','1,1 m (2 thanh chữ thập 540 mm), khoảng 0,8 kg. Ước theo giá nhôm/kg',0.8,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
     ['head','Nhôm thanh dẹt 30×13','0,15 m (2 trụ bản lề), khoảng 0,2 kg. Ước theo giá nhôm/kg',0.2,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
-    ['head','In 3D PETG','0,8–1,0 kg: bệ màn hình rỗng, giá chữ C, giá servo, tai, 4 hộp cảm biến có loa (khoảng 38 cm³ mỗi hộp). In ở trường nên không mất tiền. Nếu phải tự trả: mua 1 cuộn eSUN 1 kg 317k để tự in, hoặc thuê in 0,8–1,0 kg × 800–1.500đ/g = 0,64–1,5 triệu, có nơi tính tối thiểu 50k mỗi chi tiết',1,'lô',0,[['NGE 3D Printer, eSUN PETG 1 kg (Shopee)','https://shopee.vn/product/1458987144/28924391297'],['3DMaster, Hà Nội (thuê in)','https://3dmaster.com.vn/dich-vu-in-3d-theo-yeu-cau-ha-noi-o-dau-gia-tot-in-dep/']],'free'],
+    ['head','In 3D PETG','0,8–1,0 kg: bệ màn hình rỗng, giá chữ C, giá servo, miếng nối servo xoay, tai, 4 hộp cảm biến có loa (khoảng 38 cm³ mỗi hộp). In ở trường nên không mất tiền. Nếu phải tự trả: mua 1 cuộn eSUN 1 kg 317k để tự in, hoặc thuê in 0,8–1,0 kg × 800–1.500đ/g = 0,64–1,5 triệu, có nơi tính tối thiểu 50k mỗi chi tiết',1,'lô',0,[['NGE 3D Printer, eSUN PETG 1 kg (Shopee)','https://shopee.vn/product/1458987144/28924391297'],['3DMaster, Hà Nội (thuê in)','https://3dmaster.com.vn/dich-vu-in-3d-theo-yeu-cau-ha-noi-o-dau-gia-tot-in-dep/']],'free'],
     ['head','Keo dán Alteco 110','',1,'tuýp',18000,[['Linh Kiện 3M','https://chotroihn.vn/keo-dan-alteco-110-japan']],'ok'],
     ['head','Rivet nhôm, đệm cao su tự dính 30×30','',1,'bộ',80000,[],'est'],
     ['b','Nhôm định hình 20×20','4 cột 1170 mm và 11 thanh 640 mm',11.72,'m',[45000,70000],[['Leanway, 16 Phan Trọng Tuệ, Thanh Trì (Lazada, đang hết hàng)','https://www.lazada.vn/products/nhom-dinh-hinh-20x20-lwa-221461400-mien-phi-cat-theo-kich-thuoc-yeu-cau-gia-da-bao-gom-vat-i2359442557.html'],['Vimetco','https://www.vimetco.com.vn/nhom-thanh-nhom-dinh-hinh-20x20']],'ok','frame'],

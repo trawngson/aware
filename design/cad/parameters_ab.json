@@ -47,8 +47,15 @@
   "yaw_platform_half_y_mm": 96.0,
   "yaw_stack_mm": {
     "servo_shelf_z_offset": 35.0,
-    "lower_arm_z_offset": 52.0,
+    "lower_arm_z_offset": 57.0,
     "upper_arm_z_offset": 92.0
+  },
+  "yaw_hub_mm": {
+    "horn_disc": [20.0, 2.0],
+    "diameter": 20.0,
+    "height": 11.0,
+    "shaft_depth": 9.0,
+    "horn_screw_radius": 7.0
   },
   "maximum_yaw_degrees": 45.0,
   "motor_cable": {

@@ -18,7 +18,8 @@ yaw_bracket,1,print,"PETG, 60 % infill (or bent aluminium 3 mm)",E1,Fixed C-brac
 yaw_bearing_lower,1,buy,"Flanged pillow block KFL08, bore 8 mm",E1,Flanged bearing for the vertical yaw shaft
 yaw_bearing_upper,1,buy,"Flanged pillow block KFL08, bore 8 mm",E1,Flanged bearing for the vertical yaw shaft
 yaw_servo,1,buy,"MG90S, metal gears",E1,MG90S turning the tilt stage plus or minus 45 degrees toward the bin
-yaw_coupling,1,buy,Flexible coupling 5 x 8 mm,E1,Flexible coupling from the yaw servo spline to the 8 mm shaft
+yaw_servo_horn,1,buy,Comes with the servo,E1,"Round horn that ships with the MG90S, screwed to the hub"
+yaw_hub,1,print,"PETG, 100 % infill",E1,"Hub from the yaw servo horn to the 8 mm shaft: horn screws below, M3 set screw and nut on the shaft flat"
 yaw_shaft,1,cut,Stainless 304 rod 8 mm,E1,Vertical yaw shaft in the two flanged bearings
 yaw_collar,1,buy,Shaft collar 8 mm,E1,Shaft collar resting on the upper bearing: carries the stage weight
 yaw_platform,1,laser,Aluminium sheet 4 mm,E1,"Turning platform carrying the hinge posts, the tilt servo and the stop pads"
@@ -43,7 +44,7 @@ tilt_imu,1,buy,MPU-6050 (GY-521),E1,IMU under the plate: true tilt angle for jam
 motor_cable_yaw_servo,1,buy,"Servo extension 3 x 22 AWG, about 1 m",E1,"MG90S cable: console, rear hanger, beam top to the yaw servo; no moving joint"
 yaw_cable_channel,1,print,"PETG, 100 % infill at the stop lugs; rubber pads on the lug faces",E1,"Fixed rolling-loop channel on the upper bearing, with the two yaw stop lugs at +/-70 degrees"
 yaw_cable_drum,1,print,PETG,E1,"Drum under the platform, turning with it: the inner face of the rolling loop"
-yaw_stop_pin,1,buy,M4 steel bolt with an 8 mm sleeve,E1,Stop pin under the platform: hits a lug at the yaw limit even if the coupling slips
+yaw_stop_pin,1,buy,M4 steel bolt with an 8 mm sleeve,E1,Stop pin under the platform: hits a lug at the yaw limit even if the hub slips
 yaw_ribbon_loop,1,buy,"Flat ribbon cable 10 cores, 1.27 mm pitch, high-flex",E1,"10-core ribbon in the rolling loop (drawn at mid travel): 6 V x2, GND x2, PWM, GND, SDA, GND, SCL, 3.3 V"
 motor_cable_tilt_servo,1,buy,"Ribbon cable, same as the loop",E1,"MG996R and IMU cable, fixed part: console to the rolling-loop channel; becomes the ribbon at the wall"
 motor_cable_tilt_servo_stage,1,buy,"Same ribbon, split to the servo plug and the IMU lead",E1,"Cable on the turning platform: up through the platform, on the -x side of the servo, clear of the belt"
