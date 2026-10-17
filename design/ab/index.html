@@ -272,7 +272,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
       <tr><td>Servo nghiêng / xoay</td><td class="n">MG996R / MG90S</td></tr>
       <tr><td>Góc nghiêng / góc xoay</td><td class="n">±45° / ±45°</td></tr>
-      <tr><td>Mô-men kẹt MG996R ở 6 V (theo shop)</td><td class="n">khoảng 11 kg·cm = 1,08 N·m</td></tr>
+      <tr><td>Mô-men kẹt MG996R ở 6 V (số thận trọng, shop ghi 15 kg·cm)</td><td class="n">khoảng 11 kg·cm = 1,08 N·m</td></tr>
       <tr><td>Puly, tỉ số</td><td class="n">GT2 20T → 40T, 2:1</td></tr>
       <tr><td>Đai kín GT2 rộng 6 mm / khoảng cách tâm puly</td><td class="n">158 mm / 48,58 mm</td></tr>
       <tr><td>Trục bản lề (cách mặt đĩa 22 mm)</td><td class="n">Ø8 × 180 mm, z = 878</td></tr>
@@ -353,7 +353,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <li><b>Đai chùng hoặc quá căng:</b> đai kín không có bộ căng đai, nên khoảng cách tâm 48,58 mm phải đúng. Giá bắt MG996R có lỗ rãnh ±1 mm để chỉnh căng.</li>
     <li><b>Puly 20T không lắp thẳng vào spline 25T của MG996R:</b> cần một miếng nối in 3D bắt vít vào horn tròn.</li>
     <li><b>Puly 40T</b> có shop ghi lỗ 8 mm nhưng đường link lại ghi 5 mm. Hỏi shop trước, nếu là lỗ 5 mm thì khoan lên 8 mm.</li>
-    <li><b>MG996R giá rẻ hay là hàng nhái:</b> mua 1 con, đo mô-men bằng cân treo rồi mới mua thêm.</li>
+    <li><b>MG996R giá rẻ hay là hàng nhái:</b> mua 1 con, đo mô-men bằng cân treo rồi mới mua thêm. Gắn tay đòn 2,5 cm ở 6 V: cân phải lên tới khoảng 3,5 kg servo mới chịu thua (tức 9 kg·cm, đủ để tải 0,435 N·m chỉ chiếm 50%). Tháo đáy xem mọi bánh răng đều là kim loại. Shop đang chọn có bán cả bản MG996R-360: cấp xung 1500 µs, servo phải đứng yên ở giữa chứ không quay mãi.</li>
     <li><b>Xoay khi đĩa đang nghiêng:</b> phần mềm phải luôn đưa đĩa về nằm ngang trước, rồi mới xoay sang ngăn khác.</li>
     <li><b>Nghiêng quá nhanh làm rác văng:</b> tăng tốc từ từ, khoảng 1 giây cho 45°.</li>
   </ul></div>
@@ -1142,8 +1142,8 @@ requestAnimationFrame(loop);fillPartTables();
   // SL và đơn giá là số hoặc [thấp, cao]. Tình trạng: ok = đã tra trên trang bán, ref = bảng giá chung hoặc giá tuỳ biến thể,
   // est = ước tính chưa tra, none = chưa tìm thấy hàng, free = in ở trường, không mất tiền. Nhóm (shell, frame) chỉ để cộng nhanh ở đoạn tóm tắt dưới bảng.
   var ITEMS=[
-    ['head','Servo MG996R','Servo nghiêng đĩa (khoẻ, kéo qua đai 2:1). Bánh răng kim loại',1,'cái',85000,[['Linh Kiện 3M, Tạ Quang Bửu','https://chotroihn.vn/dong-co-servo-mg996']],'ok'],
-    ['head','Servo MG90S','Servo xoay đĩa ±45° về phía ngăn cần đổ. Bánh răng kim loại',1,'cái',39000,[['Linh Kiện 3M','https://chotroihn.vn/dong-co-servo-mg90s']],'ok'],
+    ['head','Servo MG996R','Servo nghiêng đĩa, kéo qua đai 2:1. Chọn mẫu Mg996r. Shop ghi full 100% bánh răng kim loại, 0–180°, 15 kg·cm ở 6 V (thông số ghi cho MG995), thiết kế vẫn tính 11 kg·cm. Shop có bán cả bản MG996R-360, nhận hàng phải thử',1,'cái',89000,[['Shopee, MG995/MG996R full kim loại (4,7★, đã bán 40k+, có hoả tốc)','https://shopee.vn/%C4%90%E1%BB%99ng-C%C6%A1-Servo-MG995-MG996-MG996R-Full-100-b%C3%A1nh-r%C4%83ng-kim-lo%E1%BA%A1i-g%C3%B3c-quay-180-%C4%91%E1%BB%99-i.81431289.16762476269?extraParams=%7B%22display_model_id%22%3A144254823331%2C%22model_selection_logic%22%3A3%7D&rModelId=144254823331&vItemId=51759213760&vModelId=425816630006&vShopId=1506174776']],'ok'],
+    ['head','Servo MG90S','Servo xoay đĩa ±45° về phía ngăn cần đổ. Trang bán không ghi bánh răng kim loại hay nhựa, nhận hàng mở ra xem',1,'cái',39000,[['Linh Kiện 3M','https://chotroihn.vn/dong-co-servo-mg90s']],'ok'],
     ['head','Puly GT2 20 răng','Puly nhỏ, gắn trên servo nghiêng. Lỗ 6 mm, đai bản 6 mm',1,'cái',22000,[['Linh Kiện 3M','https://chotroihn.vn/pulley-gt2-puly-20-rang-lo-lap-truc-phi-6-mm-co-dai-rong-6mm']],'ok'],
     ['head','Puly GT2 40 răng','Puly lớn, gắn trên trục nghiêng. Cùng puly 20 răng tạo tỉ số 2:1, gấp đôi lực của servo. Lỗ 8 mm',1,'cái',[49000,80000],[['Tôi Thích Điện Tử (Lazada)','https://www.lazada.vn/products/-i2101394822-s9874495921.html'],['Ic Lab VN (Shopee)','https://shopee.vn/product/952239701/43572101935']],'ok'],
     ['head','Đai GT2 vòng kín','Nối puly 20 và 40 răng. Chu vi 158 mm, bản 6 mm, lõi thép',1,'cái',[29000,46000],[['Điện tử Hải Đăng (Shopee)','https://shopee.vn/product/350699790/28754607025']],'ok'],
