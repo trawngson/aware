@@ -1,6 +1,6 @@
-"""Buildable prototype options A (220 L drum) and B (aluminium frame + four bins). Units mm.
+"""Buildable prototype B: aluminium frame, stainless shell and four square bins. Units mm.
 
-Both bodies carry the same head: funnel, soft skirt, 320 mm aluminium tipping plate on a
+The body carries one head: funnel, soft skirt, 320 mm aluminium tipping plate on a
 two-axis joint driven by two DS3218 servos through GT2 2:1 belts, a 47 degree stop ring, an
 IMU on the plate yoke and four fill sensors. The head hangs from one deck ring and stands on
 its joint beam when lifted out. A rear console holds the ESP32-S3, the TFT and an LED strip,
@@ -428,19 +428,42 @@ def head(p, add):
                      "rolling_loop_bend_radius": round(fold_rad, 1),
                      "fold_travel_over_full_yaw": round(math.degrees(travel * r_i / (r_o + r_i)))}
 
-    # Fill sensors hang off the throat lip, under the funnel and out of the item path.
-    pod_w, pod_h = p["fill_sensor_housing_width_mm"], p["fill_sensor_housing_height_mm"]
-    sensor_r = p["fill_sensor_radial_position_mm"]
-    pod_top, pod_bottom = lip_top, lip_top - pod_h
-    pod = box(pod_w, pod_w, pod_h, (sensor_r, 0, pod_top - pod_h / 2))
-    pod = pod.cut(box(pod_w - 6, pod_w - 6, pod_h - 6, (sensor_r, 0, pod_top - pod_h / 2)).fuse(
-        cylinder(6, 8, (sensor_r, 0, pod_bottom - 1), (0, 0, 1))))
-    reach_s = sensor_r - pod_w / 2 - throat_r
-    bracket = box(reach_s, 20, 20, (throat_r + reach_s / 2, 0, pod_top - pod_h / 2)).cut(
-        tube(throat_r + fw, 0, pod_bottom, pod_h))
+    # Fill sensors hang off the throat lip, under the funnel and out of the item path. Each pod
+    # holds an HC-SR04 face down, its two transducers on a tangential line at sensor_r, and flares
+    # each transducer into a printed horn: the wider mouth narrows the beam. The tray is open on
+    # top; the header points outward and the wires leave over the top.
+    fs, sensor_r = p["fill_sensor"], p["fill_sensor_radial_position_mm"]
+    board_l, board_w, board_t = fs["board_mm"]
+    can_r, can_h, pitch = fs["transducer_diameter_mm"] / 2, fs["transducer_height_mm"], fs["transducer_pitch_mm"]
+    horn_l, horn_r, horn_wall, wall = (fs["horn_length_mm"], fs["horn_mouth_diameter_mm"] / 2,
+                                       fs["horn_wall_mm"], fs["wall_mm"])
+    assert pitch - 2 * horn_r >= horn_wall, "the two horn mouths need a wall between them"
+    pod_top = lip_top
+    board_z = pod_top - fs["space_above_board_mm"] - board_t
+    window_z = board_z - can_h - horn_l
+    half_x = max(board_w / 2 + wall, horn_r + horn_wall)
+    half_y = max(board_l / 2 + wall, pitch / 2 + horn_r + horn_wall)
+    x_in, x_out = sensor_r - half_x, sensor_r + board_w / 2 + fs["connector_space_mm"] + wall
+    # Printed horn mouths down, so a 45 degree web carries the connector shelf without supports.
+    shelf_z, web = board_z - wall, x_out - sensor_r - half_x
+    pod = box(x_out - x_in, 2 * half_y, pod_top - board_z + wall,
+              ((x_in + x_out) / 2, 0, (pod_top + board_z - wall) / 2)).fuse(
+        box(2 * half_x, 2 * half_y, shelf_z - window_z, (sensor_r, 0, (shelf_z + window_z) / 2)),
+        cq.Workplane("XZ").polyline([(x_out - web, shelf_z), (x_out, shelf_z), (x_out - web, shelf_z - web)])
+        .close().extrude(half_y, both=True).val())
+    c0, c1 = sensor_r - board_w / 2 - .5, x_out - wall
+    pod = pod.cut(box(c1 - c0, board_l + 1, pod_top - board_z, ((c0 + c1) / 2, 0, (pod_top + board_z) / 2)))
+    pod = pod.cut(box(12, 8, 4, (sensor_r, 0, board_z - 2)))  # crystal between the transducers
+    for y in (-pitch / 2, pitch / 2):
+        pod = pod.cut(cylinder(can_r + .3, can_h + .01, (sensor_r, y, board_z - can_h), (0, 0, 1))).cut(
+            cq.Solid.makeCone(can_r + .3, horn_r, horn_l + .01, cq.Vector(sensor_r, y, board_z - can_h),
+                              cq.Vector(0, 0, -1)))
+    reach_s = x_in - throat_r
+    bracket = box(reach_s, 20, 20, (throat_r + reach_s / 2, 0, pod_top - 15)).cut(
+        tube(throat_r + fw, 0, window_z, pod_top - window_z))
     for i, a in enumerate(DIRECTIONS, 1):
         add(f"fill_sensor_pod_{i}", pod.rotate((0, 0, 0), (0, 0, 1), a), charcoal, "head", lift,
-            "Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)",
+            "HC-SR04 pod above one bin, face down, with a printed horn on each transducer",
             "print", "PETG")
         add(f"fill_sensor_arm_{i}", bracket.rotate((0, 0, 0), (0, 0, 1), a), metal, "head", lift,
             "Sensor arm from the throat lip", "print", "PETG")
@@ -556,80 +579,8 @@ def head(p, add):
             "low_edge_z": low_edge_z, "belt_center_mm": c, "big_r": big_r, "small_r": small_r,
             "camera": cam, "camera_hidden_edge_samples": hidden, "slope": slope,
             "camera_sight_margin": sight_margin, "camera_aim_from_vertical": math.degrees(math.atan2(-dy, -dz)),
+            "sensor_r": sensor_r, "sensor_window_z": window_z,
             "shell_top": shell_top, "collar_t": collar_t, "mouth_r": mouth_r, "fw": fw}
-
-
-def body_a(p, add, h):
-    d = p["drum"]
-    r, wall, floor_t = d["outer_diameter_mm"] / 2, d["wall_mm"], d["bottom_mm"]
-    height = d["height_mm"]
-    assert abs(height - p["head_deck_height_mm"]) < 1e-6, "head deck rests on the drum rim"
-    ri = r - wall
-    assert ri > p["locating_ring_outer_radius_mm"] + 2
-    drum = tube(r, ri, floor_t, height - floor_t).fuse(tube(r, 0, 0, floor_t))
-    add("drum_220l", drum, (.18, .42, .66), "body", (0, 0, 0),
-        "Open-top 220 L HDPE drum used as the body; dimensions provisional", "buy",
-        "HDPE open-top drum 220 L")
-    t, clear = d["divider_thickness_mm"], d["divider_clearance_mm"]
-    cap_w, cap_t = d["divider_cap_width_mm"], d["divider_cap_thickness_mm"]
-    frame_t, bar, gap = d["bag_frame_thickness_mm"], d["bag_frame_bar_mm"], d["bag_frame_gap_to_spider_mm"]
-    # Stack under the joint beam: rubber foot, gap, bag frame, divider cap, divider.
-    frame_top = h["spider_bottom"] - gap
-    frame_bottom = frame_top - frame_t
-    cap_bottom = frame_bottom - cap_t
-    top = cap_bottom
-    length = 2 * (ri - clear)
-    hgt = top - floor_t
-    slot = t + .4
-    lower = box(length, t, hgt, (0, 0, floor_t + hgt / 2)).cut(
-        box(slot, t + 2, hgt / 2, (0, 0, top - hgt / 4)))
-    upper = box(t, length, hgt, (0, 0, floor_t + hgt / 2)).cut(
-        box(t + 2, slot, hgt / 2, (0, 0, floor_t + hgt / 4)))
-    white = (.95, .95, .93)
-    add("divider_x", lower, white, "dividers", (0, 0, 380),
-        "Divider plate, slot from the top; half-laps with divider_y", "laser", "PVC foam board 5 mm")
-    add("divider_y", upper, white, "dividers", (0, 0, 380),
-        "Divider plate, slot from the bottom", "laser", "PVC foam board 5 mm")
-    cap = box(length, cap_w, cap_t, (0, 0, cap_bottom + cap_t / 2)).fuse(
-        box(cap_w, length, cap_t, (0, 0, cap_bottom + cap_t / 2)))
-    add("divider_cap", cap, (.55, .58, .57), "dividers", (0, 0, 420),
-        "Cross cap on the divider tops: a ledge for the bag frames on both sides", "laser",
-        "Aluminium composite 5 mm")
-
-    # One bag frame per quarter: the bag folds over it; the joint beam's feet hold it down.
-    r_out = ri - clear
-    edge = t / 2 + .5
-    for i, a in enumerate(DIRECTIONS, 1):
-        sx, sy = math.copysign(1, math.cos(math.radians(a))), math.copysign(1, math.sin(math.radians(a)))
-        quarter = lambda r, off: cylinder(r, frame_t, (0, 0, frame_bottom), (0, 0, 1)).intersect(
-            box(r, r, frame_t, (sx * (off + r / 2), sy * (off + r / 2), frame_bottom + frame_t / 2)))
-        frame = quarter(r_out, edge).cut(quarter(r_out - bar, cap_w / 2))
-        add(f"bag_frame_{i}", frame, (.80, .66, .45), "dividers", (sx * 60, sy * 60, 470),
-            "Quarter bag frame: lift it out with the full bag", "laser", "Plywood 6 mm, sealed")
-        for j, da in enumerate((-30, 0, 30), 1):
-            ang = math.radians(a + da)
-            tab = box(12, 16, 10, (0, 0, frame_bottom - 5)).rotate((0, 0, 0), (0, 0, 1), a + da).translate(
-                ((ri - 6.6) * math.cos(ang), (ri - 6.6) * math.sin(ang), 0))
-            add(f"bag_frame_tab_{i}{j}", tab, (.19, .23, .26), "body", (0, 0, 0),
-                "Tab bonded to the drum wall under the frame arc", "print", "PETG, bonded with MS polymer")
-
-    # Fixing, orientation and lid sensing on the drum rim.
-    pin_r = p["orientation_pin_radius_mm"]
-    socket = box(16, ri - .5 - (pin_r - 5), 20, (0, (pin_r - 5 + ri - .5) / 2, height - 20)).cut(
-        cylinder(3.3, 20, (0, pin_r, height - 20), (0, 0, 1)))
-    add("orientation_socket", socket, (.19, .23, .26), "body", (0, 0, 0),
-        "Block bonded inside the rear rim; the deck pin drops into it", "print", "PETG")
-    add("lid_switch", box(20, 6, 12, (0, -(ri - 3.5), height - 6.5)), (.85, .2, .2), "body", (0, 0, 0),
-        "Microswitch at the front rim: servos stay unpowered unless the head is seated", "buy",
-        "Microswitch with lever, KW11")
-    for i, x in enumerate((-1, 1), 1):
-        add(f"head_latch_{i}", box(15, 24, 35, (x * (r + 7.5), 0, height - 2 - 17.5)), (.61, .66, .69),
-            "body", (x * 40, 0, 0), "Toggle latch on the drum side, hooking over the deck rim", "buy",
-            "Toggle latch 40 mm, stainless")
-    quarter_v = (math.pi * ri ** 2 / 4 - (ri - clear) * t) * (top - floor_t) / 1e6
-    return {"body": "A", "outer_mm": [r * 2, r * 2], "bin_rim_z": top, "bin_floor_z": floor_t,
-            "capacity_l_each": round(quarter_v, 1), "bin_center_radius": ri * .52,
-            "bag_note": "Lift the head off (it stands on its beam feet), lift each bag frame out with its bag"}
 
 
 def fold_allowance(leg, t, k, hem=False):
@@ -812,15 +763,49 @@ def body_b(p, add, h):
 BIN_COLORS = [(.29, .56, .72), (.79, .53, .23), (.37, .62, .42), (.60, .42, .69)]
 
 
-def for_body(p, body):
-    """Parameters as one body sees them. The drum fixes the deck height of body A; the frame of
-    body B can stand taller, which raises its whole head by frame.extra_height_mm."""
-    extra = p["frame"].get("extra_height_mm", 0) if body == "B" else 0
-    return {**p, "rim_height_mm": p["rim_height_mm"] + extra,
-            "head_deck_height_mm": p["head_deck_height_mm"] + extra}
+def fill_sightlines(parts, h, info, full_fraction):
+    """What a fill sensor can hear before the waste at the full level. For each part, the smallest
+    angle off the sensor axis among its edge points nearer than that level (edges and corners
+    scatter sound back; flat faces seen at an angle mostly reflect it away), or 0 when the part
+    crosses the axis itself. Worst of the four sensors, with the plate level, out to 40 degrees
+    (about where a bare 16 mm transducer stops hearing). Shadowing by other parts is ignored."""
+    floor, window = info["bin_floor_z"], h["sensor_window_z"]
+    full_z = floor + full_fraction * (info["bin_rim_z"] - floor)
+    reach = window - full_z
+    worst = {}
+    for a in DIRECTIONS:
+        sx, sy = h["sensor_r"] * math.cos(math.radians(a)), h["sensor_r"] * math.sin(math.radians(a))
+        axis = cq.Edge.makeLine(cq.Vector(sx, sy, window - .01), cq.Vector(sx, sy, full_z))
+        for part in parts:
+            bb = part.shape.BoundingBox()
+            near = math.dist((sx, sy, window), (min(max(sx, bb.xmin), bb.xmax), min(max(sy, bb.ymin), bb.ymax),
+                                                min(max(window, bb.zmin), bb.zmax)))
+            if part.name.startswith("fill_sensor_") or bb.zmin >= window or near >= reach:
+                continue
+            best = None
+            if part.shape.distance(axis) < .01:
+                best = (0.0, part.shape.distance(cq.Vertex.makeVertex(sx, sy, window)))
+            else:
+                for e in part.shape.Edges():
+                    n = max(2, math.ceil(e.Length() / 4))
+                    for k in range(n):
+                        v = e.positionAt(k / (n - 1))
+                        lat, dz = math.hypot(v.x - sx, v.y - sy), window - v.z
+                        if dz > 0 and math.hypot(lat, dz) < reach:
+                            ang = math.degrees(math.atan2(lat, dz))
+                            if best is None or ang < best[0]:
+                                best = (ang, math.hypot(lat, dz))
+            name = part.name.rstrip("0123456789").rstrip("_")
+            if best and (name not in worst or best[0] < worst[name][0]):
+                worst[name] = best
+    return {"window_height_mm": round(window, 1), "radial_position_mm": h["sensor_r"],
+            "empty_distance_mm": round(window - floor), "full_fraction": full_fraction,
+            "full_distance_mm": round(reach),
+            "nearer_than_full": [{"part": k, "off_axis_degrees": round(v[0], 1), "distance_mm": round(v[1])}
+                                 for k, v in sorted(worst.items(), key=lambda kv: kv[1][0]) if v[0] < 40]}
 
 
-def build(p, body):
+def build(p):
     parts, meta = [], {}
 
     def add(name, shape, color, group, explode=(0, 0, 0), description="", process="", material=""):
@@ -830,7 +815,7 @@ def build(p, body):
         meta[name] = {"process": process, "material": material}
 
     h = head(p, add)
-    info = (body_a if body == "A" else body_b)(p, add, h)
+    info = body_b(p, add, h)
 
     # Torque each servo must hold at full tilt with the item at the plate edge.
     theta = math.radians(p["maximum_plate_tilt_degrees"])
@@ -850,7 +835,7 @@ def build(p, body):
     edge_force = stall * ratio * p["belt_efficiency"] / (p["plate_radius_mm"] / 1000)
 
     metrics = {
-        "revision": f"ab-{body}-E1", "units": "mm", "body": body, "brain": "E1",
+        "revision": "ab-B-E1", "units": "mm", "body": "B", "brain": "E1",
         "outer_mm": info["outer_mm"], "rim_height_mm": p["rim_height_mm"],
         "head_deck_height_mm": p["head_deck_height_mm"],
         "bin_rim_height_mm": info["bin_rim_z"], "bin_floor_height_mm": info["bin_floor_z"],
@@ -887,6 +872,7 @@ def build(p, body):
                                        + p["display_slab_mm"][2] * math.cos(math.radians(p["display_lean_back_degrees"])), 1),
         "console_electronics_envelopes_mm": {k: v["size"] for k, v in p["console_electronics_mm"].items()},
         "bin_landing_radius_mm": round(info["bin_center_radius"], 1),
+        "fill_sensor": fill_sightlines(parts, h, info, p["fill_sensor"]["full_fraction"]),
         "bag_change": info["bag_note"],
         "flat_pieces_mm": info.get("flat_pieces", {}),
         **({"shell": info["shell"]} if "shell" in info else {}),
@@ -1015,14 +1001,14 @@ def funnel_patterns(p, h, out):
             "funnel_cone_inner_outer_radius_mm": [round(s_bot, 1), round(s_top, 1)]}
 
 
-def export_option(p, body, out):
+def export_option(p, out):
     out.mkdir(parents=True, exist_ok=True)
     (out / "parts").mkdir(exist_ok=True)
     (out / "dxf").mkdir(exist_ok=True)
     report = {"variants": {}}
     union, meshes = {}, []
     for brain in ("E1",):
-        parts, meta, metrics = build(p, body)
+        parts, meta, metrics = build(p)
         checks = [{"pose": "neutral", **{k: v for k, v in validate(parts).items() if k == "checks"}}]
         for destination, direction in enumerate(DIRECTIONS, 1):
             # Yaw first with the plate level (half and full turn), then tilt in steps.
@@ -1035,9 +1021,9 @@ def export_option(p, body, out):
                                "positive_volume_intersections": []})
                 if fraction == 1 and brain == "E1":
                     export_assembly(items, f"tilt_to_bin_{destination}", out / f"tilt_to_bin_{destination}.step")
-        export_assembly(parts, f"option_{body}_{brain}", out / f"assembly_{brain.lower()}.step")
+        export_assembly(parts, f"option_B_{brain}", out / f"assembly_{brain.lower()}.step")
         if brain == "E1":
-            export_assembly(parts, f"option_{body}_{brain}_exploded", out / "exploded_e1.step", True)
+            export_assembly(parts, f"option_B_{brain}_exploded", out / "exploded_e1.step", True)
         report["variants"][brain] = {"part_count": len(parts), "tilt_pose_checks": checks,
                                      "metrics": metrics}
         for part in parts:
@@ -1070,19 +1056,18 @@ def export_option(p, body, out):
         for name, entry in union.items():
             writer.writerow([name, 1, entry["meta"]["process"], entry["meta"]["material"],
                              entry["variant"], entry["part"].description])
-    if body == "B":
-        lengths = {}
-        for name, entry in union.items():
-            if entry["meta"]["material"] == "Aluminium profile 20 x 20":
-                bb = entry["part"].shape.BoundingBox()
-                key = round(max(bb.xlen, bb.ylen, bb.zlen))
-                lengths[key] = lengths.get(key, 0) + 1
-        with (out / "cut_list_profile_20x20.csv").open("w", newline="") as stream:
-            writer = csv.writer(stream)
-            writer.writerow(["profile", "length_mm", "quantity"])
-            for length, qty in sorted(lengths.items(), reverse=True):
-                writer.writerow(["Aluminium 20 x 20", length, qty])
-            report["profile_total_length_mm"] = sum(k * v for k, v in lengths.items())
+    lengths = {}
+    for name, entry in union.items():
+        if entry["meta"]["material"] == "Aluminium profile 20 x 20":
+            bb = entry["part"].shape.BoundingBox()
+            key = round(max(bb.xlen, bb.ylen, bb.zlen))
+            lengths[key] = lengths.get(key, 0) + 1
+    with (out / "cut_list_profile_20x20.csv").open("w", newline="") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(["profile", "length_mm", "quantity"])
+        for length, qty in sorted(lengths.items(), reverse=True):
+            writer.writerow(["Aluminium 20 x 20", length, qty])
+        report["profile_total_length_mm"] = sum(k * v for k, v in lengths.items())
     (out / "dimensions.json").write_text(json.dumps(metrics_e1, indent=2) + "\n")
     report["cadquery_version"] = cq.__version__
     (out / "validation.json").write_text(json.dumps(report, indent=2) + "\n")
@@ -1093,18 +1078,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--parameters", type=Path, default=ROOT / "cad/parameters_ab.json")
     parser.add_argument("--output", type=Path, default=ROOT / "ab")
-    parser.add_argument("--body", choices=["A", "B", "both"], default="both")
     args = parser.parse_args()
     p = json.loads(args.parameters.read_text())
-    for body in (("A", "B") if args.body == "both" else (args.body,)):
-        folder = args.output / ("a_drum" if body == "A" else "b_frame")
-        print(f"Building option {body} (E1), checking 24 yaw and tilt poses…", flush=True)
-        metrics = export_option(for_body(p, body), body, folder)
-        print(json.dumps({k: metrics[k] for k in (
-            "capacity_l_each_provisional", "servo_load_fraction_of_stall", "max_item_kg_at_half_stall",
-            "camera_hidden_plate_edge_samples_of_72", "belt_center_distance_mm")}), flush=True)
+    print("Building option B (E1), checking 24 yaw and tilt poses…", flush=True)
+    metrics = export_option(p, args.output / "b_frame")
+    print(json.dumps({k: metrics[k] for k in (
+        "capacity_l_each_provisional", "servo_load_fraction_of_stall", "max_item_kg_at_half_stall",
+        "camera_hidden_plate_edge_samples_of_72", "belt_center_distance_mm")}), flush=True)
     print("All poses passed without positive-volume overlaps.", flush=True)
-
 
 if __name__ == "__main__":
     main()

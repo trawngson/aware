@@ -48,13 +48,13 @@ yaw_ribbon_loop,1,buy,"Flat ribbon cable 10 cores, 1.27 mm pitch, high-flex",E1,
 motor_cable_tilt_servo,1,buy,"Ribbon cable, same as the loop",E1,"MG996R and IMU cable, fixed part: console to the rolling-loop channel; becomes the ribbon at the wall"
 motor_cable_tilt_servo_stage,1,buy,"Same ribbon, split to the servo plug and the IMU lead",E1,"Cable on the turning platform: up through the platform, on the -x side of the servo, clear of the belt"
 cable_clip_stage,1,print,PETG clip with a cable tie,E1,Clip on the platform: strain relief where the ribbon leaves the loop
-fill_sensor_pod_1,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
+fill_sensor_pod_1,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
 fill_sensor_arm_1,1,print,PETG,E1,Sensor arm from the throat lip
-fill_sensor_pod_2,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
+fill_sensor_pod_2,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
 fill_sensor_arm_2,1,print,PETG,E1,Sensor arm from the throat lip
-fill_sensor_pod_3,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
+fill_sensor_pod_3,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
 fill_sensor_arm_3,1,print,PETG,E1,Sensor arm from the throat lip
-fill_sensor_pod_4,1,print,PETG,E1,"Distance-sensor pod above one bin (HC-SR04 first, VL53L1X if bags mislead it)"
+fill_sensor_pod_4,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
 fill_sensor_arm_4,1,print,PETG,E1,Sensor arm from the throat lip
 display_console,1,print,"PETG, printed in 2 halves",E1,"Rear console, hollow shell: a tablet-sized display slab leaning back on a low base; ESP32-S3 camera board, servo supply and wiring in the base, camera and LED strip under the chin, clear of any liquid in the funnel"
 tft_screen,1,buy,"TJC X5 10.1 inch TJC1060X5101, no touch: IPS 1024x600, 300 nit, UART TTL, own controller board 258 x 152 x 11.5 mm",E1,"10.1 inch display filling the slab: sorting status, and facts about waste while idle"

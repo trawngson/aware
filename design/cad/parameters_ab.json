@@ -1,6 +1,6 @@
 {
-  "rim_height_mm": 1050.0,
-  "head_deck_height_mm": 930.0,
+  "rim_height_mm": 1170.0,
+  "head_deck_height_mm": 1050.0,
   "deck_thickness_mm": 3.0,
   "deck_outer_radius_mm": 297.0,
   "deck_inner_radius_mm": 200.0,
@@ -81,8 +81,19 @@
   "belt_width_mm": 6.0,
   "belt_efficiency": 0.9,
   "fill_sensor_radial_position_mm": 215.0,
-  "fill_sensor_housing_width_mm": 32.0,
-  "fill_sensor_housing_height_mm": 30.0,
+  "fill_sensor": {
+    "board_mm": [45.0, 20.0, 1.6],
+    "transducer_diameter_mm": 16.0,
+    "transducer_height_mm": 12.0,
+    "transducer_pitch_mm": 26.0,
+    "space_above_board_mm": 6.0,
+    "connector_space_mm": 18.0,
+    "wall_mm": 2.5,
+    "horn_length_mm": 15.0,
+    "horn_mouth_diameter_mm": 24.0,
+    "horn_wall_mm": 1.6,
+    "full_fraction": 0.9
+  },
   "item_mass_kg": 0.5,
   "item_diameter_mm": 60.0,
   "console_width_mm": 160.0,
@@ -206,22 +217,8 @@
     "Kim loại",
     "Khác"
   ],
-  "drum": {
-    "outer_diameter_mm": 585.0,
-    "height_mm": 930.0,
-    "wall_mm": 4.0,
-    "bottom_mm": 5.0,
-    "divider_thickness_mm": 5.0,
-    "divider_clearance_mm": 4.0,
-    "divider_cap_width_mm": 30.0,
-    "divider_cap_thickness_mm": 5.0,
-    "bag_frame_thickness_mm": 6.0,
-    "bag_frame_bar_mm": 12.0,
-    "bag_frame_gap_to_spider_mm": 2.0
-  },
   "frame": {
     "outer_mm": 680.0,
-    "extra_height_mm": 120.0,
     "profile_mm": 20.0,
     "panel_mm": 1.0,
     "panel_hem_mm": 10.0,
@@ -251,7 +248,7 @@
     "wall_mm": 3.0,
     "center_offset_mm": 158.5
   },
-  "purchased_dimensions_status": "Provisional. Measure the actual 220 L drum and the four square bins, then update drum and bin before cutting anything.",
+  "purchased_dimensions_status": "Provisional. Measure the four square bins and one HC-SR04 board (transducer pitch), then update bin and fill_sensor before cutting or printing anything.",
   "yaw_hard_stop": {
     "travel_degrees": 70.0,
     "pin_radius_mm": 55.0,

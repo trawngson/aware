@@ -321,6 +321,160 @@
           ]
         },
         "bin_landing_radius_mm": 224.2,
+        "fill_sensor": {
+          "window_height_mm": 995.4,
+          "radial_position_mm": 215.0,
+          "empty_distance_mm": 962,
+          "full_fraction": 0.9,
+          "full_distance_mm": 434,
+          "nearer_than_full": [
+            {
+              "part": "bin",
+              "off_axis_degrees": 18.5,
+              "distance_mm": 396
+            },
+            {
+              "part": "joint_beam",
+              "off_axis_degrees": 20.6,
+              "distance_mm": 374
+            },
+            {
+              "part": "yaw_platform",
+              "off_axis_degrees": 22.3,
+              "distance_mm": 220
+            },
+            {
+              "part": "motor_cable_yaw_servo",
+              "off_axis_degrees": 24.2,
+              "distance_mm": 351
+            },
+            {
+              "part": "motor_cable_tilt_servo",
+              "off_axis_degrees": 24.2,
+              "distance_mm": 351
+            },
+            {
+              "part": "spider_foot",
+              "off_axis_degrees": 24.8,
+              "distance_mm": 388
+            },
+            {
+              "part": "flexible_throat_skirt",
+              "off_axis_degrees": 26.2,
+              "distance_mm": 108
+            },
+            {
+              "part": "hanger",
+              "off_axis_degrees": 26.9,
+              "distance_mm": 359
+            },
+            {
+              "part": "drawer_stiffener_right",
+              "off_axis_degrees": 27.6,
+              "distance_mm": 432
+            },
+            {
+              "part": "drawer_stiffener_left",
+              "off_axis_degrees": 27.6,
+              "distance_mm": 432
+            },
+            {
+              "part": "yaw_bracket",
+              "off_axis_degrees": 28.4,
+              "distance_mm": 364
+            },
+            {
+              "part": "tipping_plate",
+              "off_axis_degrees": 29.7,
+              "distance_mm": 111
+            },
+            {
+              "part": "yaw_servo",
+              "off_axis_degrees": 32.4,
+              "distance_mm": 372
+            },
+            {
+              "part": "drawer_front_right",
+              "off_axis_degrees": 33.0,
+              "distance_mm": 432
+            },
+            {
+              "part": "drawer_front_left",
+              "off_axis_degrees": 33.0,
+              "distance_mm": 432
+            },
+            {
+              "part": "post",
+              "off_axis_degrees": 33.3,
+              "distance_mm": 433
+            },
+            {
+              "part": "yaw_bearing_lower",
+              "off_axis_degrees": 34.9,
+              "distance_mm": 321
+            },
+            {
+              "part": "yaw_coupling",
+              "off_axis_degrees": 36.1,
+              "distance_mm": 348
+            },
+            {
+              "part": "back_panel",
+              "off_axis_degrees": 36.6,
+              "distance_mm": 434
+            },
+            {
+              "part": "tilt_servo_bracket",
+              "off_axis_degrees": 36.8,
+              "distance_mm": 248
+            },
+            {
+              "part": "yaw_cable_channel",
+              "off_axis_degrees": 36.8,
+              "distance_mm": 274
+            },
+            {
+              "part": "side_panel_right",
+              "off_axis_degrees": 37.1,
+              "distance_mm": 432
+            },
+            {
+              "part": "side_panel_left",
+              "off_axis_degrees": 37.1,
+              "distance_mm": 432
+            },
+            {
+              "part": "tilt_stop_pad",
+              "off_axis_degrees": 37.4,
+              "distance_mm": 250
+            },
+            {
+              "part": "yaw_shaft",
+              "off_axis_degrees": 37.5,
+              "distance_mm": 347
+            },
+            {
+              "part": "hinge_post",
+              "off_axis_degrees": 37.8,
+              "distance_mm": 251
+            },
+            {
+              "part": "yaw_ribbon_loop",
+              "off_axis_degrees": 38.9,
+              "distance_mm": 279
+            },
+            {
+              "part": "yaw_stop_pin",
+              "off_axis_degrees": 39.3,
+              "distance_mm": 278
+            },
+            {
+              "part": "yaw_bearing_upper",
+              "off_axis_degrees": 39.4,
+              "distance_mm": 289
+            }
+          ]
+        },
         "bag_change": "Pull a drawer out: its front and rear bins lift straight up; the back stays against the wall",
         "flat_pieces_mm": {
           "drawer_bottom_x2": [
@@ -450,7 +604,7 @@
           },
           "stainless_mass_kg": 30.7
         },
-        "purchased_dimensions_status": "Provisional. Measure the actual 220 L drum and the four square bins, then update drum and bin before cutting anything.",
+        "purchased_dimensions_status": "Provisional. Measure the four square bins and one HC-SR04 board (transducer pitch), then update bin and fill_sensor before cutting or printing anything.",
         "status": "Prototype CAD; fasteners, wiring and hinges are not modelled"
       }
     }
