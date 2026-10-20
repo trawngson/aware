@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461330.856875
+2461333.634490741
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461330.856875
+2461333.634490741
   9
 $TDUUPDATE
  40
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{42431F92-41A0-4E2E-8095-B3DA6F2F08B0}
+{62054266-6FD6-4752-8FA4-ACA7905DBEF2}
   9
 $VERSIONGUID
   2
-{29FDF10D-48BE-4785-9108-DA7D6C1AF3ED}
+{FFB3AC74-FAA9-43DA-92B0-6999E5E4E8E9}
   9
 $EXTNAMES
 290
@@ -5301,41 +5301,41 @@ AcDbPolyline
  20
 0.0
  10
-697.24
+709.24
  20
 0.0
  10
-697.24
+709.24
  20
 15.26
  10
-712.5
+724.5
  20
 15.26
  10
-712.5
+724.5
  20
-697.24
+709.24
  10
-697.24
+709.24
  20
-697.24
+709.24
  10
-697.24
+709.24
  20
-712.5
- 10
-15.26
- 20
-712.5
+724.5
  10
 15.26
  20
-697.24
+724.5
+ 10
+15.26
+ 20
+709.24
  10
 0.0
  20
-697.24
+709.24
  10
 0.0
  20
@@ -5357,9 +5357,9 @@ CUT
 100
 AcDbCircle
  10
-356.25
+362.25
  20
-356.25
+362.25
  30
 0.0
  40
@@ -5385,7 +5385,7 @@ AcDbLine
  30
 0.0
  11
-697.24
+709.24
  21
 14.13
  31
@@ -5407,13 +5407,13 @@ AcDbLine
  10
 15.26
  20
-698.37
+710.37
  30
 0.0
  11
-697.24
+709.24
  21
-698.37
+710.37
  31
 0.0
   0
@@ -5439,7 +5439,7 @@ AcDbLine
  11
 14.13
  21
-697.24
+709.24
  31
 0.0
   0
@@ -5457,15 +5457,15 @@ DASHED
 100
 AcDbLine
  10
-698.37
+710.37
  20
 15.26
  30
 0.0
  11
-698.37
+710.37
  21
-697.24
+709.24
  31
 0.0
   0
@@ -5489,7 +5489,7 @@ AcDbText
  40
 6.0
   1
-top_cover: stainless 304, 1.0 mm. Finished 686.0 x 686.0 mm, skirt 15 mm bent 90 deg down on all 4 edges, inside radius 1 mm.
+top_cover: stainless 304, 1.0 mm. Finished 698.0 x 698.0 mm, skirt 15 mm bent 90 deg down on all 4 edges, inside radius 1 mm.
  11
 0.0
  21
@@ -5519,7 +5519,7 @@ AcDbText
  40
 6.0
   1
-Blank 712.5 x 712.5 mm. Dashed = bend centre lines, K 0.44. Confirm the allowance with the shop before cutting.
+Blank 724.5 x 724.5 mm. Dashed = bend centre lines, K 0.44. Confirm the allowance with the shop before cutting.
  11
 0.0
  21
@@ -6631,7 +6631,7 @@ DictionaryVariables
 280
 0
   1
-1.4.4 @ 2026-10-16T13:33:54.682559+00:00
+1.4.5 @ 2026-10-19T08:13:40.273310+00:00
   0
 VISUALSTYLE
   5
@@ -7343,7 +7343,7 @@ DictionaryVariables
 280
 0
   1
-1.4.4 @ 2026-10-16T13:33:54.684375+00:00
+1.4.5 @ 2026-10-19T08:13:40.276508+00:00
   0
 ENDSEC
   0

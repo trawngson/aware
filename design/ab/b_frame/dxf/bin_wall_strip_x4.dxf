@@ -493,7 +493,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461327.9158449075
+2461333.634502315
   9
 $TDUCREATE
  40
@@ -501,7 +501,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461327.9158449075
+2461333.634502315
   9
 $TDUUPDATE
  40
@@ -553,7 +553,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-37
+71
   9
 $SURFTAB1
  70
@@ -933,11 +933,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{80FC2D19-EE6E-4FDD-B0D9-DA465C9B461C}
+{B2A46B58-C2A1-4C24-A4C5-8C25E62E2AF7}
   9
 $VERSIONGUID
   2
-{056DAE5E-0546-4DD9-84F4-C0C867D63BDA}
+{1EA5F0A3-9D23-487A-B11B-667DB7B28654}
   9
 $EXTNAMES
 290
@@ -1377,7 +1377,7 @@ AcDbSymbolTable
   0
 VPORT
   5
-33
+61
 330
 8
 100
@@ -1397,9 +1397,9 @@ AcDbViewportTableRecord
  21
 1.0
  12
-323.5
+547.5
  22
-30.0
+302.5
  13
 0.0
  23
@@ -1425,7 +1425,7 @@ AcDbViewportTableRecord
  37
 0.0
  40
-323.5
+605.0
  41
 1.34
  42
@@ -1493,7 +1493,7 @@ LTYPE
 100
 AcDbSymbolTable
  70
-3
+4
   0
 LTYPE
   5
@@ -1561,6 +1561,36 @@ Continuous
  40
 0.0
   0
+LTYPE
+  5
+68
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+DASHED
+ 70
+0
+  3
+
+ 72
+65
+ 73
+2
+ 40
+10.0
+ 49
+6.0
+ 74
+0
+ 49
+-4.0
+ 74
+0
+  0
 ENDTAB
   0
 TABLE
@@ -1573,7 +1603,7 @@ LAYER
 100
 AcDbSymbolTable
  70
-2
+5
   0
 LAYER
   5
@@ -1618,6 +1648,78 @@ Defpoints
 Continuous
 290
 0
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+65
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+CUT
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+66
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+BEND
+ 70
+0
+ 62
+1
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+67
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+NOTE
+ 70
+0
+ 62
+3
+  6
+Continuous
 370
 -3
 390
@@ -1725,7 +1827,7 @@ ACAD
   0
 APPID
   5
-34
+62
 330
 3
 100
@@ -1739,7 +1841,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-35
+63
 330
 3
 100
@@ -2055,19 +2157,19 @@ LINE
 100
 AcDbEntity
   8
-0
+CUT
 100
 AcDbLine
  10
-0.0
+269.0
  20
-60.0
+605.0
  30
 0.0
  11
 0.0
  21
-0.0
+605.0
  31
 0.0
   0
@@ -2079,17 +2181,17 @@ LINE
 100
 AcDbEntity
   8
-0
+CUT
 100
 AcDbLine
  10
 0.0
  20
-0.0
+605.0
  30
 0.0
  11
-647.0
+0.0
  21
 0.0
  31
@@ -2103,19 +2205,19 @@ LINE
 100
 AcDbEntity
   8
-0
+CUT
 100
 AcDbLine
  10
-647.0
+0.0
  20
 0.0
  30
 0.0
  11
-647.0
+1095.0
  21
-60.0
+0.0
  31
 0.0
   0
@@ -2127,21 +2229,1249 @@ LINE
 100
 AcDbEntity
   8
-0
+CUT
 100
 AcDbLine
  10
-647.0
+1095.0
  20
-60.0
+0.0
  30
 0.0
  11
-0.0
+1095.0
  21
-60.0
+590.0
  31
 0.0
+  0
+LINE
+  5
+33
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+1095.0
+ 20
+590.0
+ 30
+0.0
+ 11
+1080.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+34
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+1080.0
+ 20
+590.0
+ 30
+0.0
+ 11
+1080.0
+ 21
+605.0
+ 31
+0.0
+  0
+LINE
+  5
+35
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+1080.0
+ 20
+605.0
+ 30
+0.0
+ 11
+811.0
+ 21
+605.0
+ 31
+0.0
+  0
+LINE
+  5
+36
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+811.0
+ 20
+605.0
+ 30
+0.0
+ 11
+811.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+37
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+811.0
+ 20
+590.0
+ 30
+0.0
+ 11
+809.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+38
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+809.0
+ 20
+590.0
+ 30
+0.0
+ 11
+809.0
+ 21
+605.0
+ 31
+0.0
+  0
+LINE
+  5
+39
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+809.0
+ 20
+605.0
+ 30
+0.0
+ 11
+541.0
+ 21
+605.0
+ 31
+0.0
+  0
+LINE
+  5
+3A
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+541.0
+ 20
+605.0
+ 30
+0.0
+ 11
+541.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+3B
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+541.0
+ 20
+590.0
+ 30
+0.0
+ 11
+539.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+3C
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+539.0
+ 20
+590.0
+ 30
+0.0
+ 11
+539.0
+ 21
+605.0
+ 31
+0.0
+  0
+LINE
+  5
+3D
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+539.0
+ 20
+605.0
+ 30
+0.0
+ 11
+271.0
+ 21
+605.0
+ 31
+0.0
+  0
+LINE
+  5
+3E
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+271.0
+ 20
+605.0
+ 30
+0.0
+ 11
+271.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+3F
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+271.0
+ 20
+590.0
+ 30
+0.0
+ 11
+269.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+40
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+269.0
+ 20
+590.0
+ 30
+0.0
+ 11
+269.0
+ 21
+605.0
+ 31
+0.0
+  0
+CIRCLE
+  5
+41
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+65.0
+ 20
+15.0
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+42
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+7.5
+ 20
+40.0
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+43
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+205.0
+ 20
+15.0
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+44
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+7.5
+ 20
+112.85714285714286
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+45
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+335.0
+ 20
+15.0
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+46
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+475.0
+ 20
+15.0
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+47
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+7.5
+ 20
+185.71428571428572
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+48
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+7.5
+ 20
+258.57142857142856
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+49
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+605.0
+ 20
+15.0
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+4A
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+745.0
+ 20
+15.0
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+4B
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+875.0
+ 20
+15.0
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+4C
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+1015.0
+ 20
+15.0
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+4D
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+1087.5
+ 20
+40.0
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+4E
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+1087.5
+ 20
+112.85714285714286
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+4F
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+1087.5
+ 20
+185.71428571428572
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+50
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+1087.5
+ 20
+258.57142857142856
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+51
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+7.5
+ 20
+331.42857142857144
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+52
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+7.5
+ 20
+404.2857142857143
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+53
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+7.5
+ 20
+477.14285714285717
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+54
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+7.5
+ 20
+550.0
+ 30
+0.0
+ 40
+2.05
+  0
+LINE
+  5
+55
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+450.0
+ 20
+515.0
+ 30
+0.0
+ 11
+360.0
+ 21
+515.0
+ 31
+0.0
+  0
+LINE
+  5
+56
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+360.0
+ 20
+515.0
+ 30
+0.0
+ 11
+360.0
+ 21
+545.0
+ 31
+0.0
+  0
+LINE
+  5
+57
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+360.0
+ 20
+545.0
+ 30
+0.0
+ 11
+450.0
+ 21
+545.0
+ 31
+0.0
+  0
+LINE
+  5
+58
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+450.0
+ 20
+545.0
+ 30
+0.0
+ 11
+450.0
+ 21
+515.0
+ 31
+0.0
+  0
+CIRCLE
+  5
+59
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+1087.5
+ 20
+331.42857142857144
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+5A
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+1087.5
+ 20
+404.2857142857143
+ 30
+0.0
+ 40
+2.05
+  0
+CIRCLE
+  5
+5B
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+1087.5
+ 20
+477.14285714285717
+ 30
+0.0
+ 40
+2.05
+  0
+LINE
+  5
+5C
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+990.0
+ 20
+515.0
+ 30
+0.0
+ 11
+900.0
+ 21
+515.0
+ 31
+0.0
+  0
+LINE
+  5
+5D
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+900.0
+ 20
+515.0
+ 30
+0.0
+ 11
+900.0
+ 21
+545.0
+ 31
+0.0
+  0
+LINE
+  5
+5E
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+900.0
+ 20
+545.0
+ 30
+0.0
+ 11
+990.0
+ 21
+545.0
+ 31
+0.0
+  0
+LINE
+  5
+5F
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbLine
+ 10
+990.0
+ 20
+545.0
+ 30
+0.0
+ 11
+990.0
+ 21
+515.0
+ 31
+0.0
+  0
+CIRCLE
+  5
+60
+330
+17
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+1087.5
+ 20
+550.0
+ 30
+0.0
+ 40
+2.05
+  0
+LINE
+  5
+69
+330
+17
+100
+AcDbEntity
+  8
+BEND
+  6
+DASHED
+100
+AcDbLine
+ 10
+270.0
+ 20
+0.0
+ 30
+0.0
+ 11
+270.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+6A
+330
+17
+100
+AcDbEntity
+  8
+BEND
+  6
+DASHED
+100
+AcDbLine
+ 10
+540.0
+ 20
+0.0
+ 30
+0.0
+ 11
+540.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+6B
+330
+17
+100
+AcDbEntity
+  8
+BEND
+  6
+DASHED
+100
+AcDbLine
+ 10
+810.0
+ 20
+0.0
+ 30
+0.0
+ 11
+810.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+6C
+330
+17
+100
+AcDbEntity
+  8
+BEND
+  6
+DASHED
+100
+AcDbLine
+ 10
+1080.0
+ 20
+0.0
+ 30
+0.0
+ 11
+1080.0
+ 21
+590.0
+ 31
+0.0
+  0
+LINE
+  5
+6D
+330
+17
+100
+AcDbEntity
+  8
+BEND
+  6
+DASHED
+100
+AcDbLine
+ 10
+0.0
+ 20
+590.0
+ 30
+0.0
+ 11
+1080.0
+ 21
+590.0
+ 31
+0.0
+  0
+TEXT
+  5
+6E
+330
+17
+100
+AcDbEntity
+  8
+NOTE
+100
+AcDbText
+ 10
+0.0
+ 20
+-14.0
+ 30
+0.0
+ 40
+6.0
+  1
+PP 3 mm, cut 4. V-groove the BEND lines 2/3 deep, do not cut through.
+ 11
+0.0
+ 21
+-14.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+6F
+330
+17
+100
+AcDbEntity
+  8
+NOTE
+100
+AcDbText
+ 10
+0.0
+ 20
+-24.0
+ 30
+0.0
+ 40
+6.0
+  1
+Fold the 4 faces into a tube, glue tab inside face 1, rivet 4 mm with washers.
+ 11
+0.0
+ 21
+-24.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+70
+330
+17
+100
+AcDbEntity
+  8
+NOTE
+100
+AcDbText
+ 10
+0.0
+ 20
+-34.0
+ 30
+0.0
+ 40
+6.0
+  1
+Turn the 15 mm rim flange outwards.
+ 11
+0.0
+ 21
+-34.0
+ 31
+0.0
+100
+AcDbText
   0
 ENDSEC
   0
@@ -3133,7 +4463,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-36
+64
   0
 DICTIONARYVAR
   5
@@ -3145,11 +4475,11 @@ DictionaryVariables
 280
 0
   1
-1.4.4 @ 2026-10-13T14:58:49.691543+00:00
+1.4.5 @ 2026-10-19T08:13:41.859929+00:00
   0
 DICTIONARYVAR
   5
-36
+64
 330
 2D
 100
@@ -3157,7 +4487,7 @@ DictionaryVariables
 280
 0
   1
-1.4.4 @ 2026-10-13T14:58:49.697361+00:00
+1.4.5 @ 2026-10-19T08:13:41.874179+00:00
   0
 ENDSEC
   0
