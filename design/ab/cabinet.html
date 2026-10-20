@@ -1,0 +1,250 @@
+<title>Thân tủ MFC thân B</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Bố cục: hình 3D tủ ở trên, mặt cắt cạnh và danh sách cắt ở dưới. Màu tấm theo vật liệu thật: MFC trắng ngà, Formex xám, chỉ dán cạnh nâu. */
+:root{
+  --bg:#f3f4f1; --paper:#ffffff; --fg:#1d211d; --muted:#5f665f; --line:#d7dbd4; --soft:#eceee9;
+  --accent:#8a5a2b; --accent-soft:#f3e8dc; --viewer:#e6e9e3; --warn:#9a6200; --warnbg:#f8eed8;
+  --mfc:#d9d2c3; --fmx:#9aa6ad; --pp:#e9eef0; --ctx:#7e9c8c;
+  --f-head:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#151815; --paper:#1d211d; --fg:#e4e8e2; --muted:#9ea69d; --line:#323831; --soft:#242a24;
+  --accent:#e0a86e; --accent-soft:#3a2d1f; --viewer:#1a1f1b; --warn:#e8b45a; --warnbg:#33290f;
+  --mfc:#cfc6b4; --fmx:#9aa6ad; --pp:#c9d3d6; --ctx:#7e9c8c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151815; --paper:#1d211d; --fg:#e4e8e2; --muted:#9ea69d; --line:#323831; --soft:#242a24;
+  --accent:#e0a86e; --accent-soft:#3a2d1f; --viewer:#1a1f1b; --warn:#e8b45a; --warnbg:#33290f;
+  --mfc:#cfc6b4; --fmx:#9aa6ad; --pp:#c9d3d6; --ctx:#7e9c8c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--f-head);margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-block:26px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+h1{font-size:clamp(1.5rem,3vw,2.05rem);line-height:1.2;margin:0;text-wrap:balance}
+h2{font-size:1.15rem;margin:0 0 10px}
+p{margin:0;max-width:70ch}
+.eyebrow{font:600 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lead{color:var(--muted)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:18px 20px;min-width:0}
+.stage{position:relative;height:min(68vh,620px);min-height:380px;border-radius:9px;overflow:hidden;background:var(--viewer);border:1px solid var(--line)}
+#viewer{position:absolute;inset:0}
+.tool{position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
+.tool button{pointer-events:auto;border:1px solid var(--line);background:var(--paper);color:var(--fg);border-radius:6px;padding:6px 11px;font:500 .82rem var(--f-head);cursor:pointer}
+.tool button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.tool button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.hud{position:absolute;left:12px;top:12px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:5px 10px;font:500 .8rem var(--f-head);max-width:calc(100% - 24px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.82rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1px solid var(--line)}
+.cols{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:18px}
+@media (max-width:860px){.cols{grid-template-columns:1fr}}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.85rem;min-width:560px}
+th,td{text-align:left;vertical-align:top;padding:7px 9px;border-bottom:1px solid var(--line)}
+th{font:600 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.pick{cursor:pointer} tr.pick:hover td{background:var(--soft)} tr.pick.on td{background:var(--accent-soft)}
+.chip{font:500 .7rem var(--f-mono);padding:1px 7px;border-radius:999px;white-space:nowrap}
+.c-mfc{background:var(--mfc);color:#2b261d} .c-fmx{background:var(--fmx);color:#16201f} .c-pp{background:var(--pp);color:#16201f}
+svg.sec{width:100%;height:auto;display:block}
+svg.sec text{fill:var(--fg);font:12px var(--f-mono)}
+svg.sec .lbl{font-family:var(--f-head);font-size:12.5px}
+svg.sec .dim{stroke:var(--muted);stroke-width:1;fill:none}
+.note{border-left:3px solid var(--warn);background:var(--warnbg);padding:10px 14px;border-radius:0 6px 6px 0;font-size:.9rem}
+ul{margin:0;padding-left:20px;display:grid;gap:4px}
+a{color:var(--accent)}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:8px">
+    <div class="eyebrow">Thân B · phương án C · tủ ván MFC chống ẩm</div>
+    <h1>Thân tủ MFC thân B</h1>
+    <p class="lead">Thân làm như tủ bếp: ván MFC chống ẩm lõi xanh 17 mm cho phần khô, tấm Formex 15 mm cho sàn và khay ngăn kéo. Ngoài 680 × 680 mm, cao 1170 mm, đặt trên 4 chân tăng chỉnh. Cụm đầu và thùng gấp PP giữ nguyên như thiết kế.</p>
+  </header>
+
+  <section>
+    <div class="stage">
+      <div id="viewer"></div>
+      <div class="hud" id="hud">Kéo để xoay · cuộn để phóng to · bấm một tấm để xem tên</div>
+      <div class="tool">
+        <button type="button" id="bExp" aria-pressed="false">Tách rời</button>
+        <button type="button" id="bDrw" aria-pressed="false">Kéo ngăn kéo</button>
+        <button type="button" id="bCtx" aria-pressed="true">Hiện thùng và cụm đầu</button>
+        <button type="button" id="bFront" aria-pressed="false">Ẩn mặt ngăn kéo</button>
+        <button type="button" id="bHome">Góc nhìn ban đầu</button>
+      </div>
+    </div>
+    <div class="legend" style="margin-top:10px">
+      <span><i style="background:var(--mfc)"></i>MFC chống ẩm 17 mm</span>
+      <span><i style="background:var(--fmx)"></i>Formex 15 mm</span>
+      <span><i style="background:var(--pp)"></i>PP 3 mm (phần dư tấm làm thùng)</span>
+      <span><i style="background:var(--ctx);opacity:.5"></i>Thùng PP và vùng cụm đầu (để tham chiếu, không cắt)</span>
+    </div>
+  </section>
+
+  <section class="cols">
+    <div class="card">
+      <h2>Mặt cắt cạnh (cao độ)</h2>
+      <svg class="sec" viewBox="0 0 420 560" role="img" aria-label="Mặt cắt cạnh tủ với các cao độ chính">
+        <rect x="80" y="30" width="230" height="5.8" fill="var(--mfc)" stroke="var(--fg)" stroke-width=".6"/>
+        <rect x="80" y="35.8" width="5.8" height="392" fill="var(--mfc)" stroke="var(--fg)" stroke-width=".6"/>
+        <rect x="304" y="35.8" width="5.8" height="392" fill="var(--mfc)" stroke="var(--fg)" stroke-width=".6"/>
+        <rect x="85.8" y="78" width="218" height="5.8" fill="var(--mfc)" stroke="var(--fg)" stroke-width=".6"/>
+        <rect x="85.8" y="422.9" width="218" height="5.1" fill="var(--fmx)" stroke="var(--fg)" stroke-width=".6"/>
+        <rect x="95" y="412" width="200" height="5.1" fill="var(--fmx)" stroke="var(--fg)" stroke-width=".6"/>
+        <rect x="102" y="216" width="92" height="196" fill="var(--ctx)" opacity=".35"/>
+        <rect x="200" y="216" width="92" height="196" fill="var(--ctx)" opacity=".35"/>
+        <path d="M110 207 H282 V84 H110 Z" fill="var(--ctx)" opacity=".18"/>
+        <rect x="70" y="428" width="10" height="9" fill="var(--fg)"/><rect x="310" y="428" width="10" height="9" fill="var(--fg)"/>
+        <line x1="40" y1="437" x2="380" y2="437" class="dim"/>
+        <g>
+          <line x1="320" y1="30" x2="360" y2="30" class="dim"/><text x="364" y="34">1170</text>
+          <line x1="320" y1="78" x2="360" y2="78" class="dim"/><text x="364" y="82">1044</text>
+          <line x1="320" y1="207" x2="360" y2="207" class="dim"/><text x="364" y="211">645</text>
+          <line x1="320" y1="216" x2="360" y2="216" class="dim"/><text x="364" y="227">622</text>
+          <line x1="320" y1="412" x2="360" y2="412" class="dim"/><text x="364" y="416">32</text>
+          <line x1="320" y1="428" x2="360" y2="428" class="dim"/><text x="364" y="432">0</text>
+        </g>
+        <text x="96" y="22" class="lbl">Nóc 17 mm, lỗ Ø596</text>
+        <text x="92" y="100" class="lbl">Tấm đỡ đầu, lỗ Ø560</text>
+        <text x="128" y="150" class="lbl">vùng cụm đầu</text>
+        <text x="122" y="320" class="lbl">thùng</text><text x="222" y="320" class="lbl">thùng</text>
+        <text x="96" y="458" class="lbl">Sàn Formex · khay Formex, thành PP</text>
+        <text x="40" y="480" class="lbl">chân tăng chỉnh nâng cả tủ</text>
+        <text x="10" y="520" class="lbl" style="fill:var(--muted)">Số đo tính từ mặt dưới sàn tủ. Đáy thanh chữ thập ở 645,</text>
+        <text x="10" y="538" class="lbl" style="fill:var(--muted)">miệng thùng ở 622: còn 23 mm, cần tối thiểu 20 mm.</text>
+      </svg>
+    </div>
+    <div class="card">
+      <h2>Vì sao các số này</h2>
+      <ul>
+        <li><b>Ngoài vẫn 680 × 680</b>: hông sâu 663 mm, mặt ngăn kéo và tấm che trước nằm phía trước hông, phẳng với nhau.</li>
+        <li><b>Mặt tấm đỡ đầu ở 1044 mm</b>, như tấm đỡ đầu bản khung nhôm, nên cụm đầu không phải sửa.</li>
+        <li><b>Sàn đặt sát dưới, không có bậc chân bên trong.</b> Sàn Formex 15 + khay 15 dày hơn tấm alu cũ. Nếu nâng sàn thêm 20 mm thì miệng thùng chạm thanh chữ thập của cụm đầu. Vì vậy cả tủ đứng trên 4 chân tăng chỉnh.</li>
+        <li><b>Vách giữa chỉ cao 120 mm</b>, vì cao hơn sẽ đụng thanh treo và thanh chữ thập của cụm đầu.</li>
+        <li><b>Thùng PP thu còn 264 × 264 mm</b> (dung tích khoảng 39 L thay vì 40,9 L). Vách giữa 17 mm dày hơn tấm 6 mm cũ, nên thùng 270 mm không còn lọt giữa thành khay. Tâm thùng giữ nguyên ±158,5 mm nên rác vẫn rơi đúng chỗ.</li>
+        <li><b>Thành khay bằng PP 3 mm</b>, cắt từ dải dư 250 × 1220 mm của tấm PP làm thùng, nên không tốn thêm.</li>
+        <li><b>Khay sâu 633 mm</b>, tức 646 mm lòng tủ trừ khe 13 mm phía sau. Ray 600 mm vẫn kéo ra hết.</li>
+      </ul>
+      <div class="note" style="margin-top:12px">Bản vẽ này dựng từ danh sách cắt, chưa phải CAD đã kiểm tra va chạm. Khi sửa CAD thân B sang dạng tủ, chạy lại 25 tư thế xoay và nghiêng rồi mới gửi xưởng.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Danh sách cắt gửi xưởng tủ</h2>
+    <p class="lead" style="margin-bottom:10px">Bấm một dòng để làm nổi tấm đó trong hình 3D. Mọi cạnh MFC dán chỉ PVC 1 mm, kể cả cạnh lỗ khoét.</p>
+    <div class="tbl"><table id="cut"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Lắp và chống nước</h2>
+    <ul>
+      <li>Nối các tấm bằng ốc liên kết cam (minifix) và chốt gỗ Ø8, tháo lắp lại được.</li>
+      <li>Ray ngoài bắt thẳng vào mặt trong 2 hông; ray trong bắt vào vách giữa. Khoan mồi, vít cách mép ván ít nhất 25 mm.</li>
+      <li>Đi silicone ở mép sàn và chân 2 hông. Khay Formex có gờ 60 mm giữ nước rỉ từ thùng.</li>
+      <li>Thân tủ khoảng 50 kg (MFC) cộng 8 kg (Formex). Muốn nhẹ hơn: lưng bằng HDF 8 mm, bớt khoảng 7 kg.</li>
+    </ul>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// Toạ độ mm: x sang phải, y từ trước (-340) ra sau (+340), z lên trên. Mặt dưới sàn tủ ở z = 0.
+var M='mfc',F='fmx',P='pp';
+var PANELS=[
+ {id:1,name:'Nóc',mat:M,size:[680,680,17],at:[0,0,1161.5],hole:298,ex:[0,0,156],cut:'680 × 680',qty:1,note:'Phủ trùm 2 hông. Khoét lỗ Ø596 ở tâm cho miệng phễu'},
+ {id:2,name:'Hông trái',mat:M,size:[17,663,1153],at:[-331.5,8.5,576.5],ex:[-156,0,0],cut:'663 × 1153',qty:2,note:'Mặt trong bắt ray ngoài ngăn kéo'},
+ {id:2,name:'Hông phải',mat:M,size:[17,663,1153],at:[331.5,8.5,576.5],ex:[156,0,0]},
+ {id:3,name:'Lưng',mat:M,size:[646,17,1153],at:[0,331.5,576.5],ex:[0,156,0],cut:'646 × 1153',qty:1,note:'Giữa 2 hông, chống xô lệch. Có thể đổi sang HDF 8 mm để nhẹ hơn'},
+ {id:4,name:'Tấm đỡ đầu',mat:M,size:[646,646,17],at:[0,0,1035.5],hole:280,pin:[0,284],ex:[0,0,90],cut:'646 × 646',qty:1,note:'Mặt trên ở z = 1044. Lỗ Ø560 ở tâm, lỗ chốt Ø6,6 ở bán kính 284 phía sau'},
+ {id:5,name:'Tấm che trước',mat:M,size:[680,17,127],at:[0,-331.5,1089.5],ex:[0,-132,24],cut:'680 × 127',qty:1,note:'Che phần đầu, từ z = 1026 đến dưới nóc'},
+ {id:6,name:'Mặt ngăn kéo trái',mat:M,size:[339,17,1022],at:[-170.5,-331.5,513],ex:[-36,-180,0],drawer:-1,front:true,cut:'339 × 1022',qty:2,note:'Khoét tay nắm âm hoặc gắn tay nắm in 3D'},
+ {id:6,name:'Mặt ngăn kéo phải',mat:M,size:[339,17,1022],at:[170.5,-331.5,513],ex:[36,-180,0],drawer:1,front:true},
+ {id:7,name:'Vách giữa',mat:M,size:[17,646,120],at:[0,0,75],ex:[0,0,-24],cut:'646 × 120',qty:1,note:'Mang 2 ray trong. Không làm cao hơn vì đụng cụm đầu'},
+ {id:8,name:'Sàn',mat:F,size:[646,646,15],at:[0,0,7.5],ex:[0,0,-84],cut:'646 × 646',qty:1,note:'Đặt sát dưới; cả tủ đứng trên 4 chân tăng chỉnh'},
+ {id:9,name:'Đáy khay trái',mat:F,size:[289,633,15],at:[-165.75,-6.5,24.5],ex:[-36,-180,-36],drawer:-1,cut:'289 × 633',qty:2,note:'Ray 600 mm kéo ra hết'},
+ {id:9,name:'Đáy khay phải',mat:F,size:[289,633,15],at:[165.75,-6.5,24.5],ex:[36,-180,-36],drawer:1},
+ {id:10,name:'Thành hông khay',mat:P,size:[3,633,60],at:[-22.7,-6.5,62],ex:[-36,-180,-36],drawer:-1,cut:'633 × 60',qty:4,note:'PP 3 mm cắt từ phần dư tấm làm thùng. Gờ chắn nước 60 mm, dán và tán rivet vào đáy khay'},
+ {id:10,name:'Thành hông khay',mat:P,size:[3,633,60],at:[-308.8,-6.5,62],ex:[-36,-180,-36],drawer:-1},
+ {id:10,name:'Thành hông khay',mat:P,size:[3,633,60],at:[22.7,-6.5,62],ex:[36,-180,-36],drawer:1},
+ {id:10,name:'Thành hông khay',mat:P,size:[3,633,60],at:[308.8,-6.5,62],ex:[36,-180,-36],drawer:1},
+ {id:11,name:'Thành sau khay',mat:P,size:[283,3,60],at:[-165.75,308.5,62],ex:[-36,-180,-36],drawer:-1,cut:'283 × 60',qty:2,note:'PP 3 mm, nằm giữa 2 thành hông khay'},
+ {id:11,name:'Thành sau khay',mat:P,size:[283,3,60],at:[165.75,308.5,62],ex:[36,-180,-36],drawer:1}
+];
+var CTX=[ // tham chiếu: 4 thùng PP và vùng cụm đầu
+ {size:[264,264,590],at:[-158.5,158.5,327],drawer:-1},{size:[264,264,590],at:[-158.5,-158.5,327],drawer:-1},
+ {size:[264,264,590],at:[158.5,158.5,327],drawer:1},{size:[264,264,590],at:[158.5,-158.5,327],drawer:1}
+];
+var host=document.getElementById('viewer'),hud=document.getElementById('hud');
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+var renderer=null;
+try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){hud.textContent='Trình duyệt không chạy được WebGL; xem danh sách cắt bên dưới.';}
+var scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(32,1,10,20000),controls;
+var root=new THREE.Group();root.rotation.x=-Math.PI/2;scene.add(root);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f88,.9));
+var sun=new THREE.DirectionalLight(0xffffff,.7);sun.position.set(900,1800,1400);scene.add(sun);
+var items=[],ctx=[],headZone;
+function panelGeom(p){
+  if(!p.hole)return new THREE.BoxGeometry(p.size[0],p.size[1],p.size[2]);
+  var w=p.size[0]/2,d=p.size[1]/2,s=new THREE.Shape();s.moveTo(-w,-d);s.lineTo(w,-d);s.lineTo(w,d);s.lineTo(-w,d);s.lineTo(-w,-d);
+  var h=new THREE.Path();h.absarc(0,0,p.hole,0,Math.PI*2,true);s.holes.push(h);
+  if(p.pin){var q=new THREE.Path();q.absarc(p.pin[0],p.pin[1],3.3,0,Math.PI*2,true);s.holes.push(q);}
+  var g=new THREE.ExtrudeGeometry(s,{depth:p.size[2],bevelEnabled:false,curveSegments:64});g.translate(0,0,-p.size[2]/2);return g;
+}
+PANELS.forEach(function(p){
+  var m=new THREE.MeshStandardMaterial({color:new THREE.Color(css('--'+p.mat)),roughness:.75,metalness:0,transparent:true,opacity:1});
+  var mesh=new THREE.Mesh(panelGeom(p),m);var edges=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry,30),new THREE.LineBasicMaterial({color:0x3b3a35,transparent:true,opacity:.55}));
+  var g=new THREE.Group();g.add(mesh,edges);g.position.set(p.at[0],p.at[1],p.at[2]);root.add(g);
+  mesh.userData=p;items.push({p:p,g:g,m:m});
+});
+CTX.forEach(function(c){var m=new THREE.MeshStandardMaterial({color:new THREE.Color(css('--ctx')),transparent:true,opacity:.28,depthWrite:false});
+  var mesh=new THREE.Mesh(new THREE.BoxGeometry(c.size[0],c.size[1],c.size[2]),m);mesh.position.set(c.at[0],c.at[1],c.at[2]);root.add(mesh);ctx.push({c:c,mesh:mesh});});
+(function(){var m=new THREE.MeshStandardMaterial({color:new THREE.Color(css('--ctx')),transparent:true,opacity:.14,depthWrite:false});
+  headZone=new THREE.Mesh(new THREE.CylinderGeometry(297,297,525,64,1,true),m);headZone.rotation.x=Math.PI/2;headZone.position.set(0,0,645+262.5);root.add(headZone);})();
+var exp=0,expT=0,drw=0,drwT=0,showCtx=true,hideFront=false,focus=null;
+function home(){var k=Math.max(1,1.2/camera.aspect)*(exp?1.45:1);camera.position.set(1900*k,1500*k,2300*k);if(controls){controls.target.set(0,560,0);controls.update();}}
+function resize(){if(!renderer)return;var w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}
+function bg(){if(renderer)renderer.setClearColor(new THREE.Color(css('--viewer')));}
+if(renderer){renderer.setPixelRatio(Math.min(devicePixelRatio,2));host.append(renderer.domElement);bg();
+  try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',bg);}catch(e){}
+  controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;
+  addEventListener('resize',resize);resize();home();}
+function applyLook(){items.forEach(function(it){var on=!focus||focus===it.p.id;it.m.opacity=(hideFront&&it.p.front)?0.08:(on?1:.15);it.m.depthWrite=it.m.opacity===1;
+  it.m.emissive.setHex(focus===it.p.id?0x6b4a22:0);});
+  ctx.forEach(function(c){c.mesh.visible=showCtx;});headZone.visible=showCtx;}
+function step(){
+  expT+=(exp-expT)*.12;drwT+=(drw-drwT)*.12;
+  items.forEach(function(it){var p=it.p,e=p.ex,dy=p.drawer?-600*drwT:0;
+    it.g.position.set(p.at[0]+e[0]*expT,p.at[1]+e[1]*expT+dy,p.at[2]+e[2]*expT);});
+  ctx.forEach(function(c){c.mesh.position.y=c.c.at[1]-600*drwT*(c.c.drawer?1:0)-300*expT;c.mesh.position.x=c.c.at[0]+c.c.drawer*60*expT;});
+}
+function loop(){requestAnimationFrame(loop);if(!renderer)return;step();controls.update();renderer.render(scene,camera);}
+loop();
+function tog(id,fn){var b=document.getElementById(id);b.onclick=function(){var v=fn();if(v!==undefined)b.setAttribute('aria-pressed',v);applyLook();};}
+tog('bExp',function(){exp=exp?0:1;home();return !!exp;});
+tog('bDrw',function(){drw=drw?0:1;return !!drw;});
+tog('bCtx',function(){showCtx=!showCtx;return showCtx;});
+tog('bFront',function(){hideFront=!hideFront;return hideFront;});
+document.getElementById('bHome').onclick=function(){focus=null;document.querySelectorAll('tr.pick.on').forEach(function(r){r.classList.remove('on');});applyLook();home();};
+// Bấm vào tấm trong hình
+if(renderer){var ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+  renderer.domElement.addEventListener('click',function(ev){var r=renderer.domElement.getBoundingClientRect();
+    mouse.set((ev.clientX-r.left)/r.width*2-1,-(ev.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);
+    var hit=ray.intersectObjects(items.map(function(i){return i.g.children[0];}))[0];
+    if(hit){var p=hit.object.userData;hud.textContent=p.id+' · '+p.name+' · '+({mfc:'MFC 17 mm',fmx:'Formex 15 mm',pp:'PP 3 mm'})[p.mat];select(p.id);}
+  });}
+// Danh sách cắt
+var cut=document.getElementById('cut');
+cut.innerHTML='<tr><th>#</th><th>Tấm</th><th>Vật liệu</th><th>Kích thước (mm)</th><th>SL</th><th>Ghi chú</th></tr>';
+PANELS.filter(function(p){return p.cut;}).forEach(function(p){
+  var tr=document.createElement('tr');tr.className='pick';tr.dataset.id=p.id;
+  var nm=p.name.replace(/ (trái|phải)$/,'');
+  [String(p.id),nm,'',p.cut,String(p.qty),p.note].forEach(function(t,i){var td=document.createElement('td');
+    if(i===2){var c=document.createElement('span');c.className='chip c-'+p.mat;c.textContent=({mfc:'MFC 17',fmx:'Formex 15',pp:'PP 3'})[p.mat];td.append(c);}
+    else{td.textContent=t;if(i===0||i===3||i===4)td.className='n';}tr.append(td);});
+  tr.onclick=function(){select(p.id);document.querySelector('.stage').scrollIntoView({block:'nearest',behavior:'smooth'});};cut.append(tr);});
+function select(id){focus=focus===id?null:id;document.querySelectorAll('tr.pick').forEach(function(r){r.classList.toggle('on',+r.dataset.id===focus);});applyLook();}
+applyLook();
+</script>

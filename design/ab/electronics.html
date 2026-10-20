@@ -1,0 +1,325 @@
+<title>Mạch điện S3-1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Bố cục: tờ kỹ thuật một cột; sơ đồ khối ở trên, bảng chân và nguồn ở dưới. Màu dây theo đường điện như trên mạch thật. */
+:root{
+  --bg:#f2f5f4; --paper:#ffffff; --fg:#17201d; --muted:#5b6862; --line:#d3dcd8; --soft:#e7edea;
+  --copper:#a8551f; --ok:#2f7d4f; --okbg:#e2f1e8; --warn:#9a6200; --warnbg:#f8eed8; --bad:#b4342b; --badbg:#f7e3e1;
+  --w12:#9a3412; --w6:#d0561c; --w5:#b07a0c; --w33:#4f8a1f; --pwm:#2459c9; --uart:#0f7a72; --i2c:#7445c9; --sig:#b32a72; --net:#5b6862;
+  --f-head:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121816; --paper:#1a2220; --fg:#e4ebe8; --muted:#9aa8a2; --line:#2e3a36; --soft:#222c29;
+  --copper:#e08a52; --ok:#6cc690; --okbg:#173326; --warn:#e8b45a; --warnbg:#33290f; --bad:#f08a80; --badbg:#3a1c19;
+  --w12:#f08a5c; --w6:#ff9a5c; --w5:#e8bd4f; --w33:#9bd067; --pwm:#7aa5ff; --uart:#4fd1c5; --i2c:#b394ff; --sig:#f27ab8; --net:#9aa8a2;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121816; --paper:#1a2220; --fg:#e4ebe8; --muted:#9aa8a2; --line:#2e3a36; --soft:#222c29;
+  --copper:#e08a52; --ok:#6cc690; --okbg:#173326; --warn:#e8b45a; --warnbg:#33290f; --bad:#f08a80; --badbg:#3a1c19;
+  --w12:#f08a5c; --w6:#ff9a5c; --w5:#e8bd4f; --w33:#9bd067; --pwm:#7aa5ff; --uart:#4fd1c5; --i2c:#b394ff; --sig:#f27ab8; --net:#9aa8a2;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--f-head);margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+h1{font-size:clamp(1.6rem,3.2vw,2.2rem);line-height:1.2;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:1.2rem;margin:0 0 10px;text-wrap:balance}
+h3{font-size:.98rem;margin:0 0 8px}
+p{margin:0;max-width:68ch}
+.eyebrow{font:600 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--copper)}
+.lead{color:var(--muted)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px 20px;min-width:0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:820px){.cols{grid-template-columns:1fr}}
+.head{display:grid;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 .74rem var(--f-mono);padding:3px 9px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.chip.ok{background:var(--okbg);color:var(--ok);border-color:transparent}
+.chip.warn{background:var(--warnbg);color:var(--warn);border-color:transparent}
+.chip.bad{background:var(--badbg);color:var(--bad);border-color:transparent}
+.scroll{overflow-x:auto}
+svg.diag{display:block;min-width:900px;width:100%;height:auto}
+svg .box{fill:var(--soft);stroke:var(--line);stroke-width:1.2}
+svg .main{fill:var(--paper);stroke:var(--fg);stroke-width:1.6}
+svg text{fill:var(--fg);font-family:var(--f-head);font-size:13px}
+svg .t-b{font-weight:700;font-size:14px}
+svg .t-s{fill:var(--muted);font-size:11.5px}
+svg .t-m{font-family:var(--f-mono);font-size:11px}
+svg path{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.w12{stroke:var(--w12)} .w6{stroke:var(--w6)} .w5{stroke:var(--w5)} .w33{stroke:var(--w33)}
+.pwm{stroke:var(--pwm)} .uart{stroke:var(--uart)} .i2c{stroke:var(--i2c)} .sig{stroke:var(--sig)} .net{stroke:var(--net);stroke-dasharray:6 5}
+.f12{fill:var(--w12)!important} .f6{fill:var(--w6)!important} .f5{fill:var(--w5)!important} .f33{fill:var(--w33)!important}
+.fpwm{fill:var(--pwm)!important} .fuart{fill:var(--uart)!important} .fi2c{fill:var(--i2c)!important} .fsig{fill:var(--sig)!important} .fnet{fill:var(--net)!important}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.82rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:18px;height:3px;border-radius:2px;display:inline-block}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:560px}
+th,td{text-align:left;vertical-align:top;padding:7px 10px;border-bottom:1px solid var(--line)}
+th{font:600 .7rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.m,code{font-family:var(--f-mono);font-size:.82rem}
+td.n{font-family:var(--f-mono);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.tot td{font-weight:600}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+ul,ol{margin:0;padding-left:20px;display:grid;gap:4px}
+.note{border-left:3px solid var(--warn);background:var(--warnbg);padding:10px 14px;border-radius:0 6px 6px 0;font-size:.9rem}
+pre{font:400 .8rem/1.5 var(--f-mono);background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow-x:auto;margin:0}
+a{color:var(--copper)}
+a:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+</style>
+
+<div class="wrap">
+
+<header class="head">
+  <div class="eyebrow">Thùng rác phân loại · thân B · phương án S3-1</div>
+  <h1>Mạch điện hai board ESP32-S3</h1>
+  <p class="lead">Board ESP32-S3-N16R8 CAM là não: chụp ảnh, gửi lên server phân loại, điều khiển 2 servo và giữ an toàn. Màn Guition JC4827W543 4,3" chỉ hiển thị và đọc 4 cảm biến báo đầy. Hai board nói chuyện qua UART 3,3 V.</p>
+  <div class="chips">
+    <span class="chip ok">Đã chốt · ESP32-S3-N16R8 WROOM CAM</span>
+    <span class="chip ok">Đã chốt · Guition JC4827W543 4,3"</span>
+    <span class="chip warn">Cần mua · camera OV2640 120° cáp 75 mm</span>
+    <span class="chip warn">Chân GPIO là suy luận, đo lại khi nhận hàng</span>
+  </div>
+</header>
+
+<section class="card">
+  <h2>Sơ đồ khối</h2>
+  <div class="legend">
+    <span><i style="background:var(--w12)"></i>12 V</span>
+    <span><i style="background:var(--w6)"></i>6 V servo</span>
+    <span><i style="background:var(--w5)"></i>5 V logic</span>
+    <span><i style="background:var(--w33)"></i>3,3 V</span>
+    <span><i style="background:var(--pwm)"></i>PWM servo</span>
+    <span><i style="background:var(--uart)"></i>UART</span>
+    <span><i style="background:var(--i2c)"></i>I²C</span>
+    <span><i style="background:var(--sig)"></i>Tín hiệu vào/ra</span>
+    <span><i style="background:var(--net)"></i>WiFi</span>
+  </div>
+  <div class="scroll" style="margin-top:12px">
+  <svg class="diag" viewBox="0 0 1080 690" role="img" aria-label="Sơ đồ khối mạch điện: nguồn 12 V qua cầu chì, hạ áp 6 V cho servo qua relay, hạ áp 5 V cho hai board; board camera nối servo, IMU, LED, relay và màn Guition; màn Guition đọc 4 cảm biến siêu âm">
+    <!-- dây nguồn -->
+    <path class="w12" d="M180 52 H220"/>
+    <path class="w12" d="M350 52 H390"/>
+    <path class="w12" d="M285 84 V150"/>
+    <path class="w6" d="M550 52 H590"/>
+    <path class="w6" d="M740 52 H770 V39 H790 M770 52 V103 H790"/>
+    <path class="w6" d="M770 103 V158 H790"/>
+    <path class="w5" d="M365 182 H420"/>
+    <path class="w5" d="M560 182 H700 V84"/>
+    <path class="w5" d="M285 214 V246 H460 V270 M460 246 H890 V270"/>
+    <path class="w33" d="M300 432 H240"/>
+    <!-- tín hiệu -->
+    <path class="pwm" d="M620 296 H690 V200 H1072 V39 H1060"/>
+    <path class="pwm" d="M620 314 H700 V212 H1066 V103 H1060"/>
+    <path class="sig" d="M560 270 V232 H620 V84"/>
+    <path class="sig" d="M490 214 V270" stroke-dasharray="3 4"/>
+    <path class="sig" d="M300 528 H240"/>
+    <path class="i2c" d="M300 448 H240"/>
+    <path class="uart" d="M620 372 H720"/>
+    <path class="uart" d="M620 392 H720"/>
+    <path class="sig" d="M890 470 V520"/>
+    <path class="net" d="M460 540 V610"/>
+    <path class="sig" d="M300 326 H240" stroke-width="6" opacity=".45"/>
+
+    <!-- khối nguồn -->
+    <rect class="box" x="20" y="20" width="160" height="64" rx="6"/>
+    <text x="34" y="46" class="t-b">Adapter 12 V 5 A</text><text x="34" y="66" class="t-s">jack 5,5 × 2,1 mm</text>
+    <rect class="box" x="220" y="20" width="130" height="64" rx="6"/>
+    <text x="234" y="46" class="t-b">Cầu chì 3 A</text><text x="234" y="66" class="t-s">ống 5 × 20 mm</text>
+    <rect class="box" x="390" y="20" width="160" height="64" rx="6"/>
+    <text x="404" y="46" class="t-b">XL4015 → 6,0 V</text><text x="404" y="66" class="t-s">cho 2 servo, tối đa 5 A</text>
+    <rect class="box" x="590" y="20" width="150" height="64" rx="6"/>
+    <text x="604" y="46" class="t-b">Relay 5 V</text><text x="604" y="66" class="t-s">cắt 6 V khi kéo ngăn</text>
+    <rect class="box" x="790" y="14" width="270" height="50" rx="6"/>
+    <text x="804" y="44" class="t-b">MG996R · servo nghiêng đĩa</text>
+    <rect class="box" x="790" y="78" width="270" height="50" rx="6"/>
+    <text x="804" y="108" class="t-b">MG90S · servo xoay ±45°</text>
+    <rect class="box" x="790" y="142" width="270" height="34" rx="6"/>
+    <text x="804" y="164" class="t-s">Tụ 2200 µF 16 V sát đầu servo</text>
+    <rect class="box" x="205" y="150" width="160" height="64" rx="6"/>
+    <text x="219" y="176" class="t-b">Hạ áp 5,0 V 3 A</text><text x="219" y="196" class="t-s">2 board, cảm biến, LED</text>
+    <rect class="box" x="420" y="150" width="140" height="64" rx="6"/>
+    <text x="434" y="176" class="t-b">2 công tắc</text><text x="434" y="196" class="t-s">ngăn kéo, nối tiếp</text>
+
+    <!-- board chính -->
+    <rect class="main" x="300" y="270" width="320" height="270" rx="10"/>
+    <text x="318" y="300" class="t-b">ESP32-S3-N16R8 WROOM CAM</text>
+    <text x="318" y="320" class="t-s">não: chụp ảnh, WiFi, servo, an toàn</text>
+    <text x="318" y="352" class="t-m">GPIO1  → PWM MG996R</text>
+    <text x="318" y="370" class="t-m">GPIO14 → PWM MG90S</text>
+    <text x="318" y="388" class="t-m">GPIO21 → TX · GPIO47 ← RX</text>
+    <text x="318" y="406" class="t-m">GPIO41 SDA · GPIO42 SCL</text>
+    <text x="318" y="424" class="t-m">GPIO38/39 ← công tắc trái/phải</text>
+    <text x="318" y="442" class="t-m">GPIO2  → relay IN</text>
+    <text x="318" y="460" class="t-m">GPIO48 → XY-MOS LED</text>
+    <text x="318" y="478" class="t-m">GPIO40 · dự phòng</text>
+    <text x="318" y="506" class="t-s">camera dùng GPIO 4–13, 15–18</text>
+    <text x="318" y="524" class="t-s">5 V vào chân 5V · GND chung</text>
+
+    <!-- ngoại vi board chính -->
+    <rect class="box" x="40" y="290" width="200" height="72" rx="6"/>
+    <text x="54" y="316" class="t-b">Camera OV2640</text><text x="54" y="336" class="t-s">ống 120°, cáp dẹt 75 mm</text><text x="54" y="352" class="t-s">dưới cằm bệ, nhìn xuống đĩa</text>
+    <rect class="box" x="40" y="404" width="200" height="64" rx="6"/>
+    <text x="54" y="430" class="t-b">MPU-6050</text><text x="54" y="450" class="t-s">dưới đĩa · 3,3 V, I²C</text>
+    <rect class="box" x="40" y="496" width="200" height="64" rx="6"/>
+    <text x="54" y="522" class="t-b">XY-MOS → LED 5 V</text><text x="54" y="542" class="t-s">dải 120 mm dưới cằm</text>
+
+    <!-- màn hình -->
+    <rect class="main" x="720" y="270" width="340" height="200" rx="10"/>
+    <text x="738" y="300" class="t-b">Guition JC4827W543 · 4,3"</text>
+    <text x="738" y="320" class="t-s">hiển thị + đọc cảm biến báo đầy</text>
+    <text x="738" y="352" class="t-m">P4 UART1: IO18 RX · IO17 TX</text>
+    <text x="738" y="370" class="t-m">JST 1,25: +5V TX RX GND</text>
+    <text x="738" y="396" class="t-m">IO5 IO9 IO14 IO46 → TRIG 1–4</text>
+    <text x="738" y="414" class="t-m">IO6 IO7 IO15 IO16 ← ECHO 1–4</text>
+    <text x="738" y="440" class="t-s">IO46 chỉ làm ngõ ra (chân khởi động)</text>
+    <text x="738" y="458" class="t-s">số chân đọc từ ảnh bo, cần đối chiếu</text>
+    <rect class="box" x="720" y="520" width="340" height="80" rx="6"/>
+    <text x="738" y="546" class="t-b">4 × HC-SR04 · báo đầy</text>
+    <text x="738" y="566" class="t-s">nuôi 5 V · ECHO 5 V qua chia áp 1 kΩ / 2 kΩ</text>
+    <text x="738" y="584" class="t-s">mỗi cái 1 TRIG riêng · đo lần lượt, cách 60 ms</text>
+
+    <!-- server -->
+    <rect class="box" x="300" y="610" width="320" height="60" rx="6" stroke-dasharray="5 4"/>
+    <text x="318" y="636" class="t-b">Server phân loại</text><text x="318" y="656" class="t-s">ảnh JPEG 640×480 → Nhựa / Giấy / Kim loại / Khác</text>
+
+    <!-- nhãn dây -->
+    <text x="186" y="44" class="t-m f12">12 V</text>
+    <text x="292" y="122" class="t-m f12">12 V</text>
+    <text x="556" y="44" class="t-m f6">6 V</text>
+    <text x="370" y="174" class="t-m f5">5 V</text>
+    <text x="604" y="174" class="t-m f5">5 V cuộn relay</text>
+    <text x="640" y="240" class="t-m f5">5 V</text>
+    <text x="700" y="194" class="t-m fpwm">GPIO1 · GPIO14 PWM</text>
+    <text x="568" y="226" class="t-m fsig">GPIO2 → IN</text>
+    <text x="496" y="236" class="t-m fsig">38/39</text>
+    <text x="246" y="424" class="t-m f33">3V3</text>
+    <text x="246" y="462" class="t-m fi2c">SDA SCL</text>
+    <text x="246" y="520" class="t-m fsig">GPIO48</text>
+    <text x="246" y="318" class="t-m fsig">DVP</text>
+    <text x="630" y="366" class="t-m fuart">TX→RX</text>
+    <text x="630" y="406" class="t-m fuart">RX←TX</text>
+    <text x="898" y="502" class="t-m fsig">TRIG · ECHO</text>
+    <text x="468" y="590" class="t-m fnet">WiFi</text>
+  </svg>
+  </div>
+  <p class="lead" style="margin-top:10px">Mọi khối nối chung GND. Servo lấy 6 V riêng từ XL4015, không lấy từ board, vì MG996R kéo khoảng 2 A khi kẹt.</p>
+</section>
+
+<section class="cols">
+  <div class="card">
+    <h2>Chân board ESP32-S3 CAM</h2>
+    <p class="lead" style="margin-bottom:10px">Suy ra từ sơ đồ board Freenove ESP32-S3-WROOM CAM cùng kiểu. Camera chiếm GPIO 4–13 và 15–18. Đèn trên bo nối GPIO2 và GPIO48, nên 2 chân này chỉ dùng làm ngõ ra.</p>
+    <div class="scroll"><table>
+      <tr><th>GPIO</th><th>Nối tới</th><th>Kiểu</th></tr>
+      <tr><td class="m">1</td><td>MG996R, dây tín hiệu</td><td>PWM 50 Hz</td></tr>
+      <tr><td class="m">14</td><td>MG90S, dây tín hiệu</td><td>PWM 50 Hz</td></tr>
+      <tr><td class="m">41 · 42</td><td>MPU-6050 SDA · SCL</td><td>I²C</td></tr>
+      <tr><td class="m">21 · 47</td><td>Guition RX · TX (TX nối chéo RX)</td><td>UART 115200</td></tr>
+      <tr><td class="m">38 · 39</td><td>Công tắc ngăn kéo trái · phải, qua chia áp 5 V → 3,3 V</td><td>Vào</td></tr>
+      <tr><td class="m">2</td><td>Relay IN (bật nguồn 6 V cho servo)</td><td>Ra</td></tr>
+      <tr><td class="m">48</td><td>Module XY-MOS (2 × D4184) bật dải LED</td><td>Ra</td></tr>
+      <tr><td class="m">40</td><td>Dự phòng</td><td>—</td></tr>
+      <tr><td class="m">43 · 44</td><td>Để trống: nạp code, xem log</td><td>UART0</td></tr>
+      <tr><td class="m">0 3 45 46</td><td>Không dùng: chân cấu hình lúc khởi động</td><td>—</td></tr>
+    </table></div>
+  </div>
+  <div class="card">
+    <h2>Chân màn Guition JC4827W543</h2>
+    <p class="lead" style="margin-bottom:10px">Đọc từ ảnh mạch: cổng P4 · UART1 và các cổng Extended IO P2, P3, P5. Chữ trên ảnh nhỏ, phải đối chiếu tài liệu Guition trước khi hàn.</p>
+    <div class="scroll"><table>
+      <tr><th>Chân</th><th>Nối tới</th><th>Kiểu</th></tr>
+      <tr><td class="m">+5V · GND</td><td>Mạch hạ áp 5 V qua đầu JST 1,25 mm</td><td>Nguồn</td></tr>
+      <tr><td class="m">IO17 TX</td><td>Board CAM GPIO47 (RX)</td><td>UART</td></tr>
+      <tr><td class="m">IO18 RX</td><td>Board CAM GPIO21 (TX)</td><td>UART</td></tr>
+      <tr><td class="m">IO5 · IO9 · IO14</td><td>TRIG ngăn 1 · 2 · 3</td><td>Ra</td></tr>
+      <tr><td class="m">IO46</td><td>TRIG ngăn 4. Chân cấu hình lúc khởi động, chỉ dùng làm ngõ ra; HC-SR04 không kéo chân này lúc bật nguồn</td><td>Ra</td></tr>
+      <tr><td class="m">IO6 · IO7</td><td>ECHO ngăn 1 · 2, qua chia áp</td><td>Vào</td></tr>
+      <tr><td class="m">IO15 · IO16</td><td>ECHO ngăn 3 · 4, qua chia áp</td><td>Vào</td></tr>
+          </table></div>
+    <div class="note" style="margin-top:12px">Mỗi HC-SR04 cần 1 chân TRIG riêng. Dùng chung 1 TRIG thì cả 4 cái phát cùng lúc và nghe nhầm tiếng vọng của nhau, nên phải đo lần lượt, cách nhau ít nhất 60 ms. Board màn chỉ còn khoảng 7–8 chân trống, vừa đủ 8 chân; nếu thiếu thì đưa 4 chân TRIG qua mạch PCF8574 (TRIG chỉ cần xung ngắn), còn ECHO phải nằm trên chân GPIO thật.</div>
+    <div class="note" style="margin-top:8px">HC-SR04 xuất ECHO ở mức 5 V. Nối thẳng vào chân 3,3 V của ESP32-S3 có thể hỏng chân. Mỗi chân ECHO cần chia áp 1 kΩ / 2 kΩ, hoặc mua bản HC-SR04P chạy 3,3 V.</div>
+  </div>
+</section>
+
+<section class="cols">
+  <div class="card">
+    <h2>Dòng điện từng đường</h2>
+    <div class="scroll"><table>
+      <tr><th>Đường</th><th>Tải</th><th class="n">Dòng ước tính</th><th class="n">Nguồn cho phép</th></tr>
+      <tr><td><span class="dot" style="background:var(--w6)"></span>6 V</td><td>MG996R kẹt khoảng 2 A, MG90S khoảng 0,7 A</td><td class="n">≤ 2,7 A</td><td class="n">XL4015 5 A · cầu chì 3 A</td></tr>
+      <tr><td><span class="dot" style="background:var(--w5)"></span>5 V</td><td>Board CAM khi WiFi gửi ảnh</td><td class="n">0,3–0,5 A</td><td class="n" rowspan="5">3 A</td></tr>
+      <tr><td></td><td>Màn Guition (theo shop)</td><td class="n">0,26 A</td></tr>
+      <tr><td></td><td>4 × HC-SR04</td><td class="n">0,06 A</td></tr>
+      <tr><td></td><td>Dải LED 120 mm</td><td class="n">0,1–0,2 A</td></tr>
+      <tr><td></td><td>Cuộn relay</td><td class="n">0,07 A</td></tr>
+      <tr class="tot"><td></td><td>Cộng 5 V</td><td class="n">khoảng 0,8–1,1 A</td><td class="n">dư khoảng 2 A</td></tr>
+      <tr class="tot"><td><span class="dot" style="background:var(--w12)"></span>12 V</td><td>Cả hai đường qua mạch hạ áp, hiệu suất khoảng 85%</td><td class="n">khoảng 2,1 A lúc đỉnh</td><td class="n">adapter 5 A</td></tr>
+    </table></div>
+    <p class="lead" style="margin-top:10px">Số dòng là ước tính từ thông số nhà bán, chưa đo. Đo lại ở bước thử trên bàn.</p>
+  </div>
+  <div class="card">
+    <h2>Khoá an toàn khi kéo ngăn</h2>
+    <p>Nguồn 5 V nuôi cuộn relay đi qua 2 công tắc ngăn kéo mắc nối tiếp. Kéo một ngăn ra là cuộn relay mất điện, 6 V của servo bị cắt, kể cả khi phần mềm đang treo.</p>
+    <pre>5 V ── SW trái ──┬── SW phải ──┬── cuộn relay ── GND
+                 │             │
+          chia áp → GPIO38   chia áp → GPIO39</pre>
+    <ul style="margin-top:10px">
+      <li>GPIO38 thấp: ngăn kéo trái đang mở. Khoá ngăn 2 và 3.</li>
+      <li>GPIO39 thấp nhưng GPIO38 cao: ngăn kéo phải đang mở. Khoá ngăn 1 và 4.</li>
+      <li>GPIO2 bật relay chỉ khi cả hai công tắc đóng và IMU báo đĩa nằm ngang.</li>
+      <li>Cầu chì 3 A trên đường 12 V chặn chập mạch.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="cols">
+  <div class="card">
+    <h2>Lệnh qua UART</h2>
+    <p class="lead" style="margin-bottom:10px">Mỗi lệnh là một dòng chữ, kết thúc bằng xuống dòng, tốc độ 115200. Board màn trả lời mức đầy mỗi giây và gửi nhịp sống để board CAM biết màn còn chạy.</p>
+    <pre>CAM → màn   STATE:IDLE
+CAM → màn   STATE:SORTING
+CAM → màn   RESULT:1,0.92        ngăn 1 Nhựa, tin cậy 92%
+CAM → màn   LOCK:2,3             ngăn kéo trái đang mở
+CAM → màn   ERROR:OFFLINE        mất mạng, tạm cho vào ngăn 4
+màn → CAM   FILL:80,20,45,10     % đầy ngăn 1–4, đo lần lượt
+màn → CAM   HB                   nhịp sống mỗi giây</pre>
+  </div>
+  <div class="card">
+    <h2>Một lần bỏ rác</h2>
+    <ol>
+      <li>Board CAM thấy vật trên đĩa, gửi <code>STATE:SORTING</code>.</li>
+      <li>Chụp ảnh JPEG 640×480, gửi qua WiFi lên server.</li>
+      <li>Server trả nhãn và độ tin cậy. Quá 3 giây không trả lời thì chọn ngăn 4 Khác.</li>
+      <li>Kiểm tra ngăn đích còn chỗ (theo <code>FILL</code>) và ngăn kéo đã đóng.</li>
+      <li>Bật relay, xoay MG90S, nghiêng MG996R, IMU xác nhận góc, rồi về ngang.</li>
+      <li>Gửi <code>RESULT</code> cho màn, tắt relay sau khi đĩa đứng yên.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Đủ điều kiện lắp mạch chưa</h2>
+  <div class="scroll"><table>
+    <tr><th>Món</th><th>Trạng thái</th><th>Việc cần làm</th></tr>
+    <tr><td>Board ESP32-S3-N16R8 WROOM CAM</td><td><span class="chip ok">Đã chốt</span></td><td>Nhận hàng: chụp sơ đồ chân thật, chạy code camera mẫu, đếm chân trống</td></tr>
+    <tr><td>Màn Guition JC4827W543 4,3"</td><td><span class="chip ok">Đã chốt</span></td><td>Hỏi shop giá 1 cái, ship, sơ đồ chân. Nhận hàng: đo TX ở mức 3,3 V</td></tr>
+    <tr><td>Camera OV2640 ống 120°, cáp 75 mm</td><td><span class="chip warn">Cần mua</span></td><td>Cáp kèm board chỉ khoảng 21 mm, không với tới cửa sổ camera dưới cằm bệ</td></tr>
+    <tr><td>8 điện trở chia áp 1 kΩ và 2 kΩ</td><td><span class="chip warn">Cần mua</span></td><td>4 cho ECHO, 2 cho công tắc ngăn kéo, 2 dự phòng</td></tr>
+    <tr><td>Servo, IMU, HC-SR04, relay, XY-MOS, nguồn, cầu chì, tụ</td><td><span class="chip warn">Cần mua</span></td><td>Theo danh sách đợt 1A</td></tr>
+    <tr><td>Bệ màn hình trong CAD</td><td><span class="chip bad">Chưa sửa</span></td><td>CAD đang vẽ cho màn 10,1". Thu nhỏ cho bo 120 × 70 mm sau khi đo hàng thật</td></tr>
+  </table></div>
+</section>
+
+<section class="card">
+  <h2>Lỗi hay gặp khi đi dây</h2>
+  <ul>
+    <li><b>Chỉnh XL4015 sau khi đã cắm servo.</b> Mạch mới có thể ra tới 12 V. Chỉnh đúng 6,0 V bằng đồng hồ trước, rồi mới nối servo.</li>
+    <li><b>Nối TX vào TX.</b> UART phải nối chéo: TX của board này vào RX của board kia, và nối chung GND.</li>
+    <li><b>Lấy 5 V cho màn từ chân 5V của board CAM.</b> Đường mạch trên board nhỏ, dễ sụt áp khi WiFi gửi ảnh. Cấp thẳng từ mạch hạ áp.</li>
+    <li><b>Kéo cáp camera quá dài.</b> Trên khoảng 15–20 cm ảnh bị sọc. Cáp 75–100 mm là an toàn.</li>
+  </ul>
+</section>
+
+</div>

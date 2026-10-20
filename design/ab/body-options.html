@@ -1,0 +1,224 @@
+<title>Phương án thân B</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Bố cục: hàng nút chọn phương án ở trên, hình 3D dùng chung ở giữa, thẻ thông tin phương án và bảng so sánh ở dưới. Màu chi tiết theo vật liệu thật. */
+:root{
+  --bg:#f2f4f2; --paper:#ffffff; --fg:#1c211e; --muted:#5d6660; --line:#d5dbd6; --soft:#eaeeeb;
+  --accent:#2f6f8f; --accent-soft:#e0edf4; --viewer:#e4e8e5; --ok:#2f7d4f; --okbg:#e2f1e8; --warn:#9a6200; --warnbg:#f8eed8;
+  --inox:#c9cdd1; --alu:#b9c0c6; --acp:#e3e6e8; --fmx:#f1f1ee; --mfc:#ddd4c2; --prof:#a9b0b6; --vlo:#5d6e7e; --pp:#d6e3e8; --ctx:#7e9c8c;
+  --f-head:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141816; --paper:#1c211e; --fg:#e3e9e5; --muted:#9ca8a0; --line:#313a35; --soft:#232a26;
+  --accent:#7ab6dc; --accent-soft:#1d2f3a; --viewer:#1a1f1c; --ok:#6cc690; --okbg:#173326; --warn:#e8b45a; --warnbg:#33290f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141816; --paper:#1c211e; --fg:#e3e9e5; --muted:#9ca8a0; --line:#313a35; --soft:#232a26;
+  --accent:#7ab6dc; --accent-soft:#1d2f3a; --viewer:#1a1f1c; --ok:#6cc690; --okbg:#173326; --warn:#e8b45a; --warnbg:#33290f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--f-head);margin:0}
+.wrap{max-width:1200px;margin:0 auto;padding-block:26px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+h1{font-size:clamp(1.5rem,3vw,2.05rem);line-height:1.2;margin:0;text-wrap:balance}
+h2{font-size:1.15rem;margin:0 0 8px;text-wrap:balance}
+p{margin:0;max-width:72ch}
+.eyebrow{font:600 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lead{color:var(--muted)}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts button{display:grid;gap:2px;text-align:left;border:1px solid var(--line);background:var(--paper);color:var(--fg);border-radius:8px;padding:9px 13px;cursor:pointer;font:600 .9rem var(--f-head);min-width:150px}
+.opts button small{font:500 .74rem var(--f-mono);color:var(--muted)}
+.opts button[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opts button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.stage{position:relative;height:min(66vh,600px);min-height:380px;border-radius:9px;overflow:hidden;background:var(--viewer);border:1px solid var(--line)}
+#viewer{position:absolute;inset:0}
+.tool{position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
+.tool button{pointer-events:auto;border:1px solid var(--line);background:var(--paper);color:var(--fg);border-radius:6px;padding:6px 11px;font:500 .82rem var(--f-head);cursor:pointer}
+.tool button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.tool button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.hud{position:absolute;left:12px;top:12px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:5px 10px;font:500 .8rem var(--f-head);max-width:calc(100% - 24px)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.82rem;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1px solid var(--line)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:18px 20px;min-width:0}
+.info{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+@media (max-width:820px){.info{grid-template-columns:1fr}}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+.kv div{background:var(--soft);border-radius:7px;padding:9px 12px}
+.kv small{display:block;font:500 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.kv b{font-variant-numeric:tabular-nums}
+ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.pros li::marker{color:var(--ok)} .cons li::marker{color:var(--warn)}
+.parts{display:grid;gap:6px;margin-top:4px}
+.parts div{display:grid;grid-template-columns:14px 1fr;gap:8px;align-items:start;font-size:.9rem}
+.parts i{width:12px;height:12px;border-radius:3px;margin-top:5px;border:1px solid var(--line)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.85rem;min-width:760px}
+th,td{text-align:left;vertical-align:top;padding:7px 9px;border-bottom:1px solid var(--line)}
+th{font:600 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.sel td{background:var(--accent-soft)}
+.tag{font:500 .7rem var(--f-mono);padding:1px 8px;border-radius:999px;background:var(--okbg);color:var(--ok);white-space:nowrap}
+.note{border-left:3px solid var(--warn);background:var(--warnbg);padding:10px 14px;border-radius:0 6px 6px 0;font-size:.9rem}
+a{color:var(--accent)}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:8px">
+    <div class="eyebrow">Thùng rác phân loại · thân B · khung và vỏ</div>
+    <h1>Phương án thân B</h1>
+    <p class="lead">Năm cách làm khung và vỏ cho cùng một thân 680 × 680 × 1170 mm. Cụm đầu, 2 ngăn kéo và 4 thùng gấp PP giữ nguyên. Chọn một phương án để xem hình 3D, vật liệu từng phần, giá và điểm mạnh yếu.</p>
+  </header>
+
+  <nav class="opts" id="opts" role="tablist" aria-label="Phương án"></nav>
+
+  <section>
+    <div class="stage">
+      <div id="viewer"></div>
+      <div class="hud" id="hud"></div>
+      <div class="tool">
+        <button type="button" id="bExp" aria-pressed="false">Tách rời</button>
+        <button type="button" id="bX" aria-pressed="false">Nhìn xuyên vỏ</button>
+        <button type="button" id="bDrw" aria-pressed="false">Kéo ngăn kéo</button>
+        <button type="button" id="bHome">Góc nhìn ban đầu</button>
+      </div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="info">
+    <div class="card" id="infoA"></div>
+    <div class="card" id="infoB"></div>
+  </section>
+
+  <section class="card">
+    <h2>So sánh 5 phương án</h2>
+    <div class="tbl"><table id="cmp"></table></div>
+    <p class="lead" style="margin-top:10px">Giá khung và vỏ lấy từ tab 3 của sheet vật tư (giá tấm, thanh từ trang báo giá; tiền cắt, hàn, chấn, dán cạnh là ước tính). Hai phương án mix và cân nặng là ước tính của mình, chưa tra.</p>
+  </section>
+
+  <div class="note">Hình 3D dựng từ kích thước thiết kế để so sánh hình dáng và vật liệu, chưa phải CAD đã kiểm tra va chạm. Trừ phương án nhôm (đang có trong CAD), các phương án khác phải sửa CAD và chạy lại kiểm tra trước khi gửi xưởng.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+var MAT={inox:['Inox 304 1 mm','--inox',.75,.35],acp:['Tấm alu composite 3 mm','--acp',.15,.5],fmx:['Formex (PVC xốp)','--fmx',0,.85],mfc:['Ván MFC chống ẩm 17 mm','--mfc',0,.75],
+  prof:['Nhôm định hình 20×20','--prof',.6,.4],vlo:['Sắt V lỗ 3×3 sơn','--vlo',.3,.55],alu:['Tấm alu bên trong','--alu',.2,.55],pp:['PP 3 mm','--pp',0,.7]};
+// Mỗi chi tiết: [vật liệu, kích thước x y z, tâm x y z, nhóm, lỗ tròn (bán kính)]. Mặt dưới sàn ở z = 0, mặt trước ở y = -340.
+function frameAl(){var a=[],P=330,L=640;
+  [[-P,-P],[P,-P],[-P,P],[P,P]].forEach(function(c){a.push(['prof',[20,20,1170],[c[0],c[1],585],'frame']);});
+  [10,1034].forEach(function(z){[-P,P].forEach(function(s){a.push(['prof',[20,L,20],[s,0,z],'frame']);a.push(['prof',[L,20,20],[0,s,z],'frame']);});});
+  [-P,P].forEach(function(s){a.push(['prof',[20,L,20],[s,0,450],'frame']);});a.push(['prof',[L,20,20],[0,P,450],'frame']);return a;}
+function frameV(){var a=[],E=340,t=2,w=30;
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(c){var x=c[0]*E,y=c[1]*E;
+    a.push(['vlo',[w,t,1170],[x-c[0]*w/2,y-c[1]*t/2,585],'frame']);a.push(['vlo',[t,w,1170],[x-c[0]*t/2,y-c[1]*w/2,585],'frame']);});
+  [15,1029].forEach(function(z){[-1,1].forEach(function(s){a.push(['vlo',[w,620,t],[s*(E-w/2),0,z],'frame']);a.push(['vlo',[620,w,t],[0,s*(E-w/2),z],'frame']);});});
+  [-1,1].forEach(function(s){a.push(['vlo',[w,620,t],[s*(E-w/2),0,450],'frame']);});return a;}
+function inside(m,seat){return [[m,[680,680,4],[0,0,22],'in'],[seat||m,[680,680,6],[0,0,1041],'in',280],[m,[6,640,106],[0,0,77],'in']];}
+function skins(m,t){var o=340+t/2;return [[m,[t,680,1170],[-o,0,585],'skinL'],[m,[t,680,1170],[o,0,585],'skinR'],[m,[680,t,1170],[0,o,585],'skinB'],
+  [m,[680,t,144],[0,-o,1098],'front'],[m,[339,t,1022],[-170.5,-o,513],'drawerL',0,'skin'],[m,[339,t,1022],[170.5,-o,513],'drawerR',0,'skin']];}
+function topPlate(m,t,skirt){var a=[[m,[686,686,t||3],[0,0,1170+(t||3)/2],'top',298]];
+  if(skirt){var s=15,o=343-.5;a.push([m,[686,1,s],[0,-o,1170-s/2],'top'],[m,[686,1,s],[0,o,1170-s/2],'top'],[m,[1,686,s],[-o,0,1170-s/2],'top'],[m,[1,686,s],[o,0,1170-s/2],'top']);}return a;}
+function trays(m,walls){var a=[];[-1,1].forEach(function(s){var d=s<0?'drawerL':'drawerR';
+  a.push([m,[285,633,4],[s*158.5,-6,30],d]);a.push([walls||m,[3,633,60],[s*15.7,-6,62],d],[walls||m,[3,633,60],[s*301.3,-6,62],d],[walls||m,[285,3,60],[s*158.5,308,62],d]);});return a;}
+function mfcBody(){var M='mfc',F='fmx';return [
+ [M,[680,680,17],[0,0,1161.5],'top',298],[M,[17,663,1153],[-331.5,8.5,576.5],'skinL'],[M,[17,663,1153],[331.5,8.5,576.5],'skinR'],
+ [M,[646,17,1153],[0,331.5,576.5],'skinB'],[M,[646,646,17],[0,0,1035.5],'in',280],[M,[680,17,127],[0,-331.5,1089.5],'front'],
+ [M,[339,17,1022],[-170.5,-331.5,513],'drawerL',0,'skin'],[M,[339,17,1022],[170.5,-331.5,513],'drawerR',0,'skin'],[M,[17,646,120],[0,0,75],'in'],[F,[646,646,15],[0,0,7.5],'in'],
+ [F,[289,633,15],[-165.75,-6.5,24.5],'drawerL'],[F,[289,633,15],[165.75,-6.5,24.5],'drawerR'],
+ ['pp',[3,633,60],[-22.7,-6.5,62],'drawerL'],['pp',[3,633,60],[-308.8,-6.5,62],'drawerL'],['pp',[283,3,60],[-165.75,308.5,62],'drawerL'],
+ ['pp',[3,633,60],[22.7,-6.5,62],'drawerR'],['pp',[3,633,60],[308.8,-6.5,62],'drawerR'],['pp',[283,3,60],[165.75,308.5,62],'drawerR']];}
+var OPTS=[
+ {id:'inox',name:'Nhôm + vỏ inox',short:'đang có trong CAD',cost:[4.48,7.92],kg:'khoảng 45',parts:function(){return frameAl().concat(inside('alu'),skins('inox',1),topPlate('inox',1,true),trays('alu'));},bin:270,
+  lead:'Khung nhôm định hình 20×20, toàn bộ vỏ inox 304 dày 1 mm gập mép kín, phun cát mờ. Là thiết kế hiện tại của đồng đội.',
+  mats:[['inox','Nóc, 2 hông, lưng, tấm che trước, 2 mặt ngăn kéo'],['prof','Khung 4 cột, 11 thanh ngang'],['alu','Sàn, tấm đỡ đầu, vách giữa, khay']],
+  pros:['Đẹp và bền nhất, chống nước, chống xước','Đã có file cắt và chấn cho từng tấm','Không phải sửa CAD'],cons:['Đắt nhất: vỏ inox chiếm 2,9–5,6 triệu','Nặng, cần 2 người khiêng','Màu khác bạc phải mạ PVD, thêm 1,7–3,7 triệu']},
+ {id:'acp',name:'Nhôm + vỏ alu',short:'đổi vật liệu vỏ',cost:[2.34,3.42],kg:'khoảng 34',parts:function(){return frameAl().concat(inside('alu'),skins('acp',3),topPlate('acp',3),trays('alu'));},bin:270,
+  lead:'Giữ nguyên khung nhôm, thay vỏ inox bằng tấm nhôm composite 3 mm bắt vít vào rãnh khung. Nhìn gần như bản inox, có nhiều màu.',
+  mats:[['acp','Nóc, 2 hông, lưng, tấm che trước, 2 mặt ngăn kéo'],['prof','Khung 4 cột, 11 thanh ngang'],['alu','Sàn, tấm đỡ đầu, vách giữa, khay']],
+  pros:['Rẻ hơn bản inox 2–4,5 triệu','Nhẹ, chống nước hoàn toàn','CAD chỉ cần đổi độ dày tấm vỏ'],cons:['Cạnh cắt lộ lõi nhựa, cần nẹp góc','Mặt alu dễ móp nếu va mạnh','Vẫn đắt hơn MFC khoảng 1 triệu']},
+ {id:'mix1',name:'Mix 1 · nhôm + nóc inox',short:'Formex 8 mm',cost:[2.4,3.8],est:true,kg:'khoảng 34',parts:function(){return frameAl().concat(inside('alu'),skins('fmx',8),topPlate('inox',1,true),trays('alu'));},bin:270,
+  lead:'Khung nhôm như CAD. Chỉ riêng nóc làm inox gập mép, vì đó là chỗ hay chạm tay, hay dính nước và dễ thấy nhất. Hông, lưng, mặt ngăn kéo bằng Formex 8 mm.',
+  mats:[['inox','Nóc (có sẵn file cắt, mép gập 15 mm)'],['fmx','2 hông, lưng, tấm che trước, 2 mặt ngăn kéo (8 mm)'],['prof','Khung 4 cột, 11 thanh ngang'],['alu','Sàn, tấm đỡ đầu, vách giữa, khay']],
+  pros:['Nóc inox bền ở chỗ chịu nhiều tác động nhất','Chống nước toàn bộ','Sửa CAD ít: chỉ đổi tấm vỏ'],cons:['Giá gần bằng vỏ alu, không rẻ hơn','Formex mặt mềm, dễ móp khi va mạnh','Formex nở theo nhiệt: khoan lỗ vít rộng hơn 1 mm']},
+ {id:'mix2',name:'Mix 2 · V lỗ + nóc inox',short:'đã chọn',cost:[1.73,3.48],est:true,kg:'khoảng 40',parts:function(){return frameV().concat(inside('fmx','fmx'),skins('fmx',8),topPlate('inox',1,true),trays('fmx','pp'));},bin:270,
+  lead:'Phương án đã chọn (19/10), đã có trong CAD và qua kiểm tra 24 tư thế. Khung sắt V lỗ 3×3 bắt bulông như kệ kho, không cần hàn. Nóc inox, vỏ Formex 8 mm, bên trong Formex 15 mm. Vách giữa nên giữ tấm mỏng 6 mm để thùng 270 vẫn lọt.',
+  mats:[['inox','Nóc'],['fmx','Vỏ 8 mm; sàn, tấm đỡ đầu, khay 15 mm'],['vlo','Khung sắt V lỗ 30×30, sơn sẵn'],['pp','Thành khay']],
+  pros:['Gần rẻ bằng tủ MFC','Chống nước toàn bộ, có nóc inox','Tự lắp bằng cờ lê, không cần xưởng hàn'],cons:['Thanh V 30 mm to hơn 20 mm: phải sửa CAD','Tấm đỡ đầu Formex có thể võng theo thời gian, cần kiểm tra','Lỗ V lỗ lộ ra nếu không che kín']},
+ {id:'mfc',name:'Tủ MFC chống ẩm',short:'rẻ nhất',cost:[1.26,2.45],kg:'khoảng 58',parts:mfcBody,bin:264,link:'https://claude.ai/artifact/4Vgcu3Rv1XnRo4Nz8TxvyS',
+  lead:'Không có khung: thân làm như tủ bếp bằng ván MFC chống ẩm 17 mm, sàn và khay Formex 15 mm. Mặt melamine là vỏ hoàn thiện luôn.',
+  mats:[['mfc','Nóc, 2 hông, lưng, tấm đỡ đầu, tấm che trước, mặt ngăn kéo, vách giữa'],['fmx','Sàn, đáy khay (15 mm)'],['pp','Thành khay']],
+  pros:['Rẻ nhất','Xưởng tủ bếp cắt, dán cạnh, lắp nhanh','Nhiều màu melamine sẵn'],cons:['Nặng nhất','Phải dán kín mọi cạnh để chống ẩm','Thùng phải thu còn 264 mm (khoảng 39 L), phải sửa CAD']}
+];
+var host=document.getElementById('viewer'),hud=document.getElementById('hud');
+var renderer=null;try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){hud.textContent='Trình duyệt không chạy được WebGL; xem thông tin bên dưới.';}
+var scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(32,1,10,20000),controls;
+scene.add(new THREE.HemisphereLight(0xffffff,0x7d837f,.85));
+var sun=new THREE.DirectionalLight(0xffffff,.75);sun.position.set(900,1800,1400);scene.add(sun);
+var fill=new THREE.DirectionalLight(0xffffff,.25);fill.position.set(-1200,600,-800);scene.add(fill);
+var root=null,items=[],cur=null,exp=0,expT=0,drw=0,drwT=0,xray=false;
+var EXP={top:[0,0,260],skinL:[-260,0,0],skinR:[260,0,0],skinB:[0,260,0],front:[0,-230,60],drawerL:[-60,-260,0],drawerR:[60,-260,0],frame:[0,0,0],in:[0,0,0],bins:[0,0,0]};
+function geom(size,hole){if(!hole)return new THREE.BoxGeometry(size[0],size[1],size[2]);
+  var w=size[0]/2,d=size[1]/2,s=new THREE.Shape();s.moveTo(-w,-d);s.lineTo(w,-d);s.lineTo(w,d);s.lineTo(-w,d);s.lineTo(-w,-d);
+  var h=new THREE.Path();h.absarc(0,0,hole,0,Math.PI*2,true);s.holes.push(h);
+  var g=new THREE.ExtrudeGeometry(s,{depth:size[2],bevelEnabled:false,curveSegments:64});g.translate(0,0,-size[2]/2);return g;}
+function build(o){
+  if(root){scene.remove(root);root.traverse(function(n){if(n.geometry)n.geometry.dispose();if(n.material)n.material.dispose();});}
+  root=new THREE.Group();root.rotation.x=-Math.PI/2;scene.add(root);items=[];
+  o.parts().forEach(function(p){var mt=MAT[p[0]];
+    var m=new THREE.MeshStandardMaterial({color:new THREE.Color(css(mt[1])),metalness:mt[2],roughness:mt[3],transparent:true,opacity:1});
+    var mesh=new THREE.Mesh(geom(p[1],p[4]),m);
+    var e=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry,30),new THREE.LineBasicMaterial({color:0x2f3532,transparent:true,opacity:.35}));
+    var g=new THREE.Group();g.add(mesh,e);g.position.set(p[2][0],p[2][1],p[2][2]);root.add(g);items.push({p:p,g:g,m:m,grp:p[3]});});
+  var b=o.bin;[[-1,1,'drawerL'],[-1,-1,'drawerL'],[1,1,'drawerR'],[1,-1,'drawerR']].forEach(function(c){
+    var m=new THREE.MeshStandardMaterial({color:new THREE.Color(css('--ctx')),transparent:true,opacity:.25,depthWrite:false});
+    var mesh=new THREE.Mesh(new THREE.BoxGeometry(b,b,590),m);var g=new THREE.Group();g.add(mesh);g.position.set(c[0]*158.5,c[1]*158.5,327);root.add(g);
+    items.push({p:[null,null,[c[0]*158.5,c[1]*158.5,327]],g:g,m:m,grp:c[2],ctx:true});});
+  look();}
+function look(){items.forEach(function(it){if(it.ctx)return;var skin=['top','front','skinL','skinR','skinB'].indexOf(it.grp)>=0||it.p[5]==='skin';
+  var o=xray&&skin?.16:1;it.m.opacity=o;it.m.depthWrite=o===1;});}
+function step(){expT+=(exp-expT)*.12;drwT+=(drw-drwT)*.12;
+  items.forEach(function(it){var e=EXP[it.grp]||[0,0,0],dy=/^drawer/.test(it.grp)?-600*drwT:0,p=it.p[2];
+    it.g.position.set(p[0]+e[0]*expT,p[1]+e[1]*expT+dy,p[2]+e[2]*expT);});}
+function home(){var k=Math.max(1,1.2/camera.aspect)*(exp?1.4:1);camera.position.set(1900*k,1450*k,2300*k);if(controls){controls.target.set(0,560,0);controls.update();}}
+function resize(){if(!renderer)return;var w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}
+function bg(){if(renderer)renderer.setClearColor(new THREE.Color(css('--viewer')));}
+if(renderer){renderer.setPixelRatio(Math.min(devicePixelRatio,2));host.append(renderer.domElement);bg();
+  try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',bg);}catch(e){}
+  controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;addEventListener('resize',resize);resize();home();}
+(function loop(){requestAnimationFrame(loop);if(!renderer)return;step();controls.update();renderer.render(scene,camera);})();
+function money(c){return (c[0].toLocaleString('vi-VN'))+'–'+(c[1].toLocaleString('vi-VN'))+' triệu';}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;}
+function show(id){cur=OPTS.find(function(o){return o.id===id;});
+  document.querySelectorAll('#opts button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.id===id);});
+  document.querySelectorAll('#cmp tr[data-id]').forEach(function(r){r.classList.toggle('sel',r.dataset.id===id);});
+  if(renderer)build(cur);hud.textContent=cur.name+' · khung + vỏ '+money(cur.cost)+(cur.est?' (ước tính)':'');
+  var lg=document.getElementById('legend');lg.innerHTML='';var used={};cur.parts().forEach(function(p){used[p[0]]=1;});
+  Object.keys(used).forEach(function(k){var s=el('span');var i=el('i');i.style.background='var('+MAT[k][1]+')';s.append(i,document.createTextNode(MAT[k][0]));lg.append(s);});
+  var s=el('span');var i=el('i');i.style.background='var(--ctx)';i.style.opacity='.5';s.append(i,document.createTextNode('Thùng PP '+cur.bin+' mm (tham chiếu)'));lg.append(s);
+  var A=document.getElementById('infoA');A.innerHTML='';A.append(el('h2',null,cur.name),el('p','lead',cur.lead));
+  var kv=el('div','kv');[['Khung + vỏ',money(cur.cost)+(cur.est?' · ước tính':'')],['Thân nặng','ước tính '+cur.kg+' kg'],['Thùng PP',cur.bin+' × '+cur.bin+' mm']].forEach(function(x){var d=el('div');d.append(el('small',null,x[0]),el('b',null,x[1]));kv.append(d);});A.append(kv);
+  var pt=el('div','parts');pt.style.marginTop='14px';cur.mats.forEach(function(m){var d=el('div');var i=el('i');i.style.background='var('+MAT[m[0]][1]+')';var t=el('span');t.append(el('b',null,MAT[m[0]][0]+': '),document.createTextNode(m[1]));d.append(i,t);pt.append(d);});A.append(pt);
+  if(cur.link){var a=el('a',null,'Mở bản vẽ chi tiết và danh sách cắt ↗');a.href=cur.link;a.target='_blank';a.rel='noopener';a.style.display='inline-block';a.style.marginTop='12px';A.append(a);}
+  var B=document.getElementById('infoB');B.innerHTML='';B.append(el('h2',null,'Điểm mạnh'));var u=el('ul','pros');cur.pros.forEach(function(x){u.append(el('li',null,x));});B.append(u);
+  var h=el('h2',null,'Điểm yếu');h.style.marginTop='14px';B.append(h);u=el('ul','cons');cur.cons.forEach(function(x){u.append(el('li',null,x));});B.append(u);
+  try{localStorage.setItem('aware-body-opt',id);}catch(e){}
+}
+var nav=document.getElementById('opts');
+OPTS.forEach(function(o){var b=el('button');b.type='button';b.setAttribute('role','tab');b.dataset.id=o.id;b.append(document.createTextNode(o.name),el('small',null,money(o.cost)+(o.est?' *':'')));b.onclick=function(){show(o.id);};nav.append(b);});
+var cmp=document.getElementById('cmp');
+cmp.innerHTML='<tr><th>Phương án</th><th>Khung</th><th>Nóc</th><th>Hông, lưng, mặt ngăn kéo</th><th>Bên trong</th><th>Khung + vỏ</th><th>Nặng (ước tính)</th><th>Sửa CAD</th></tr>';
+[['inox','Nhôm 20×20','Inox','Inox','Alu','Không'],['acp','Nhôm 20×20','Alu composite','Alu composite','Alu','Đổi độ dày vỏ'],['mix1','Nhôm 20×20','Inox','Formex 8 mm','Alu','Đổi độ dày vỏ'],
+ ['mix2','Sắt V lỗ','Inox','Formex 8 mm','Formex 15 mm','Nhiều (thanh 30 mm)'],['mfc','Không (ván 17 mm)','MFC','MFC','MFC, Formex','Nhiều (dạng tủ, thùng 264)']].forEach(function(r){
+  var o=OPTS.find(function(x){return x.id===r[0];}),tr=el('tr');tr.dataset.id=r[0];tr.style.cursor='pointer';tr.onclick=function(){show(r[0]);document.querySelector('.stage').scrollIntoView({block:'nearest',behavior:'smooth'});};
+  var n=el('td');n.append(el('b',null,o.name));if(r[0]==='mfc'){n.append(document.createTextNode(' '),el('span','tag','rẻ nhất'));}if(r[0]==='mix2'){n.append(document.createTextNode(' '),el('span','tag','rẻ + chống nước'));}
+  tr.append(n,el('td',null,r[1]),el('td',null,r[2]),el('td',null,r[3]),el('td',null,r[4]),el('td','n',money(o.cost)+(o.est?' *':'')),el('td','n',o.kg+' kg'),el('td',null,r[5]));cmp.append(tr);});
+document.getElementById('bExp').onclick=function(){exp=exp?0:1;this.setAttribute('aria-pressed',!!exp);home();};
+document.getElementById('bDrw').onclick=function(){drw=drw?0:1;this.setAttribute('aria-pressed',!!drw);};
+document.getElementById('bX').onclick=function(){xray=!xray;this.setAttribute('aria-pressed',xray);look();};
+document.getElementById('bHome').onclick=home;
+var start='mix2';try{start=localStorage.getItem('aware-body-opt')||'mix2';}catch(e){}
+if(!OPTS.some(function(o){return o.id===start;}))start='mix1';
+show(start);
+</script>
