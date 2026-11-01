@@ -141,7 +141,7 @@ code{font-family:var(--f-mono);font-size:.88em}
 // Mỗi bước: chi tiết CAD (tên hoặc tiền tố có "_" ở cuối) và các mối bulông (tên joint trong dimensions.json)
 const STEPS=[
  {t:'Bắt giá chữ C lên thanh chữ thập',cad:['yaw_bracket'],bolts:['yaw_bracket_to_beam'],
-  do:['Khoan 2 lỗ Ø5,5 xuyên tâm thanh chữ thập, đúng lỗ trên chân giá.','Bắt giá bằng 2 bulông M5 × 45 và đai ốc.']},
+  do:['Khoan 2 lỗ Ø5,5 xuyên thanh chữ thập và tấm nối bên dưới, đúng lỗ trên chân giá.','Bắt giá bằng 2 bulông M5 × 45 đầu bằng vặn từ dưới tấm nối lên, đai ốc nằm trên chân giá: dưới thanh chữ thập không được có gì nhô thấp hơn đệm cao su.']},
  {t:'Bắt 2 gối KFL08 vào 2 cánh giá',cad:['yaw_bearing_'],bolts:['yaw_bearing_lower_to_bracket','yaw_bearing_upper_to_bracket'],
   do:['Lỗ trên cánh giá là rãnh dài: KFL08 có lỗ cách nhau 36–37 mm tuỳ hãng.','Mỗi gối 2 bulông M4 × 16 vặn từ dưới cánh lên. Chỉ siết tay để gối còn tự căn khi luồn trục.','Đai ốc của gối trên để sau: nó chìm vào đáy rãnh cáp ở bước 9.']},
  {t:'Lắp MG90S, horn, miếng nối, trục đứng',cad:['yaw_servo','yaw_servo_horn','yaw_hub','yaw_shaft','yaw_collar'],bolts:['yaw_servo_to_shelf','yaw_horn_to_hub'],

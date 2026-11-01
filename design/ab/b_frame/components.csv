@@ -1,19 +1,40 @@
 component,quantity,process,material,variant,description
-head_deck,1,laser,Aluminium sheet 3 mm,E1,Head deck ring carrying all head loads; rests on the body at the deck height
-orientation_pin,1,buy,Steel dowel 6 x 25,E1,Single pin at the rear of the deck; the head seats in one orientation only
+head_deck,1,laser,Aluminium sheet 3 mm,E1,"Head deck ring carrying all head loads; rests on the seat board, 4 bolts into inserts in that board"
+orientation_pin,1,buy,"Hex bolt M6 x 30, fully threaded",E1,"Orientation pin: an M6 bolt screwed down into the tapped deck, its shank below the deck goes into the seat board's rear hole, so the head seats one way only"
 head_locating_ring,1,laser,"PP sheet 3 mm, rolled and riveted",E1,Spigot under the deck that centres the head in the body
-head_shell_ring,1,laser,"Aluminium composite 3 mm, rolled",E1,Raised wall between deck and funnel collar
+locating_ring_clip_1,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,"Angle clip holding the locating ring under the deck: one rivet into the ring, one into the deck"
+locating_ring_clip_2,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,"Angle clip holding the locating ring under the deck: one rivet into the ring, one into the deck"
+locating_ring_clip_3,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,"Angle clip holding the locating ring under the deck: one rivet into the ring, one into the deck"
+locating_ring_clip_4,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,"Angle clip holding the locating ring under the deck: one rivet into the ring, one into the deck"
+head_shell_ring,1,laser,"Aluminium composite 3 mm, rolled",E1,"Raised wall between deck and funnel collar, held by 4 angle clips at each edge"
+shell_ring_clip_low_1,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the deck
+shell_ring_clip_high_1,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the funnel collar
+shell_ring_clip_low_2,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the deck
+shell_ring_clip_high_2,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the funnel collar
+shell_ring_clip_low_3,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the deck
+shell_ring_clip_high_3,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the funnel collar
+shell_ring_clip_low_4,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the deck
+shell_ring_clip_high_4,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the funnel collar
 intake_funnel,1,laser,PP sheet 2 mm,E1,"Collar, cone and throat lip; cone, collar and lip band are cut flat and riveted"
 flexible_throat_skirt,1,laser,Soft PVC strip curtain 2 mm,E1,Flexible strip fringe under the throat lip
-hanger_1,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
-hanger_2,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
-hanger_3,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
-hanger_4,1,cut,Aluminium square tube 30 x 30 x 2,E1,Square aluminium tube hanging the joint beam from the deck
-joint_beam,1,cut,"Aluminium rectangular tube 40 x 30 x 2, two pieces crossed and bolted through a 3 mm plate",E1,Cross beam carrying the joint; its arms lie above the bin dividers
-spider_foot_1,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
-spider_foot_2,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
-spider_foot_3,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
-spider_foot_4,1,buy,"Rubber pad 30 x 30 x 1.5, self-adhesive",E1,Rubber foot under a beam end: the head stands on it when lifted out
+hanger_1,1,cut,Aluminium square tube 30 x 30 x 2,E1,"Square aluminium tube hanging the joint beam from the deck; cut 371 mm, a threaded insert in each end"
+hanger_insert_top_1,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the deck
+hanger_insert_bottom_1,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the beam
+hanger_2,1,cut,Aluminium square tube 30 x 30 x 2,E1,"Square aluminium tube hanging the joint beam from the deck; cut 371 mm, a threaded insert in each end"
+hanger_insert_top_2,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the deck
+hanger_insert_bottom_2,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the beam
+hanger_3,1,cut,Aluminium square tube 30 x 30 x 2,E1,"Square aluminium tube hanging the joint beam from the deck; cut 371 mm, a threaded insert in each end"
+hanger_insert_top_3,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the deck
+hanger_insert_bottom_3,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the beam
+hanger_4,1,cut,Aluminium square tube 30 x 30 x 2,E1,"Square aluminium tube hanging the joint beam from the deck; cut 371 mm, a threaded insert in each end"
+hanger_insert_top_4,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the deck
+hanger_insert_bottom_4,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the beam
+joint_beam,1,cut,Aluminium rectangular tube 40 x 30 x 2,E1,"Cross beam: one tube along X (540 mm) and two half tubes along Y (250 mm) butted against it, bolted to the splice plate underneath; its arms lie above the bin dividers"
+beam_splice_plate,1,laser,Aluminium sheet 3 mm,E1,Splice plate under the beam crossing: the Y half tubes and the X tube bolt to it
+spider_foot_1,1,buy,"Rubber pad 30 x 30 x 5, self-adhesive",E1,Rubber foot under a beam arm: the head stands on the four feet when lifted out
+spider_foot_2,1,buy,"Rubber pad 30 x 30 x 5, self-adhesive",E1,Rubber foot under a beam arm: the head stands on the four feet when lifted out
+spider_foot_3,1,buy,"Rubber pad 30 x 30 x 5, self-adhesive",E1,Rubber foot under a beam arm: the head stands on the four feet when lifted out
+spider_foot_4,1,buy,"Rubber pad 30 x 30 x 5, self-adhesive",E1,Rubber foot under a beam arm: the head stands on the four feet when lifted out
 yaw_bracket,1,print,"PETG, 60 % infill (or bent aluminium 3 mm)",E1,"Fixed C-bracket on the beam hub: two arms for the yaw bearings, a shelf the MG90S hangs through and a foot bolted through the hub"
 yaw_bearing_lower,1,buy,"Flanged pillow block KFL08, bore 8 mm",E1,"Flanged bearing for the vertical yaw shaft, 2 M4 bolts through the bracket arm"
 yaw_bearing_upper,1,buy,"Flanged pillow block KFL08, bore 8 mm",E1,"Flanged bearing for the vertical yaw shaft, 2 M4 bolts through the bracket arm"
@@ -87,7 +108,7 @@ rail_seat_xp,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V l
 rail_seat_yn,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Seat rail, slotted angle bolted inside the posts; the head seat board rests on it"
 rail_seat_yp,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Seat rail, slotted angle bolted inside the posts; the head seat board rests on it"
 floor_plate,1,laser,Formex (PVC foam) 15 mm,E1,Floor board on the bottom rails; waterproof
-head_seat_plate,1,laser,Formex (PVC foam) 15 mm,E1,Head seat board on the four seat rails; the rear hole takes the deck orientation pin
+head_seat_plate,1,laser,Formex (PVC foam) 15 mm,E1,"Head seat board on the four seat rails; the rear hole takes the deck orientation pin, 4 M6 insert nuts take the deck bolts"
 side_panel_left,1,bend,Stainless 304 sheet 1 mm,E1,"Side skin, stainless with closed hems; covers the edges of the back and front panels; M4 screws with spacers into the angle holes"
 side_panel_right,1,bend,Stainless 304 sheet 1 mm,E1,"Side skin, stainless with closed hems; covers the edges of the back and front panels; M4 screws with spacers into the angle holes"
 back_panel,1,bend,Stainless 304 sheet 1 mm,E1,"Fixed back skin, stainless with closed hems: the bin can stand against a wall"
@@ -95,21 +116,31 @@ head_panel_front,1,bend,Stainless 304 sheet 1 mm,E1,"Front panel around the head
 top_cover,1,bend,Stainless 304 sheet 1 mm,E1,Stainless top cover with the funnel opening; its skirt folds down over the skins
 center_wall,1,laser,"Aluminium composite 6 mm, offcut",E1,Centre wall carrying both inner slides
 slide_mount_left,1,laser,"Aluminium composite 6 mm, offcut",E1,Plate carrying the outer slide; bolted to the front and rear posts through 18 mm spacers
-drawer_left,1,laser,"Formex 8 mm floor, PP 3 mm walls riveted",E1,Drawer tray holding the front and the rear bin
+drawer_left,1,laser,"Formex 8 mm floor, PP 3 mm walls screwed into its edges",E1,Drawer tray holding the front and the rear bin
+tray_corner_left_1,1,cut,"Aluminium angle 10 x 10 x 1.5, 50 mm long",E1,"Angle inside a rear tray corner, riveted to the back and the side wall"
+tray_corner_left_2,1,cut,"Aluminium angle 10 x 10 x 1.5, 50 mm long",E1,"Angle inside a rear tray corner, riveted to the back and the side wall"
 drawer_front_left,1,bend,Stainless 304 sheet 1 mm,E1,"Drawer front, stainless with closed hems, recessed pull slot 120 x 30 mm; two stiffeners keep the sheet flat"
 drawer_stiffener_left_1,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
 drawer_stiffener_left_2,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
 slide_left_inner,1,buy,"Ball-bearing drawer slide 600 mm, 3-section full extension, 46 x 12.7, 45 kg per pair (First Slide)",E1,Full-extension ball slide 600 mm
 slide_left_outer,1,buy,"Ball-bearing drawer slide 600 mm, 3-section full extension, 46 x 12.7, 45 kg per pair (First Slide)",E1,Full-extension ball slide 600 mm
 drawer_switch_left,1,buy,"Subminiature lever switch TIAIHUA 1 A 125 VAC, 13 x 6.8 x 6",E1,Microswitch the closed drawer presses; open drawer locks its two bins
+drawer_switch_bracket_left,1,print,PETG,E1,Printed L bracket on the floor board holding the drawer switch
 slide_mount_right,1,laser,"Aluminium composite 6 mm, offcut",E1,Plate carrying the outer slide; bolted to the front and rear posts through 18 mm spacers
-drawer_right,1,laser,"Formex 8 mm floor, PP 3 mm walls riveted",E1,Drawer tray holding the front and the rear bin
+drawer_right,1,laser,"Formex 8 mm floor, PP 3 mm walls screwed into its edges",E1,Drawer tray holding the front and the rear bin
+tray_corner_right_1,1,cut,"Aluminium angle 10 x 10 x 1.5, 50 mm long",E1,"Angle inside a rear tray corner, riveted to the back and the side wall"
+tray_corner_right_2,1,cut,"Aluminium angle 10 x 10 x 1.5, 50 mm long",E1,"Angle inside a rear tray corner, riveted to the back and the side wall"
 drawer_front_right,1,bend,Stainless 304 sheet 1 mm,E1,"Drawer front, stainless with closed hems, recessed pull slot 120 x 30 mm; two stiffeners keep the sheet flat"
 drawer_stiffener_right_1,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
 drawer_stiffener_right_2,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
 slide_right_inner,1,buy,"Ball-bearing drawer slide 600 mm, 3-section full extension, 46 x 12.7, 45 kg per pair (First Slide)",E1,Full-extension ball slide 600 mm
 slide_right_outer,1,buy,"Ball-bearing drawer slide 600 mm, 3-section full extension, 46 x 12.7, 45 kg per pair (First Slide)",E1,Full-extension ball slide 600 mm
 drawer_switch_right,1,buy,"Subminiature lever switch TIAIHUA 1 A 125 VAC, 13 x 6.8 x 6",E1,Microswitch the closed drawer presses; open drawer locks its two bins
+drawer_switch_bracket_right,1,print,PETG,E1,Printed L bracket on the floor board holding the drawer switch
+center_wall_clip_1,1,cut,"Aluminium angle 10 x 10 x 1.5, 30 mm long",E1,Angle at the foot of the centre wall
+center_wall_clip_2,1,cut,"Aluminium angle 10 x 10 x 1.5, 30 mm long",E1,Angle at the foot of the centre wall
+center_wall_clip_3,1,cut,"Aluminium angle 10 x 10 x 1.5, 30 mm long",E1,Angle at the foot of the centre wall
+center_wall_clip_4,1,cut,"Aluminium angle 10 x 10 x 1.5, 30 mm long",E1,Angle at the foot of the centre wall
 bin_1,1,laser,PP sheet 3 mm,E1,"Bin 1 (Nhựa), folded from sheet: wall strip and floor riveted, rim flange 15 mm, 2 hand slots, 4 vent holes of 10 mm"
 bin_bag_band_1,1,buy,"Flat elastic 10 mm, loop of about 92 cm",E1,Elastic band holding the bag folded over the bin rim
 bin_2,1,laser,PP sheet 3 mm,E1,"Bin 2 (Giấy), folded from sheet: wall strip and floor riveted, rim flange 15 mm, 2 hand slots, 4 vent holes of 10 mm"

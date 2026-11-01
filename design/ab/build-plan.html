@@ -111,11 +111,11 @@ var OPTIONS='https://claude.ai/artifact/LmpTTGTHpTmY31gDXuiTsj';
 var STEPS=[
  {n:0,t:'Chốt thiết kế và ngân sách',tr:'all',st:'done',time:'Xong 20/10',cost:'0',dep:'—',
   why:'Mọi việc mua và gia công dựa trên các quyết định này. Đổi ý sau khi đã cắt vật liệu thì tốn tiền gấp đôi.',
-  do:['Thân B: khung 680 × 680 × 1170 mm, 2 ngăn kéo trên ray bi 600 mm, mỗi ngăn kéo chở 2 thùng','Cơ cấu phương án D: MG90S xoay ±45°, MG996R nghiêng ±45° qua đai GT2 2:1, đĩa nhôm Ø320 dày 1,5 mm','Mạch S3-1: board ESP32-S3-N16R8 CAM (não, chụp ảnh, servo) và màn Guition JC4827W543 4,3" (hiển thị, đọc 4 cảm biến báo đầy), nối UART','Khung và vỏ Mix 2: khung sắt V lỗ bắt bulông trên 4 bản đế chân, sàn và tấm đỡ đầu Formex 15 mm, vỏ và nắp bằng inox 304 dày 1 mm gấp mép kín','4 thùng gấp từ tấm PP 3 mm, 270 × 270 × 590 mm, thay túi tại chỗ bằng vòng chun','Vật tư nhỏ: nắp inox để mặt 2B, đĩa để mặt nhôm, tay nắm khoét âm, thùng PP thuê CNC','Ngân sách: càng thấp càng tốt, sheet vật tư cộng khoảng 7,1–10,0 triệu (vỏ bọc inox từ 31/10)'],
+  do:['Thân B: khung 680 × 680 × 1170 mm, 2 ngăn kéo trên ray bi 600 mm, mỗi ngăn kéo chở 2 thùng','Cơ cấu phương án D: MG90S xoay ±45°, MG996R nghiêng ±45° qua đai GT2 2:1, đĩa nhôm Ø320 dày 1,5 mm','Mạch S3-1: board ESP32-S3-N16R8 CAM (não, chụp ảnh, servo) và màn Guition JC4827W543 4,3" (hiển thị, đọc 4 cảm biến báo đầy), nối UART','Khung và vỏ Mix 2: khung sắt V lỗ bắt bulông trên 4 bản đế chân, sàn và tấm đỡ đầu Formex 15 mm, vỏ và nắp bằng inox 304 dày 1 mm gấp mép kín','4 thùng gấp từ tấm PP 3 mm, 270 × 270 × 590 mm, thay túi tại chỗ bằng vòng chun','Vật tư nhỏ: nắp inox để mặt 2B, đĩa để mặt nhôm, tay nắm khoét âm, thùng PP thuê CNC','Ngân sách: càng thấp càng tốt, sheet vật tư cộng khoảng 7,4–10,7 triệu (vỏ bọc inox từ 31/10)'],
   how:[['Quyết định nằm ở đâu','Mỗi quyết định có trong artifact thiết kế (tab Tổng quan, mục Đã chốt), sheet vật tư (tab 1–4) và trang so sánh phương án thân.'],['Khi nào được đổi','Chỉ đổi khi thử trên bàn (bước 2) hoặc đo hàng thật (bước 1) cho thấy không làm được. Đổi thì sửa CAD, chạy lại kiểm tra rồi mới mua.']],
   risk:['Đổi ý sau khi đã cắt tấm: mất tiền vật liệu và công cắt.','Chọn theo giá rẻ nhất mà bỏ qua độ khớp: tiết kiệm ở bề mặt, không tiết kiệm ở độ chính xác.'],
   tools:['Artifact thiết kế','Sheet vật tư','Trang so sánh phương án thân'],
-  out:[['Thẻ quyết định','Thân, cơ cấu, mạch, khung và vỏ, thùng','Đã ghi trong artifact thiết kế',1],['Bảng ngân sách','Sheet vật tư 4 tab','Tổng khoảng 7,1–10,0 triệu, đợt 1 đã chốt đủ',1]],
+  out:[['Thẻ quyết định','Thân, cơ cấu, mạch, khung và vỏ, thùng','Đã ghi trong artifact thiết kế',1],['Bảng ngân sách','Sheet vật tư 4 tab','Tổng khoảng 7,4–10,7 triệu, đợt 1 đã chốt đủ',1]],
   links:[['Artifact thiết kế',DESIGN],['Mạch S3-1',CIRCUIT],['Sheet vật tư',SHEET],['So sánh phương án thân',OPTIONS]]},
 
  {n:1,t:'Đặt linh kiện đợt 1 và đo',tr:'elec',st:'doing',time:'1–3 tuần (chờ hàng)',cost:'khoảng 1,6–2,0 triệu',dep:'Bước 0',
@@ -145,7 +145,7 @@ var STEPS=[
   out:[['File','CAD theo mạch S3-1','Đã có, theo số của nhà bán (20/10)',1],['File','dimensions.json theo hàng thật','Mọi số mua sẵn đã thay bằng số đo',0],['Kiểm tra','25 tư thế, camera 72/72','0 va chạm, 72/72 điểm',0]],
   links:[['Artifact thiết kế',DESIGN]]},
 
- {n:4,t:'Đặt gia công và vật liệu đợt 2',tr:'mech',st:'todo',time:'1–2 tuần',cost:'khoảng 5,5–8,0 triệu (đợt 2 + khung, vỏ bọc inox)',dep:'Bước 2 đạt, bước 3',
+ {n:4,t:'Đặt gia công và vật liệu đợt 2',tr:'mech',st:'todo',time:'1–2 tuần',cost:'khoảng 5,7–8,7 triệu (đợt 2 + khung, vỏ bọc inox, đủ bulông theo CAD)',dep:'Bước 2 đạt, bước 3',
   why:'Đây là phần tốn tiền nhất. Chỉ đặt khi cơ cấu đã thử đạt và CAD đã sửa theo hàng thật.',
   do:['Sắt V lỗ 3×3 dày 2 mm: 12 m, nhờ cửa hàng cắt sẵn 4 cây 1155 mm, 9 cây 671 mm và 1 cây 665 mm, mua kèm ke góc, bulông M8, 4 chân tăng chỉnh M8 đế Ø30','Formex: 1 tấm 15 mm (sàn, tấm đỡ đầu) và 1 tấm 8 mm (2 đáy khay), gửi file cắt','Alu composite 6 mm cắt lẻ: 2 tấm bắt ray và vách giữa','Inox 304 1 mm: nắp trên, 2 hông, lưng, tấm che trước, 2 mặt ngăn kéo, 4 nẹp gân; cắt laser và gấp mép kín 10 mm. Cùng đơn: 4 bản đế chân thép 3 mm hàn đai ốc M8','Nhôm tấm A5052: mâm, đĩa, đế xoay, cắt laser','Nhôm hộp 30×30, 40×30, thanh dẹt 30×13 cho cụm đầu','Tấm PP 2 mm (phễu) và PP 3 mm (4 thùng), cắt CNC gộp với Formex','In 3D ở trường: giá chữ C, giá servo, hub trục xoay, tai đĩa, cục chặn, 4 hộp cảm biến, bệ màn','Ray bi 600 mm 2 cặp, rivet, vòng chun, bulông nhỏ'],
   how:[['Gom theo xưởng','Xưởng 1 (tiệm biển quảng cáo): Formex 8 và 15 mm, PP 3 mm thùng, PP 2 mm phễu, alu 6 mm cắt lẻ. Xưởng 2 (laser kim loại): nhôm tấm cụm đầu, vỏ và nắp inox kèm chấn, 4 bản đế chân. Cửa hàng kệ: sắt V lỗ cắt sẵn và phụ kiện. Gom như vậy chỉ chịu mỗi nơi một lần phí tối thiểu.'],['File gửi đi','Mọi file nằm trong design/ab/b_frame: dxf/ cho tấm cắt (đơn vị mm, tỉ lệ 1:1), cut_list_slotted_angle.csv cho sắt V lỗ, parts/*.stl cho in 3D. Vỏ và nắp inox gửi side_panel_left/right, back_panel, head_panel_front, drawer_front_left/right, drawer_stiffener_x4, top_cover, mỗi file có lớp CUT, BEND, NOTE. Bản đế chân gửi parts/foot_plate_*.step.'],['Tiết kiệm công cắt','Các tấm Formex chữ nhật nhờ kho cắt thẳng bằng máy cưa tấm. Chỉ tấm đỡ đầu (lỗ Ø560) và thùng PP (rãnh gấp, lỗ) mới cần CNC.'],['Hỏi trước khi đặt','Giá đã gồm VAT và ship chưa; có cắt theo kích thước không; thời gian giao. Ghi giá thật vào sheet.']],
@@ -312,7 +312,7 @@ function renderRoad(){
   wrap.append(g);c.append(wrap);panel.append(c);
   var now=el('section','card');now.append(el('h3',null,'Đang ở đâu (cập nhật 20/10)'));
   var ul=el('ul');
-  ['Bước 0 xong: thân B, cơ cấu D, thùng gấp PP, mạch S3-1, khung và vỏ Mix 2, các vật tư nhỏ đều đã chốt. Sheet vật tư cộng khoảng 7,1–10,0 triệu (vỏ đổi sang inox 31/10).',
+  ['Bước 0 xong: thân B, cơ cấu D, thùng gấp PP, mạch S3-1, khung và vỏ Mix 2, các vật tư nhỏ đều đã chốt. Sheet vật tư cộng khoảng 7,4–10,7 triệu (vỏ đổi sang inox 31/10).',
    'Bước 1 đang làm: đợt 1 đã chốt đủ (26 món tab 1, 3 món đầu tab 2 và 3 món cơ khí #38–40 ở tab 1, khoảng 1,6–2,0 triệu). Chưa đặt hàng.',
    'Thay đổi thiết kế từ 17/10 đến 20/10 chưa commit lên nhánh.'].forEach(function(t){ul.append(el('li',null,t));});
   now.append(ul);panel.append(now);

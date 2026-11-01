@@ -1,7 +1,7 @@
 {
   "variants": {
     "E1": {
-      "part_count": 119,
+      "part_count": 150,
       "tilt_pose_checks": [
         {
           "pose": "neutral",
@@ -271,34 +271,34 @@
           {
             "joint": "yaw_bracket_to_beam",
             "size": "M5 x 45",
-            "head": "hex",
+            "head": "countersunk",
             "start_mm": [
               -30.0,
               -9.0,
-              680.0
+              642.0
             ],
             "axis": [
               0,
               0,
-              -1
+              1
             ],
-            "length_mm": 40.0
+            "length_mm": 43.0
           },
           {
             "joint": "yaw_bracket_to_beam",
             "size": "M5 x 45",
-            "head": "hex",
+            "head": "countersunk",
             "start_mm": [
               -30.0,
               9.0,
-              680.0
+              642.0
             ],
             "axis": [
               0,
               0,
-              -1
+              1
             ],
-            "length_mm": 40.0
+            "length_mm": 43.0
           },
           {
             "joint": "yaw_bearing_lower_to_bracket",
@@ -1233,7 +1233,7 @@
           {
             "joint": "floor_board_to_rail",
             "size": "M8 x 30",
-            "head": "carriage",
+            "head": "hex",
             "start_mm": [
               -322.0,
               0,
@@ -1249,7 +1249,7 @@
           {
             "joint": "floor_board_to_rail",
             "size": "M8 x 30",
-            "head": "carriage",
+            "head": "hex",
             "start_mm": [
               322.0,
               0,
@@ -1265,7 +1265,7 @@
           {
             "joint": "floor_board_to_rail",
             "size": "M8 x 30",
-            "head": "carriage",
+            "head": "hex",
             "start_mm": [
               0,
               325.0,
@@ -1281,7 +1281,7 @@
           {
             "joint": "seat_board_to_rail",
             "size": "M8 x 30",
-            "head": "carriage",
+            "head": "hex",
             "start_mm": [
               -325.0,
               0,
@@ -1297,7 +1297,7 @@
           {
             "joint": "seat_board_to_rail",
             "size": "M8 x 30",
-            "head": "carriage",
+            "head": "hex",
             "start_mm": [
               325.0,
               0,
@@ -1313,7 +1313,7 @@
           {
             "joint": "seat_board_to_rail",
             "size": "M8 x 30",
-            "head": "carriage",
+            "head": "hex",
             "start_mm": [
               0,
               325.0,
@@ -1329,7 +1329,7 @@
           {
             "joint": "seat_board_to_rail",
             "size": "M8 x 30",
-            "head": "carriage",
+            "head": "hex",
             "start_mm": [
               0,
               -325.0,
@@ -1471,6 +1471,4459 @@
             "length_mm": 30.0
           }
         ],
+        "joints": [
+          {
+            "id": "deck_to_seat_board",
+            "kind": "tapped",
+            "parts": [
+              "head_deck",
+              "head_seat_plate"
+            ],
+            "status": "drawn",
+            "proposed": true,
+            "note": "Undo these four bolts to lift the head out",
+            "points": 4,
+            "positions_mm": [
+              [
+                202.9,
+                202.9,
+                1053.0
+              ],
+              [
+                -202.9,
+                202.9,
+                1053.0
+              ],
+              [
+                -202.9,
+                -202.9,
+                1053.0
+              ],
+              [
+                202.9,
+                -202.9,
+                1053.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "button bolt",
+                "size": "M6 x 16",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M6",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "insert nut",
+                "size": "M6, for 15 mm board",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "orientation_pin_in_deck",
+            "kind": "tapped",
+            "parts": [
+              "orientation_pin",
+              "head_deck"
+            ],
+            "status": "drawn",
+            "proposed": true,
+            "note": "Deck hole tapped M6; the bolt itself is the pin",
+            "points": 1,
+            "positions_mm": [
+              [
+                0,
+                284.0,
+                1053.0
+              ]
+            ],
+            "hardware": []
+          },
+          {
+            "id": "locating_ring_to_deck",
+            "kind": "rivet",
+            "parts": [
+              "head_locating_ring",
+              "locating_ring_clip_*",
+              "head_deck"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Deck holes are cut; drill the ring through the clip on assembly",
+            "points": 8,
+            "positions_mm": [
+              [
+                194.5,
+                194.5,
+                1041.0
+              ],
+              [
+                -194.5,
+                194.5,
+                1041.0
+              ],
+              [
+                -194.5,
+                -194.5,
+                1041.0
+              ],
+              [
+                194.5,
+                -194.5,
+                1041.0
+              ],
+              [
+                188.4,
+                188.4,
+                1053.0
+              ],
+              [
+                -188.4,
+                188.4,
+                1053.0
+              ],
+              [
+                -188.4,
+                -188.4,
+                1053.0
+              ],
+              [
+                188.4,
+                -188.4,
+                1053.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 8 aluminium",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "locating_ring_seam",
+            "kind": "rivet",
+            "parts": [
+              "head_locating_ring"
+            ],
+            "status": "count",
+            "proposed": false,
+            "note": "Overlap of the rolled strip",
+            "points": 2,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 8 aluminium",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "shell_ring_to_deck",
+            "kind": "rivet",
+            "parts": [
+              "head_shell_ring",
+              "shell_ring_clip_low_*",
+              "head_deck"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Deck holes are cut; drill the ring through the clip on assembly",
+            "points": 8,
+            "positions_mm": [
+              [
+                254.6,
+                147.0,
+                1062.0
+              ],
+              [
+                -254.6,
+                147.0,
+                1062.0
+              ],
+              [
+                -254.6,
+                -147.0,
+                1062.0
+              ],
+              [
+                254.6,
+                -147.0,
+                1062.0
+              ],
+              [
+                247.3,
+                142.7,
+                1053.0
+              ],
+              [
+                -247.3,
+                142.7,
+                1053.0
+              ],
+              [
+                -247.3,
+                -142.8,
+                1053.0
+              ],
+              [
+                247.3,
+                -142.8,
+                1053.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 8 aluminium",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "shell_ring_to_collar",
+            "kind": "rivet",
+            "parts": [
+              "head_shell_ring",
+              "shell_ring_clip_high_*",
+              "intake_funnel"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Collar holes are cut; drill the ring through the clip on assembly",
+            "points": 8,
+            "positions_mm": [
+              [
+                254.6,
+                147.0,
+                1155.0
+              ],
+              [
+                -254.6,
+                147.0,
+                1155.0
+              ],
+              [
+                -254.6,
+                -147.0,
+                1155.0
+              ],
+              [
+                254.6,
+                -147.0,
+                1155.0
+              ],
+              [
+                247.3,
+                142.7,
+                1170.0
+              ],
+              [
+                -247.3,
+                142.7,
+                1170.0
+              ],
+              [
+                -247.3,
+                -142.8,
+                1170.0
+              ],
+              [
+                247.3,
+                -142.8,
+                1170.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 8 aluminium",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "shell_ring_seam",
+            "kind": "rivet",
+            "parts": [
+              "head_shell_ring"
+            ],
+            "status": "count",
+            "proposed": false,
+            "note": "20 mm overlap of the rolled strip",
+            "points": 3,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 8 aluminium",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "funnel_cone_seams",
+            "kind": "rivet",
+            "parts": [
+              "intake_funnel"
+            ],
+            "status": "count",
+            "proposed": false,
+            "note": "Two seams of the cone halves, 15 mm overlap, about 80 mm apart",
+            "points": 8,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 8 aluminium",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "funnel_cone_to_lip",
+            "kind": "rivet",
+            "parts": [
+              "intake_funnel"
+            ],
+            "status": "count",
+            "proposed": false,
+            "note": "Round the throat, about 80 mm apart",
+            "points": 13,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 8 aluminium",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "funnel_cone_to_collar",
+            "kind": "rivet",
+            "parts": [
+              "intake_funnel"
+            ],
+            "status": "count",
+            "proposed": false,
+            "note": "Round the mouth, about 80 mm apart",
+            "points": 22,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 8 aluminium",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "funnel_lip_seam",
+            "kind": "rivet",
+            "parts": [
+              "intake_funnel"
+            ],
+            "status": "count",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 8 aluminium",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "skirt_to_lip",
+            "kind": "rivet",
+            "parts": [
+              "flexible_throat_skirt",
+              "intake_funnel"
+            ],
+            "status": "count",
+            "proposed": false,
+            "note": "Strip curtain riveted round the lip band, about 80 mm apart",
+            "points": 14,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 8 aluminium",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "hanger_inserts",
+            "kind": "press",
+            "parts": [
+              "hanger_insert_*",
+              "hanger_*"
+            ],
+            "status": "drawn",
+            "proposed": true,
+            "note": "Tap the inserts into the tube ends with a mallet",
+            "points": 8,
+            "positions_mm": [
+              [
+                255.0,
+                0.0,
+                1049.0
+              ],
+              [
+                255.0,
+                0.0,
+                676.0
+              ],
+              [
+                0.0,
+                255.0,
+                1049.0
+              ],
+              [
+                0.0,
+                255.0,
+                676.0
+              ],
+              [
+                -255.0,
+                0.0,
+                1049.0
+              ],
+              [
+                -255.0,
+                0.0,
+                676.0
+              ],
+              [
+                -0.0,
+                -255.0,
+                1049.0
+              ],
+              [
+                -0.0,
+                -255.0,
+                676.0
+              ]
+            ],
+            "hardware": []
+          },
+          {
+            "id": "hanger_to_deck",
+            "kind": "tapped",
+            "parts": [
+              "head_deck",
+              "hanger_insert_top_*",
+              "hanger_*"
+            ],
+            "status": "drawn",
+            "proposed": true,
+            "note": "Button heads: the rear one sits between the two motor cables",
+            "points": 4,
+            "positions_mm": [
+              [
+                255.0,
+                0.0,
+                1053.0
+              ],
+              [
+                0.0,
+                255.0,
+                1053.0
+              ],
+              [
+                -255.0,
+                0.0,
+                1053.0
+              ],
+              [
+                -0.0,
+                -255.0,
+                1053.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "button bolt",
+                "size": "M6 x 16",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "hanger_to_beam",
+            "kind": "tapped",
+            "parts": [
+              "joint_beam",
+              "hanger_insert_bottom_*",
+              "hanger_*"
+            ],
+            "status": "drawn",
+            "proposed": true,
+            "note": "Up through both walls of the beam into the insert",
+            "points": 4,
+            "positions_mm": [
+              [
+                255.0,
+                0.0,
+                645.0
+              ],
+              [
+                0.0,
+                255.0,
+                645.0
+              ],
+              [
+                -255.0,
+                0.0,
+                645.0
+              ],
+              [
+                -0.0,
+                -255.0,
+                645.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "button bolt",
+                "size": "M6 x 45",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "beam_splice",
+            "kind": "bolt",
+            "parts": [
+              "joint_beam",
+              "beam_splice_plate"
+            ],
+            "status": "drawn",
+            "proposed": true,
+            "note": "Countersunk from below, nuts on the beam top",
+            "points": 6,
+            "positions_mm": [
+              [
+                0,
+                35,
+                642.0
+              ],
+              [
+                0,
+                -35,
+                642.0
+              ],
+              [
+                0,
+                70,
+                642.0
+              ],
+              [
+                0,
+                -70,
+                642.0
+              ],
+              [
+                30,
+                9,
+                642.0
+              ],
+              [
+                30,
+                -9,
+                642.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "countersunk bolt",
+                "size": "M5 x 40",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M5",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M5",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "beam_feet",
+            "kind": "adhesive",
+            "parts": [
+              "spider_foot_*",
+              "joint_beam"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "Self-adhesive rubber",
+            "points": 4,
+            "positions_mm": [],
+            "hardware": []
+          },
+          {
+            "id": "tilt_stop_bumpers",
+            "kind": "adhesive",
+            "parts": [
+              "tilt_stop_pad_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "rubber bumper",
+                "size": "\u00d810 x 3, self-adhesive",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "imu_under_plate",
+            "kind": "adhesive",
+            "parts": [
+              "tilt_imu",
+              "tipping_plate"
+            ],
+            "status": "drawn",
+            "proposed": true,
+            "note": "No holes in the plate surface",
+            "points": 1,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "VHB tape",
+                "size": "20 x 15 mm piece",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "yaw_stop_pin_in_platform",
+            "kind": "tapped",
+            "parts": [
+              "yaw_stop_pin",
+              "yaw_platform"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "The bolt is the pin; the platform hole is tapped M4",
+            "points": 1,
+            "positions_mm": [
+              [
+                -55.0,
+                0,
+                797.0
+              ]
+            ],
+            "hardware": []
+          },
+          {
+            "id": "cable_channel_on_bearing",
+            "kind": "bolt",
+            "parts": [
+              "yaw_cable_channel",
+              "yaw_bearing_upper"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "Clamped by the two upper KFL08 bolts, counted under yaw_bearing_upper_to_bracket",
+            "points": 2,
+            "positions_mm": [],
+            "hardware": []
+          },
+          {
+            "id": "drum_to_platform",
+            "kind": "screw",
+            "parts": [
+              "yaw_cable_drum",
+              "yaw_platform"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Down through the platform into the drum wall; holes not cut yet",
+            "points": 3,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "self-tapping screw",
+                "size": "M2 x 10",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "cable_clip_to_platform",
+            "kind": "tapped",
+            "parts": [
+              "cable_clip_stage",
+              "yaw_platform"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "",
+            "points": 1,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 8",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "cable tie",
+                "size": "100 x 2.5 mm",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "motor_cable_ties",
+            "kind": "cable_tie",
+            "parts": [
+              "motor_cable_yaw_servo",
+              "motor_cable_tilt_servo",
+              "hanger_2",
+              "joint_beam"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Rear hanger 3, beam top 4, under the console 1",
+            "points": 8,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "cable tie",
+                "size": "100 x 2.5 mm",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "supplied_set_screws",
+            "kind": "set_screw",
+            "parts": [
+              "yaw_collar",
+              "hinge_collar_*",
+              "tilt_pulley_small",
+              "tilt_pulley_large",
+              "hinge_block_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 7,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "set screw",
+                "size": "comes with the part",
+                "per_point": 1,
+                "bought": false
+              }
+            ]
+          },
+          {
+            "id": "sensor_pod_and_arm",
+            "kind": "one_piece",
+            "parts": [
+              "fill_sensor_pod_*",
+              "fill_sensor_arm_*"
+            ],
+            "status": "drawn",
+            "proposed": true,
+            "note": "Print each pod and its arm as one piece",
+            "points": 4,
+            "positions_mm": [],
+            "hardware": []
+          },
+          {
+            "id": "sensor_arm_to_lip",
+            "kind": "bolt",
+            "parts": [
+              "fill_sensor_arm_*",
+              "intake_funnel"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "2 per arm through the lip band, drilled on assembly",
+            "points": 8,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 12",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M3",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M3",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "hcsr04_in_pod",
+            "kind": "screw",
+            "parts": [
+              "fill_sensor_pod_*"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "2 per board; check the board's hole size on arrival",
+            "points": 8,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "self-tapping screw",
+                "size": "M2 x 6",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "console_to_collar",
+            "kind": "bolt",
+            "parts": [
+              "display_console",
+              "intake_funnel"
+            ],
+            "status": "drawn",
+            "proposed": true,
+            "note": "Through the saddle and the collar, nuts under the collar",
+            "points": 4,
+            "positions_mm": [
+              [
+                143.0,
+                247.7,
+                1175.0
+              ],
+              [
+                88.4,
+                272.0,
+                1175.0
+              ],
+              [
+                -88.4,
+                272.0,
+                1175.0
+              ],
+              [
+                -143.0,
+                247.7,
+                1175.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 16",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 2,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "display_to_console",
+            "kind": "tapped",
+            "parts": [
+              "tft_screen",
+              "display_console"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "The 4 holes of the Guition board, into inserts in the slab",
+            "points": 4,
+            "positions_mm": [
+              [
+                -56.3,
+                150.5,
+                1195.2
+              ],
+              [
+                -56.3,
+                163.4,
+                1256.0
+              ],
+              [
+                56.3,
+                150.5,
+                1195.2
+              ],
+              [
+                56.3,
+                163.4,
+                1256.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 6",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "heat-set insert",
+                "size": "M3",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "console_halves",
+            "kind": "tapped",
+            "parts": [
+              "display_console"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "",
+            "points": 6,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 12",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "heat-set insert",
+                "size": "M3",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "esp32_s3_board_in_console",
+            "kind": "screw",
+            "parts": [
+              "display_console"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Hole positions from the board on arrival",
+            "points": 2,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "self-tapping screw",
+                "size": "M2 x 6",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "servo_buck_xl4015_in_console",
+            "kind": "tapped",
+            "parts": [
+              "display_console"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Hole positions from the board on arrival",
+            "points": 4,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 6",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "heat-set insert",
+                "size": "M3",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "logic_buck_5v_in_console",
+            "kind": "tapped",
+            "parts": [
+              "display_console"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Hole positions from the board on arrival",
+            "points": 2,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 6",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "heat-set insert",
+                "size": "M3",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "relay_module_in_console",
+            "kind": "tapped",
+            "parts": [
+              "display_console"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Hole positions from the board on arrival",
+            "points": 4,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 6",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "heat-set insert",
+                "size": "M3",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "led_switch_xy_mos_in_console",
+            "kind": "tapped",
+            "parts": [
+              "display_console"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Hole positions from the board on arrival",
+            "points": 2,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 6",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "heat-set insert",
+                "size": "M3",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "terminal_4p_in_console",
+            "kind": "screw",
+            "parts": [
+              "display_console"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Hole positions from the board on arrival",
+            "points": 2,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "self-tapping screw",
+                "size": "M3 x 10",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "divider_board_in_console",
+            "kind": "tapped",
+            "parts": [
+              "display_console"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Hole positions from the board on arrival",
+            "points": 2,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 6",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "heat-set insert",
+                "size": "M3",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "supply_capacitor_in_console",
+            "kind": "cable_tie",
+            "parts": [
+              "display_console"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Hole positions from the board on arrival",
+            "points": 1,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "cable tie",
+                "size": "100 x 2.5 mm",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "camera_in_window",
+            "kind": "adhesive",
+            "parts": [
+              "camera_window",
+              "display_console"
+            ],
+            "status": "count",
+            "proposed": true,
+            "note": "Lens pressed into the window and glued from inside; no clamp drawn yet",
+            "points": 1,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "hot glue",
+                "size": "stick",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "led_strip_in_groove",
+            "kind": "adhesive",
+            "parts": [
+              "led_strip",
+              "display_console"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "Self-adhesive back",
+            "points": 1,
+            "positions_mm": [],
+            "hardware": []
+          },
+          {
+            "id": "foot_plate_nut_weld",
+            "kind": "weld",
+            "parts": [
+              "foot_plate_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "The only weld: an M8 nut under each foot plate, done by the shop that cuts and bends the plates",
+            "points": 4,
+            "positions_mm": [
+              [
+                -327.0,
+                -327.0,
+                12.0
+              ],
+              [
+                -327.0,
+                327.0,
+                12.0
+              ],
+              [
+                327.0,
+                -327.0,
+                12.0
+              ],
+              [
+                327.0,
+                327.0,
+                12.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "nut",
+                "size": "M8",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "foot_into_plate",
+            "kind": "thread",
+            "parts": [
+              "foot_*",
+              "foot_plate_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "The foot screws into the welded nut; turn it to level the bin",
+            "points": 4,
+            "positions_mm": [
+              [
+                -327.0,
+                -327.0,
+                12.0
+              ],
+              [
+                -327.0,
+                327.0,
+                12.0
+              ],
+              [
+                327.0,
+                -327.0,
+                12.0
+              ],
+              [
+                327.0,
+                327.0,
+                12.0
+              ]
+            ],
+            "hardware": []
+          },
+          {
+            "id": "skins_to_frame",
+            "kind": "bolt",
+            "parts": [
+              "side_panel_*",
+              "back_panel",
+              "head_panel_front",
+              "post_*",
+              "rail_*"
+            ],
+            "status": "positions",
+            "proposed": false,
+            "note": "Spacer keeps the skin 6 mm off the angles; drill the skin at the real angle holes on assembly",
+            "points": 70,
+            "positions_mm": [
+              [
+                -348.0,
+                -327.0,
+                75.0
+              ],
+              [
+                -348.0,
+                -327.0,
+                282.0
+              ],
+              [
+                -348.0,
+                -327.0,
+                489.0
+              ],
+              [
+                -348.0,
+                -327.0,
+                696.0
+              ],
+              [
+                -348.0,
+                -327.0,
+                903.0
+              ],
+              [
+                -348.0,
+                -327.0,
+                1110.0
+              ],
+              [
+                -348.0,
+                327.0,
+                75.0
+              ],
+              [
+                -348.0,
+                327.0,
+                282.0
+              ],
+              [
+                -348.0,
+                327.0,
+                489.0
+              ],
+              [
+                -348.0,
+                327.0,
+                696.0
+              ],
+              [
+                -348.0,
+                327.0,
+                903.0
+              ],
+              [
+                -348.0,
+                327.0,
+                1110.0
+              ],
+              [
+                -348.0,
+                -200,
+                30.0
+              ],
+              [
+                -348.0,
+                -200,
+                452.0
+              ],
+              [
+                -348.0,
+                -200,
+                1020.0
+              ],
+              [
+                -348.0,
+                0,
+                30.0
+              ],
+              [
+                -348.0,
+                0,
+                452.0
+              ],
+              [
+                -348.0,
+                0,
+                1020.0
+              ],
+              [
+                -348.0,
+                200,
+                30.0
+              ],
+              [
+                -348.0,
+                200,
+                452.0
+              ],
+              [
+                -348.0,
+                200,
+                1020.0
+              ],
+              [
+                348.0,
+                -327.0,
+                75.0
+              ],
+              [
+                348.0,
+                -327.0,
+                282.0
+              ],
+              [
+                348.0,
+                -327.0,
+                489.0
+              ],
+              [
+                348.0,
+                -327.0,
+                696.0
+              ],
+              [
+                348.0,
+                -327.0,
+                903.0
+              ],
+              [
+                348.0,
+                -327.0,
+                1110.0
+              ],
+              [
+                348.0,
+                327.0,
+                75.0
+              ],
+              [
+                348.0,
+                327.0,
+                282.0
+              ],
+              [
+                348.0,
+                327.0,
+                489.0
+              ],
+              [
+                348.0,
+                327.0,
+                696.0
+              ],
+              [
+                348.0,
+                327.0,
+                903.0
+              ],
+              [
+                348.0,
+                327.0,
+                1110.0
+              ],
+              [
+                348.0,
+                -200,
+                30.0
+              ],
+              [
+                348.0,
+                -200,
+                452.0
+              ],
+              [
+                348.0,
+                -200,
+                1020.0
+              ],
+              [
+                348.0,
+                0,
+                30.0
+              ],
+              [
+                348.0,
+                0,
+                452.0
+              ],
+              [
+                348.0,
+                0,
+                1020.0
+              ],
+              [
+                348.0,
+                200,
+                30.0
+              ],
+              [
+                348.0,
+                200,
+                452.0
+              ],
+              [
+                348.0,
+                200,
+                1020.0
+              ],
+              [
+                -327.0,
+                348.0,
+                75.0
+              ],
+              [
+                -327.0,
+                348.0,
+                282.0
+              ],
+              [
+                -327.0,
+                348.0,
+                489.0
+              ],
+              [
+                -327.0,
+                348.0,
+                696.0
+              ],
+              [
+                -327.0,
+                348.0,
+                903.0
+              ],
+              [
+                -327.0,
+                348.0,
+                1110.0
+              ],
+              [
+                327.0,
+                348.0,
+                75.0
+              ],
+              [
+                327.0,
+                348.0,
+                282.0
+              ],
+              [
+                327.0,
+                348.0,
+                489.0
+              ],
+              [
+                327.0,
+                348.0,
+                696.0
+              ],
+              [
+                327.0,
+                348.0,
+                903.0
+              ],
+              [
+                327.0,
+                348.0,
+                1110.0
+              ],
+              [
+                -200,
+                348.0,
+                28.0
+              ],
+              [
+                -200,
+                348.0,
+                450.0
+              ],
+              [
+                -200,
+                348.0,
+                1022.0
+              ],
+              [
+                0,
+                348.0,
+                28.0
+              ],
+              [
+                0,
+                348.0,
+                450.0
+              ],
+              [
+                0,
+                348.0,
+                1022.0
+              ],
+              [
+                200,
+                348.0,
+                28.0
+              ],
+              [
+                200,
+                348.0,
+                450.0
+              ],
+              [
+                200,
+                348.0,
+                1022.0
+              ],
+              [
+                -327.0,
+                -348.0,
+                1049.0
+              ],
+              [
+                -327.0,
+                -348.0,
+                1130.0
+              ],
+              [
+                327.0,
+                -348.0,
+                1049.0
+              ],
+              [
+                327.0,
+                -348.0,
+                1130.0
+              ],
+              [
+                -200,
+                -348.0,
+                1022.0
+              ],
+              [
+                0,
+                -348.0,
+                1022.0
+              ],
+              [
+                200,
+                -348.0,
+                1022.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "button bolt",
+                "size": "M4 x 20 stainless",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "spacer sleeve",
+                "size": "M4, 6 mm",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "large washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "top_cover_to_frame",
+            "kind": "bolt",
+            "parts": [
+              "top_cover",
+              "post_*"
+            ],
+            "status": "positions",
+            "proposed": false,
+            "note": "Through the skirt and the skin into the post tops",
+            "points": 8,
+            "positions_mm": [
+              [
+                -349.0,
+                -327.0,
+                1162.5
+              ],
+              [
+                -349.0,
+                327.0,
+                1162.5
+              ],
+              [
+                349.0,
+                -327.0,
+                1162.5
+              ],
+              [
+                349.0,
+                327.0,
+                1162.5
+              ],
+              [
+                -327.0,
+                -349.0,
+                1162.5
+              ],
+              [
+                327.0,
+                -349.0,
+                1162.5
+              ],
+              [
+                -327.0,
+                349.0,
+                1162.5
+              ],
+              [
+                327.0,
+                349.0,
+                1162.5
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "button bolt",
+                "size": "M4 x 20 stainless",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "spacer sleeve",
+                "size": "M4, 6 mm",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "large washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "tray_walls_to_floor_left",
+            "kind": "screw",
+            "parts": [
+              "drawer_left"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Into the middle of the 8 mm Formex edge, pre-drill 2.5 mm",
+            "points": 22,
+            "positions_mm": [
+              [
+                -15.7,
+                -315.0,
+                40.0
+              ],
+              [
+                -15.7,
+                -240.8,
+                40.0
+              ],
+              [
+                -15.7,
+                -166.5,
+                40.0
+              ],
+              [
+                -15.7,
+                -92.2,
+                40.0
+              ],
+              [
+                -15.7,
+                -18.0,
+                40.0
+              ],
+              [
+                -15.7,
+                56.2,
+                40.0
+              ],
+              [
+                -15.7,
+                130.5,
+                40.0
+              ],
+              [
+                -15.7,
+                204.8,
+                40.0
+              ],
+              [
+                -15.7,
+                279.0,
+                40.0
+              ],
+              [
+                -301.3,
+                -315.0,
+                40.0
+              ],
+              [
+                -301.3,
+                -240.8,
+                40.0
+              ],
+              [
+                -301.3,
+                -166.5,
+                40.0
+              ],
+              [
+                -301.3,
+                -92.2,
+                40.0
+              ],
+              [
+                -301.3,
+                -18.0,
+                40.0
+              ],
+              [
+                -301.3,
+                56.2,
+                40.0
+              ],
+              [
+                -301.3,
+                130.5,
+                40.0
+              ],
+              [
+                -301.3,
+                204.8,
+                40.0
+              ],
+              [
+                -301.3,
+                279.0,
+                40.0
+              ],
+              [
+                -43.7,
+                307.0,
+                40.0
+              ],
+              [
+                -120.2,
+                307.0,
+                40.0
+              ],
+              [
+                -196.8,
+                307.0,
+                40.0
+              ],
+              [
+                -273.3,
+                307.0,
+                40.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "wood screw",
+                "size": "3.5 x 16 stainless",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "tray_corners_left",
+            "kind": "rivet",
+            "parts": [
+              "drawer_left",
+              "tray_corner_left_*"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Heads outside the tray, washers on the PP side",
+            "points": 8,
+            "positions_mm": [
+              [
+                -24.7,
+                307.0,
+                59.0
+              ],
+              [
+                -15.7,
+                298.0,
+                59.0
+              ],
+              [
+                -24.7,
+                307.0,
+                79.0
+              ],
+              [
+                -15.7,
+                298.0,
+                79.0
+              ],
+              [
+                -292.3,
+                307.0,
+                59.0
+              ],
+              [
+                -301.3,
+                298.0,
+                59.0
+              ],
+              [
+                -292.3,
+                307.0,
+                79.0
+              ],
+              [
+                -301.3,
+                298.0,
+                79.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 10 aluminium",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "stiffener_left_1_to_tray",
+            "kind": "bolt",
+            "parts": [
+              "drawer_stiffener_left_1",
+              "drawer_left"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Through the tray wall and a spacer into the stiffener web: the drawer front hangs on these",
+            "points": 2,
+            "positions_mm": [
+              [
+                -15.7,
+                -334.0,
+                59.0
+              ],
+              [
+                -15.7,
+                -334.0,
+                94.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 20",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "spacer sleeve",
+                "size": "M4, 9 mm",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "stiffener_left_1_to_front",
+            "kind": "adhesive",
+            "parts": [
+              "drawer_stiffener_left_1",
+              "drawer_front_left"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "Both flanges taped to the back of the front",
+            "points": 1,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "VHB tape",
+                "size": "8 mm wide, metres",
+                "per_point": 1.9,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "stiffener_left_2_to_tray",
+            "kind": "bolt",
+            "parts": [
+              "drawer_stiffener_left_2",
+              "drawer_left"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Through the tray wall and a spacer into the stiffener web: the drawer front hangs on these",
+            "points": 2,
+            "positions_mm": [
+              [
+                -301.3,
+                -334.0,
+                59.0
+              ],
+              [
+                -301.3,
+                -334.0,
+                94.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 20",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "spacer sleeve",
+                "size": "M4, 9 mm",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "stiffener_left_2_to_front",
+            "kind": "adhesive",
+            "parts": [
+              "drawer_stiffener_left_2",
+              "drawer_front_left"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "Both flanges taped to the back of the front",
+            "points": 1,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "VHB tape",
+                "size": "8 mm wide, metres",
+                "per_point": 1.9,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "switch_to_bracket_left",
+            "kind": "bolt",
+            "parts": [
+              "drawer_switch_left",
+              "drawer_switch_bracket_left"
+            ],
+            "status": "positions",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                -161.8,
+                316.4,
+                74.0
+              ],
+              [
+                -155.2,
+                316.4,
+                74.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M2 x 12",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M2",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "switch_bracket_to_floor_left",
+            "kind": "screw",
+            "parts": [
+              "drawer_switch_bracket_left",
+              "floor_plate"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                -163.5,
+                328.4,
+                39.0
+              ],
+              [
+                -153.5,
+                328.4,
+                39.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "wood screw",
+                "size": "3.5 x 16 stainless",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "outer_slide_to_plate_left",
+            "kind": "bolt",
+            "parts": [
+              "slide_left_outer",
+              "slide_mount_left"
+            ],
+            "status": "positions",
+            "proposed": false,
+            "note": "",
+            "points": 6,
+            "positions_mm": [
+              [
+                -314.0,
+                -270.0,
+                75.0
+              ],
+              [
+                -314.0,
+                -170.0,
+                75.0
+              ],
+              [
+                -314.0,
+                -70.0,
+                75.0
+              ],
+              [
+                -314.0,
+                30.0,
+                75.0
+              ],
+              [
+                -314.0,
+                130.0,
+                75.0
+              ],
+              [
+                -314.0,
+                230.0,
+                75.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 12",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "slides_to_tray_left",
+            "kind": "bolt",
+            "parts": [
+              "slide_left_inner",
+              "slide_left_outer",
+              "drawer_left"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Nuts only in front of the front bin and between the bins (2 mm gap beside the bins)",
+            "points": 8,
+            "positions_mm": [
+              [
+                -15.7,
+                -315,
+                75.0
+              ],
+              [
+                -15.7,
+                -300,
+                75.0
+              ],
+              [
+                -15.7,
+                -10,
+                75.0
+              ],
+              [
+                -15.7,
+                10,
+                75.0
+              ],
+              [
+                -301.3,
+                -315,
+                75.0
+              ],
+              [
+                -301.3,
+                -300,
+                75.0
+              ],
+              [
+                -301.3,
+                -10,
+                75.0
+              ],
+              [
+                -301.3,
+                10,
+                75.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 10",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "tray_walls_to_floor_right",
+            "kind": "screw",
+            "parts": [
+              "drawer_right"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Into the middle of the 8 mm Formex edge, pre-drill 2.5 mm",
+            "points": 22,
+            "positions_mm": [
+              [
+                15.7,
+                -315.0,
+                40.0
+              ],
+              [
+                15.7,
+                -240.8,
+                40.0
+              ],
+              [
+                15.7,
+                -166.5,
+                40.0
+              ],
+              [
+                15.7,
+                -92.2,
+                40.0
+              ],
+              [
+                15.7,
+                -18.0,
+                40.0
+              ],
+              [
+                15.7,
+                56.2,
+                40.0
+              ],
+              [
+                15.7,
+                130.5,
+                40.0
+              ],
+              [
+                15.7,
+                204.8,
+                40.0
+              ],
+              [
+                15.7,
+                279.0,
+                40.0
+              ],
+              [
+                301.3,
+                -315.0,
+                40.0
+              ],
+              [
+                301.3,
+                -240.8,
+                40.0
+              ],
+              [
+                301.3,
+                -166.5,
+                40.0
+              ],
+              [
+                301.3,
+                -92.2,
+                40.0
+              ],
+              [
+                301.3,
+                -18.0,
+                40.0
+              ],
+              [
+                301.3,
+                56.2,
+                40.0
+              ],
+              [
+                301.3,
+                130.5,
+                40.0
+              ],
+              [
+                301.3,
+                204.8,
+                40.0
+              ],
+              [
+                301.3,
+                279.0,
+                40.0
+              ],
+              [
+                43.7,
+                307.0,
+                40.0
+              ],
+              [
+                120.2,
+                307.0,
+                40.0
+              ],
+              [
+                196.8,
+                307.0,
+                40.0
+              ],
+              [
+                273.3,
+                307.0,
+                40.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "wood screw",
+                "size": "3.5 x 16 stainless",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "tray_corners_right",
+            "kind": "rivet",
+            "parts": [
+              "drawer_right",
+              "tray_corner_right_*"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Heads outside the tray, washers on the PP side",
+            "points": 8,
+            "positions_mm": [
+              [
+                24.7,
+                307.0,
+                59.0
+              ],
+              [
+                15.7,
+                298.0,
+                59.0
+              ],
+              [
+                24.7,
+                307.0,
+                79.0
+              ],
+              [
+                15.7,
+                298.0,
+                79.0
+              ],
+              [
+                292.3,
+                307.0,
+                59.0
+              ],
+              [
+                301.3,
+                298.0,
+                59.0
+              ],
+              [
+                292.3,
+                307.0,
+                79.0
+              ],
+              [
+                301.3,
+                298.0,
+                79.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 10 aluminium",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "stiffener_right_1_to_tray",
+            "kind": "bolt",
+            "parts": [
+              "drawer_stiffener_right_1",
+              "drawer_right"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Through the tray wall and a spacer into the stiffener web: the drawer front hangs on these",
+            "points": 2,
+            "positions_mm": [
+              [
+                15.7,
+                -334.0,
+                59.0
+              ],
+              [
+                15.7,
+                -334.0,
+                94.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 20",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "spacer sleeve",
+                "size": "M4, 9 mm",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "stiffener_right_1_to_front",
+            "kind": "adhesive",
+            "parts": [
+              "drawer_stiffener_right_1",
+              "drawer_front_right"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "Both flanges taped to the back of the front",
+            "points": 1,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "VHB tape",
+                "size": "8 mm wide, metres",
+                "per_point": 1.9,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "stiffener_right_2_to_tray",
+            "kind": "bolt",
+            "parts": [
+              "drawer_stiffener_right_2",
+              "drawer_right"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Through the tray wall and a spacer into the stiffener web: the drawer front hangs on these",
+            "points": 2,
+            "positions_mm": [
+              [
+                301.3,
+                -334.0,
+                59.0
+              ],
+              [
+                301.3,
+                -334.0,
+                94.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 20",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "spacer sleeve",
+                "size": "M4, 9 mm",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "stiffener_right_2_to_front",
+            "kind": "adhesive",
+            "parts": [
+              "drawer_stiffener_right_2",
+              "drawer_front_right"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "Both flanges taped to the back of the front",
+            "points": 1,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "VHB tape",
+                "size": "8 mm wide, metres",
+                "per_point": 1.9,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "switch_to_bracket_right",
+            "kind": "bolt",
+            "parts": [
+              "drawer_switch_right",
+              "drawer_switch_bracket_right"
+            ],
+            "status": "positions",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                155.2,
+                316.4,
+                74.0
+              ],
+              [
+                161.8,
+                316.4,
+                74.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M2 x 12",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M2",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "switch_bracket_to_floor_right",
+            "kind": "screw",
+            "parts": [
+              "drawer_switch_bracket_right",
+              "floor_plate"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                153.5,
+                328.4,
+                39.0
+              ],
+              [
+                163.5,
+                328.4,
+                39.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "wood screw",
+                "size": "3.5 x 16 stainless",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "outer_slide_to_plate_right",
+            "kind": "bolt",
+            "parts": [
+              "slide_right_outer",
+              "slide_mount_right"
+            ],
+            "status": "positions",
+            "proposed": false,
+            "note": "",
+            "points": 6,
+            "positions_mm": [
+              [
+                314.0,
+                -270.0,
+                75.0
+              ],
+              [
+                314.0,
+                -170.0,
+                75.0
+              ],
+              [
+                314.0,
+                -70.0,
+                75.0
+              ],
+              [
+                314.0,
+                30.0,
+                75.0
+              ],
+              [
+                314.0,
+                130.0,
+                75.0
+              ],
+              [
+                314.0,
+                230.0,
+                75.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 12",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "slides_to_tray_right",
+            "kind": "bolt",
+            "parts": [
+              "slide_right_inner",
+              "slide_right_outer",
+              "drawer_right"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "Nuts only in front of the front bin and between the bins (2 mm gap beside the bins)",
+            "points": 8,
+            "positions_mm": [
+              [
+                15.7,
+                -315,
+                75.0
+              ],
+              [
+                15.7,
+                -300,
+                75.0
+              ],
+              [
+                15.7,
+                -10,
+                75.0
+              ],
+              [
+                15.7,
+                10,
+                75.0
+              ],
+              [
+                301.3,
+                -315,
+                75.0
+              ],
+              [
+                301.3,
+                -300,
+                75.0
+              ],
+              [
+                301.3,
+                -10,
+                75.0
+              ],
+              [
+                301.3,
+                10,
+                75.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 10",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "inner_slides_through_wall",
+            "kind": "bolt",
+            "parts": [
+              "slide_left_inner",
+              "slide_right_inner",
+              "center_wall"
+            ],
+            "status": "positions",
+            "proposed": false,
+            "note": "One bolt through both inner slides and the centre wall",
+            "points": 6,
+            "positions_mm": [
+              [
+                0,
+                -270.0,
+                75.0
+              ],
+              [
+                0,
+                -170.0,
+                75.0
+              ],
+              [
+                0,
+                -70.0,
+                75.0
+              ],
+              [
+                0,
+                30.0,
+                75.0
+              ],
+              [
+                0,
+                130.0,
+                75.0
+              ],
+              [
+                0,
+                230.0,
+                75.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 16",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "center_wall_clips_through",
+            "kind": "bolt",
+            "parts": [
+              "center_wall",
+              "center_wall_clip_*"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "One bolt through both clips and the wall at each end",
+            "points": 2,
+            "positions_mm": [
+              [
+                -4.5,
+                -280.0,
+                40.0
+              ],
+              [
+                -4.5,
+                280.0,
+                40.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 16",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "center_wall_clips_to_floor",
+            "kind": "screw",
+            "parts": [
+              "center_wall_clip_*",
+              "floor_plate"
+            ],
+            "status": "positions",
+            "proposed": true,
+            "note": "",
+            "points": 4,
+            "positions_mm": [
+              [
+                -9.0,
+                -280.0,
+                35.5
+              ],
+              [
+                9.0,
+                -280.0,
+                35.5
+              ],
+              [
+                -9.0,
+                280.0,
+                35.5
+              ],
+              [
+                9.0,
+                280.0,
+                35.5
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "wood screw",
+                "size": "3.5 x 12 stainless",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "bin_rivets",
+            "kind": "rivet",
+            "parts": [
+              "bin_1",
+              "bin_2",
+              "bin_3",
+              "bin_4"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "16 per bin: 8 on the wall seam, 2 per floor flap; the holes are in the DXFs",
+            "points": 64,
+            "positions_mm": [],
+            "hardware": [
+              {
+                "item": "blind rivet",
+                "size": "\u00d84 x 10 aluminium",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "yaw_servo_to_shelf",
+            "kind": "bolt",
+            "parts": [
+              "yaw_servo",
+              "yaw_bracket"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                -8.5,
+                0,
+                707.5
+              ],
+              [
+                19.3,
+                0,
+                707.5
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M2 x 10",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M2",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "yaw_bracket_to_beam",
+            "kind": "bolt",
+            "parts": [
+              "yaw_bracket",
+              "joint_beam",
+              "beam_splice_plate"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                -30.0,
+                -9.0,
+                642.0
+              ],
+              [
+                -30.0,
+                9.0,
+                642.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "countersunk bolt",
+                "size": "M5 x 45",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M5",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M5",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "yaw_bearing_lower_to_bracket",
+            "kind": "bolt",
+            "parts": [
+              "yaw_bearing_lower",
+              "yaw_bracket"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                -18.5,
+                0,
+                732.0
+              ],
+              [
+                18.5,
+                0,
+                732.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 16",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "yaw_bearing_upper_to_bracket",
+            "kind": "bolt",
+            "parts": [
+              "yaw_bearing_upper",
+              "yaw_bracket",
+              "yaw_cable_channel"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                -18.5,
+                0,
+                767.0
+              ],
+              [
+                18.5,
+                0,
+                767.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 16",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "yaw_horn_to_hub",
+            "kind": "screw",
+            "parts": [
+              "yaw_servo_horn",
+              "yaw_hub"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                0,
+                -7.0,
+                717.6
+              ],
+              [
+                0,
+                7.0,
+                717.6
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "self-tapping screw",
+                "size": "M2 x 6",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "yaw_flange_set_screw",
+            "kind": "set_screw",
+            "parts": [
+              "yaw_flange",
+              "yaw_shaft"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                8.0,
+                0,
+                810.0
+              ],
+              [
+                -8.0,
+                0,
+                810.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "set screw",
+                "size": "comes with the part",
+                "per_point": 1,
+                "bought": false
+              }
+            ]
+          },
+          {
+            "id": "yaw_flange_to_platform",
+            "kind": "tapped",
+            "parts": [
+              "yaw_flange",
+              "yaw_platform"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 4,
+            "positions_mm": [
+              [
+                8.5,
+                8.5,
+                805.0
+              ],
+              [
+                -8.5,
+                8.5,
+                805.0
+              ],
+              [
+                -8.5,
+                -8.5,
+                805.0
+              ],
+              [
+                8.5,
+                -8.5,
+                805.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 8",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "tilt_servo_bracket_to_platform",
+            "kind": "tapped",
+            "parts": [
+              "tilt_servo_bracket",
+              "yaw_platform"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                33.8,
+                -14.6,
+                797.0
+              ],
+              [
+                33.8,
+                35.5,
+                797.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "countersunk bolt",
+                "size": "M4 x 12",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "tilt_stop_pad_to_platform",
+            "kind": "tapped",
+            "parts": [
+              "tilt_stop_pad_*",
+              "yaw_platform"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                0,
+                -88.0,
+                797.0
+              ],
+              [
+                0,
+                88.0,
+                797.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 12",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "hinge_post_to_platform",
+            "kind": "tapped",
+            "parts": [
+              "hinge_post_*",
+              "yaw_platform"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 4,
+            "positions_mm": [
+              [
+                -83.0,
+                -18.0,
+                797.0
+              ],
+              [
+                -83.0,
+                18.0,
+                797.0
+              ],
+              [
+                83.0,
+                -18.0,
+                797.0
+              ],
+              [
+                83.0,
+                18.0,
+                797.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 16",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "hinge_block_to_post",
+            "kind": "tapped",
+            "parts": [
+              "hinge_block_*",
+              "hinge_post_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 4,
+            "positions_mm": [
+              [
+                -83.0,
+                -21.0,
+                868.0
+              ],
+              [
+                -83.0,
+                21.0,
+                868.0
+              ],
+              [
+                83.0,
+                -21.0,
+                868.0
+              ],
+              [
+                83.0,
+                21.0,
+                868.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M4 x 16",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "tilt_servo_to_bracket",
+            "kind": "bolt",
+            "parts": [
+              "tilt_servo",
+              "tilt_servo_bracket"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 4,
+            "positions_mm": [
+              [
+                38.8,
+                -13.8,
+                824.4
+              ],
+              [
+                38.8,
+                -13.8,
+                834.4
+              ],
+              [
+                38.8,
+                34.7,
+                824.4
+              ],
+              [
+                38.8,
+                34.7,
+                834.4
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 12",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M3",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "tilt_horn_to_adapter",
+            "kind": "tapped",
+            "parts": [
+              "tilt_servo_horn",
+              "tilt_pulley_adapter"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 4,
+            "positions_mm": [
+              [
+                54.7,
+                0,
+                836.4
+              ],
+              [
+                54.7,
+                0,
+                822.4
+              ],
+              [
+                54.7,
+                7.0,
+                829.4
+              ],
+              [
+                54.7,
+                -7.0,
+                829.4
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M3 x 6",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "plate_lug_set_screw",
+            "kind": "set_screw",
+            "parts": [
+              "plate_lug_*",
+              "hinge_shaft"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 2,
+            "positions_mm": [
+              [
+                -40.0,
+                0,
+                868.0
+              ],
+              [
+                40.0,
+                0,
+                868.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "set screw",
+                "size": "M3 x 6",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "plate_to_lug",
+            "kind": "tapped",
+            "parts": [
+              "tipping_plate",
+              "plate_lug_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 4,
+            "positions_mm": [
+              [
+                -40.0,
+                -12,
+                900.0
+              ],
+              [
+                -40.0,
+                12,
+                900.0
+              ],
+              [
+                40.0,
+                -12,
+                900.0
+              ],
+              [
+                40.0,
+                12,
+                900.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "countersunk bolt",
+                "size": "M4 x 6",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "heat-set insert",
+                "size": "M4",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "rail_to_post_M8x15",
+            "kind": "bolt",
+            "parts": [
+              "rail_*",
+              "post_*",
+              "foot_plate_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 4,
+            "positions_mm": [
+              [
+                -340.0,
+                -327.0,
+                30.0
+              ],
+              [
+                -340.0,
+                327.0,
+                30.0
+              ],
+              [
+                340.0,
+                -327.0,
+                30.0
+              ],
+              [
+                340.0,
+                327.0,
+                30.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "carriage bolt",
+                "size": "M8 x 15",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M8",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "rail_to_post_M8x12",
+            "kind": "bolt",
+            "parts": [
+              "rail_*",
+              "post_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 16,
+            "positions_mm": [
+              [
+                -340.0,
+                -327.0,
+                452.0
+              ],
+              [
+                -340.0,
+                327.0,
+                452.0
+              ],
+              [
+                340.0,
+                -327.0,
+                452.0
+              ],
+              [
+                340.0,
+                327.0,
+                452.0
+              ],
+              [
+                -327.0,
+                340.0,
+                28.0
+              ],
+              [
+                327.0,
+                340.0,
+                28.0
+              ],
+              [
+                -327.0,
+                340.0,
+                450.0
+              ],
+              [
+                327.0,
+                340.0,
+                450.0
+              ],
+              [
+                -340.0,
+                -327.0,
+                1020.0
+              ],
+              [
+                -340.0,
+                327.0,
+                1020.0
+              ],
+              [
+                340.0,
+                -327.0,
+                1020.0
+              ],
+              [
+                340.0,
+                327.0,
+                1020.0
+              ],
+              [
+                -327.0,
+                -340.0,
+                1022.0
+              ],
+              [
+                327.0,
+                -340.0,
+                1022.0
+              ],
+              [
+                -327.0,
+                340.0,
+                1022.0
+              ],
+              [
+                327.0,
+                340.0,
+                1022.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "carriage bolt",
+                "size": "M8 x 12",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M8",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "floor_board_to_rail",
+            "kind": "bolt",
+            "parts": [
+              "floor_plate",
+              "rail_bottom_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 3,
+            "positions_mm": [
+              [
+                -322.0,
+                0,
+                34.0
+              ],
+              [
+                322.0,
+                0,
+                34.0
+              ],
+              [
+                0,
+                325.0,
+                34.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M8 x 30",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "large washer",
+                "size": "M8",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M8",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "seat_board_to_rail",
+            "kind": "bolt",
+            "parts": [
+              "head_seat_plate",
+              "rail_seat_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 4,
+            "positions_mm": [
+              [
+                -325.0,
+                0,
+                1050.0
+              ],
+              [
+                325.0,
+                0,
+                1050.0
+              ],
+              [
+                0,
+                325.0,
+                1050.0
+              ],
+              [
+                0,
+                -325.0,
+                1050.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M8 x 30",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "large washer",
+                "size": "M8",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M8",
+                "per_point": 1,
+                "bought": true
+              }
+            ]
+          },
+          {
+            "id": "slide_mount_to_post",
+            "kind": "bolt",
+            "parts": [
+              "slide_mount_*",
+              "post_*"
+            ],
+            "status": "drawn",
+            "proposed": false,
+            "note": "",
+            "points": 8,
+            "positions_mm": [
+              [
+                -314.0,
+                -327.0,
+                57.0
+              ],
+              [
+                -314.0,
+                -327.0,
+                117.0
+              ],
+              [
+                -314.0,
+                327.0,
+                57.0
+              ],
+              [
+                -314.0,
+                327.0,
+                117.0
+              ],
+              [
+                314.0,
+                -327.0,
+                57.0
+              ],
+              [
+                314.0,
+                -327.0,
+                117.0
+              ],
+              [
+                314.0,
+                327.0,
+                57.0
+              ],
+              [
+                314.0,
+                327.0,
+                117.0
+              ]
+            ],
+            "hardware": [
+              {
+                "item": "hex bolt",
+                "size": "M5 x 40",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "spacer sleeve",
+                "size": "M5, 18 mm",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "nut",
+                "size": "M5",
+                "per_point": 1,
+                "bought": true
+              },
+              {
+                "item": "washer",
+                "size": "M5",
+                "per_point": 2,
+                "bought": true
+              }
+            ]
+          }
+        ],
+        "hardware_bom": [
+          {
+            "item": "VHB tape",
+            "size": "20 x 15 mm piece",
+            "quantity": 1,
+            "joints": [
+              "imu_under_plate"
+            ]
+          },
+          {
+            "item": "VHB tape",
+            "size": "8 mm wide, metres",
+            "quantity": 7.6,
+            "joints": [
+              "stiffener_left_1_to_front",
+              "stiffener_left_2_to_front",
+              "stiffener_right_1_to_front",
+              "stiffener_right_2_to_front"
+            ]
+          },
+          {
+            "item": "blind rivet",
+            "size": "\u00d84 x 10 aluminium",
+            "quantity": 80,
+            "joints": [
+              "tray_corners_left",
+              "tray_corners_right",
+              "bin_rivets"
+            ]
+          },
+          {
+            "item": "blind rivet",
+            "size": "\u00d84 x 8 aluminium",
+            "quantity": 88,
+            "joints": [
+              "locating_ring_to_deck",
+              "locating_ring_seam",
+              "shell_ring_to_deck",
+              "shell_ring_to_collar",
+              "shell_ring_seam",
+              "funnel_cone_seams",
+              "funnel_cone_to_lip",
+              "funnel_cone_to_collar",
+              "funnel_lip_seam",
+              "skirt_to_lip"
+            ]
+          },
+          {
+            "item": "button bolt",
+            "size": "M4 x 20 stainless",
+            "quantity": 78,
+            "joints": [
+              "skins_to_frame",
+              "top_cover_to_frame"
+            ]
+          },
+          {
+            "item": "button bolt",
+            "size": "M6 x 16",
+            "quantity": 8,
+            "joints": [
+              "deck_to_seat_board",
+              "hanger_to_deck"
+            ]
+          },
+          {
+            "item": "button bolt",
+            "size": "M6 x 45",
+            "quantity": 4,
+            "joints": [
+              "hanger_to_beam"
+            ]
+          },
+          {
+            "item": "cable tie",
+            "size": "100 x 2.5 mm",
+            "quantity": 10,
+            "joints": [
+              "cable_clip_to_platform",
+              "motor_cable_ties",
+              "supply_capacitor_in_console"
+            ]
+          },
+          {
+            "item": "carriage bolt",
+            "size": "M8 x 12",
+            "quantity": 16,
+            "joints": [
+              "rail_to_post_M8x12"
+            ]
+          },
+          {
+            "item": "carriage bolt",
+            "size": "M8 x 15",
+            "quantity": 4,
+            "joints": [
+              "rail_to_post_M8x15"
+            ]
+          },
+          {
+            "item": "countersunk bolt",
+            "size": "M4 x 12",
+            "quantity": 2,
+            "joints": [
+              "tilt_servo_bracket_to_platform"
+            ]
+          },
+          {
+            "item": "countersunk bolt",
+            "size": "M4 x 6",
+            "quantity": 4,
+            "joints": [
+              "plate_to_lug"
+            ]
+          },
+          {
+            "item": "countersunk bolt",
+            "size": "M5 x 40",
+            "quantity": 6,
+            "joints": [
+              "beam_splice"
+            ]
+          },
+          {
+            "item": "countersunk bolt",
+            "size": "M5 x 45",
+            "quantity": 2,
+            "joints": [
+              "yaw_bracket_to_beam"
+            ]
+          },
+          {
+            "item": "heat-set insert",
+            "size": "M3",
+            "quantity": 24,
+            "joints": [
+              "display_to_console",
+              "console_halves",
+              "servo_buck_xl4015_in_console",
+              "logic_buck_5v_in_console",
+              "relay_module_in_console",
+              "led_switch_xy_mos_in_console",
+              "divider_board_in_console"
+            ]
+          },
+          {
+            "item": "heat-set insert",
+            "size": "M4",
+            "quantity": 4,
+            "joints": [
+              "plate_to_lug"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M2 x 10",
+            "quantity": 2,
+            "joints": [
+              "yaw_servo_to_shelf"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M2 x 12",
+            "quantity": 4,
+            "joints": [
+              "switch_to_bracket_left",
+              "switch_to_bracket_right"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M3 x 12",
+            "quantity": 20,
+            "joints": [
+              "sensor_arm_to_lip",
+              "console_halves",
+              "tilt_stop_pad_to_platform",
+              "tilt_servo_to_bracket"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M3 x 6",
+            "quantity": 22,
+            "joints": [
+              "display_to_console",
+              "servo_buck_xl4015_in_console",
+              "logic_buck_5v_in_console",
+              "relay_module_in_console",
+              "led_switch_xy_mos_in_console",
+              "divider_board_in_console",
+              "tilt_horn_to_adapter"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M3 x 8",
+            "quantity": 1,
+            "joints": [
+              "cable_clip_to_platform"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M4 x 10",
+            "quantity": 16,
+            "joints": [
+              "slides_to_tray_left",
+              "slides_to_tray_right"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M4 x 12",
+            "quantity": 12,
+            "joints": [
+              "outer_slide_to_plate_left",
+              "outer_slide_to_plate_right"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M4 x 16",
+            "quantity": 24,
+            "joints": [
+              "console_to_collar",
+              "inner_slides_through_wall",
+              "center_wall_clips_through",
+              "yaw_bearing_lower_to_bracket",
+              "yaw_bearing_upper_to_bracket",
+              "hinge_post_to_platform",
+              "hinge_block_to_post"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M4 x 20",
+            "quantity": 8,
+            "joints": [
+              "stiffener_left_1_to_tray",
+              "stiffener_left_2_to_tray",
+              "stiffener_right_1_to_tray",
+              "stiffener_right_2_to_tray"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M4 x 8",
+            "quantity": 4,
+            "joints": [
+              "yaw_flange_to_platform"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M5 x 40",
+            "quantity": 8,
+            "joints": [
+              "slide_mount_to_post"
+            ]
+          },
+          {
+            "item": "hex bolt",
+            "size": "M8 x 30",
+            "quantity": 7,
+            "joints": [
+              "floor_board_to_rail",
+              "seat_board_to_rail"
+            ]
+          },
+          {
+            "item": "hot glue",
+            "size": "stick",
+            "quantity": 1,
+            "joints": [
+              "camera_in_window"
+            ]
+          },
+          {
+            "item": "insert nut",
+            "size": "M6, for 15 mm board",
+            "quantity": 4,
+            "joints": [
+              "deck_to_seat_board"
+            ]
+          },
+          {
+            "item": "large washer",
+            "size": "M4",
+            "quantity": 78,
+            "joints": [
+              "skins_to_frame",
+              "top_cover_to_frame"
+            ]
+          },
+          {
+            "item": "large washer",
+            "size": "M8",
+            "quantity": 7,
+            "joints": [
+              "floor_board_to_rail",
+              "seat_board_to_rail"
+            ]
+          },
+          {
+            "item": "nut",
+            "size": "M2",
+            "quantity": 6,
+            "joints": [
+              "switch_to_bracket_left",
+              "switch_to_bracket_right",
+              "yaw_servo_to_shelf"
+            ]
+          },
+          {
+            "item": "nut",
+            "size": "M3",
+            "quantity": 12,
+            "joints": [
+              "sensor_arm_to_lip",
+              "tilt_servo_to_bracket"
+            ]
+          },
+          {
+            "item": "nut",
+            "size": "M4",
+            "quantity": 130,
+            "joints": [
+              "console_to_collar",
+              "skins_to_frame",
+              "top_cover_to_frame",
+              "stiffener_left_1_to_tray",
+              "stiffener_left_2_to_tray",
+              "outer_slide_to_plate_left",
+              "slides_to_tray_left",
+              "stiffener_right_1_to_tray",
+              "stiffener_right_2_to_tray",
+              "outer_slide_to_plate_right",
+              "slides_to_tray_right",
+              "inner_slides_through_wall",
+              "center_wall_clips_through",
+              "yaw_bearing_lower_to_bracket",
+              "yaw_bearing_upper_to_bracket"
+            ]
+          },
+          {
+            "item": "nut",
+            "size": "M5",
+            "quantity": 16,
+            "joints": [
+              "beam_splice",
+              "yaw_bracket_to_beam",
+              "slide_mount_to_post"
+            ]
+          },
+          {
+            "item": "nut",
+            "size": "M8",
+            "quantity": 31,
+            "joints": [
+              "foot_plate_nut_weld",
+              "rail_to_post_M8x15",
+              "rail_to_post_M8x12",
+              "floor_board_to_rail",
+              "seat_board_to_rail"
+            ]
+          },
+          {
+            "item": "rubber bumper",
+            "size": "\u00d810 x 3, self-adhesive",
+            "quantity": 2,
+            "joints": [
+              "tilt_stop_bumpers"
+            ]
+          },
+          {
+            "item": "self-tapping screw",
+            "size": "M2 x 10",
+            "quantity": 3,
+            "joints": [
+              "drum_to_platform"
+            ]
+          },
+          {
+            "item": "self-tapping screw",
+            "size": "M2 x 6",
+            "quantity": 12,
+            "joints": [
+              "hcsr04_in_pod",
+              "esp32_s3_board_in_console",
+              "yaw_horn_to_hub"
+            ]
+          },
+          {
+            "item": "self-tapping screw",
+            "size": "M3 x 10",
+            "quantity": 2,
+            "joints": [
+              "terminal_4p_in_console"
+            ]
+          },
+          {
+            "item": "set screw",
+            "size": "M3 x 6",
+            "quantity": 2,
+            "joints": [
+              "plate_lug_set_screw"
+            ]
+          },
+          {
+            "item": "spacer sleeve",
+            "size": "M4, 6 mm",
+            "quantity": 78,
+            "joints": [
+              "skins_to_frame",
+              "top_cover_to_frame"
+            ]
+          },
+          {
+            "item": "spacer sleeve",
+            "size": "M4, 9 mm",
+            "quantity": 8,
+            "joints": [
+              "stiffener_left_1_to_tray",
+              "stiffener_left_2_to_tray",
+              "stiffener_right_1_to_tray",
+              "stiffener_right_2_to_tray"
+            ]
+          },
+          {
+            "item": "spacer sleeve",
+            "size": "M5, 18 mm",
+            "quantity": 8,
+            "joints": [
+              "slide_mount_to_post"
+            ]
+          },
+          {
+            "item": "washer",
+            "size": "M3",
+            "quantity": 8,
+            "joints": [
+              "sensor_arm_to_lip"
+            ]
+          },
+          {
+            "item": "washer",
+            "size": "M4",
+            "quantity": 114,
+            "joints": [
+              "console_to_collar",
+              "tray_corners_left",
+              "stiffener_left_1_to_tray",
+              "stiffener_left_2_to_tray",
+              "outer_slide_to_plate_left",
+              "tray_corners_right",
+              "stiffener_right_1_to_tray",
+              "stiffener_right_2_to_tray",
+              "outer_slide_to_plate_right",
+              "inner_slides_through_wall",
+              "bin_rivets"
+            ]
+          },
+          {
+            "item": "washer",
+            "size": "M5",
+            "quantity": 24,
+            "joints": [
+              "beam_splice",
+              "yaw_bracket_to_beam",
+              "slide_mount_to_post"
+            ]
+          },
+          {
+            "item": "washer",
+            "size": "M6",
+            "quantity": 4,
+            "joints": [
+              "deck_to_seat_board"
+            ]
+          },
+          {
+            "item": "wood screw",
+            "size": "3.5 x 12 stainless",
+            "quantity": 4,
+            "joints": [
+              "center_wall_clips_to_floor"
+            ]
+          },
+          {
+            "item": "wood screw",
+            "size": "3.5 x 16 stainless",
+            "quantity": 48,
+            "joints": [
+              "tray_walls_to_floor_left",
+              "switch_bracket_to_floor_left",
+              "tray_walls_to_floor_right",
+              "switch_bracket_to_floor_right"
+            ]
+          }
+        ],
+        "weld_points": 4,
         "plate_mass_kg": 0.326,
         "hinge_torque_needed_nm": 0.783,
         "servo_torque_needed_nm": 0.435,
@@ -1581,6 +6034,11 @@
               "distance_mm": 399
             },
             {
+              "part": "beam_splice_plate",
+              "off_axis_degrees": 20.3,
+              "distance_mm": 377
+            },
+            {
               "part": "joint_beam",
               "off_axis_degrees": 20.6,
               "distance_mm": 374
@@ -1589,6 +6047,11 @@
               "part": "yaw_platform",
               "off_axis_degrees": 21.4,
               "distance_mm": 213
+            },
+            {
+              "part": "spider_foot",
+              "off_axis_degrees": 22.6,
+              "distance_mm": 385
             },
             {
               "part": "motor_cable_yaw_servo",
@@ -1601,19 +6064,19 @@
               "distance_mm": 351
             },
             {
-              "part": "spider_foot",
-              "off_axis_degrees": 24.8,
-              "distance_mm": 388
-            },
-            {
               "part": "flexible_throat_skirt",
               "off_axis_degrees": 26.2,
               "distance_mm": 108
             },
             {
-              "part": "hanger",
+              "part": "hanger_insert_bottom",
               "off_axis_degrees": 26.9,
               "distance_mm": 359
+            },
+            {
+              "part": "hanger",
+              "off_axis_degrees": 27.1,
+              "distance_mm": 358
             },
             {
               "part": "yaw_bracket",
@@ -1725,16 +6188,16 @@
         "bag_change": "Pull a drawer out, slip off the elastic band and lift the full bag out; the bins stay in the drawer",
         "flat_pieces_mm": {
           "drawer_bottom_formex_x2": [
-            285.6,
-            647.0
+            279.6,
+            644.0
           ],
           "drawer_side_wall_pp_x4": [
             647.0,
-            60.0
+            68.0
           ],
           "drawer_back_wall_pp_x2": [
-            285.6,
-            60.0
+            279.6,
+            68.0
           ]
         },
         "shell": {
@@ -1866,7 +6329,7 @@
           "stainless_mass_kg": 30.7
         },
         "purchased_dimensions_status": "Provisional. Measure the four square bins and one HC-SR04 board (transducer pitch), then update bin and fill_sensor before cutting or printing anything.",
-        "status": "Prototype CAD; fasteners, wiring and hinges are not modelled",
+        "status": "Prototype CAD; every joint is listed in joints (fasteners as points, not solids); wiring is not modelled",
         "bin_flat_patterns": {
           "bin_wall_strip_mm": [
             1095.0,

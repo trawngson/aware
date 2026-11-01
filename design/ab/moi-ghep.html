@@ -1,0 +1,270 @@
+<title>Mối ghép thân B</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Bố cục: số điểm theo kiểu ghép ở trên; danh sách mối ghép theo cụm bên trái, 3D có chấm màu bên phải; dưới cùng là bảng vật tư CAD đếm */
+:root{
+  --bg:#edf0ef; --surface:#fbfcfb; --ink:#1c2524; --muted:#5a6866; --line:#cfd8d5; --scene:#dfe5e2; --ghost:#b9c3c0;
+  --sel:#c8790f; --sel-soft:#f6e6cc;
+  --k-weld:#c0392b; --k-bolt:#24955a; --k-tapped:#16808a; --k-screw:#7a8a1f; --k-rivet:#7b4fb0; --k-glue:#b8860b; --k-tie:#6b7572; --k-fit:#2f6fa6;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"Be Vietnam Pro",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131918; --surface:#1a2221; --ink:#e3eae8; --muted:#97a6a2; --line:#2c3836; --scene:#1b2422; --ghost:#46524f;
+  --sel:#eda646; --sel-soft:#3a2c16;
+  --k-weld:#ef6b5b; --k-bolt:#55c487; --k-tapped:#4cc0c9; --k-screw:#b9c955; --k-rivet:#ad8ae0; --k-glue:#e3b444; --k-tie:#9aa6a3; --k-fit:#6aa9dc;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131918; --surface:#1a2221; --ink:#e3eae8; --muted:#97a6a2; --line:#2c3836; --scene:#1b2422; --ghost:#46524f;
+  --sel:#eda646; --sel-soft:#3a2c16;
+  --k-weld:#ef6b5b; --k-bolt:#55c487; --k-tapped:#4cc0c9; --k-screw:#b9c955; --k-rivet:#ad8ae0; --k-glue:#e3b444; --k-tie:#9aa6a3; --k-fit:#6aa9dc;
+  color-scheme:dark}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 56px}
+.wrap{max-width:1280px;margin:0 auto;display:grid;gap:24px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;margin:0;line-height:1.12;text-wrap:balance}
+h1{font-size:clamp(28px,4vw,40px)} h2{font-size:24px} h3{font-size:18px}
+p{margin:0;max-width:76ch}
+.eyebrow{font:500 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:grid;gap:10px} header p{color:var(--muted)}
+code{font-family:var(--f-mono);font-size:.88em}
+.kinds{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.kind{display:grid;gap:2px;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:7px;padding:8px 10px;cursor:pointer}
+.kind b{font:600 26px var(--f-display);font-variant-numeric:tabular-nums}
+.kind span{font-size:13px;color:var(--muted)}
+.kind[aria-pressed="false"]{opacity:.45}
+.kind:focus-visible,.jt:focus-visible,.btn:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.app{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.list{display:grid;gap:14px;min-width:0;order:1;align-content:start}
+.view{order:0;display:grid;gap:10px;min-width:0}
+@media (min-width:980px){.app{grid-template-columns:400px minmax(0,1fr);align-items:start}
+  .list{order:0;max-height:calc(100vh - 40px);overflow:auto;padding-right:4px}
+  .view{order:1;position:sticky;top:max(12px,env(safe-area-inset-top,0px))}}
+.area{display:grid;gap:5px}
+.area h3{display:flex;justify-content:space-between;align-items:baseline}
+.area h3 small{font:500 12px var(--f-mono);color:var(--muted)}
+.jt{display:grid;grid-template-columns:10px 1fr auto;gap:4px 10px;align-items:baseline;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:7px 10px;cursor:pointer;width:100%}
+.jt i{width:10px;height:10px;border-radius:50%;background:var(--c);align-self:center}
+.jt .nm{font-weight:500}
+.jt .n{font:500 13px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.jt .hw{grid-column:2/4;font-size:13px;color:var(--muted)}
+.jt .tags{grid-column:2/4;display:flex;flex-wrap:wrap;gap:5px}
+.jt .note{grid-column:2/4;font-size:13px;display:none}
+.jt[aria-current="true"]{border-color:var(--sel);background:var(--sel-soft)}
+.jt[aria-current="true"] .note{display:block}
+.tag{font:500 11px var(--f-mono);padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
+.tag.new{border-color:var(--sel);color:var(--sel)}
+.box{position:relative;width:100%;aspect-ratio:4/3;max-height:78vh;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--scene)}
+.box canvas{display:block;width:100%;height:100%;touch-action:none}
+#loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);padding:16px;text-align:center}
+.hud{position:absolute;left:10px;top:10px;font:12px var(--f-mono);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 8px;max-width:calc(100% - 20px)}
+#tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:4px 8px;border-radius:5px;max-width:320px;transform:translate(12px,12px)}
+.ctrl{display:flex;flex-wrap:wrap;gap:6px}
+.btn{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 11px;border-radius:6px;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--ink)}
+.hint{font-size:13px;color:var(--muted)}
+section{display:grid;gap:12px}
+.grid{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:8px;align-content:start;min-width:0}
+.card.weld{border-left:5px solid var(--k-weld)}
+.card ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:14px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:680px;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:7px 12px;border-bottom:1px solid var(--line)}
+th{font:600 15px var(--f-display);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td.use{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">aware · thân B · CAD sinh lại 01/11 · đọc từ <code>b_frame/dimensions.json</code></span>
+  <h1>Mối ghép thân B</h1>
+  <p id="lead">Mỗi chấm trên hình 3D là một điểm ghép trong CAD, tô màu theo cách ghép. Bấm một ô màu để chỉ xem kiểu ghép đó, bấm một mối trong danh sách để làm sáng các chi tiết nó nối.</p>
+  <div class="kinds" id="kinds"></div>
+</header>
+
+<div class="app">
+  <nav class="list" id="list" aria-label="Danh sách mối ghép"></nav>
+  <div class="view">
+    <div class="box" id="box">
+      <div id="loading">Đang tải mô hình CAD (khoảng 6 MB)…</div>
+      <div class="hud" id="hud"></div>
+      <div id="tip" hidden></div>
+    </div>
+    <div class="ctrl">
+      <button class="btn" type="button" id="btnShell" aria-pressed="false">Hiện vỏ, phễu và thùng</button>
+      <button class="btn" type="button" id="btnFocus">Nhìn vào mối đang chọn</button>
+      <button class="btn" type="button" id="btnAll">Bỏ chọn, xem cả thùng</button>
+    </div>
+    <p class="hint">Kéo để xoay, cuộn để phóng to, rê chuột lên chấm hoặc chi tiết để xem tên. Vỏ inox, phễu và thùng đang hiện mờ để nhìn thấy bên trong.</p>
+  </div>
+</div>
+
+<section>
+  <h2>Hàn và đề xuất mới</h2>
+  <div class="grid">
+    <div class="card weld"><h3>Chỉ có 1 chỗ hàn</h3>
+      <p>4 đai ốc M8 hàn dưới 4 bản đế chân để vặn chân tăng chỉnh. Gửi xưởng laser làm cùng lúc cắt và chấn bản đế. Khung V lỗ, cụm đầu, vỏ và ngăn kéo đều bắt bulông, vít, rivet hoặc keo, tháo ra được.</p>
+      <p class="hint">Muốn bỏ luôn chỗ hàn này: dùng đai ốc tán rút M8 (lỗ khoảng Ø11 trên bản 26 mm), hoặc xỏ ren chân qua lỗ bản đế và khoá 1 đai ốc phía trên (tầm chỉnh còn khoảng 5 mm). Chưa vẽ thử.</p></div>
+    <div class="card"><h3>Những gì CAD vừa thêm (01/11)</h3><ul>
+      <li>Thanh treo 30×30 rỗng, nút ren M6 ở 2 đầu; 1 bulông M6 xuống qua mâm, 1 bulông M6 lên qua thanh chữ thập.</li>
+      <li>Thanh chữ thập: 1 ống dọc X và 2 nửa ống Y, bắt vào tấm nối nhôm 3 mm bên dưới bằng bulông đầu bằng.</li>
+      <li>Mâm bắt vào tấm đỡ đầu bằng 4 bulông M6 vào đai ốc cấy; tháo 4 con này là nhấc được cụm đầu.</li>
+      <li>Vòng định tâm và vòng vỏ đầu giữ bằng ke nhôm nhỏ và rivet. Bệ màn bắt 4 bulông M4 qua vành miệng phễu.</li>
+      <li>Khay ngăn kéo: thành PP ôm mép đáy Formex, vít vào cạnh đáy, ke nhôm ở 2 góc sau. Giá in đỡ công tắc ngăn kéo. Ke nhôm giữ chân vách giữa.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section>
+  <h2>Bulông, vít, rivet và keo (CAD đếm)</h2>
+  <p class="hint">Cộng từ mọi mối ghép ở trên. Linh kiện vẽ thành chi tiết riêng (nút ren, đệm cao su, chân tăng chỉnh, chốt chặn) nằm trong danh sách chi tiết, không lặp ở đây. Vít trí đi kèm khoá trục, puly và gối không tính.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Loại</th><th>Cỡ</th><th class="num">Số lượng</th><th>Dùng ở</th></tr></thead>
+    <tbody id="bomRows"><tr><td colspan="4">Đang đọc từ CAD…</td></tr></tbody>
+  </table></div>
+</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+// Kiểu ghép trong CAD (kind) gom thành 8 nhóm màu
+const KIND={weld:'weld',bolt:'bolt',tapped:'tapped',screw:'screw',set_screw:'tapped',rivet:'rivet',adhesive:'glue',cable_tie:'tie',press:'fit',thread:'fit',one_piece:'fit',pin:'fit'};
+const KV={weld:'Hàn',bolt:'Bulông + đai ốc',tapped:'Vít vào lỗ ren, đai ốc cấy',screw:'Vít gỗ, vít tự ren',rivet:'Rivet',glue:'Keo, băng keo',tie:'Dây rút',fit:'Đóng khít, vặn ren, in liền'};
+const KORDER=['weld','bolt','tapped','screw','rivet','glue','tie','fit'];
+const STATUS={drawn:'Lỗ có trong CAD',positions:'Có vị trí, khoan khi lắp',count:'Chỉ đếm số lượng'};
+const AREA={head:'Cụm đầu và phễu',tilt_fixed:'Cơ cấu nghiêng',yaw:'Cơ cấu nghiêng',tilt_plate:'Cơ cấu nghiêng',brain:'Bệ màn hình',frame:'Khung thân',skin:'Vỏ inox',drawers:'Ngăn kéo',bins:'Thùng gấp'};
+const AORDER=['Khung thân','Vỏ inox','Ngăn kéo','Thùng gấp','Cụm đầu và phễu','Cơ cấu nghiêng','Bệ màn hình','Khác'];
+const SHELLY=n=>/^(side_panel|back_panel|head_panel_front|top_cover|drawer_front|bin_|intake_funnel|flexible_throat|head_shell_ring|display_console|tft_screen)/.test(n);
+const JV={deck_to_seat_board:'Mâm đầu vào tấm đỡ đầu',orientation_pin_in_deck:'Chốt định hướng vặn vào mâm',locating_ring_to_deck:'Vòng định tâm vào mâm, qua 4 ke',
+  locating_ring_seam:'Mối nối vòng định tâm',shell_ring_to_deck:'Vòng vỏ đầu vào mâm, qua 4 ke',shell_ring_to_collar:'Vòng vỏ đầu vào vành miệng phễu, qua 4 ke',shell_ring_seam:'Mối nối vòng vỏ đầu',
+  funnel_cone_seams:'Hai mối nối thân phễu',funnel_cone_to_lip:'Thân phễu vào vành cổ',funnel_cone_to_collar:'Thân phễu vào vành miệng',funnel_lip_seam:'Mối nối vành cổ phễu',skirt_to_lip:'Diềm PVC vào vành cổ',
+  hanger_inserts:'Nút ren vào 2 đầu thanh treo',hanger_to_deck:'Thanh treo vào mâm',hanger_to_beam:'Thanh treo vào thanh chữ thập',beam_splice:'Thanh chữ thập vào tấm nối',beam_feet:'Đệm cao su dưới thanh chữ thập',
+  tilt_stop_bumpers:'Cao su trên cục chặn 47°',yaw_stop_pin_in_platform:'Chốt chặn ±70° vặn vào đế xoay',cable_channel_on_bearing:'Rãnh cáp kẹp chung bulông gối trên',drum_to_platform:'Trống cáp vào đế xoay',
+  cable_clip_to_platform:'Kẹp cáp vào đế xoay',motor_cable_ties:'Buộc dây servo dọc thanh treo, thanh chữ thập',supplied_set_screws:'Vít trí có sẵn: khoá trục, puly, gối KP08',imu_under_plate:'IMU dán dưới đĩa',
+  sensor_pod_and_arm:'Hộp cảm biến và tay đỡ in liền',sensor_arm_to_lip:'Tay đỡ cảm biến vào vành cổ',hcsr04_in_pod:'HC-SR04 vào hộp',
+  console_to_collar:'Bệ màn vào vành miệng phễu',display_to_console:'Màn Guition vào bệ',console_halves:'Ghép 2 nửa bệ màn',camera_in_window:'Camera vào ô kính',led_strip_in_groove:'Dải LED vào rãnh',
+  esp32_s3_board_in_console:'Board ESP32-S3 CAM vào bệ',servo_buck_xl4015_in_console:'Mạch hạ áp XL4015 vào bệ',logic_buck_5v_in_console:'Mạch hạ áp 5 V vào bệ',relay_module_in_console:'Relay vào bệ',
+  led_switch_xy_mos_in_console:'Mạch XY-MOS bật LED vào bệ',terminal_4p_in_console:'Cầu đấu 4 cực vào bệ',divider_board_in_console:'Bo chia áp vào bệ',supply_capacitor_in_console:'Tụ nguồn vào bệ',
+  foot_plate_nut_weld:'Hàn đai ốc M8 dưới bản đế chân',foot_into_plate:'Chân tăng chỉnh vặn vào đai ốc hàn','rail_to_post_M8x12':'Thanh ngang vào cột','rail_to_post_M8x15':'Thanh dưới kẹp tai bản đế vào cột',
+  floor_board_to_rail:'Tấm sàn Formex vào thanh dưới',seat_board_to_rail:'Tấm đỡ đầu Formex vào thanh trên',slide_mount_to_post:'Tấm bắt ray vào cột, qua ống cách 18',skins_to_frame:'Vỏ inox vào khung',top_cover_to_frame:'Nắp inox vào cột',
+  tray_walls_to_floor:'Thành khay vào cạnh đáy Formex',tray_corners:'Ke góc sau khay',stiffener_to_tray:'Nẹp gân vào thành khay',stiffener_to_front:'Nẹp gân dán vào mặt ngăn kéo',
+  switch_to_bracket:'Công tắc ngăn kéo vào giá',switch_bracket_to_floor:'Giá công tắc vào sàn',outer_slide_to_plate:'Ray ngoài vào tấm bắt ray',slides_to_tray:'Ray vào thành khay',
+  inner_slides_through_wall:'Hai ray trong xuyên vách giữa',center_wall_clips_through:'Ke chân vách giữa, bulông xuyên',center_wall_clips_to_floor:'Ke chân vách giữa vào sàn',bin_rivets:'Rivet 4 thùng gấp',
+  yaw_servo_to_shelf:'Tai MG90S lên kệ',yaw_horn_to_hub:'Horn chữ thập vào miếng nối',yaw_bracket_to_beam:'Giá chữ C vào thanh chữ thập và tấm nối',yaw_bearing_lower_to_bracket:'Gối KFL08 dưới vào giá',
+  yaw_bearing_upper_to_bracket:'Gối KFL08 trên vào giá',yaw_flange_to_platform:'Mặt bích vào đế xoay',yaw_flange_set_screw:'Vít trí mặt bích lên trục',hinge_post_to_platform:'Trụ vào đế xoay',
+  hinge_block_to_post:'Gối KP08 vào trụ',plate_lug_set_screw:'Vít trí tai đĩa lên trục bản lề',tilt_servo_bracket_to_platform:'Giá MG996R vào đế xoay',tilt_servo_to_bracket:'Tai MG996R vào giá',
+  tilt_horn_to_adapter:'Horn vào miếng nối puly',plate_to_lug:'Đĩa vào 2 tai',tilt_stop_pad_to_platform:'Cục chặn vào đế xoay'};
+function jName(id){if(JV[id])return JV[id];
+  let m=/^stiffener_(left|right)_(\d)_to_(tray|front)$/.exec(id);if(m)return JV['stiffener_to_'+m[3]]+' ('+(m[1]==='left'?'trái':'phải')+' '+m[2]+')';
+  m=/^(.*)_(left|right)$/.exec(id);if(m&&JV[m[1]])return JV[m[1]]+' ('+(m[2]==='left'?'trái':'phải')+')';return id;}
+const HV={'hex bolt':'Bulông lục giác','button bolt':'Bulông đầu tròn lục giác chìm','countersunk bolt':'Bulông đầu bằng','carriage bolt':'Bulông cổ vuông (bulông kệ)','set screw':'Vít trí',
+  'self-tapping screw':'Vít tự ren','wood screw':'Vít gỗ (bắt Formex)','nut':'Đai ốc','washer':'Long đền','large washer':'Long đền to','blind rivet':'Rivet nhôm','heat-set insert':'Đai ốc cấy nhiệt',
+  'insert nut':'Đai ốc cấy (tán cấy)','spacer sleeve':'Ống cách','VHB tape':'Băng keo VHB','cable tie':'Dây rút','rubber bumper':'Đệm cao su dán','hot glue':'Keo nến'};
+const sz=s=>s.replace(/ x /g,' × ').replace('aluminium','nhôm').replace('stainless','inox').replace(', for 15 mm board',', cho tấm 15 mm').replace('mm wide, metres','mm, tính mét')
+  .replace('mm piece','mm, 1 miếng').replace('self-adhesive','tự dính').replace(/^stick$/,'thỏi').replace('comes with the part','có sẵn').replace(/(\d)\.(\d)/g,'$1,$2');
+const hwText=h=>h.map(x=>(x.per_point!==1?String(x.per_point).replace('.',',')+' ':'')+(HV[x.item]||x.item)+' '+sz(x.size)).join(' + ');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const match=(pat,n)=>pat.endsWith('*')?n.startsWith(pat.slice(0,-1)):n===pat;
+
+// ---------- 3D: toạ độ CAD (Z lên, mm) ----------
+const box=document.getElementById('box'),hud=document.getElementById('hud'),tip=document.getElementById('tip');
+let renderer=null;try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){}
+if(!renderer)document.getElementById('loading').textContent='Trình duyệt không mở được WebGL. Danh sách mối ghép và bảng vật tư vẫn đọc được.';
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(30,4/3,10,12000);let controls=null;
+if(renderer){renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.outputEncoding=THREE.sRGBEncoding;box.prepend(renderer.domElement);
+  controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;}
+const HOME={p:[1650,1500,1900],t:[0,560,0]};
+function home(){camera.position.set(...HOME.p);if(controls){controls.target.set(...HOME.t);controls.update();}}home();
+scene.add(new THREE.HemisphereLight(0xffffff,0x56636a,.85));
+const sun=new THREE.DirectionalLight(0xffffff,.55);sun.position.set(800,2200,1200);scene.add(sun);
+const fl=new THREE.DirectionalLight(0xffffff,.25);fl.position.set(-900,600,-800);scene.add(fl);
+const root=new THREE.Group();root.rotation.x=-Math.PI/2;scene.add(root);
+
+let joints=[],parts=[],dots=[],sel=null,showShell=false;const on=Object.fromEntries(KORDER.map(k=>[k,true]));
+const dotGeo=new THREE.SphereGeometry(1,10,8);
+function paint(){
+  const C=n=>new THREE.Color(css(n)).convertSRGBToLinear(),SEL=C('--sel'),GH=C('--ghost');
+  const selParts=sel?sel.parts:null;
+  parts.forEach(p=>{const hit=selParts&&selParts.some(pat=>match(pat,p.name));let op=1,col=p.base;
+    if(sel){col=hit?SEL:GH;op=hit?1:.16;}else if(SHELLY(p.name)&&!showShell){op=.14;}
+    p.m.color.copy(col);p.m.opacity=op;p.m.transparent=op<1;p.m.depthWrite=op===1;p.m.needsUpdate=true;});
+  dots.forEach(d=>{const k=KIND[d.j.kind]||'fit',mine=sel===d.j;d.o.visible=on[k]&&(!sel||mine);d.m.color.copy(C('--k-'+k));d.o.scale.setScalar(mine?7:(k==='weld'?9:4.5));});
+  if(renderer)renderer.setClearColor(new THREE.Color(css('--scene')));
+}
+function focusSel(){if(!controls)return;const vis=dots.filter(d=>d.o.visible&&sel&&d.j===sel).map(d=>d.o);
+  const ps=sel?parts.filter(p=>sel.parts.some(pat=>match(pat,p.name))).map(p=>p.o):[];const objs=vis.length?vis:ps;
+  if(!objs.length){home();return;}root.updateMatrixWorld(true);const b=new THREE.Box3();objs.forEach(o=>b.expandByObject(o));
+  const c=b.getCenter(new THREE.Vector3()),r=Math.max(b.getSize(new THREE.Vector3()).length()/2,80);
+  const dir=camera.position.clone().sub(controls.target).normalize();controls.target.copy(c);
+  camera.position.copy(c.clone().add(dir.multiplyScalar(r/Math.sin(camera.fov*Math.PI/360)*1.25)));controls.update();}
+function select(j){sel=j;document.querySelectorAll('.jt').forEach(b=>b.setAttribute('aria-current',j&&b.dataset.id===j.id?'true':'false'));
+  hud.textContent=j?jName(j.id)+' · '+KV[KIND[j.kind]||'fit']+' · '+j.points+' điểm':'Cả thùng · chấm màu là điểm ghép, vỏ, phễu và thùng hiện mờ';paint();}
+function fromHash(){const m=/^#j-([a-z0-9-]+)$/.exec(location.hash);const j=m&&joints.find(x=>x.id.replace(/_/g,'-').toLowerCase()===m[1]);select(j||null);return !!j;}
+window.addEventListener('hashchange',()=>{if(fromHash())focusSel();});
+document.getElementById('btnAll').addEventListener('click',()=>{history.replaceState(null,'',location.pathname+location.search);select(null);home();});
+document.getElementById('btnFocus').addEventListener('click',focusSel);
+document.getElementById('btnShell').addEventListener('click',e=>{showShell=!showShell;e.currentTarget.setAttribute('aria-pressed',showShell);paint();});
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paint);}catch(e){}
+new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+if(renderer){const ray=new THREE.Raycaster(),v=new THREE.Vector2(),cv=renderer.domElement;
+  cv.addEventListener('pointermove',e=>{const rc=cv.getBoundingClientRect();v.set((e.clientX-rc.left)/rc.width*2-1,-(e.clientY-rc.top)/rc.height*2+1);ray.setFromCamera(v,camera);
+    const cand=dots.filter(d=>d.o.visible).map(d=>d.o).concat(parts.filter(p=>p.m.opacity>.5).map(p=>p.o));
+    const h=ray.intersectObjects(cand,false)[0];
+    if(h){tip.hidden=false;tip.textContent=h.object.userData.label;tip.style.left=(e.clientX-rc.left)+'px';tip.style.top=(e.clientY-rc.top)+'px';}else tip.hidden=true;});
+  cv.addEventListener('pointerleave',()=>tip.hidden=true);
+  cv.addEventListener('click',()=>{const t=tip.hidden?null:tip.textContent;const d=t&&dots.find(x=>x.o.visible&&x.o.userData.label===t);if(d)location.hash='j-'+d.j.id.replace(/_/g,'-').toLowerCase();});}
+function resize(){if(!renderer)return;const w=box.clientWidth,h=box.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+new ResizeObserver(resize).observe(box);resize();
+
+// ---------- Ô đếm theo kiểu ghép, danh sách, bảng vật tư ----------
+function build(dims,mesh){
+  joints=dims.joints||[];
+  const group={};(mesh||[]).forEach(p=>group[p.name]=p.group);
+  const areaOf=j=>{if(/slide|tray|stiffener|switch/.test(j.id))return 'Ngăn kéo';for(const pat of j.parts){const n=Object.keys(group).find(n=>match(pat,n));if(n)return AREA[group[n]]||'Khác';}return 'Khác';};
+  const tot={};joints.forEach(j=>{const k=KIND[j.kind]||'fit';tot[k]=(tot[k]||0)+j.points;});
+  const all=joints.reduce((s,j)=>s+j.points,0);
+  document.getElementById('lead').textContent='CAD có '+joints.length+' mối ghép, '+all+' điểm ghép, trong đó '+(dims.weld_points||0)+' điểm hàn. Mỗi chấm trên hình 3D là một điểm có vị trí, tô màu theo cách ghép. Bấm ô màu để bật, tắt từng kiểu; bấm một mối trong danh sách để làm sáng các chi tiết nó nối.';
+  const kb=document.getElementById('kinds');kb.innerHTML='';
+  KORDER.forEach(k=>{const b=document.createElement('button');b.type='button';b.className='kind';b.style.setProperty('--c','var(--k-'+k+')');b.setAttribute('aria-pressed','true');
+    b.innerHTML='<b>'+(tot[k]||0)+'</b><span>'+KV[k]+'</span>';b.addEventListener('click',()=>{on[k]=!on[k];b.setAttribute('aria-pressed',on[k]);paint();});kb.appendChild(b);});
+  const byArea={};joints.forEach(j=>{(byArea[areaOf(j)]=byArea[areaOf(j)]||[]).push(j);});
+  const list=document.getElementById('list');list.innerHTML='';
+  AORDER.filter(a=>byArea[a]).forEach(a=>{const sec=document.createElement('div');sec.className='area';
+    const n=byArea[a].reduce((s,j)=>s+j.points,0);sec.innerHTML='<h3>'+esc(a)+' <small>'+n+' điểm</small></h3>';
+    byArea[a].sort((x,y)=>KORDER.indexOf(KIND[x.kind]||'fit')-KORDER.indexOf(KIND[y.kind]||'fit')).forEach(j=>{
+      const k=KIND[j.kind]||'fit',b=document.createElement('button');b.type='button';b.className='jt';b.dataset.id=j.id;b.style.setProperty('--c','var(--k-'+k+')');
+      const tags='<span class="tag">'+STATUS[j.status]+'</span>'+(j.proposed?'<span class="tag new">Mới đề xuất 01/11</span>':'');
+      b.innerHTML='<i></i><span class="nm">'+esc(jName(j.id))+'</span><span class="n">'+j.points+'</span><span class="hw">'+esc(KV[k]+(j.hardware.length?': '+hwText(j.hardware):''))+'</span><span class="tags">'+tags+'</span>'+(j.note?'<span class="note">'+esc(j.note)+'</span>':'');
+      b.addEventListener('click',()=>{location.hash='j-'+j.id.replace(/_/g,'-').toLowerCase();});sec.appendChild(b);});
+    list.appendChild(sec);});
+  const tb=document.getElementById('bomRows');tb.innerHTML='';
+  (dims.hardware_bom||[]).slice().sort((a,b)=>(HV[a.item]||a.item).localeCompare(HV[b.item]||b.item,'vi')||a.size.localeCompare(b.size,undefined,{numeric:true})).forEach(e=>{
+    const tr=document.createElement('tr');const uses=[...new Set(e.joints)].map(jName);
+    tr.innerHTML='<td>'+esc(HV[e.item]||e.item)+'</td><td>'+esc(sz(e.size))+'</td><td class="num">'+String(e.quantity).replace('.',',')+'</td><td class="use">'+esc(uses.join('; '))+'</td>';tb.appendChild(tr);});
+  if(mesh&&renderer){
+    mesh.forEach(p=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p.vertices.flat(),3));g.setIndex(p.triangles.flat());g.computeVertexNormals();
+      const m=new THREE.MeshStandardMaterial({roughness:.6,metalness:.1,side:THREE.DoubleSide});const o=new THREE.Mesh(g,m);o.userData.label=p.name;root.add(o);
+      parts.push({name:p.name,o,m,base:new THREE.Color(...p.color).convertSRGBToLinear()});});
+    joints.forEach(j=>j.positions_mm.forEach(pt=>{const m=new THREE.MeshBasicMaterial();const o=new THREE.Mesh(dotGeo,m);o.position.set(...pt);o.userData.label=jName(j.id);root.add(o);dots.push({o,m,j});}));
+    document.getElementById('loading').hidden=true;}
+  if(fromHash())focusSel();else select(null);
+}
+Promise.all([fetch('b_frame/dimensions.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}),
+  fetch('b_frame/mesh.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).catch(()=>null)]).then(([dims,mesh])=>build(dims,mesh))
+  .catch(err=>{document.getElementById('loading').textContent='Không tải được dữ liệu CAD ('+err.message+'). Tải lại trang để thử lại.';});
+if(renderer)(function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);})();
+})();
+</script>

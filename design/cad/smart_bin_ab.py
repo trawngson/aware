@@ -18,6 +18,46 @@ from pathlib import Path
 from smart_bin import Part, ROOT, box, cq, tube, validate
 
 DIRECTIONS = (45, 135, 225, 315)
+# How each board in the console is held: number of points and the hardware at each point.
+M3_INSERT = [("hex bolt", "M3 x 6", 1), ("heat-set insert", "M3", 1)]
+BOARD_MOUNTS = {
+    "esp32_s3_board": (2, [("self-tapping screw", "M2 x 6", 1)]),
+    "servo_buck_xl4015": (4, M3_INSERT),
+    "logic_buck_5v": (2, M3_INSERT),
+    "relay_module": (4, M3_INSERT),
+    "led_switch_xy_mos": (2, M3_INSERT),
+    "terminal_4p": (2, [("self-tapping screw", "M3 x 10", 1)]),
+    "divider_board": (2, M3_INSERT),
+    "supply_capacitor": (1, [("cable tie", "100 x 2.5 mm", 1)]),
+}
+SKIN_SCREW = [("button bolt", "M4 x 20 stainless", 1), ("spacer sleeve", "M4, 6 mm", 1), ("large washer", "M4", 1),
+              ("nut", "M4", 1)]
+# Joints whose bolts are recorded one by one (start point, axis, length) by head() and body_b():
+# how each is made and the hardware at every point. "*" takes the bolt size from the record.
+FASTENER_JOINTS = {
+    "yaw_servo_to_shelf": ("bolt", ["yaw_servo", "yaw_bracket"], [("hex bolt", "*", 1), ("nut", "M2", 1)]),
+    "yaw_bracket_to_beam": ("bolt", ["yaw_bracket", "joint_beam", "beam_splice_plate"],
+                            [("countersunk bolt", "*", 1), ("nut", "M5", 1), ("washer", "M5", 1)]),
+    "yaw_bearing_lower_to_bracket": ("bolt", ["yaw_bearing_lower", "yaw_bracket"], [("hex bolt", "*", 1), ("nut", "M4", 1)]),
+    "yaw_bearing_upper_to_bracket": ("bolt", ["yaw_bearing_upper", "yaw_bracket", "yaw_cable_channel"],
+                                     [("hex bolt", "*", 1), ("nut", "M4", 1)]),
+    "yaw_horn_to_hub": ("screw", ["yaw_servo_horn", "yaw_hub"], [("self-tapping screw", "*", 1)]),
+    "yaw_flange_set_screw": ("set_screw", ["yaw_flange", "yaw_shaft"], [("set screw", "comes with the part", 1, False)]),
+    "yaw_flange_to_platform": ("tapped", ["yaw_flange", "yaw_platform"], [("hex bolt", "*", 1)]),
+    "tilt_servo_bracket_to_platform": ("tapped", ["tilt_servo_bracket", "yaw_platform"], [("countersunk bolt", "*", 1)]),
+    "tilt_stop_pad_to_platform": ("tapped", ["tilt_stop_pad_*", "yaw_platform"], [("hex bolt", "*", 1)]),
+    "hinge_post_to_platform": ("tapped", ["hinge_post_*", "yaw_platform"], [("hex bolt", "*", 1)]),
+    "hinge_block_to_post": ("tapped", ["hinge_block_*", "hinge_post_*"], [("hex bolt", "*", 1)]),
+    "tilt_servo_to_bracket": ("bolt", ["tilt_servo", "tilt_servo_bracket"], [("hex bolt", "*", 1), ("nut", "M3", 1)]),
+    "tilt_horn_to_adapter": ("tapped", ["tilt_servo_horn", "tilt_pulley_adapter"], [("hex bolt", "*", 1)]),
+    "plate_lug_set_screw": ("set_screw", ["plate_lug_*", "hinge_shaft"], [("set screw", "*", 1)]),
+    "plate_to_lug": ("tapped", ["tipping_plate", "plate_lug_*"], [("countersunk bolt", "*", 1), ("heat-set insert", "M4", 1)]),
+    "rail_to_post": ("bolt", ["rail_*", "post_*"], [("carriage bolt", "*", 1), ("nut", "M8", 1)]),
+    "floor_board_to_rail": ("bolt", ["floor_plate", "rail_bottom_*"], [("hex bolt", "*", 1), ("large washer", "M8", 1), ("nut", "M8", 1)]),
+    "seat_board_to_rail": ("bolt", ["head_seat_plate", "rail_seat_*"], [("hex bolt", "*", 1), ("large washer", "M8", 1), ("nut", "M8", 1)]),
+    "slide_mount_to_post": ("bolt", ["slide_mount_*", "post_*"],
+                            [("hex bolt", "*", 1), ("spacer sleeve", "M5, 18 mm", 1), ("nut", "M5", 1), ("washer", "M5", 2)]),
+}
 
 
 def cylinder(radius, length, origin, direction):
@@ -112,8 +152,49 @@ def belt_loop(to3d, extrude, big_r, small_r, center_z, c, gap=.3, thickness=1.2)
     return cq.Solid.extrudeLinear(face, cq.Vector(*extrude))
 
 
-def head(p, add):
+def polar(r, degrees, z=0.0):
+    a = math.radians(degrees)
+    return (r * math.cos(a), r * math.sin(a), z)
+
+
+def joinery_holes(p):
+    """Hole centres (x, y) shared by the head parts and their flat patterns: the deck bolts into the
+    seat board, the rivets of the ring clips, and the console bolts through the funnel collar."""
+    j = p["joinery"]
+    leg = j["clip_angle_mm"][0]
+    shell_in = p["deck_outer_radius_mm"] - p["head_shell_wall_mm"]
+    ring_in = p["locating_ring_outer_radius_mm"] - p["locating_ring_wall_mm"]
+    xy = lambda r, angles: [polar(r, a)[:2] for a in angles]
+    return {"deck_bolts": xy(j["deck_bolt_radius_mm"], j["deck_bolt_angles"]),
+            "shell_clip_rivets": xy(shell_in - leg / 2 - 1, j["shell_clip_angles"]),
+            "locating_clip_rivets": xy(ring_in - leg / 2 - 1, j["locating_clip_angles"]),
+            "console_bolts": xy(j["console_bolt_radius_mm"], j["console_bolt_angles"])}
+
+
+def angle_clip(theta, r_face, z_face, up, leg, t, width):
+    """Small aluminium angle inside a ring: one leg against the ring's inner face, the other flat
+    on the deck (up=1) or under the deck or collar (up=-1)."""
+    r_face = math.sqrt(r_face ** 2 - (width / 2) ** 2) - .05    # the flat leg touches the curved face at its ends
+    v = box(t, width, leg, (r_face - t / 2, 0, z_face + up * leg / 2))
+    h = box(leg, width, t, (r_face - leg / 2, 0, z_face + up * t / 2))
+    return v.fuse(h).rotate((0, 0, 0), (0, 0, 1), theta)
+
+
+def seg_dist(pt, a, b):
+    """Plan distance from a point to a cable segment."""
+    (px, py), (ax, ay), (bx, by) = pt[:2], a[:2], b[:2]
+    dx, dy = bx - ax, by - ay
+    t = max(0, min(1, ((px - ax) * dx + (py - ay) * dy) / ((dx * dx + dy * dy) or 1)))
+    return math.hypot(px - ax - t * dx, py - ay - t * dy)
+
+
+def head(p, add, joint=None):
     """Shared head module. Returns geometry facts used by the bodies and checks."""
+    J = joint or (lambda *a, **k: None)
+    j = p["joinery"]
+    jh = joinery_holes(p)
+    leg, clip_t, clip_w = j["clip_angle_mm"]
+    rivet = [("blind rivet", "Ø4 x 8 aluminium", 1)]
     top = p["rim_height_mm"]
     deck_z, deck_t = p["head_deck_height_mm"], p["deck_thickness_mm"]
     deck_ro, deck_ri = p["deck_outer_radius_mm"], p["deck_inner_radius_mm"]
@@ -157,50 +238,132 @@ def head(p, add):
     cab_holes = lambda y, z0, h: cylinder(cab_r + .75, h, (-cab_dx, y, z0), (0, 0, 1)).fuse(
         cylinder(cab_r + .75, h, (cab_dx, y, z0), (0, 0, 1)))
 
-    # Deck ring: the one interface every body must carry at deck_z.
-    add("head_deck", tube(deck_ro, deck_ri, deck_z, deck_t).cut(cab_holes(cab_hang_y, deck_z, deck_t)), metal, "head", lift,
-        "Head deck ring carrying all head loads; rests on the body at the deck height",
-        "laser", "Aluminium sheet 3 mm")
+    # Deck ring: the one interface every body must carry at deck_z. Holes: hanger bolts, four bolts
+    # into the seat board, the rivets of the ring clips and the tapped hole of the orientation pin.
+    hs, hr, reach = p["hanger_size_mm"], p["hanger_radius_mm"], p["spider_reach_mm"]
     pin_r = p["orientation_pin_radius_mm"]
+    deck = tube(deck_ro, deck_ri, deck_z, deck_t).cut(cab_holes(cab_hang_y, deck_z, deck_t))
+    for (x, y), r in ([(xy, 3.25) for xy in jh["deck_bolts"]] + [(polar(hr, a)[:2], 3.25) for a in (0, 90, 180, 270)]
+                      + [(xy, 2.05) for xy in jh["shell_clip_rivets"] + jh["locating_clip_rivets"]]
+                      + [((0, pin_r), 2.5)]):
+        deck = deck.cut(cylinder(r, deck_t, (x, y, deck_z), (0, 0, 1)))
+    add("head_deck", deck, metal, "head", lift,
+        "Head deck ring carrying all head loads; rests on the seat board, 4 bolts into inserts in that board",
+        "laser", "Aluminium sheet 3 mm")
+    J("deck_to_seat_board", "tapped", ["head_deck", "head_seat_plate"],
+      [("button bolt", "M6 x 16", 1), ("washer", "M6", 1), ("insert nut", "M6, for 15 mm board", 1)],
+      positions=[(*xy, deck_z + deck_t) for xy in jh["deck_bolts"]], proposed=True,
+      note="Undo these four bolts to lift the head out")
     add("orientation_pin", cylinder(3, 25, (0, pin_r, deck_z - 25), (0, 0, 1)), metal, "head", lift,
-        "Single pin at the rear of the deck; the head seats in one orientation only", "buy",
-        "Steel dowel 6 x 25")
+        "Orientation pin: an M6 bolt screwed down into the tapped deck, its shank below the deck goes into "
+        "the seat board's rear hole, so the head seats one way only", "buy", "Hex bolt M6 x 30, fully threaded")
+    J("orientation_pin_in_deck", "tapped", ["orientation_pin", "head_deck"], [],
+      positions=[(0, pin_r, deck_z + deck_t)], proposed=True, note="Deck hole tapped M6; the bolt itself is the pin")
     ring_ro, ring_w = p["locating_ring_outer_radius_mm"], p["locating_ring_wall_mm"]
-    add("head_locating_ring", tube(ring_ro, ring_ro - ring_w, deck_z - p["locating_ring_depth_mm"],
+    ring_in = ring_ro - ring_w
+    add("head_locating_ring", tube(ring_ro, ring_in, deck_z - p["locating_ring_depth_mm"],
                                    p["locating_ring_depth_mm"]),
         charcoal, "head", lift, "Spigot under the deck that centres the head in the body",
         "laser", "PP sheet 3 mm, rolled and riveted")
+    for i, a in enumerate(j["locating_clip_angles"], 1):
+        add(f"locating_ring_clip_{i}", angle_clip(a, ring_in, deck_z, -1, leg, clip_t, clip_w), metal, "head", lift,
+            "Angle clip holding the locating ring under the deck: one rivet into the ring, one into the deck",
+            "cut", f"Aluminium angle {leg:.0f} x {leg:.0f} x {clip_t:.0f}, {clip_w:.0f} mm long")
+    J("locating_ring_to_deck", "rivet", ["head_locating_ring", "locating_ring_clip_*", "head_deck"], rivet,
+      positions=[polar(ring_in, a, deck_z - .6 * leg) for a in j["locating_clip_angles"]]
+      + [(*xy, deck_z + deck_t) for xy in jh["locating_clip_rivets"]], status="positions", proposed=True,
+      note="Deck holes are cut; drill the ring through the clip on assembly")
+    J("locating_ring_seam", "rivet", ["head_locating_ring"], rivet, count=2, status="count",
+      note="Overlap of the rolled strip")
     shell_w = p["head_shell_wall_mm"]
-    add("head_shell_ring", tube(deck_ro, deck_ro - shell_w, deck_z + deck_t, shell_top - deck_z - deck_t),
-        light, "head", lift, "Raised wall between deck and funnel collar",
+    shell_in = deck_ro - shell_w
+    add("head_shell_ring", tube(deck_ro, shell_in, deck_z + deck_t, shell_top - deck_z - deck_t),
+        light, "head", lift, "Raised wall between deck and funnel collar, held by 4 angle clips at each edge",
         "laser", "Aluminium composite 3 mm, rolled")
+    for i, a in enumerate(j["shell_clip_angles"], 1):
+        for tag, z_face, up in (("low", deck_z + deck_t, 1), ("high", shell_top, -1)):
+            add(f"shell_ring_clip_{tag}_{i}", angle_clip(a, shell_in, z_face, up, leg, clip_t, clip_w), metal, "head",
+                lift, f"Angle clip joining the shell ring to the {'deck' if tag == 'low' else 'funnel collar'}",
+                "cut", f"Aluminium angle {leg:.0f} x {leg:.0f} x {clip_t:.0f}, {clip_w:.0f} mm long")
+    J("shell_ring_to_deck", "rivet", ["head_shell_ring", "shell_ring_clip_low_*", "head_deck"], rivet,
+      positions=[polar(shell_in, a, deck_z + deck_t + .6 * leg) for a in j["shell_clip_angles"]]
+      + [(*xy, deck_z + deck_t) for xy in jh["shell_clip_rivets"]], status="positions", proposed=True,
+      note="Deck holes are cut; drill the ring through the clip on assembly")
+    J("shell_ring_to_collar", "rivet", ["head_shell_ring", "shell_ring_clip_high_*", "intake_funnel"], rivet,
+      positions=[polar(shell_in, a, shell_top - .6 * leg) for a in j["shell_clip_angles"]]
+      + [(*xy, top) for xy in jh["shell_clip_rivets"]], status="positions", proposed=True,
+      note="Collar holes are cut; drill the ring through the clip on assembly")
+    J("shell_ring_seam", "rivet", ["head_shell_ring"], rivet, count=3, status="count",
+      note="20 mm overlap of the rolled strip")
     funnel = revolve([(mouth_r, top), (deck_ro, top), (deck_ro, shell_top),
                       (mouth_r + fw - collar_t / slope, shell_top),
                       (throat_r + fw, lip_top), (throat_r + fw, lip_bottom),
                       (throat_r, lip_bottom), (throat_r, lip_top)])
     funnel = funnel.cut(cab_holes(cab_shell_y, shell_top - 2, collar_t + 4))
+    for (x, y), r in [(xy, 2.25) for xy in jh["console_bolts"]] + [(xy, 2.05) for xy in jh["shell_clip_rivets"]]:
+        funnel = funnel.cut(cylinder(r, collar_t, (x, y, shell_top), (0, 0, 1)))
     add("intake_funnel", funnel, (.78, .81, .80), "head", lift,
         "Collar, cone and throat lip; cone, collar and lip band are cut flat and riveted",
         "laser", "PP sheet 2 mm")
+    # Rivet counts of the rolled funnel at the set pitch: two cone seams, cone to lip band and
+    # cone to collar round the circle, and the lip band seam.
+    pitch = j["rivet_pitch_mm"]
+    slant = math.hypot(mouth_r - throat_r, p["funnel_height_mm"])
+    J("funnel_cone_seams", "rivet", ["intake_funnel"], rivet, count=2 * (math.ceil(slant / pitch) + 1), status="count",
+      note=f"Two seams of the cone halves, 15 mm overlap, about {pitch:.0f} mm apart")
+    J("funnel_cone_to_lip", "rivet", ["intake_funnel"], rivet, count=math.ceil(2 * math.pi * throat_r / pitch),
+      status="count", note=f"Round the throat, about {pitch:.0f} mm apart")
+    J("funnel_cone_to_collar", "rivet", ["intake_funnel"], rivet, count=math.ceil(2 * math.pi * mouth_r / pitch),
+      status="count", note=f"Round the mouth, about {pitch:.0f} mm apart")
+    J("funnel_lip_seam", "rivet", ["intake_funnel"], rivet, count=2, status="count")
     fringe = (cq.Workplane("XY").polarArray(skirt_r + 1, 0, 360, strips)
               .rect(2, p["skirt_strip_width_mm"]).extrude(lip_bottom - plate_z)
               .translate((0, 0, plate_z))).vals()
     add("flexible_throat_skirt", tube(skirt_r + 2, skirt_r, lip_bottom - 8, 8).fuse(*fringe),
         (.14, .15, .16), "head", lift, "Flexible strip fringe under the throat lip",
         "laser", "Soft PVC strip curtain 2 mm")
+    J("skirt_to_lip", "rivet", ["flexible_throat_skirt", "intake_funnel"], rivet,
+      count=math.ceil(2 * math.pi * skirt_r / pitch), status="count",
+      note=f"Strip curtain riveted round the lip band, about {pitch:.0f} mm apart")
 
-    # Hangers on the four axes run above the dividers, never over a bin opening.
-    hs, hr, reach = p["hanger_size_mm"], p["hanger_radius_mm"], p["spider_reach_mm"]
+    # Hangers on the four axes run above the dividers, never over a bin opening. Each square tube
+    # takes a threaded insert in both ends; one M6 bolt down through the deck and one up through
+    # the beam hold it, so nothing is welded.
     assert math.hypot(hr + hs / 2, hs / 2) < ring_ro - ring_w
+    ti = j["tube_insert_mm"]
+    fl_i, dep = ti["flange"], ti["depth"]
+    hang_len = deck_z - spider_top - 2 * fl_i
+    hanger_tops, hanger_bottoms, insert_pts = [], [], []
     for i, a in enumerate((0, 90, 180, 270), 1):
-        c, s = math.cos(math.radians(a)), math.sin(math.radians(a))
-        add(f"hanger_{i}", box(hs, hs, deck_z - spider_top, (hr * c, hr * s, (deck_z + spider_top) / 2)),
-            metal, "head", lift, "Square aluminium tube hanging the joint beam from the deck",
-            "cut", "Aluminium square tube 30 x 30 x 2")
+        cx, cy, _ = polar(hr, a)
+        zc = (deck_z + spider_top) / 2
+        add(f"hanger_{i}", box(hs, hs, hang_len, (cx, cy, zc)).cut(box(hs - 4, hs - 4, hang_len, (cx, cy, zc))),
+            metal, "head", lift, f"Square aluminium tube hanging the joint beam from the deck; cut {hang_len:.0f} mm, "
+            "a threaded insert in each end", "cut", "Aluminium square tube 30 x 30 x 2")
+        for end, z_fl, z_body in (("top", deck_z - fl_i, deck_z - fl_i - dep), ("bottom", spider_top, spider_top + fl_i)):
+            plug = box(hs, hs, fl_i, (cx, cy, z_fl + fl_i / 2)).fuse(
+                box(hs - 4.2, hs - 4.2, dep, (cx, cy, z_body + dep / 2))).cut(
+                cylinder(2.5, fl_i + dep, (cx, cy, min(z_fl, z_body)), (0, 0, 1)))
+            add(f"hanger_insert_{end}_{i}", plug, charcoal, "head", lift,
+                "Threaded insert pressed into the tube end; its flange sits between the tube and the "
+                + ("deck" if end == "top" else "beam"), "buy", f"Square tube insert 30 x 30 (2 mm wall), {ti['thread']} thread")
+            insert_pts.append((cx, cy, z_fl + fl_i / 2))
+        hanger_tops.append((cx, cy, deck_z + deck_t))
+        hanger_bottoms.append((cx, cy, spider_bottom))
+    J("hanger_inserts", "press", ["hanger_insert_*", "hanger_*"], [], positions=insert_pts, proposed=True,
+      note="Tap the inserts into the tube ends with a mallet")
+    J("hanger_to_deck", "tapped", ["head_deck", "hanger_insert_top_*", "hanger_*"], [("button bolt", "M6 x 16", 1)],
+      positions=hanger_tops, proposed=True, note="Button heads: the rear one sits between the two motor cables")
+    J("hanger_to_beam", "tapped", ["joint_beam", "hanger_insert_bottom_*", "hanger_*"], [("button bolt", "M6 x 45", 1)],
+      positions=hanger_bottoms, proposed=True, note="Up through both walls of the beam into the insert")
+    for x, y, _ in hanger_tops:
+        assert all(seg_dist((x, y), (s * cab_dx, cab_shell_y), (s * cab_dx, cab_hang_y)) - 5.25 - cab_r >= .5
+                   for s in (-1, 1)), "hanger bolt heads clear the motor cables on the deck"
+    # Cross beam: one tube along X through the middle and two half tubes along Y butted against it,
+    # all bolted to a splice plate underneath. Countersunk heads keep the plate the lowest steel.
     sw = p["spider_width_mm"]
     spider = box(reach * 2, sw, spider_top - spider_bottom, (0, 0, (spider_top + spider_bottom) / 2)).fuse(
-        box(sw, reach * 2, spider_top - spider_bottom, (0, 0, (spider_top + spider_bottom) / 2)),
-        box(90, 90, spider_top - spider_bottom, (0, 0, (spider_top + spider_bottom) / 2)))
+        box(sw, reach * 2, spider_top - spider_bottom, (0, 0, (spider_top + spider_bottom) / 2)))
     # Fasteners are not modelled as solids; each joint records its bolt here for the BOM and the
     # assembly page (head end, direction into the parts, length).
     fasteners = []
@@ -208,18 +371,36 @@ def head(p, add):
     def fastener(joint, size, start, axis, length, head="hex"):
         fasteners.append({"joint": joint, "size": size, "head": head, "start_mm": [round(v, 2) for v in start],
                           "axis": list(axis), "length_mm": round(length, 1)})
-    # The yaw bracket foot bolts through the beam hub with two M5 bolts.
+    # The yaw bracket foot bolts through the beam and the splice plate with two M5 bolts.
     foot_holes = [(-30.0, -9.0), (-30.0, 9.0)]
-    for x, y in foot_holes:
+    splice_xy = [tuple(xy) for xy in j["splice_bolts_xy_mm"]]
+    for x, y in foot_holes + splice_xy:
         spider = spider.cut(cylinder(2.75, spider_top - spider_bottom, (x, y, spider_bottom), (0, 0, 1)))
+    for x, y, _ in hanger_bottoms:
+        spider = spider.cut(cylinder(3.25, spider_top - spider_bottom, (x, y, spider_bottom), (0, 0, 1)))
     add("joint_beam", spider, metal, "head", lift,
-        "Cross beam carrying the joint; its arms lie above the bin dividers",
-        "cut", "Aluminium rectangular tube 40 x 30 x 2, two pieces crossed and bolted through a 3 mm plate")
+        f"Cross beam: one tube along X ({2 * reach:.0f} mm) and two half tubes along Y ({reach - sw / 2:.0f} mm) butted "
+        "against it, bolted to the splice plate underneath; its arms lie above the bin dividers",
+        "cut", "Aluminium rectangular tube 40 x 30 x 2")
+    spw, spl, spt = j["splice_plate_mm"]
+    splice = box(spw, spl, spt, (0, 0, spider_bottom - spt / 2))
+    for x, y in foot_holes + splice_xy:
+        splice = splice.cut(cylinder(2.75, spt, (x, y, spider_bottom - spt), (0, 0, 1)))
+    add("beam_splice_plate", splice, metal, "head", lift,
+        "Splice plate under the beam crossing: the Y half tubes and the X tube bolt to it", "laser",
+        f"Aluminium sheet {spt:.0f} mm")
+    J("beam_splice", "bolt", ["joint_beam", "beam_splice_plate"],
+      [("countersunk bolt", "M5 x 40", 1), ("nut", "M5", 1), ("washer", "M5", 1)],
+      positions=[(x, y, spider_bottom - spt) for x, y in splice_xy], proposed=True,
+      note="Countersunk from below, nuts on the beam top")
+    pad_w, pad_t = j["spider_pad_mm"]
+    pad_r = j["spider_pad_radius_mm"]
+    assert pad_r + pad_w / 2 + 5.25 <= hr and pad_t > 3.3 and pad_t >= spt, "pads stand lower than the bolt heads and the plate"
     for i, a in enumerate((0, 90, 180, 270), 1):
-        c, s = math.cos(math.radians(a)), math.sin(math.radians(a))
-        add(f"spider_foot_{i}", box(30, 30, 1.5, ((reach - 15) * c, (reach - 15) * s, spider_bottom - .75)),
-            rubber, "head", lift, "Rubber foot under a beam end: the head stands on it when lifted out",
-            "buy", "Rubber pad 30 x 30 x 1.5, self-adhesive")
+        add(f"spider_foot_{i}", box(pad_w, pad_w, pad_t, (*polar(pad_r, a)[:2], spider_bottom - pad_t / 2)),
+            rubber, "head", lift, "Rubber foot under a beam arm: the head stands on the four feet when lifted out",
+            "buy", f"Rubber pad {pad_w:.0f} x {pad_w:.0f} x {pad_t:.0f}, self-adhesive")
+    J("beam_feet", "adhesive", ["spider_foot_*", "joint_beam"], [], count=4, note="Self-adhesive rubber")
 
     # Option D drive. A small yaw servo turns the tilt stage toward the bin, then one hinge tilts
     # the plate. The hinge sits just under the plate, near its centre of gravity, and two pillow
@@ -270,8 +451,9 @@ def head(p, add):
     bracket = bracket.fuse(box(foot_l, 32, foot_t, (-45 + foot_l / 2, 0, spider_top + foot_t / 2)))
     for x, y in foot_holes:
         bracket = bracket.cut(cylinder(2.75, foot_t, (x, y, spider_top), (0, 0, 1)))
-        fastener("yaw_bracket_to_beam", "M5 x 45", (x, y, spider_top + foot_t), (0, 0, -1),
-                 foot_t + spider_top - spider_bottom + 5)
+        # Countersunk from under the splice plate (nothing may hang below the rubber feet), nut on the foot.
+        fastener("yaw_bracket_to_beam", "M5 x 45", (x, y, spider_bottom - spt), (0, 0, 1),
+                 spt + spider_top - spider_bottom + foot_t + 5, "countersunk")
     add("yaw_bracket", bracket, charcoal, "tilt_fixed", lift,
         "Fixed C-bracket on the beam hub: two arms for the yaw bearings, a shelf the MG90S hangs through and a "
         "foot bolted through the hub", "print", "PETG, 60 % infill (or bent aluminium 3 mm)")
@@ -401,7 +583,8 @@ def head(p, add):
         cylinder(cab_r + .75, 5, (*exit_xy, plat_bot), (0, 0, 1))).cut(cylinder(bore, 5, (0, 0, plat_bot), (0, 0, 1)))
     for x, y, r in ([(x, y, 1.65) for x, y in flange_screws] + [(x, y, 2.25) for x in (-block_x, block_x)
                     for y in (-post_y, post_y)] + [(bracket_x, y, 2.2) for y in bracket_y]
-                    + [(0, y, 1.7) for y in (-pad_y, pad_y)]):
+                    + [(0, y, 1.7) for y in (-pad_y, pad_y)]
+                    + [(-p["yaw_hard_stop"]["pin_radius_mm"], 0, 1.65)]):     # tapped M4 for the stop pin
         platform = platform.cut(cylinder(r, 5, (x, y, plat_bot), (0, 0, 1)))
     add("yaw_platform", platform, charcoal, "yaw", lift,
         "Turning platform carrying the hinge posts, the tilt servo and the stop pads; holes for the shaft, "
@@ -506,6 +689,7 @@ def head(p, add):
         add(f"tilt_stop_pad_{i}", pad,
             rubber, "yaw", lift, f"Stop pad: the plate lands on it at {p['tilt_stop_degrees']:.0f} degrees",
             "print", "PETG block with a rubber bumper on top")
+    J("tilt_stop_bumpers", "adhesive", ["tilt_stop_pad_*"], [("rubber bumper", "Ø10 x 3, self-adhesive", 1)], count=2)
 
     # Tilt stage: hinge shaft, collars, lugs under the plate, large pulley, plate and IMU.
     shaft_len = 2 * (block_x + 6.5 + proud + 8 + 1)
@@ -547,6 +731,8 @@ def head(p, add):
     add("tipping_plate", plate, pp, "tilt_plate", lift,
         "320 mm tipping plate bolted to the two lugs; does not melt under a hot ember", "laser",
         "Aluminium sheet 1.5 mm, matt grey powder coat")
+    J("imu_under_plate", "adhesive", ["tilt_imu", "tipping_plate"], [("VHB tape", "20 x 15 mm piece", 1)], count=1,
+      proposed=True, note="No holes in the plate surface")
     add("tilt_imu", box(21, 16, 3, (0, 30, plate_z - 1.5)), (.10, .35, .20), "tilt_plate", lift,
         "IMU under the plate: true tilt angle for jam detection and homing after a power cut",
         "buy", "MPU-6050 (GY-521)")
@@ -598,6 +784,12 @@ def head(p, add):
         metal, "yaw", lift,
         "Stop pin under the platform: hits a lug at the yaw limit even if the hub slips", "buy",
         "M4 steel bolt with an 8 mm sleeve")
+    J("yaw_stop_pin_in_platform", "tapped", ["yaw_stop_pin", "yaw_platform"], [], positions=[(-pr, 0, plat_bot)],
+      note="The bolt is the pin; the platform hole is tapped M4")
+    J("cable_channel_on_bearing", "bolt", ["yaw_cable_channel", "yaw_bearing_upper"], [], count=2,
+      note="Clamped by the two upper KFL08 bolts, counted under yaw_bearing_upper_to_bracket")
+    J("drum_to_platform", "screw", ["yaw_cable_drum", "yaw_platform"], [("self-tapping screw", "M2 x 10", 1)], count=3,
+      status="count", proposed=True, note="Down through the platform into the drum wall; holes not cut yet")
 
     # Ribbon in the channel, drawn at mid travel: outer run, U fold, drum run.
     r_o, r_i = wall_ri - .25 - rib_t / 2, exit_r
@@ -637,6 +829,17 @@ def head(p, add):
         "buy", "Same ribbon, split to the servo plug and the IMU lead")
     add("cable_clip_stage", box(6, 8, 4, (exit_xy[0] + cab_r + 3.35, 18, plat_top + 2)), charcoal, "yaw", lift,
         "Clip on the platform: strain relief where the ribbon leaves the loop", "print", "PETG clip with a cable tie")
+    J("cable_clip_to_platform", "tapped", ["cable_clip_stage", "yaw_platform"],
+      [("hex bolt", "M3 x 8", 1), ("cable tie", "100 x 2.5 mm", 1)], count=1, status="count", proposed=True)
+    J("motor_cable_ties", "cable_tie", ["motor_cable_yaw_servo", "motor_cable_tilt_servo", "hanger_2", "joint_beam"],
+      [("cable tie", "100 x 2.5 mm", 1)], count=8, status="count", proposed=True,
+      note="Rear hanger 3, beam top 4, under the console 1")
+    J("supplied_set_screws", "set_screw", ["yaw_collar", "hinge_collar_*", "tilt_pulley_small", "tilt_pulley_large",
+                                           "hinge_block_*"], [("set screw", "comes with the part", 1, False)], count=7)
+    # Nuts of the splice plate stand on the beam top, where the motor cables run.
+    beam_runs = [((-cab_dx, cab_hang_y), (-cab_dx, 0)), ((cab_dx, cab_hang_y), (cab_dx, 60)), ((cab_dx, 60), riser_xy)]
+    for x, y in splice_xy:
+        assert min(seg_dist((x, y), a, b) for a, b in beam_runs) - 5 - cab_r >= .5, "splice nuts clear the beam cables"
     travel = math.radians(2 * hs_["travel_degrees"])
     cable_lengths = {"yaw_servo": round(path_length(yaw_cable)),
                      "tilt_servo": round(path_length(tilt_fixed_path) + loop_len + path_length(stage_path)),
@@ -683,6 +886,13 @@ def head(p, add):
             "print", "PETG")
         add(f"fill_sensor_arm_{i}", bracket.rotate((0, 0, 0), (0, 0, 1), a), metal, "head", lift,
             "Sensor arm from the throat lip", "print", "PETG")
+    J("sensor_pod_and_arm", "one_piece", ["fill_sensor_pod_*", "fill_sensor_arm_*"], [], count=4, proposed=True,
+      note="Print each pod and its arm as one piece")
+    J("sensor_arm_to_lip", "bolt", ["fill_sensor_arm_*", "intake_funnel"],
+      [("hex bolt", "M3 x 12", 1), ("nut", "M3", 1), ("washer", "M3", 1)], count=8, status="count", proposed=True,
+      note="2 per arm through the lip band, drilled on assembly")
+    J("hcsr04_in_pod", "screw", ["fill_sensor_pod_*"], [("self-tapping screw", "M2 x 6", 1)], count=8, status="count",
+      proposed=True, note="2 per board; check the board's hole size on arrival")
 
     # Rear console: a small display slab leaning back on a low base. The slab is a thin frame
     # around the display board (a 4.3 inch board with its own ESP32-S3); the base carries the camera
@@ -717,6 +927,13 @@ def head(p, add):
     saddle = tube(deck_ro, mouth_r, top, p["console_saddle_height_mm"]).intersect(
         box(2 * deck_ro, deck_ro, 40, (0, p["console_saddle_from_y_mm"] + deck_ro / 2, top)))
     body = body.fuse(saddle)
+    saddle_h = p["console_saddle_height_mm"]
+    for x, y in jh["console_bolts"]:
+        body = body.cut(cylinder(2.25, saddle_h, (x, y, top), (0, 0, 1)))
+    J("console_to_collar", "bolt", ["display_console", "intake_funnel"],
+      [("hex bolt", "M4 x 16", 1), ("nut", "M4", 1), ("washer", "M4", 2)],
+      positions=[(x, y, top + saddle_h) for x, y in jh["console_bolts"]], proposed=True,
+      note="Through the saddle and the collar, nuts under the collar")
     # Display slab: stands on the chin and leans back with the base face, corners rounded like a tablet.
     face_center = (0, y_front + sh / 2 * math.sin(lean), z_face0 + sh / 2 * math.cos(lean))
     on_face = lambda shape: shape.rotate((0, 0, 0), (1, 0, 0), -math.degrees(lean)).translate(face_center)
@@ -754,9 +971,12 @@ def head(p, add):
         slots.append(room)
     # Guition JC4827W543 (maker drawing): 4 M3 holes 112.6 x 62.1 behind the board, and USB-C and the
     # 4-pin JST power/UART socket on its left edge, reached through a slot in the slab side.
+    display_pts = []
     for hx in (-56.3, 56.3):
         for hz in (-31.05, 31.05):
             body = body.cut(on_face(cylinder(1.25, 8, (hx, md, hz), (0, 1, 0))))
+            v = on_face(cq.Vertex.makeVertex(hx, md + 4, hz))
+            display_pts.append((v.X, v.Y, v.Z))
     body = body.cut(on_face(box(8, md, 22, (-mw / 2 - 2.5, md / 2, .5))))
     # Both USB-C ports of the ESP32-S3 CAM board face the left wall of the base, through a slot.
     eb_ = p["console_electronics_mm"]["esp32_s3_board"]
@@ -767,6 +987,18 @@ def head(p, add):
         "camera board, supplies, voltage dividers and wiring in the base, camera and LED strip under the "
         "chin, clear of any liquid in the funnel; leave the USB-C ports of both boards reachable", "print",
         "PETG, printed in 2 halves")
+    J("display_to_console", "tapped", ["tft_screen", "display_console"],
+      [("hex bolt", "M3 x 6", 1), ("heat-set insert", "M3", 1)], positions=display_pts,
+      note="The 4 holes of the Guition board, into inserts in the slab")
+    J("console_halves", "tapped", ["display_console"], [("hex bolt", "M3 x 12", 1), ("heat-set insert", "M3", 1)],
+      count=6, status="count", proposed=True)
+    for name, (n, hw) in BOARD_MOUNTS.items():
+        kind = "cable_tie" if hw[0][0] == "cable tie" else "screw" if hw[0][0] == "self-tapping screw" else "tapped"
+        J(f"{name}_in_console", kind, ["display_console"], hw, count=n, status="count", proposed=True,
+          note="Hole positions from the board on arrival")
+    J("camera_in_window", "adhesive", ["camera_window", "display_console"], [("hot glue", "stick", 1)], count=1,
+      status="count", proposed=True, note="Lens pressed into the window and glued from inside; no clamp drawn yet")
+    J("led_strip_in_groove", "adhesive", ["led_strip", "display_console"], [], count=1, note="Self-adhesive back")
     add("tft_screen", face, glass, "brain", brain_lift,
         "4.3 inch display: sorting status and fill levels; its own ESP32-S3 also reads the 4 fill sensors",
         "buy", f"Guition JC4827W543, ESP32-S3 N4R8, IPS 480x272, UART on a 4-pin JST 1.25, "
@@ -806,7 +1038,7 @@ def head(p, add):
         v = (plate_r * math.cos(a) - cam[0], plate_r * math.sin(a) - cam[1], plate_z + plate_t - cam[2])
         widest = max(widest, math.degrees(math.acos(sum(x * y for x, y in zip(v, aim)) / math.hypot(*v))))
 
-    return {"fasteners": fasteners, "camera_cable_reach": cable_reach, "motor_cable_mm": cable_lengths, "camera_required_full_fov_degrees": round(2 * widest, 1), "pivot_z": pivot, "plate_z": plate_z, "spider_bottom": spider_bottom,
+    return {"fasteners": fasteners, "head_lowest": spider_bottom - max(pad_t, spt), "camera_cable_reach": cable_reach, "motor_cable_mm": cable_lengths, "camera_required_full_fov_degrees": round(2 * widest, 1), "pivot_z": pivot, "plate_z": plate_z, "spider_bottom": spider_bottom,
             "spider_top": spider_top, "lip_top": lip_top, "lip_bottom": lip_bottom,
             "throat_r": throat_r, "exit_gap": exit_gap, "skirt_gap": skirt_gap,
             "low_edge_z": low_edge_z, "belt_center_mm": c, "big_r": big_r, "small_r": small_r,
@@ -836,7 +1068,10 @@ def hemmed_panel(w, h, t, hem):
     return face.fuse(box(w, t, h, (0, 1.5 * t, 0)).cut(box(w - 2 * hem, t, h - 2 * hem, (0, 1.5 * t, 0))))
 
 
-def body_b(p, add, h):
+def body_b(p, add, h, joint=None):
+    J = joint or (lambda *a, **k: None)
+    j = p["joinery"]
+    jh = joinery_holes(p)
     f, b = p["frame"], p["bin"]
     half, prof, sheet = f["outer_mm"] / 2, f["profile_mm"], f["panel_mm"]
     deck = p["head_deck_height_mm"]
@@ -936,10 +1171,12 @@ def body_b(p, add, h):
             body_fasteners.append({"joint": joint, "size": size, "head": head, "start_mm": [round(c, 2) for c in start],
                                    "axis": list(axis), "length_mm": round(length, 1)})
         n = 0
+        weld_pts = []
         for sx in (-1, 1):
             for sy in (-1, 1):
                 n += 1
                 cx, cy = sx * (half - a / 2), sy * (half - a / 2)
+                weld_pts.append((cx, cy, zf - pt))
                 post = box(a, t, top - zf, (cx, sy * (half - t / 2), (top + zf) / 2)).fuse(
                     box(t, a, top - zf, (sx * (half - t / 2), cy, (top + zf) / 2)))
                 add(f"post_{n}", post, steel_v, "frame", (0, 0, 0), "Corner post, slotted angle, standing on a foot plate",
@@ -956,6 +1193,10 @@ def body_b(p, add, h):
                     cylinder(4, zf - pt - ft["pad_h_mm"], (cx, cy, ft["pad_h_mm"]), (0, 0, 1)))
                 add(f"foot_{n}", foot, (.12, .12, .12), "frame", (0, 0, 0), "Levelling foot M8 under a post", "buy",
                     f"Levelling foot M8, pad {ft['pad_d_mm']:.0f} mm")
+        J("foot_plate_nut_weld", "weld", ["foot_plate_*"], [("nut", "M8", 1)], positions=weld_pts,
+          note="The only weld: an M8 nut under each foot plate, done by the shop that cuts and bends the plates")
+        J("foot_into_plate", "thread", ["foot_*", "foot_plate_*"], [], positions=weld_pts,
+          note="The foot screws into the welded nut; turn it to level the bin")
         span = 2 * (half - 2 * t) - 1
 
         def rail(name, side, z_leg, z_flat, desc, inset=0, length=span):
@@ -1007,18 +1248,21 @@ def body_b(p, add, h):
         floor = board(floor_z, bd, bh_ - pt)
         for x, y in floor_pts:
             floor = floor.cut(cylinder(4.5, bd, (x, y, floor_z), (0, 0, 1)))
-            bolt("floor_board_to_rail", "M8 x 30", (x, y, floor_z + bd), (0, 0, -1), bd + t + 9)
+            bolt("floor_board_to_rail", "M8 x 30", (x, y, floor_z + bd), (0, 0, -1), bd + t + 9, "hex")
         add("floor_plate", floor, fmx, "frame", (0, 0, 0), "Floor board on the bottom rails; waterproof",
             "laser", v["board_material"])
         seat_hole = p["locating_ring_outer_radius_mm"] + 2
         pin_hole = cylinder(3.3, seat_t, (0, p["orientation_pin_radius_mm"], seat_z), (0, 0, 1))
         seat = board(seat_z, seat_t).cut(tube(seat_hole, 0, seat_z, seat_t)).cut(pin_hole)
+        for x, y in jh["deck_bolts"]:
+            seat = seat.cut(cylinder(4, seat_t, (x, y, seat_z), (0, 0, 1)))    # M6 insert nuts for the deck bolts
         seat_pts = [(-(half - t - a / 2), 0), (half - t - a / 2, 0), (0, half - t - a / 2), (0, -(half - t - a / 2))]
         for x, y in seat_pts:
             seat = seat.cut(cylinder(4.5, seat_t, (x, y, seat_z), (0, 0, 1)))
-            bolt("seat_board_to_rail", "M8 x 30", (x, y, seat_z + seat_t), (0, 0, -1), seat_t + t + 9)
+            bolt("seat_board_to_rail", "M8 x 30", (x, y, seat_z + seat_t), (0, 0, -1), seat_t + t + 9, "hex")
         add("head_seat_plate", seat, fmx, "frame",
-            (0, 0, 0), "Head seat board on the four seat rails; the rear hole takes the deck orientation pin",
+            (0, 0, 0), "Head seat board on the four seat rails; the rear hole takes the deck orientation pin, "
+            "4 M6 insert nuts take the deck bolts",
             "laser", v["board_material"])
         assert half - t - seat_hole >= a, "the seat board ring reaches over the seat rails"
         floor_t, base = bd, floor_z + bd
@@ -1074,6 +1318,28 @@ def body_b(p, add, h):
                 box(2 * co - 2 * sheet, 2 * co - 2 * sheet, skirt, (0, 0, top + sheet - skirt / 2))))
         add("top_cover", cover, (.82, .85, .84), "skin", (0, 0, 450),
             "Stainless top cover with the funnel opening; its skirt folds down over the skins", "bend", mat)
+        if stainless:
+            # Skin screws: along each post and across the rails behind each skin, about one per pitch.
+            # The angle holes are not measured yet, so the skins are drilled to the real holes on assembly.
+            po, along = half - a / 2, (-200, 0, 200)
+            nz = max(2, math.ceil((top - zf - 120) / j["skin_screw_pitch_mm"]) + 1)
+            post_z = [zf + 60 + k_ * (top - zf - 120) / (nz - 1) for k_ in range(nz)]
+            rail_zx = [zf + a / 2 + t, mid + t, seat_z - a / 2 - t]      # side rails sit one leg off the back ones
+            rail_zy = [zf + a / 2, mid, seat_z - a / 2]
+            pts = []
+            for s in (-1, 1):
+                pts += [(s * skin_out, y, z) for y in (-po, po) for z in post_z]
+                pts += [(s * skin_out, y, z) for y in along for z in rail_zx]
+            pts += [(x, skin_out, z) for x in (-po, po) for z in post_z] + [(x, skin_out, z) for x in along for z in rail_zy]
+            pts += [(x, -skin_out, z) for x in (-po, po) for z in (head_bottom + 40, top - 40)]
+            pts += [(x, -skin_out, seat_z - a / 2) for x in along]
+            J("skins_to_frame", "bolt", ["side_panel_*", "back_panel", "head_panel_front", "post_*", "rail_*"],
+              SKIN_SCREW, positions=pts, status="positions",
+              note="Spacer keeps the skin 6 mm off the angles; drill the skin at the real angle holes on assembly")
+            J("top_cover_to_frame", "bolt", ["top_cover", "post_*"], SKIN_SCREW,
+              positions=[(s * co, y, top - skirt / 2) for s in (-1, 1) for y in (-po, po)]
+              + [(x, s * co, top - skirt / 2) for s in (-1, 1) for x in (-po, po)], status="positions",
+              note="Through the skirt and the skin into the post tops")
         shell["blanks"]["top_cover"] = {"finished_mm": [round(2 * co, 1)] * 2, "fold": "skirt", "hole_d": 2 * hole_r,
                                         "blank_mm": [round(2 * co + 2 * folds["skirt"]["blank_past_outline"], 1)] * 2}
         shell["volume"] += cover.Volume()
@@ -1112,13 +1378,49 @@ def body_b(p, add, h):
             (.55, .58, .57), "frame", (0, 0, 0),
             "Plate carrying the outer slide" + (f"; bolted to the front and rear posts through {f['vlo']['mount_spacer_mm']:.0f} mm spacers"
                                                  if style == "vlo" else ", on the bottom rail"), "laser", mount_mat)
-        tray = box(out_x1 - in_x0, tray_y1 - tray_y0, db, (s * (in_x0 + out_x1) / 2, (tray_y0 + tray_y1) / 2, tray_z + db / 2))
-        for x in (in_x0 + dw / 2, out_x1 - dw / 2):
-            tray = tray.fuse(box(dw, tray_y1 - tray_y0, dwh, (s * x, (tray_y0 + tray_y1) / 2, z0 + dwh / 2)))
-        tray = tray.fuse(box(out_x1 - in_x0, dw, dwh, (s * (in_x0 + out_x1) / 2, tray_y1 - dw / 2, z0 + dwh / 2)))
+        mx, my, ly = s * (in_x0 + out_x1) / 2, (tray_y0 + tray_y1) / 2, tray_y1 - tray_y0
+        if style == "vlo":
+            # The PP walls wrap the edges of the Formex floor and screw into them; the back wall sits
+            # between the side walls, with an aluminium angle riveted inside each rear corner.
+            wall_h = dwh + db
+            tray = box(out_x1 - in_x0 - 2 * dw, ly - dw, db, (mx, my - dw / 2, tray_z + db / 2))
+            for x in (in_x0 + dw / 2, out_x1 - dw / 2):
+                tray = tray.fuse(box(dw, ly, wall_h, (s * x, my, tray_z + wall_h / 2)))
+            tray = tray.fuse(box(out_x1 - in_x0 - 2 * dw, dw, wall_h, (mx, tray_y1 - dw / 2, tray_z + wall_h / 2)))
+        else:
+            tray = box(out_x1 - in_x0, ly, db, (mx, my, tray_z + db / 2))
+            for x in (in_x0 + dw / 2, out_x1 - dw / 2):
+                tray = tray.fuse(box(dw, ly, dwh, (s * x, my, z0 + dwh / 2)))
+            tray = tray.fuse(box(out_x1 - in_x0, dw, dwh, (mx, tray_y1 - dw / 2, z0 + dwh / 2)))
         add(f"drawer_{name}", tray, (.62, .65, .64), "drawers", (0, -420, 0),
             "Drawer tray holding the front and the rear bin", "laser",
-            f"Formex {db:.0f} mm floor, PP 3 mm walls riveted" if style == "vlo" else "Aluminium composite 4 mm, riveted angles")
+            f"Formex {db:.0f} mm floor, PP 3 mm walls screwed into its edges" if style == "vlo"
+            else "Aluminium composite 4 mm, riveted angles")
+        if style == "vlo":
+            pitch = j["tray_screw_pitch_mm"]
+            span_y = tray_y1 - dw - tray_y0 - 50
+            ys = [tray_y0 + 25 + k_ * span_y / math.ceil(span_y / pitch) for k_ in range(math.ceil(span_y / pitch) + 1)]
+            span_x = out_x1 - in_x0 - 2 * dw - 50
+            xs = [in_x0 + dw + 25 + k_ * span_x / math.ceil(span_x / pitch) for k_ in range(math.ceil(span_x / pitch) + 1)]
+            zs = tray_z + db / 2
+            J(f"tray_walls_to_floor_{name}", "screw", [f"drawer_{name}"], [("wood screw", "3.5 x 16 stainless", 1)],
+              positions=[(s * x, y, zs) for x in (in_x0, out_x1) for y in ys] + [(s * x, tray_y1, zs) for x in xs],
+              status="positions", proposed=True,
+              note="Into the middle of the 8 mm Formex edge, pre-drill 2.5 mm")
+            ca, ct3, ch_ = j["tray_corner_angle_mm"]
+            yb, rv = tray_y1 - dw, []
+            for k_, xw in enumerate((in_x0 + dw, out_x1 - dw), 1):
+                d = 1 if k_ == 1 else -1                      # into the tray
+                corner = box(ca, ct3, ch_, (s * (xw + d * ca / 2), yb - ct3 / 2, z0 + ch_ / 2)).fuse(
+                    box(ct3, ca, ch_, (s * (xw + d * ct3 / 2), yb - ca / 2, z0 + ch_ / 2)))
+                add(f"tray_corner_{name}_{k_}", corner, (.70, .72, .74), "drawers", (0, -420, 0),
+                    "Angle inside a rear tray corner, riveted to the back and the side wall", "cut",
+                    f"Aluminium angle {ca:.0f} x {ca:.0f} x {ct3:g}, {ch_:.0f} mm long")
+                for z in (z0 + 15, z0 + ch_ - 15):
+                    rv += [(s * (xw + d * ca * .6), tray_y1, z), (s * (xw - d * dw), yb - ca * .6, z)]
+            J(f"tray_corners_{name}", "rivet", [f"drawer_{name}", f"tray_corner_{name}_*"],
+              [("blind rivet", "Ø4 x 10 aluminium", 1), ("washer", "M4", 1)], positions=rv, status="positions",
+              proposed=True, note="Heads outside the tray, washers on the PP side")
         if style == "vlo" and stainless:
             vs = f["vlo"]
             hw_, hh_ = vs["handle_slot_mm"]
@@ -1152,6 +1454,14 @@ def body_b(p, add, h):
                 "Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall",
                 "bend", f"{mat}, top-hat {sc:.0f} x {sd:.0f} with {sf:.0f} mm flanges")
             shell["volume"] += stiff.Volume()
+            xw = in_x0 if i == 1 else out_x1                   # outer face of the tray wall next to it
+            J(f"stiffener_{name}_{i}_to_tray", "bolt", [f"drawer_stiffener_{name}_{i}", f"drawer_{name}"],
+              [("hex bolt", "M4 x 20", 1), ("spacer sleeve", f"M4, {sf + 1:.0f} mm", 1), ("nut", "M4", 1), ("washer", "M4", 1)],
+              positions=[(s * xw, tray_y0 + 6, z) for z in (z0 + 15, z0 + dwh - 10)], status="positions", proposed=True,
+              note="Through the tray wall and a spacer into the stiffener web: the drawer front hangs on these")
+            J(f"stiffener_{name}_{i}_to_front", "adhesive", [f"drawer_stiffener_{name}_{i}", f"drawer_front_{name}"],
+              [("VHB tape", f"{sf:.0f} mm wide, metres", round(2 * (stiffener_z[1] - stiffener_z[0]) / 1000, 2))], count=1,
+              note="Both flanges taped to the back of the front")
         for x, tag in ((in_x0 - st / 2, "inner"), (out_x1 + st / 2, "outer")):
             add(f"slide_{name}_{tag}", box(st, sl, sh, (s * x, -inner + sl / 2, z0 + 8 + sh / 2)), steel,
                 "frame", (0, 0, 0), f"Full-extension ball slide {sl:.0f} mm", "buy",
@@ -1161,7 +1471,56 @@ def body_b(p, add, h):
         add(f"drawer_switch_{name}", sw_, (.85, .2, .2), "frame",
             (0, 0, 0), "Microswitch the closed drawer presses; open drawer locks its two bins", "buy",
             "Subminiature lever switch TIAIHUA 1 A 125 VAC, 13 x 6.8 x 6")
+        if style == "vlo":
+            # Printed L bracket on the floor board behind the tray holds the switch.
+            sb_w, sb_h = j["switch_bracket_mm"]
+            y_face, y_back = tray_y1 + 6 + 3.4, half - 2 * f["vlo"]["angle_thick_mm"]
+            sb = box(sb_w, 5, sb_h, (s * off, y_face + 2.5, base + sb_h / 2)).fuse(
+                box(sb_w, y_back - y_face, 5, (s * off, (y_face + y_back) / 2, base + 2.5)))
+            add(f"drawer_switch_bracket_{name}", sb, (.25, .27, .30), "frame", (0, 0, 0),
+                "Printed L bracket on the floor board holding the drawer switch", "print", "PETG")
+            J(f"switch_to_bracket_{name}", "bolt", [f"drawer_switch_{name}", f"drawer_switch_bracket_{name}"],
+              [("hex bolt", "M2 x 12", 1), ("nut", "M2", 1)],
+              positions=[(s * off + d * 3.25, y_face, z0 + 30) for d in (-1, 1)], status="positions")
+            J(f"switch_bracket_to_floor_{name}", "screw", [f"drawer_switch_bracket_{name}", "floor_plate"],
+              [("wood screw", "3.5 x 16 stainless", 1)],
+              positions=[(s * off + d * 5, y_face + 12, base + 5) for d in (-1, 1)], status="positions", proposed=True)
+            # Slides: the outer ones bolt to the slide plates; the inner pair share through-bolts in the
+            # centre wall. The inner members bolt to the tray only where the nut has room: in front of
+            # the front bin and in the gap between the bins.
+            zc = z0 + 8 + sh / 2
+            ys6 = [-inner + sl * (k_ + .5) / 6 for k_ in range(6)]
+            J(f"outer_slide_to_plate_{name}", "bolt", [f"slide_{name}_outer", f"slide_mount_{name}"],
+              [("hex bolt", "M4 x 12", 1), ("nut", "M4", 1), ("washer", "M4", 1)],
+              positions=[(s * (inner - mt), y, zc) for y in ys6], status="positions")
+            J(f"slides_to_tray_{name}", "bolt", [f"slide_{name}_inner", f"slide_{name}_outer", f"drawer_{name}"],
+              [("hex bolt", "M4 x 10", 1), ("nut", "M4", 1)],
+              positions=[(s * x, y, zc) for x in (in_x0, out_x1) for y in (-315, -300, -10, 10)], status="positions",
+              proposed=True, note="Nuts only in front of the front bin and between the bins (2 mm gap beside the bins)")
     if style == "vlo":
+        zc = z0 + 8 + sh / 2
+        J("inner_slides_through_wall", "bolt", ["slide_left_inner", "slide_right_inner", "center_wall"],
+          [("hex bolt", "M4 x 16", 1), ("nut", "M4", 1), ("washer", "M4", 1)],
+          positions=[(0, -inner + sl * (k_ + .5) / 6, zc) for k_ in range(6)], status="positions",
+          note="One bolt through both inner slides and the centre wall")
+        # The centre wall stands on the floor board, held by small angles at its two ends, in the
+        # slot under the inner slides.
+        cl, ct2, clen = j["center_wall_clip_mm"]
+        assert cw / 2 + cl < in_x0 and base + cl < z0 + 8, "wall clips fit under the inner slides"
+        clip_y = (-(inner - 40), inner - 40)
+        n_ = 0
+        for y in clip_y:
+            for sx in (-1, 1):
+                n_ += 1
+                add(f"center_wall_clip_{n_}", box(ct2, clen, cl, (sx * (cw / 2 + ct2 / 2), y, base + cl / 2)).fuse(
+                    box(cl, clen, ct2, (sx * (cw / 2 + cl / 2), y, base + ct2 / 2))), (.70, .72, .74), "frame", (0, 0, 0),
+                    "Angle at the foot of the centre wall", "cut", f"Aluminium angle {cl:.0f} x {cl:.0f} x {ct2:g}, {clen:.0f} mm long")
+        J("center_wall_clips_through", "bolt", ["center_wall", "center_wall_clip_*"],
+          [("hex bolt", "M4 x 16", 1), ("nut", "M4", 1)], positions=[(-cw / 2 - ct2, y, base + .6 * cl) for y in clip_y],
+          status="positions", proposed=True, note="One bolt through both clips and the wall at each end")
+        J("center_wall_clips_to_floor", "screw", ["center_wall_clip_*", "floor_plate"], [("wood screw", "3.5 x 12 stainless", 1)],
+          positions=[(sx * (cw / 2 + .6 * cl), y, base + ct2) for y in clip_y for sx in (-1, 1)], status="positions",
+          proposed=True)
         for s in (-1, 1):
             for y in (-(half - f["vlo"]["angle_leg_mm"] / 2), half - f["vlo"]["angle_leg_mm"] / 2):
                 for zz in (base + 23, base + 83):
@@ -1203,6 +1562,10 @@ def body_b(p, add, h):
             "Elastic band holding the bag folded over the bin rim", "buy",
             f"Flat elastic {bw:.0f} mm, loop of about {4 * w * .85 / 10:.0f} cm")
     assert z0 + bh < h["spider_bottom"] - 20
+    assert z0 + bh < h["head_lowest"] - 10, "bin rims clear the head's feet and splice plate"
+    J("bin_rivets", "rivet", [f"bin_{i}" for i in range(1, 5)], [("blind rivet", "Ø4 x 10 aluminium", 1), ("washer", "M4", 1)],
+      count=4 * (b["seam_rivets"] + 8), note=f"{b['seam_rivets'] + 8} per bin: {b['seam_rivets']} on the wall seam, "
+      "2 per floor flap; the holes are in the DXFs")
     # The rear bin must leave the head's footprint when the drawer is fully out, so it lifts free.
     assert off + w / 2 - sl < -(p["spider_reach_mm"] + 10), "rear bin clears the head when pulled out"
     # The stiffener's flat strip: flange, web, crown, web, flange with four 90 degree bends.
@@ -1221,9 +1584,9 @@ def body_b(p, add, h):
                 "capacity_l_each": round((w - 2 * bt) ** 2 * (bh - bt) / 1e6, 1),
                 "bin_center_radius": off * math.sqrt(2),
                 "bag_note": "Pull a drawer out, slip off the elastic band and lift the full bag out; the bins stay in the drawer",
-                "flat_pieces": {"drawer_bottom_formex_x2": [out_x1 - in_x0, tray_y1 - tray_y0],
-                                "drawer_side_wall_pp_x4": [tray_y1 - tray_y0, dwh],
-                                "drawer_back_wall_pp_x2": [out_x1 - in_x0, dwh]}}
+                "flat_pieces": {"drawer_bottom_formex_x2": [out_x1 - in_x0 - 2 * dw, tray_y1 - tray_y0 - dw],
+                                "drawer_side_wall_pp_x4": [tray_y1 - tray_y0, dwh + db],
+                                "drawer_back_wall_pp_x2": [out_x1 - in_x0 - 2 * dw, dwh + db]}}
     shell["stainless_mass_kg"] = round(shell.pop("volume") * f["panel_density_kg_m3"] / 1e9, 1)
     return {"body": "B", "outer_mm": [2 * co, 2 * co], "shell": shell,
             "bin_rim_z": z0 + bh, "bin_floor_z": z0 + bt,
@@ -1281,7 +1644,7 @@ def fill_sightlines(parts, h, info, full_fraction):
 
 
 def build(p):
-    parts, meta = [], {}
+    parts, meta, joints = [], {}, []
 
     def add(name, shape, color, group, explode=(0, 0, 0), description="", process="", material=""):
         if color is None:
@@ -1289,8 +1652,42 @@ def build(p):
         parts.append(Part(name, shape.clean(), color, group, explode, description))
         meta[name] = {"process": process, "material": material}
 
-    h = head(p, add)
-    info = body_b(p, add, h)
+    def joint(jid, kind, members, hardware, positions=None, count=None, status="drawn", proposed=False, note=""):
+        """One way two or more parts are held together. status: drawn (holes in the CAD and DXFs),
+        positions (points known, drilled on assembly) or count (number only)."""
+        joints.append({"id": jid, "kind": kind, "parts": members, "status": status, "proposed": proposed, "note": note,
+                       "points": len(positions) if positions else (count or 1),
+                       "positions_mm": [[round(c, 1) for c in pt] for pt in positions or []],
+                       "hardware": [{"item": hw[0], "size": hw[1], "per_point": hw[2],
+                                     "bought": hw[3] if len(hw) > 3 else True} for hw in hardware]})
+
+    h = head(p, add, joint)
+    info = body_b(p, add, h, joint)
+    # Bolts recorded one by one become joints too, grouped by joint and size.
+    for records in (h["fasteners"], info.get("fasteners", [])):
+        groups = {}
+        for r in records:
+            groups.setdefault((r["joint"], r["size"]), []).append(r)
+        for (name, size), recs in groups.items():
+            kind, members, hardware = FASTENER_JOINTS[name]
+            clean = size.split(",")[0].replace(" self-tapping", "").replace(" set screw", "")
+            many = sum(1 for key in groups if key[0] == name) > 1
+            jid = f"{name}_{clean.replace(' ', '')}" if many else name
+            if name == "rail_to_post" and clean == "M8 x 15":
+                members = members + ["foot_plate_*"]
+            joint(jid, kind, members, [(i, clean if s == "*" else s, *rest) for i, s, *rest in hardware],
+                  positions=[r["start_mm"] for r in recs])
+    names = {part.name for part in parts}
+    for jn in joints:
+        for pat in jn["parts"]:
+            assert any(n == pat or (pat.endswith("*") and n.startswith(pat[:-1])) for n in names), f"{jn['id']}: no part {pat}"
+    bom = {}
+    for jn in joints:
+        for hw in jn["hardware"]:
+            if hw["bought"]:
+                e = bom.setdefault((hw["item"], hw["size"]), {"item": hw["item"], "size": hw["size"], "quantity": 0, "joints": []})
+                e["quantity"] = round(e["quantity"] + hw["per_point"] * jn["points"], 2)
+                e["joints"].append(jn["id"])
 
     # Torque each servo must hold at full tilt with the item at the plate edge.
     theta = math.radians(p["maximum_plate_tilt_degrees"])
@@ -1325,6 +1722,9 @@ def build(p):
         "belt_center_distance_mm": round(h["belt_center_mm"], 2),
         "tilt_drive_fasteners": h["fasteners"],
         "body_fasteners": info.get("fasteners", []),
+        "joints": joints,
+        "hardware_bom": sorted(bom.values(), key=lambda e: (e["item"], e["size"])),
+        "weld_points": sum(jn["points"] for jn in joints if jn["kind"] == "weld"),
         "plate_mass_kg": round(plate_mass, 3),
         "hinge_torque_needed_nm": round(hinge_torque, 3),
         "servo_torque_needed_nm": round(servo_need, 3),
@@ -1355,7 +1755,7 @@ def build(p):
         "flat_pieces_mm": info.get("flat_pieces", {}),
         **({"shell": info["shell"]} if "shell" in info else {}),
         "purchased_dimensions_status": p["purchased_dimensions_status"],
-        "status": "Prototype CAD; fasteners, wiring and hinges are not modelled",
+        "status": "Prototype CAD; every joint is listed in joints (fasteners as points, not solids); wiring is not modelled",
     }
     assert h["camera_hidden_edge_samples"] == 0, "camera must see the whole plate edge"
     assert servo_need / stall <= .5, "servo must work at or below half its stall torque"
@@ -1547,6 +1947,9 @@ def funnel_patterns(p, h, out):
     collar = cq.Workplane("XY").circle(p["deck_outer_radius_mm"]).circle(h["mouth_r"]).extrude(1)
     collar = collar.faces(">Z").workplane().pushPoints([(-dx, p["motor_cable"]["shell_y_mm"]),
                                                         (dx, p["motor_cable"]["shell_y_mm"])]).hole(2 * cr)
+    jh = joinery_holes(p)
+    collar = collar.faces(">Z").workplane().pushPoints(jh["console_bolts"]).hole(4.5)
+    collar = collar.faces(">Z").workplane().pushPoints(jh["shell_clip_rivets"]).hole(4.1)
     flat_dxf(collar.val(), out / "funnel_collar_ring.dxf")
     strip = lambda length, height: cq.Workplane("XY").rect(length, height)
     pattern_dxf(strip(2 * math.pi * (h["throat_r"] + fw / 2) + tab, p["throat_lip_height_mm"]),
@@ -1563,6 +1966,9 @@ def funnel_patterns(p, h, out):
         [(hr, 0), (0, hr), (-hr, 0), (0, -hr)]).hole(6.5)
     hang_y = hr - p["hanger_size_mm"] / 2 - p["motor_cable"]["hanger_gap_mm"]
     deck = deck.faces(">Z").workplane().pushPoints([(-dx, hang_y), (dx, hang_y)]).hole(2 * cr)
+    deck = deck.faces(">Z").workplane().pushPoints(jh["deck_bolts"]).hole(6.5)
+    deck = deck.faces(">Z").workplane().pushPoints(jh["shell_clip_rivets"] + jh["locating_clip_rivets"]).hole(4.1)
+    deck = deck.faces(">Z").workplane().pushPoints([(0, p["orientation_pin_radius_mm"])]).hole(5.0)   # tap M6
     flat_dxf(deck.val(), out / "head_deck.dxf")
     return {"funnel_cone_sector_degrees_each_half": round(math.degrees(half), 2),
             "funnel_cone_inner_outer_radius_mm": [round(s_bot, 1), round(s_top, 1)]}
