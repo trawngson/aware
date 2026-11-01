@@ -162,7 +162,7 @@ def head(p, add):
         "Head deck ring carrying all head loads; rests on the body at the deck height",
         "laser", "Aluminium sheet 3 mm")
     pin_r = p["orientation_pin_radius_mm"]
-    add("orientation_pin", cylinder(3, 15, (0, pin_r, deck_z - 15), (0, 0, 1)), metal, "head", lift,
+    add("orientation_pin", cylinder(3, 25, (0, pin_r, deck_z - 25), (0, 0, 1)), metal, "head", lift,
         "Single pin at the rear of the deck; the head seats in one orientation only", "buy",
         "Steel dowel 6 x 25")
     ring_ro, ring_w = p["locating_ring_outer_radius_mm"], p["locating_ring_wall_mm"]
@@ -201,6 +201,17 @@ def head(p, add):
     spider = box(reach * 2, sw, spider_top - spider_bottom, (0, 0, (spider_top + spider_bottom) / 2)).fuse(
         box(sw, reach * 2, spider_top - spider_bottom, (0, 0, (spider_top + spider_bottom) / 2)),
         box(90, 90, spider_top - spider_bottom, (0, 0, (spider_top + spider_bottom) / 2)))
+    # Fasteners are not modelled as solids; each joint records its bolt here for the BOM and the
+    # assembly page (head end, direction into the parts, length).
+    fasteners = []
+
+    def fastener(joint, size, start, axis, length, head="hex"):
+        fasteners.append({"joint": joint, "size": size, "head": head, "start_mm": [round(v, 2) for v in start],
+                          "axis": list(axis), "length_mm": round(length, 1)})
+    # The yaw bracket foot bolts through the beam hub with two M5 bolts.
+    foot_holes = [(-30.0, -9.0), (-30.0, 9.0)]
+    for x, y in foot_holes:
+        spider = spider.cut(cylinder(2.75, spider_top - spider_bottom, (x, y, spider_bottom), (0, 0, 1)))
     add("joint_beam", spider, metal, "head", lift,
         "Cross beam carrying the joint; its arms lie above the bin dividers",
         "cut", "Aluminium rectangular tube 40 x 30 x 2, two pieces crossed and bolted through a 3 mm plate")
@@ -220,66 +231,139 @@ def head(p, add):
     bw, bore = p["belt_width_mm"], 4.05
     s_len, s_wid, s_hgt = p["servo_body_mm"]
     from_top = p["servo_shaft_from_top_mm"]
-    belt_x, block_x = p["tilt_belt_plane_x_mm"], p["hinge_block_x_mm"]
+    belt_c, block_x = p["tilt_belt_center_x_mm"], p["hinge_block_x_mm"]
+    belt_x = belt_c - bw / 2                             # near face of the belt
     ring_x = lambda ro, ri, x0, length, z: cylinder(ro, length, (x0, 0, z), (1, 0, 0)).cut(
         cylinder(ri, length, (x0, 0, z), (1, 0, 0)))
     ring_z = lambda ro, ri, z0, h: tube(ro, ri, z0, h)
     servo_blue = (.12, .32, .58)
+    sd, pb = p["servo_dims_mm"], p["pillow_blocks_mm"]
 
     # Fixed yaw support on the beam hub: back plate, two bearing arms and the yaw servo shelf.
     st = p["yaw_stack_mm"]
     shelf_z, arm_lo, arm_hi = st["servo_shelf_z_offset"], st["lower_arm_z_offset"], st["upper_arm_z_offset"]
     z_of = lambda off: spider_top + off
+    kfl = pb["kfl08"]
+    kfl_j, kfl_hole = kfl["bolt_spacing"] / 2, kfl["bolt_hole_d"] / 2
     bracket = box(5, 32, z_of(arm_hi) + 5 - spider_top, (-42.5, 0, (spider_top + z_of(arm_hi) + 5) / 2))
     for z0 in (z_of(arm_lo), z_of(arm_hi)):
         bracket = bracket.fuse(box(72, 32, 5, (-4, 0, z0 + 2.5)).cut(cylinder(5, 5, (0, 0, z0), (0, 0, 1))))
-    bracket = bracket.fuse(box(62, 32, 4, (-9, 0, z_of(shelf_z) + 2)).cut(
-        cylinder(3.5, 4, (0, 0, z_of(shelf_z)), (0, 0, 1))))
-    add("yaw_bracket", bracket, charcoal, "tilt_fixed", lift,
-        "Fixed C-bracket on the beam hub: two arms for the yaw bearings and a shelf for the yaw servo",
-        "print", "PETG, 60 % infill (or bent aluminium 3 mm)")
-    for name, z0 in (("lower", z_of(arm_lo) + 5), ("upper", z_of(arm_hi) + 5)):
-        brg = box(60, 30, 4, (0, 0, z0 + 2)).fuse(cylinder(11, 12, (0, 0, z0), (0, 0, 1))).cut(
-            cylinder(bore, 12, (0, 0, z0), (0, 0, 1)))
-        add(f"yaw_bearing_{name}", brg, (.55, .58, .60), "tilt_fixed", lift,
-            "Flanged bearing for the vertical yaw shaft", "buy", "Flanged pillow block KFL08, bore 8 mm")
+        for x in (-kfl_j, kfl_j):
+            # Slotted 1 mm each way: KFL08 bolt spacing is 36-37 mm depending on the maker.
+            bracket = bracket.cut(box(2 * kfl_hole + 2, 2 * kfl_hole, 5, (x, 0, z0 + 2.5)))
+    # MG90S hangs through a cut-out in the shelf with its ears resting on top (TowerPro: ear underside
+    # 18.5 mm above the base, spline 4.1 mm proud of the bed).
+    mg90 = sd["mg90s"]
     y_len, y_wid, y_hgt = p["yaw_servo_body_mm"]
-    y_top = z_of(shelf_z)
-    yaw_servo = box(y_len, y_wid, y_hgt, (y_len / 2 - 6, 0, y_top - y_hgt / 2)).fuse(
-        box(32.5, y_wid, 2.5, (y_len / 2 - 6, 0, y_top - 6)),
-        cylinder(2.4, 8, (0, 0, y_top), (0, 0, 1)))
+    shelf_top = z_of(shelf_z) + 4
+    y_top = shelf_top + mg90["ear_below_bed"] + mg90["ear_thickness"]   # spline bed
+    y_cx = y_len / 2 - 6                                  # output shaft 6 mm from the body end
+    bracket = bracket.fuse(box(62, 32, 4, (-9, 0, z_of(shelf_z) + 2)).cut(
+        box(y_len + .6, y_wid + .6, 4, (y_cx, 0, z_of(shelf_z) + 2))))
+    yaw_ear_x = [y_cx - mg90["ear_hole_pitch"] / 2, y_cx + mg90["ear_hole_pitch"] / 2]
+    for x in yaw_ear_x:
+        bracket = bracket.cut(cylinder(1.1, 4, (x, 0, z_of(shelf_z)), (0, 0, 1)))
+        fastener("yaw_servo_to_shelf", "M2 x 10", (x, 0, shelf_top + mg90["ear_thickness"]), (0, 0, -1),
+                 mg90["ear_thickness"] + 4 + 2)
+    # Foot on the beam hub, stopping short of the yaw servo cable that runs along the beam top.
+    foot_l, foot_t = p["yaw_bracket_foot_mm"]
+    bracket = bracket.fuse(box(foot_l, 32, foot_t, (-45 + foot_l / 2, 0, spider_top + foot_t / 2)))
+    for x, y in foot_holes:
+        bracket = bracket.cut(cylinder(2.75, foot_t, (x, y, spider_top), (0, 0, 1)))
+        fastener("yaw_bracket_to_beam", "M5 x 45", (x, y, spider_top + foot_t), (0, 0, -1),
+                 foot_t + spider_top - spider_bottom + 5)
+    add("yaw_bracket", bracket, charcoal, "tilt_fixed", lift,
+        "Fixed C-bracket on the beam hub: two arms for the yaw bearings, a shelf the MG90S hangs through and a "
+        "foot bolted through the hub", "print", "PETG, 60 % infill (or bent aluminium 3 mm)")
+    # KFL08 (catalogue: 48 x 27 rhombic flange, holes 37 apart for M4, round body about 27 mm,
+    # 12.5 mm overall with the inner ring proud on top).
+    kfl_t, kfl_body, kfl_h = kfl["flange_t"], kfl["body_height"], kfl["total_height"]
+    for name, z0 in (("lower", z_of(arm_lo) + 5), ("upper", z_of(arm_hi) + 5)):
+        lobe_r = (kfl["flange_length"] / 2 - kfl_j)
+        brg = cylinder(kfl["body_d"] / 2, kfl_body, (0, 0, z0), (0, 0, 1)).fuse(
+            box(2 * kfl_j, 2 * lobe_r + 2, kfl_t, (0, 0, z0 + kfl_t / 2)),
+            cylinder(lobe_r, kfl_t, (-kfl_j, 0, z0), (0, 0, 1)), cylinder(lobe_r, kfl_t, (kfl_j, 0, z0), (0, 0, 1)),
+            cylinder(7, kfl_h - kfl_body, (0, 0, z0 + kfl_body), (0, 0, 1))).cut(
+            cylinder(bore, kfl_h, (0, 0, z0), (0, 0, 1)))
+        for x in (-kfl_j, kfl_j):
+            brg = brg.cut(cylinder(kfl_hole, kfl_t, (x, 0, z0), (0, 0, 1)))
+            # Bolted from under the arm; the upper pair's nuts sink into the cable channel floor.
+            fastener(f"yaw_bearing_{name}_to_bracket", "M4 x 16" if name == "lower" else "M4 x 16, nut sunk in channel",
+                     (x, 0, z0 - 5), (0, 0, 1), 5 + kfl_t + (3.5 if name == "lower" else 5))
+        add(f"yaw_bearing_{name}", brg, (.55, .58, .60), "tilt_fixed", lift,
+            "Flanged bearing for the vertical yaw shaft, 2 M4 bolts through the bracket arm", "buy",
+            "Flanged pillow block KFL08, bore 8 mm")
+    yaw_servo = box(y_len, y_wid, y_hgt, (y_cx, 0, y_top - y_hgt / 2)).fuse(
+        box(mg90["ear_length"], y_wid, mg90["ear_thickness"], (y_cx, 0, shelf_top + mg90["ear_thickness"] / 2)),
+        cylinder(mg90["spline_d"] / 2, mg90["spline_above_bed"], (0, 0, y_top), (0, 0, 1)))
+    for x in yaw_ear_x:
+        yaw_servo = yaw_servo.cut(cylinder(1.1, mg90["ear_thickness"], (x, 0, shelf_top), (0, 0, 1)))
     add("yaw_servo", yaw_servo, servo_blue, "tilt_fixed", lift,
         "MG90S turning the tilt stage plus or minus 45 degrees toward the bin", "buy", "MG90S, metal gears")
 
     # Yaw stage: horn hub, vertical shaft, collar, platform, hinge posts and blocks, tilt servo.
     plat_bot = pivot - p["yaw_platform_below_pivot_mm"]
     plat_top = plat_bot + 5
-    upper_top = z_of(arm_hi) + 5 + 12
+    upper_top = z_of(arm_hi) + 5 + kfl_h                   # top of the upper KFL08 inner ring
     assert upper_top + 8 <= plat_bot, "collar fits between the upper bearing and the platform"
-    # The servo turns the shaft through its round horn and a printed hub. A 5 x 8 flexible coupling
-    # is 25 mm long, does not fit under the lower arm, and its 5 mm half would grip only the spline tip.
+    # The MG90S ships with arm horns only, no round disc: the cross horn sits in the printed hub's
+    # underside and two of its arm holes take screws into the hub. Horn sizes are provisional.
     hb = p["yaw_hub_mm"]
-    horn_d, horn_t = hb["horn_disc"]
-    horn_z = y_top + 8                                  # on the spline tip drawn above
-    hub_z, hub_r, depth = horn_z + horn_t, hb["diameter"] / 2, hb["shaft_depth"]
+    horn_z = y_top                                       # horn boss rests on the spline bed
+    boss_h, arm_t = 4.5, 1.8
+    hub_z, hub_r, depth = horn_z + boss_h, hb["diameter"] / 2, hb["shaft_depth"]
     hub_top = hub_z + hb["height"]
     assert hub_top + 1 <= z_of(arm_lo), "hub clears the lower bearing arm"
-    add("yaw_servo_horn", cylinder(horn_d / 2, horn_t, (0, 0, horn_z), (0, 0, 1)), pp, "yaw", lift,
-        "Round horn that ships with the MG90S, screwed to the hub", "buy", "Comes with the servo")
+    cross = cylinder(3.6, boss_h, (0, 0, horn_z), (0, 0, 1)).fuse(
+        box(20, 5, arm_t, (0, 0, hub_z - arm_t / 2)), box(5, 20, arm_t, (0, 0, hub_z - arm_t / 2))).cut(
+        cylinder(mg90["spline_d"] / 2 + .05, mg90["spline_above_bed"], (0, 0, horn_z), (0, 0, 1)))
+    for y in (-hb["horn_screw_radius"], hb["horn_screw_radius"]):
+        cross = cross.cut(cylinder(1, arm_t, (0, y, hub_z - arm_t), (0, 0, 1)))
+    add("yaw_servo_horn", cross, pp, "yaw", lift,
+        "Cross horn that ships with the MG90S, screwed into the hub (sizes provisional, measure the horn)",
+        "buy", "Comes with the servo")
     screw_z = hub_top - depth / 2
     hub = cylinder(hub_r, hb["height"], (0, 0, hub_z), (0, 0, 1)).cut(
         cylinder(bore, depth, (0, 0, hub_top - depth), (0, 0, 1))).cut(
+        cylinder(2.5, 2, (0, 0, hub_z), (0, 0, 1))).cut(                     # relief for the horn's centre screw head
         cylinder(1.6, hub_r, (0, 0, screw_z), (1, 0, 0))).cut(               # M3 set screw onto the shaft flat
         box(2.6, 5.8, hub_top - screw_z + 3, (7, 0, (hub_top + screw_z - 3) / 2)))  # M3 nut drops in from the top
     for y in (-hb["horn_screw_radius"], hb["horn_screw_radius"]):
         hub = hub.cut(cylinder(.9, 4, (0, y, hub_z), (0, 0, 1)))           # pilot holes for the horn screws
+        fastener("yaw_horn_to_hub", "M2 x 6 self-tapping", (0, y, hub_z - arm_t), (0, 0, 1), arm_t + 4)
     add("yaw_hub", hub, light, "yaw", lift,
         "Hub from the yaw servo horn to the 8 mm shaft: horn screws below, M3 set screw and nut on the shaft "
         "flat", "print", "PETG, 100 % infill")
-    add("yaw_shaft", cylinder(4, plat_bot - (hub_top - depth), (0, 0, hub_top - depth), (0, 0, 1)), metal, "yaw",
-        lift, "Vertical yaw shaft in the two flanged bearings", "cut", "Stainless 304 rod 8 mm")
-    add("yaw_collar", ring_z(8, bore, plat_bot - 8, 8), metal, "yaw", lift,
-        "Shaft collar resting on the upper bearing: carries the stage weight", "buy", "Shaft collar 8 mm")
+    # The shaft runs up through the platform into a flange coupling bolted on top of it, so the
+    # platform is held by the shaft and turns with it. Common 8 mm rigid flange: 32 x 3 flange,
+    # 16 mm hub, 13 mm overall, 4 M4 holes on a 24 mm circle, 2 M4 set screws.
+    yf = p["yaw_flange_mm"]
+    (fl_d, fl_t), (fh_d, fh_h) = yf["flange"], yf["hub"]
+    shaft_top = plat_top + fl_t + fh_h - 1
+    add("yaw_shaft", cylinder(4, shaft_top - (hub_top - depth), (0, 0, hub_top - depth), (0, 0, 1)), metal, "yaw",
+        lift, f"Vertical yaw shaft in the two flanged bearings, through the platform into the flange coupling; "
+        f"cut {shaft_top - (hub_top - depth):.0f} mm, flats for the hub and coupling set screws",
+        "cut", "Stainless 304 rod 8 mm")
+    add("yaw_collar", ring_z(8, bore, upper_top, 8), metal, "yaw", lift,
+        "Shaft collar resting on the upper bearing inner ring: carries the stage weight", "buy", "Shaft collar 8 mm")
+    flange = cylinder(fl_d / 2, fl_t, (0, 0, plat_top), (0, 0, 1)).fuse(
+        cylinder(fh_d / 2, fh_h, (0, 0, plat_top + fl_t), (0, 0, 1))).cut(
+        cylinder(bore, fl_t + fh_h, (0, 0, plat_top), (0, 0, 1)))
+    for a in (0, 180):
+        flange = flange.cut(cylinder(2, fh_d / 2, (0, 0, plat_top + fl_t + fh_h / 2),
+                                     (math.cos(math.radians(a)), math.sin(math.radians(a)), 0)))
+        fastener("yaw_flange_set_screw", "M4 set screw",
+                 (fh_d / 2 * math.cos(math.radians(a)), 0, plat_top + fl_t + fh_h / 2),
+                 (-math.cos(math.radians(a)), 0, 0), fh_d / 2 - 4, "set screw")
+    flange_screws = [(yf["screw_radius"] * math.cos(math.radians(a)), yf["screw_radius"] * math.sin(math.radians(a)))
+                     for a in (45, 135, 225, 315)]
+    for x, y in flange_screws:
+        flange = flange.cut(cylinder(2, fl_t, (x, y, plat_top), (0, 0, 1)))
+        # Tapped M4 into the platform: a nut under it would hit the shaft collar.
+        fastener("yaw_flange_to_platform", "M4 x 8", (x, y, plat_top + fl_t), (0, 0, -1), fl_t + 5)
+    add("yaw_flange", flange, metal, "yaw", lift,
+        "Flange coupling on top of the platform: 2 set screws on the shaft flat, 4 M4 screws into the platform",
+        "buy", "Rigid flange coupling 8 mm (32 x 13)")
     half_y = p["yaw_platform_half_y_mm"]
     # The ribbon leaves the rolling-loop channel next to the drum and climbs through the platform.
     drum_ri, drum_ro = mc["drum_radius_mm"]
@@ -287,35 +371,123 @@ def head(p, add):
     exit_r = drum_ro + .25 + rib_t / 2
     exit_a = math.radians(mc["exit_angle_degrees"])
     exit_xy = (exit_r * math.cos(exit_a), exit_r * math.sin(exit_a))
-    add("yaw_platform", box(2 * (block_x + 15), 2 * half_y, 5, (0, 0, plat_bot + 2.5)).cut(
-        cylinder(cab_r + .75, 5, (*exit_xy, plat_bot), (0, 0, 1))), charcoal, "yaw", lift,
-        "Turning platform carrying the hinge posts, the tilt servo and the stop pads", "laser",
-        "Aluminium sheet 4 mm")
+    # Real pulleys (seller CAD): 20T is 16 long (flange, teeth, Ø16 hub); 40T is 17 long with two
+    # flanges and a Ø16 hub on one side. The 20T hub faces the servo so its set screws grip the
+    # adapter boss; the 40T hub faces inward so the outer flange stays clear of the KP08.
+    pm = p["pulley_mm"]
+    ps, pl = pm["small"], pm["large"]
+    ps_face = belt_c + ps["belt_from_flange_face"]      # outer flange face of the 20T
+    ps_hub_end = ps_face - ps["length"]
+    pl_face = belt_c + pl["belt_from_flange_face"]
+    assert pl_face + 1.5 <= block_x - 6.5, "40T outer flange clears the KP08"
+    # MG996R (TowerPro: 37 mm to the spline bed, spline 5.7 proud, ear underside 10.2 below the bed).
+    m996 = sd["mg996r"]
+    ad = p["tilt_pulley_adapter_mm"]
+    (hh_d, hh_t), (horn_d, horn_t) = ad["horn_hub"], ad["horn_disc"]
+    face = ps_hub_end - .5 - ad["disc_length"] - (.2 + hh_t + horn_t)   # spline bed
+    body_y0 = -from_top
+    body_cy = body_y0 + s_len / 2
+    ear_lo = face - m996["ear_below_bed"] - m996["ear_thickness"]        # ear face toward the base
+    bracket_x = ear_lo - 2.5                                             # 5 mm bracket plate under the ears
+    bracket_y = [body_cy + s for s in (-25, 25)]
+    post_t, post_w = p["hinge_post_mm"]
+    kp = pb["kp08"]
+    kp_j, kp_hole = kp["bolt_spacing"] / 2, kp["bolt_hole_d"] / 2
+    post_y = post_w / 2 - 12
+    pad_y = p["tilt_stop_pad_y_mm"]
+    # Holes in the platform: shaft, coupling screws, posts, servo bracket and stop pads. Everything
+    # bolted from below at r < 62 uses countersunk screws, so nothing hits the yaw stop lugs.
+    platform = box(2 * (block_x + 15), 2 * half_y, 5, (0, 0, plat_bot + 2.5)).cut(
+        cylinder(cab_r + .75, 5, (*exit_xy, plat_bot), (0, 0, 1))).cut(cylinder(bore, 5, (0, 0, plat_bot), (0, 0, 1)))
+    for x, y, r in ([(x, y, 1.65) for x, y in flange_screws] + [(x, y, 2.25) for x in (-block_x, block_x)
+                    for y in (-post_y, post_y)] + [(bracket_x, y, 2.2) for y in bracket_y]
+                    + [(0, y, 1.7) for y in (-pad_y, pad_y)]):
+        platform = platform.cut(cylinder(r, 5, (x, y, plat_bot), (0, 0, 1)))
+    add("yaw_platform", platform, charcoal, "yaw", lift,
+        "Turning platform carrying the hinge posts, the tilt servo and the stop pads; holes for the shaft, "
+        "coupling (M4 tapped), posts, servo bracket and stop pads", "laser", "Aluminium sheet 4 mm")
+    for y in bracket_y:
+        fastener("tilt_servo_bracket_to_platform", "M4 x 12", (bracket_x, y, plat_bot), (0, 0, 1), 12, "countersunk")
+    for y in (-pad_y, pad_y):
+        fastener("tilt_stop_pad_to_platform", "M3 x 12", (0, y, plat_bot), (0, 0, 1), 12)
     block_base = pivot - 15
+    proud = kp["inner_ring_proud"]
     for i, x in enumerate((-block_x, block_x), 1):
-        add(f"hinge_post_{i}", box(13, 30, block_base - plat_top, (x, 0, (block_base + plat_top) / 2)), metal,
-            "yaw", lift, "Post from the platform to a hinge pillow block", "cut", "Aluminium flat bar 30 x 13")
-        blk = box(13, 55, 5, (x, 0, block_base + 2.5)).fuse(ring_x(14, bore, x - 6.5, 13, pivot)).cut(
+        # KP08 (catalogue: 55 x 13 base, holes 42 apart, round holes for M4, centre 15 above the base).
+        # The 60 x 10 post is tapped M4 at both ends: two bolts from the platform, two from the block.
+        post = box(post_t, post_w, block_base - plat_top, (x, 0, (block_base + plat_top) / 2))
+        for y in (-post_y, post_y):
+            post = post.cut(cylinder(1.65, 12, (x, y, plat_top), (0, 0, 1)))
+            fastener("hinge_post_to_platform", "M4 x 16", (x, y, plat_bot), (0, 0, 1), 5 + 11)
+        for y in (-kp_j, kp_j):
+            post = post.cut(cylinder(1.65, 12, (x, y, block_base - 12), (0, 0, 1)))
+        add(f"hinge_post_{i}", post, metal, "yaw", lift,
+            f"Post from the platform to a hinge pillow block, tapped M4 at both ends; cut "
+            f"{block_base - plat_top:.0f} mm", "cut", f"Aluminium flat bar {post_w:.0f} x {post_t:.0f}")
+        out = 1 if x > 0 else -1                          # the inner ring stands proud on the outer side
+        blk = box(13, 55, 5, (x, 0, block_base + 2.5)).fuse(ring_x(14, bore, x - 6.5, 13, pivot)).fuse(
+            ring_x(7, bore, x + out * 6.5 - (proud if out < 0 else 0), proud, pivot)).cut(
             cylinder(bore, 13, (x - 6.5, 0, pivot), (1, 0, 0)))
+        for y in (-kp_j, kp_j):
+            blk = blk.cut(cylinder(kp_hole, 5, (x, y, block_base), (0, 0, 1)))
+            fastener("hinge_block_to_post", "M4 x 16", (x, y, block_base + 5), (0, 0, -1), 5 + 11)
         add(f"hinge_block_{i}", blk, (.55, .58, .60), "yaw", lift,
             "Horizontal pillow block carrying the hinge shaft; takes the plate load off the servo", "buy",
             "Pillow block KP08, bore 8 mm")
-    face = belt_x - 1
-    body_y0 = -from_top
-    tilt_servo = box(s_hgt, s_len, s_wid, (face - s_hgt / 2, body_y0 + s_len / 2, shaft_z)).fuse(
-        box(2.5, 54, s_wid, (face - 12, body_y0 + s_len / 2, shaft_z)),
-        cylinder(2.5, 7, (face, 0, shaft_z), (1, 0, 0)))
+    tilt_servo = box(s_hgt, s_len, s_wid, (face - s_hgt / 2, body_cy, shaft_z)).fuse(
+        box(m996["ear_thickness"], m996["ear_length"], s_wid, (ear_lo + m996["ear_thickness"] / 2, body_cy, shaft_z)),
+        cylinder(m996["spline_d"] / 2, m996["spline_above_bed"], (face, 0, shaft_z), (1, 0, 0)))
+    ehy, ehz = m996["ear_holes"][0] / 2, m996["ear_holes"][1] / 2
+    ear_holes = [(y, z) for y in (body_cy - ehy, body_cy + ehy) for z in (shaft_z - ehz, shaft_z + ehz)]
+    for y, z in ear_holes:
+        tilt_servo = tilt_servo.cut(cylinder(2.1, m996["ear_thickness"], (ear_lo, y, z), (1, 0, 0)))
     add("tilt_servo", tilt_servo, servo_blue, "yaw", lift,
-        "MG996R driving the hinge through the 2:1 belt", "buy", "MG996R, metal gears")
-    ear_x = face - 12 + 1.25
+        "MG996R driving the hinge through the 2:1 belt; cable leaves the end near the output shaft", "buy",
+        "MG996R, metal gears")
     srv_bracket = box(5, 68, shaft_z + s_wid / 2 + 6 - plat_top,
-                      (ear_x + 2.5, body_y0 + s_len / 2, (shaft_z + s_wid / 2 + 6 + plat_top) / 2)).cut(
-        box(5, s_len, s_wid, (ear_x + 2.5, body_y0 + s_len / 2, shaft_z)))
+                      (bracket_x, body_cy, (shaft_z + s_wid / 2 + 6 + plat_top) / 2)).cut(
+        box(5, s_len + .6, s_wid + .6, (bracket_x, body_cy, shaft_z)))
+    for y in bracket_y:
+        srv_bracket = srv_bracket.cut(cylinder(1.7, 10, (bracket_x, y, plat_top), (0, 0, 1)))
+    for y, z in ear_holes:
+        # Slotted 2 mm vertically: the pulley centre distance is vertical, so this sets belt tension.
+        srv_bracket = srv_bracket.cut(box(5, 3.4, 3.4 + 2, (bracket_x, y, z)))
+        fastener("tilt_servo_to_bracket", "M3 x 12", (ear_lo + m996["ear_thickness"], y, z), (-1, 0, 0),
+                 m996["ear_thickness"] + 5 + 3)
     add("tilt_servo_bracket", srv_bracket, charcoal, "yaw", lift,
-        "Bracket the MG996R ears bolt to; slotted holes set the belt tension", "print", "PETG, 60 % infill")
-    add("tilt_pulley_small", cylinder(small_r - .25, bw, (belt_x, 0, shaft_z), (1, 0, 0)).cut(
-        cylinder(2.6, bw, (belt_x, 0, shaft_z), (1, 0, 0))), metal, "yaw", lift,
-        "GT2 20-tooth pulley on the MG996R (3D-printed adapter to the horn)", "buy", "GT2 20T, 6 mm belt")
+        "Bracket the MG996R ears bolt to; vertical slots set the belt tension; 2 M4 countersunk screws from "
+        "under the platform", "print", "PETG, 60 % infill")
+    # Aluminium 25T disc horn (Ø20, 4 tapped M3 holes at r7, hub on the servo side), then a printed
+    # adapter whose boss carries the 20T pulley through its full 16 mm bore.
+    hx = face + .2
+    horn = cylinder(hh_d / 2, hh_t, (hx, 0, shaft_z), (1, 0, 0)).fuse(
+        cylinder(horn_d / 2, horn_t, (hx + hh_t, 0, shaft_z), (1, 0, 0))).cut(
+        cylinder(m996["spline_d"] / 2 + .05, hh_t + horn_t, (hx, 0, shaft_z), (1, 0, 0)))
+    horn_holes = [(0, ad["horn_hole_radius"]), (0, -ad["horn_hole_radius"]),
+                  (ad["horn_hole_radius"], 0), (-ad["horn_hole_radius"], 0)]
+    for y, dz in horn_holes:
+        horn = horn.cut(cylinder(1.25, horn_t, (hx + hh_t, y, shaft_z + dz), (1, 0, 0)))
+    add("tilt_servo_horn", horn, metal, "yaw", lift,
+        "Aluminium 25T disc horn on the MG996R, 4 tapped M3 holes", "buy", "Aluminium disc horn 25T, Ø20")
+    a0 = hx + hh_t + horn_t
+    a1 = a0 + ad["disc_length"]
+    adapter = cylinder(horn_d / 2, ad["disc_length"], (a0, 0, shaft_z), (1, 0, 0)).cut(
+        cylinder(3.5, 2.5, (a0, 0, shaft_z), (1, 0, 0))).fuse(                # relief for the horn screw head
+        cylinder(ad["boss_d"] / 2, ps_face - a1, (a1, 0, shaft_z), (1, 0, 0)))
+    for y, dz in horn_holes:
+        adapter = adapter.cut(cylinder(1.7, ad["disc_length"], (a0, y, shaft_z + dz), (1, 0, 0))).cut(
+            cylinder(3, 3, (a1 - 3, y, shaft_z + dz), (1, 0, 0)))             # counterbore: heads clear the pulley hub
+        fastener("tilt_horn_to_adapter", "M3 x 6", (a1 - 3, y, shaft_z + dz), (-1, 0, 0), ad["disc_length"] - 3 + horn_t)
+    add("tilt_pulley_adapter", adapter, light, "yaw", lift,
+        "Adapter from the MG996R horn to the 20T pulley: 4 M3 screws into the horn, the pulley's set screws on a "
+        "boss flat 4 mm from its hub end", "print", "PETG, 100 % infill")
+    small = cylinder(ps["hub_d"] / 2, ps["length"] - ps["flange_t"] - ps["tooth_w"], (ps_hub_end, 0, shaft_z), (1, 0, 0)).fuse(
+        cylinder(ps["tooth_od"] / 2, ps["tooth_w"], (ps_face - ps["flange_t"] - ps["tooth_w"], 0, shaft_z), (1, 0, 0)),
+        cylinder(ps["flange_d"] / 2, ps["flange_t"], (ps_face - ps["flange_t"], 0, shaft_z), (1, 0, 0))).cut(
+        cylinder(ps["bore"] / 2 + .05, ps["length"], (ps_hub_end, 0, shaft_z), (1, 0, 0)))
+    add("tilt_pulley_small", small, metal, "yaw", lift,
+        "GT2 20-tooth pulley, 16 mm long, hub toward the servo, on the printed adapter boss", "buy",
+        "GT2 20T, 6 mm belt, 6 mm bore")
     add("tilt_belt", belt_loop(lambda a, z: cq.Vector(belt_x, a, z), (bw, 0, 0), big_r, small_r, pivot, c),
         (.1, .1, .1), "yaw", lift, "GT2 closed belt, hinge axis", "buy",
         f"GT2 closed loop {p['belt_loop_length_mm']:.0f} mm")
@@ -329,16 +501,18 @@ def head(p, add):
     assert clear_at_max > 4, "plate must clear the stop pads at the working tilt"
     assert pad_y + pad_hw <= half_y
     for i, y in enumerate((-pad_y, pad_y), 1):
-        add(f"tilt_stop_pad_{i}", box(24, 2 * pad_hw, pad_top - plat_top, (0, y, (pad_top + plat_top) / 2)),
+        pad = box(24, 2 * pad_hw, pad_top - plat_top, (0, y, (pad_top + plat_top) / 2)).cut(
+            cylinder(1.25, 10, (0, y, plat_top), (0, 0, 1)))
+        add(f"tilt_stop_pad_{i}", pad,
             rubber, "yaw", lift, f"Stop pad: the plate lands on it at {p['tilt_stop_degrees']:.0f} degrees",
             "print", "PETG block with a rubber bumper on top")
 
     # Tilt stage: hinge shaft, collars, lugs under the plate, large pulley, plate and IMU.
-    shaft_len = 2 * (block_x + 15)
+    shaft_len = 2 * (block_x + 6.5 + proud + 8 + 1)
     add("hinge_shaft", cylinder(4, shaft_len, (-shaft_len / 2, 0, pivot), (1, 0, 0)), metal, "tilt_plate", lift,
         "Hinge shaft 22 mm under the plate surface, turning in the two pillow blocks", "cut",
         "Stainless 304 rod 8 mm")
-    for i, x in enumerate((-block_x - 6.5 - 8, block_x + 6.5), 1):
+    for i, x in enumerate((-block_x - 6.5 - proud - 8, block_x + 6.5 + proud), 1):
         add(f"hinge_collar_{i}", ring_x(8, bore, x, 8, pivot), metal, "tilt_plate", lift,
             "Shaft collar holding the hinge shaft in place", "buy", "Shaft collar 8 mm")
     lug_x = p["plate_lug_x_mm"]
@@ -348,11 +522,24 @@ def head(p, add):
             box(20, 40, 4, (x, 0, plate_z - 2))).cut(cylinder(bore, 6, (x - 3, 0, pivot), (1, 0, 0)))
         for hx, hy in holes:
             lug = lug.cut(cylinder(2.2, 4, (hx, hy, plate_z - 4), (0, 0, 1)))
+        # The lug drives the plate, so it grips the shaft: M3 set screw from below onto a flat.
+        lug = lug.cut(cylinder(1.25, 6, (x, 0, pivot - 10), (0, 0, 1)))
+        fastener("plate_lug_set_screw", "M3 x 6 set screw", (x, 0, pivot - 10), (0, 0, 1), 6, "set screw")
         add(f"plate_lug_{i}", lug, charcoal, "tilt_plate", lift,
-            "Lug under the plate, clamped to the hinge shaft", "print", "PETG, 60 % infill")
-    add("tilt_pulley_large", cylinder(big_r - .25, bw, (belt_x, 0, pivot), (1, 0, 0)).cut(
-        cylinder(bore, bw, (belt_x, 0, pivot), (1, 0, 0))), metal, "tilt_plate", lift,
-        "GT2 40-tooth pulley clamped to the hinge shaft", "buy", "GT2 40T, 8 mm bore (check: some are 5 mm)")
+            "Lug under the plate, clamped to the hinge shaft by an M3 set screw on a flat", "print",
+            "PETG, 60 % infill; M4 heat-set inserts for the plate screws")
+    for hx, hy in holes:
+        fastener("plate_to_lug", "M4 x 6", (hx, hy, plate_z + plate_t), (0, 0, -1), plate_t + 4, "countersunk")
+    lt0 = pl_face - pl["flange_t"] - pl["tooth_w"]
+    large = cylinder(pl["flange_d"] / 2, pl["flange_t"], (pl_face - pl["flange_t"], 0, pivot), (1, 0, 0)).fuse(
+        cylinder(pl["tooth_od"] / 2, pl["tooth_w"], (lt0, 0, pivot), (1, 0, 0)),
+        cylinder(pl["flange_d"] / 2, pl["flange_t"], (lt0 - pl["flange_t"], 0, pivot), (1, 0, 0)),
+        cylinder(pl["hub_d"] / 2, (lt0 - pl["flange_t"]) - (pl_face - pl["length"]),
+                 (pl_face - pl["length"], 0, pivot), (1, 0, 0))).cut(
+        cylinder(bore, pl["length"], (pl_face - pl["length"], 0, pivot), (1, 0, 0)))
+    add("tilt_pulley_large", large, metal, "tilt_plate", lift,
+        "GT2 40-tooth pulley, 17 mm long with two flanges, hub toward the plate centre, clamped to the hinge shaft",
+        "buy", "GT2 40T, 6 mm belt, 8 mm bore (check: some are 5 mm)")
     plate = (cq.Workplane("XY").circle(plate_r).extrude(plate_t).edges().fillet(min(1, plate_t / 3))
              .translate((0, 0, plate_z))).val()
     for x, y in holes:
@@ -379,28 +566,36 @@ def head(p, add):
     # platform only rolls the U along the channel, so the ribbon always bends at the same radius.
     wall_ri, wall_ro = mc["channel_wall_radius_mm"]
     rib_w = mc["ribbon_width_mm"]
-    floor_z = z_of(arm_hi) + 5 + 4                       # on the upper bearing flange
-    rib_z = floor_z + 2.5
+    floor_z = z_of(arm_hi) + 5 + kfl_t                   # on the upper KFL08 flange lobes
+    floor_t = 6                                          # thick enough to sink the KFL08 nuts
+    rib_z = floor_z + floor_t + .5
     assert rib_z + rib_w < plat_bot - .5, "ribbon fits under the platform"
     assert drum_ri > 11 + 1, "drum clears the upper bearing hub"
     ent_a, fold_a = mc["entry_angle_degrees"], mc["fold_angle_degrees"]
     hs_ = p["yaw_hard_stop"]
     lug_a = (hs_["lug_width_mm"] / 2 + hs_["pin_r_mm"]) / hs_["pin_radius_mm"]
     lug_angles = [180 + s * (hs_["travel_degrees"] + math.degrees(lug_a)) for s in (-1, 1)]
-    channel = tube(wall_ro, 12, floor_z, 2).fuse(tube(wall_ro, wall_ri, floor_z, plat_bot - .5 - floor_z))
+    assert kfl["body_d"] / 2 + .5 <= 14 and floor_z + floor_t >= z_of(arm_hi) + 5 + kfl_body, \
+        "the channel floor clears the KFL08 body"
+    channel = tube(wall_ro, 14, floor_z, floor_t).fuse(tube(wall_ro, wall_ri, floor_z, plat_bot - .5 - floor_z))
+    for x in (-kfl_j, kfl_j):
+        # The upper KFL08 bolts clamp the channel too; their nuts sink 4 mm into the floor.
+        channel = channel.cut(cylinder(kfl_hole, floor_t, (x, 0, floor_z), (0, 0, 1))).cut(
+            cylinder(4.3, 4, (x, 0, floor_z + floor_t - 4), (0, 0, 1)))
     for a in lug_angles:
         lug_len = hs_["lug_outer_radius_mm"] - wall_ri
-        channel = channel.fuse(box(lug_len, hs_["lug_width_mm"], 12, (wall_ri + lug_len / 2, 0, floor_z + 6))
+        channel = channel.fuse(box(lug_len, hs_["lug_width_mm"], 12, (wall_ri + lug_len / 2, 0, floor_z + floor_t + 6))
                                .rotate((0, 0, 0), (0, 0, 1), a))
     slot = box(10, 7, rib_w + .6, (wall_ri + 1.5, 0, rib_z + rib_w / 2)).rotate((0, 0, 0), (0, 0, 1), ent_a)
     channel = channel.cut(slot)
     add("yaw_cable_channel", channel, charcoal, "tilt_fixed", lift,
         f"Fixed rolling-loop channel on the upper bearing, with the two yaw stop lugs at +/-{hs_['travel_degrees']:.0f} degrees",
         "print", "PETG, 100 % infill at the stop lugs; rubber pads on the lug faces")
-    add("yaw_cable_drum", tube(drum_ro, drum_ri, floor_z + 2.5, plat_bot - (floor_z + 2.5)), charcoal, "yaw", lift,
+    add("yaw_cable_drum", tube(drum_ro, drum_ri, rib_z, plat_bot - rib_z), charcoal, "yaw", lift,
         "Drum under the platform, turning with it: the inner face of the rolling loop", "print", "PETG")
     pr, pin_r = hs_["pin_radius_mm"], hs_["pin_r_mm"]
-    add("yaw_stop_pin", cylinder(pin_r, plat_bot - (floor_z + 4), (-pr, 0, floor_z + 4), (0, 0, 1)), metal, "yaw", lift,
+    add("yaw_stop_pin", cylinder(pin_r, plat_bot - (floor_z + floor_t + 2), (-pr, 0, floor_z + floor_t + 2), (0, 0, 1)),
+        metal, "yaw", lift,
         "Stop pin under the platform: hits a lug at the yaw limit even if the hub slips", "buy",
         "M4 steel bolt with an 8 mm sleeve")
 
@@ -431,9 +626,12 @@ def head(p, add):
         "MG996R and IMU cable, fixed part: console to the rolling-loop channel; becomes the ribbon at the wall",
         "buy", "Ribbon cable, same as the loop")
     # From the drum up through the platform, then up the servo's rear end face to its lead.
-    srv_end_y = body_y0 + s_len + cab_r
-    stage_path = [(*exit_xy, rib_z + rib_w + 1), (*exit_xy, plat_top + cab_r), (exit_xy[0], srv_end_y, plat_top + cab_r),
-                  (exit_xy[0], srv_end_y, shaft_z - 4)]
+    # The MG996R lead leaves the end face nearest the output shaft, close to the base: rise above the
+    # flange coupling, cross to that end face and climb to the lead.
+    lead_x, lead_y = face - s_hgt + m996["cable_from_base"], body_y0 - cab_r - .5
+    run_z = plat_top + fl_t + fh_h + cab_r + .5
+    assert run_z + cab_r < shaft_z - s_wid / 2, "cable run passes under the MG996R"
+    stage_path = [(*exit_xy, max(rib_z + rib_w + 1, plat_bot + .5)), (*exit_xy, run_z), (lead_x, lead_y, run_z), (lead_x, lead_y, shaft_z)]
     add("motor_cable_tilt_servo_stage", cable(stage_path, cab_r), (.85, .18, .18), "yaw", lift,
         "Cable on the turning platform: up through the platform, on the -x side of the servo, clear of the belt",
         "buy", "Same ribbon, split to the servo plug and the IMU lead")
@@ -486,9 +684,9 @@ def head(p, add):
         add(f"fill_sensor_arm_{i}", bracket.rotate((0, 0, 0), (0, 0, 1), a), metal, "head", lift,
             "Sensor arm from the throat lip", "print", "PETG")
 
-    # Rear console: a tablet-sized display leaning back on a low base. The slab is a thin frame
-    # around the display board, big enough to read from across a room; the base carries the boards and
-    # falls away to a half-round back, and the camera hides under its chin.
+    # Rear console: a small display slab leaning back on a low base. The slab is a thin frame
+    # around the display board (a 4.3 inch board with its own ESP32-S3); the base carries the camera
+    # board and the supplies and falls away to a half-round back, and the camera hides under its chin.
     # The chin reaches in over the funnel mouth so the camera sees the rear plate edge
     # past the throat lip (v3's rim-mounted camera lost about 16 % of the plate there).
     cw, ch = p["console_width_mm"], p["console_height_mm"]
@@ -528,7 +726,7 @@ def head(p, add):
     shell = body
     # The glass is the module's visible area; the frame only has to cover the board around it.
     assert gw < mw and gh < mh and sw - mw <= 12 and sh - mh <= 12, "the slab is a thin frame around the display board"
-    face = on_face(box(gw, gd, gh, (0, gd / 2, 0)))
+    face = on_face(box(gw, gd, gh, (0, gd / 2, 1.7)))      # active area sits 1.7 mm above the board centre
     target = (0, 0, plate_z + plate_t)
     lens_at = (0, p["camera_y_mm"], top)
     dx, dy, dz = (t - l for t, l in zip(target, lens_at))
@@ -539,7 +737,7 @@ def head(p, add):
     recess = cylinder(11, 14, along(-2), inward)
     led_len = p["led_strip_length_mm"]
     assert led_len <= cw - 12 and y_front <= p["camera_y_mm"] - 16
-    led = box(led_len, 8, 2.5, (0, p["camera_y_mm"] + 24, top + 1.25))
+    led = box(led_len, 9, 2.5, (0, p["camera_y_mm"] + 24, top + 1.25))
     body = body.cut(face).cut(recess).cut(led)
 
     # Space check: the boards that live in the console must fit inside it with a printed wall
@@ -554,21 +752,38 @@ def head(p, add):
         assert inside(room, body), f"{name} fits inside the console"
         assert all(room.intersect(other).Volume() < 1 for other in slots), f"{name} is clear of the other boards"
         slots.append(room)
+    # Guition JC4827W543 (maker drawing): 4 M3 holes 112.6 x 62.1 behind the board, and USB-C and the
+    # 4-pin JST power/UART socket on its left edge, reached through a slot in the slab side.
+    for hx in (-56.3, 56.3):
+        for hz in (-31.05, 31.05):
+            body = body.cut(on_face(cylinder(1.25, 8, (hx, md, hz), (0, 1, 0))))
+    body = body.cut(on_face(box(8, md, 22, (-mw / 2 - 2.5, md / 2, .5))))
+    # Both USB-C ports of the ESP32-S3 CAM board face the left wall of the base, through a slot.
+    eb_ = p["console_electronics_mm"]["esp32_s3_board"]
+    usb_x1 = eb_["at"][0] - eb_["size"][0] / 2 + 1
+    body = body.cut(box(usb_x1 + cw / 2 + 3, 24, 9, ((usb_x1 - cw / 2 - 3) / 2, eb_["at"][1], top + eb_["at"][2])))
     add("display_console", body, light, "brain", brain_lift,
-        "Rear console, hollow shell: a tablet-sized display slab leaning back on a low base; ESP32-S3 "
-        "camera board, servo supply and wiring in the base, camera and LED strip under the chin, clear "
-        "of any liquid in the funnel", "print", "PETG, printed in 2 halves")
+        "Rear console, hollow shell: a 4.3 inch display slab leaning back on a low base; ESP32-S3 "
+        "camera board, supplies, voltage dividers and wiring in the base, camera and LED strip under the "
+        "chin, clear of any liquid in the funnel; leave the USB-C ports of both boards reachable", "print",
+        "PETG, printed in 2 halves")
     add("tft_screen", face, glass, "brain", brain_lift,
-        "10.1 inch display filling the slab: sorting status, and facts about waste while idle", "buy",
-        f"TJC X5 10.1 inch TJC1060X5101, no touch: IPS 1024x600, 300 nit, UART TTL, "
-        f"own controller board {mw:g} x {mh:g} x {md:g} mm")
-    add("camera_window", cylinder(10.5, 2, along(10), inward), (.02, .02, .02), "brain", brain_lift,
-        "ESP32-S3 camera behind the chin window, 120 degree lens", "buy",
-        "ESP32-S3 camera module, OV2640 with 120 degree lens")
+        "4.3 inch display: sorting status and fill levels; its own ESP32-S3 also reads the 4 fill sensors",
+        "buy", f"Guition JC4827W543, ESP32-S3 N4R8, IPS 480x272, UART on a 4-pin JST 1.25, "
+        f"board {mw:g} x {mh:g} x {md:g} mm (shop figures, measure)")
+    # Lens 3 mm inside the Ø22 window: the window wall stays outside the 120 degree cone (free cone about 127 degrees).
+    add("camera_window", cylinder(5, 2, along(3), inward), (.02, .02, .02), "brain", brain_lift,
+        "OV2640 camera behind the chin window, 120 degree lens, on a 75 mm ribbon to the board in the base",
+        "buy", "OV2640, 120 degree lens, 75 mm 24-pin ribbon")
     add("led_strip", led, (.98, .96, .80), "brain", brain_lift,
         "White LED strip under the chin lighting the plate evenly for recognition", "buy",
-        f"5 V white LED strip, {led_len:.0f} mm, with diffuser")
-    cam = along(10)
+        f"5 V white 2835 LED strip, {led_len:.0f} mm (cuts every 50 mm), 8 mm wide, in a 9 mm groove")
+    cam = along(3)
+    # The camera ribbon has to reach the camera connector on the board in the base.
+    eb = p["console_electronics_mm"]["esp32_s3_board"]
+    connector = (eb["at"][0], eb["at"][1], top + eb["at"][2] + eb["size"][2] / 2)   # FPC socket mid-board (Freenove)
+    cable_reach = math.dist(cam, connector)
+    assert cable_reach <= p["camera_cable_mm"] - 15, "the camera ribbon reaches the board with slack"
 
     # Camera sightline: every plate-edge point must pass inside the throat lip and the skirt.
     rings = [(lip_top, throat_r), (lip_bottom, throat_r)]
@@ -591,7 +806,7 @@ def head(p, add):
         v = (plate_r * math.cos(a) - cam[0], plate_r * math.sin(a) - cam[1], plate_z + plate_t - cam[2])
         widest = max(widest, math.degrees(math.acos(sum(x * y for x, y in zip(v, aim)) / math.hypot(*v))))
 
-    return {"motor_cable_mm": cable_lengths, "camera_required_full_fov_degrees": round(2 * widest, 1), "pivot_z": pivot, "plate_z": plate_z, "spider_bottom": spider_bottom,
+    return {"fasteners": fasteners, "camera_cable_reach": cable_reach, "motor_cable_mm": cable_lengths, "camera_required_full_fov_degrees": round(2 * widest, 1), "pivot_z": pivot, "plate_z": plate_z, "spider_bottom": spider_bottom,
             "spider_top": spider_top, "lip_top": lip_top, "lip_bottom": lip_bottom,
             "throat_r": throat_r, "exit_gap": exit_gap, "skirt_gap": skirt_gap,
             "low_edge_z": low_edge_z, "belt_center_mm": c, "big_r": big_r, "small_r": small_r,
@@ -633,6 +848,9 @@ def body_b(p, add, h):
     rail_z = seat_z - prof
     assert inner >= p["locating_ring_outer_radius_mm"] + 2
     style = f.get("style", "alu")
+    body_fasteners = []
+    # Stainless skins: always on the aluminium frame; on the slotted-angle frame when chosen.
+    stainless = style != "vlo" or f["vlo"].get("skin_kind") == "stainless"
     if style != "vlo":
         alu = (.72, .75, .77)
         n = 0
@@ -686,7 +904,8 @@ def body_b(p, add, h):
             add_skin(f"side_panel_{name}", side.translate((s * skin_out, 0, top / 2)), skin, "skin", (s * 250, 0, 0),
                      "Side skin; covers the edges of the back and front panels", 2 * skin_out, top)
         door_top, head_bottom = rail_z, rail_z + 2
-        door_h = door_top - 2
+        door_z0 = 2
+        door_h = door_top - door_z0
         back = hemmed_panel(half * 2, top, sheet, hem).rotate((0, 0, 0), (0, 0, 1), 180)
         add_skin("back_panel", back.translate((0, skin_out, top / 2)), skin, "skin", (0, 250, 0),
                  "Fixed back skin: the bin can stand against a wall", half * 2, top)
@@ -710,67 +929,151 @@ def body_b(p, add, h):
         v = f["vlo"]
         a, t, sk, bd = v["angle_leg_mm"], v["angle_thick_mm"], v["skin_mm"], v["board_mm"]
         steel_v, vmat, fmx = (.36, .42, .48), v["angle_material"], (.95, .95, .93)
+        ft = v["foot"]
+        zf, pt = ft["height_mm"], ft["plate_mm"]            # the posts stand on four levelling feet
+
+        def bolt(joint, size, start, axis, length, head="carriage"):
+            body_fasteners.append({"joint": joint, "size": size, "head": head, "start_mm": [round(c, 2) for c in start],
+                                   "axis": list(axis), "length_mm": round(length, 1)})
         n = 0
         for sx in (-1, 1):
             for sy in (-1, 1):
                 n += 1
-                post = box(a, t, top, (sx * (half - a / 2), sy * (half - t / 2), top / 2)).fuse(
-                    box(t, a, top, (sx * (half - t / 2), sy * (half - a / 2), top / 2)))
-                add(f"post_{n}", post, steel_v, "frame", (0, 0, 0), "Corner post, slotted angle", "cut", vmat)
-        span = 2 * (half - a)
+                cx, cy = sx * (half - a / 2), sy * (half - a / 2)
+                post = box(a, t, top - zf, (cx, sy * (half - t / 2), (top + zf) / 2)).fuse(
+                    box(t, a, top - zf, (sx * (half - t / 2), cy, (top + zf) / 2)))
+                add(f"post_{n}", post, steel_v, "frame", (0, 0, 0), "Corner post, slotted angle, standing on a foot plate",
+                    "cut", vmat)
+                # Foot plate under the post: a bent steel plate whose tab is clamped between the post leg and
+                # the bottom side rail by that rail's bolts, and an M8 nut welded under it for the foot.
+                plate = box(a, a, pt, (cx, cy, zf - pt / 2)).fuse(
+                    box(pt, a - t, a + t, (sx * (half - t - pt / 2), sy * (half - t - (a - t) / 2), zf + (a + t) / 2))).cut(
+                    cylinder(4.25, pt, (cx, cy, zf - pt), (0, 0, 1)))
+                add(f"foot_plate_{n}", plate, (.30, .32, .34), "frame", (0, 0, 0),
+                    "Foot plate under a post: its tab is clamped by the bottom rail bolts, M8 nut welded underneath",
+                    "bend", f"Steel plate {pt:.0f} mm, {a:.0f} x {a:.0f} with a {a + t:.0f} mm tab, M8 nut welded")
+                foot = cylinder(ft["pad_d_mm"] / 2, ft["pad_h_mm"], (cx, cy, 0), (0, 0, 1)).fuse(
+                    cylinder(4, zf - pt - ft["pad_h_mm"], (cx, cy, ft["pad_h_mm"]), (0, 0, 1)))
+                add(f"foot_{n}", foot, (.12, .12, .12), "frame", (0, 0, 0), "Levelling foot M8 under a post", "buy",
+                    f"Levelling foot M8, pad {ft['pad_d_mm']:.0f} mm")
+        span = 2 * (half - 2 * t) - 1
 
-        def rail(name, side, z_leg, z_flat, desc):
-            """Angle between two posts: upright leg on the outer face, flat leg turned inwards."""
+        def rail(name, side, z_leg, z_flat, desc, inset=0, length=span):
+            """Angle bolted inside two posts, like a warehouse shelf: its upright leg lies against the inner
+            faces of the post legs, the flat leg turns inwards. Rails along Y sit one sheet lower or higher,
+            so where two rails meet in a corner one flat leg rests on the other."""
             if side in ("xn", "xp"):
                 sx = -1 if side == "xn" else 1
-                shape = box(t, span, a, (sx * (half - t / 2), 0, z_leg)).fuse(box(a, span, t, (sx * (half - a / 2), 0, z_flat)))
+                shape = box(t, length, a, (sx * (half - 1.5 * t - inset), 0, z_leg)).fuse(
+                    box(a, length, t, (sx * (half - t - a / 2 - inset), 0, z_flat)))
+                for sy in (-1, 1):
+                    bolt("rail_to_post", "M8 x 12" if not inset else "M8 x 15", (sx * half, sy * (half - a / 2), z_leg),
+                         (-sx, 0, 0), 2 * t + inset + 7)
             else:
                 sy = -1 if side == "yn" else 1
-                shape = box(span, t, a, (0, sy * (half - t / 2), z_leg)).fuse(box(span, a, t, (0, sy * (half - a / 2), z_flat)))
+                shape = box(length, t, a, (0, sy * (half - 1.5 * t - inset), z_leg)).fuse(
+                    box(length, a, t, (0, sy * (half - t - a / 2 - inset), z_flat)))
+                for sx in (-1, 1):
+                    bolt("rail_to_post", "M8 x 12", (sx * (half - a / 2), sy * half, z_leg), (0, -sy, 0), 2 * t + 7)
             add(name, shape, steel_v, "frame", (0, 0, 0), desc, "cut", vmat)
         # Bottom rails carry the floor on their flat legs; there is none across the front, where the
         # drawers run out. Seat rails hang below the head seat board; mid rails stop the skins drumming.
+        mid = v["mid_rail_z_mm"]
         for side in ("xn", "xp", "yp"):
-            rail(f"rail_bottom_{side}", side, a / 2, t / 2, "Bottom rail, slotted angle; the floor board rests on it")
-            rail(f"rail_mid_{side}", side, v["mid_rail_z_mm"], v["mid_rail_z_mm"] - a / 2 + t / 2, "Mid rail, slotted angle")
+            dz = t if side in ("xn", "xp") else 0
+            # The side bottom rails clamp the foot plate tabs, so they sit one plate further in.
+            rail(f"rail_bottom_{side}", side, zf + a / 2 + dz, zf + t / 2 + dz,
+                 "Bottom rail, slotted angle bolted inside the posts; the floor board rests on it",
+                 inset=pt if side != "yp" else 0, length=span if side != "yp" else 2 * (half - 2 * t - pt) - 1)
+            rail(f"rail_mid_{side}", side, mid + dz, mid - a / 2 + t / 2 + dz, "Mid rail, slotted angle bolted inside the posts")
         seat_t = bd
         seat_z = deck - seat_t
         for side in ("xn", "xp", "yn", "yp"):
-            rail(f"rail_seat_{side}", side, seat_z - a / 2, seat_z - t / 2, "Seat rail, slotted angle; the head seat board rests on it")
-        board = lambda z, th: box(2 * (half - t), 2 * (half - t), th, (0, 0, z + th / 2))
-        add("floor_plate", board(t, bd), fmx, "frame", (0, 0, 0), "Floor board on the bottom rails; waterproof",
+            dz = -t if side in ("xn", "xp") else 0
+            rail(f"rail_seat_{side}", side, seat_z - a / 2 + dz, seat_z - t / 2 + dz,
+                 "Seat rail, slotted angle bolted inside the posts; the head seat board rests on it")
+        # Boards fit inside the rail uprights, with the corners notched round the foot tabs and the
+        # rail bolt nuts, and bolt to the flat legs with M8 x 30.
+        bh_ = half - 2 * t
+
+        def board(z, th, wx=bh_):
+            b_ = box(2 * wx, 2 * bh_, th, (0, 0, z + th / 2))
+            for sx in (-1, 1):
+                for sy in (-1, 1):
+                    b_ = b_.cut(box(a + 2, a + 2, th, (sx * (half - (a + 2) / 2), sy * (half - (a + 2) / 2), z + th / 2)))
+            return b_
+        floor_z = zf + 2 * t
+        floor_pts = [(-(half - t - a / 2 - pt), 0), (half - t - a / 2 - pt, 0), (0, half - t - a / 2)]
+        floor = board(floor_z, bd, bh_ - pt)
+        for x, y in floor_pts:
+            floor = floor.cut(cylinder(4.5, bd, (x, y, floor_z), (0, 0, 1)))
+            bolt("floor_board_to_rail", "M8 x 30", (x, y, floor_z + bd), (0, 0, -1), bd + t + 9)
+        add("floor_plate", floor, fmx, "frame", (0, 0, 0), "Floor board on the bottom rails; waterproof",
             "laser", v["board_material"])
         seat_hole = p["locating_ring_outer_radius_mm"] + 2
         pin_hole = cylinder(3.3, seat_t, (0, p["orientation_pin_radius_mm"], seat_z), (0, 0, 1))
-        add("head_seat_plate", board(seat_z, seat_t).cut(tube(seat_hole, 0, seat_z, seat_t)).cut(pin_hole), fmx, "frame",
+        seat = board(seat_z, seat_t).cut(tube(seat_hole, 0, seat_z, seat_t)).cut(pin_hole)
+        seat_pts = [(-(half - t - a / 2), 0), (half - t - a / 2, 0), (0, half - t - a / 2), (0, -(half - t - a / 2))]
+        for x, y in seat_pts:
+            seat = seat.cut(cylinder(4.5, seat_t, (x, y, seat_z), (0, 0, 1)))
+            bolt("seat_board_to_rail", "M8 x 30", (x, y, seat_z + seat_t), (0, 0, -1), seat_t + t + 9)
+        add("head_seat_plate", seat, fmx, "frame",
             (0, 0, 0), "Head seat board on the four seat rails; the rear hole takes the deck orientation pin",
             "laser", v["board_material"])
         assert half - t - seat_hole >= a, "the seat board ring reaches over the seat rails"
-        floor_t, base = bd, t + bd
+        floor_t, base = bd, floor_z + bd
         rail_z = seat_z - a
         skin = (.93, .93, .91)
-        skin_out = half + sk
-        for s, name in ((-1, "left"), (1, "right")):
-            add(f"side_panel_{name}", box(sk, 2 * skin_out, top, (s * (half + sk / 2), 0, top / 2)), skin, "skin",
-                (s * 250, 0, 0), "Side skin, covers the edges of the back and front panels", "laser", v["skin_material"])
-        add("back_panel", box(2 * half, sk, top, (0, half + sk / 2, top / 2)), skin, "skin", (0, 250, 0),
-            "Fixed back skin: the bin can stand against a wall", "laser", v["skin_material"])
-        door_top = rail_z - 2
-        door_h = door_top - 2
-        head_bottom = rail_z
-        add("head_panel_front", box(2 * half, sk, top - head_bottom, (0, -(half + sk / 2), (top + head_bottom) / 2)), skin,
-            "skin", (0, -250, 0), "Front panel around the head", "laser", v["skin_material"])
         hem, k, mat = f["panel_hem_mm"], f["bend_k_factor"], f["panel_material"]
         folds = {"hem": fold_allowance(hem, sheet, k, hem=True), "skirt": fold_allowance(f["top_skirt_mm"], sheet, k)}
         shell = {"material": mat, "sheet_mm": sheet, "hem_mm": hem, "top_skirt_mm": f["top_skirt_mm"],
                  "k_factor": k, "folds": folds, "blanks": {}, "volume": 0.0}
+
+        def add_skin(name, shape, color, group, explode, description, w, hgt, fold="hem", **extra):
+            add(name, shape, color, group, explode, description, "bend", mat)
+            past = folds[fold]["blank_past_outline"]
+            shell["blanks"][name] = {"finished_mm": [round(w, 1), round(hgt, 1)], "fold": fold,
+                                     "blank_mm": [round(w + 2 * past, 1), round(hgt + 2 * past, 1)], **extra}
+            shell["volume"] += shape.Volume()
+        door_top = rail_z - 2
+        door_z0 = zf + 2                                 # drawer fronts start just above the post feet
+        door_h = door_top - door_z0
+        head_bottom = rail_z
+        if stainless:
+            # 1 mm stainless with a closed hem on every edge, hem side against the angles, bolted
+            # through the angle holes; the side skins run past the back and front to cover their edges.
+            skin = (.94, .95, .94)
+            # The skins stand off the posts by the bolt heads and corner brackets on the outside.
+            skin_out = half + v["skin_gap_mm"] + 2 * sheet
+            sk_h = top - zf
+            for s, name in ((-1, "left"), (1, "right")):
+                side = hemmed_panel(2 * skin_out, sk_h, sheet, hem).rotate((0, 0, 0), (0, 0, 1), 90 * s)
+                add_skin(f"side_panel_{name}", side.translate((s * skin_out, 0, zf + sk_h / 2)), skin, "skin",
+                         (s * 250, 0, 0), "Side skin, stainless with closed hems; covers the edges of the back and front "
+                         "panels; M4 screws with spacers into the angle holes", 2 * skin_out, sk_h)
+            back = hemmed_panel(2 * (skin_out - 2 * sheet), sk_h, sheet, hem).rotate((0, 0, 0), (0, 0, 1), 180)
+            add_skin("back_panel", back.translate((0, skin_out, zf + sk_h / 2)), skin, "skin", (0, 250, 0),
+                     "Fixed back skin, stainless with closed hems: the bin can stand against a wall",
+                     2 * (skin_out - 2 * sheet), sk_h)
+            add_skin("head_panel_front", hemmed_panel(2 * (skin_out - 2 * sheet), top - head_bottom, sheet, hem).translate(
+                (0, -skin_out, (top + head_bottom) / 2)), skin, "skin", (0, -250, 0),
+                "Front panel around the head, stainless with closed hems", 2 * (skin_out - 2 * sheet), top - head_bottom)
+        else:
+            skin_out = half + sk
+            for s, name in ((-1, "left"), (1, "right")):
+                add(f"side_panel_{name}", box(sk, 2 * skin_out, top, (s * (half + sk / 2), 0, top / 2)), skin, "skin",
+                    (s * 250, 0, 0), "Side skin, covers the edges of the back and front panels", "laser", v["skin_material"])
+            add("back_panel", box(2 * half, sk, top, (0, half + sk / 2, top / 2)), skin, "skin", (0, 250, 0),
+                "Fixed back skin: the bin can stand against a wall", "laser", v["skin_material"])
+            add("head_panel_front", box(2 * half, sk, top - head_bottom, (0, -(half + sk / 2), (top + head_bottom) / 2)), skin,
+                "skin", (0, -250, 0), "Front panel around the head", "laser", v["skin_material"])
         co, skirt = skin_out + sheet, f["top_skirt_mm"]
         hole_r = p["deck_outer_radius_mm"] + 1
         cover = box(2 * co, 2 * co, sheet, (0, 0, top + sheet / 2)).cut(tube(hole_r, 0, top, sheet)).fuse(
             box(2 * co, 2 * co, skirt, (0, 0, top + sheet - skirt / 2)).cut(
                 box(2 * co - 2 * sheet, 2 * co - 2 * sheet, skirt, (0, 0, top + sheet - skirt / 2))))
         add("top_cover", cover, (.82, .85, .84), "skin", (0, 0, 450),
-            "Stainless top cover with the funnel opening; its skirt folds down over the Formex skins", "bend", mat)
+            "Stainless top cover with the funnel opening; its skirt folds down over the skins", "bend", mat)
         shell["blanks"]["top_cover"] = {"finished_mm": [round(2 * co, 1)] * 2, "fold": "skirt", "hole_d": 2 * hole_r,
                                         "blank_mm": [round(2 * co + 2 * folds["skirt"]["blank_past_outline"], 1)] * 2}
         shell["volume"] += cover.Volume()
@@ -794,7 +1097,7 @@ def body_b(p, add, h):
 
     def hat(xc, z_lo, z_hi):
         """Top-hat stiffener on the back of a drawer front: flanges on the sheet, crown inside."""
-        y0, length, zc = -(half + sheet), z_hi - z_lo, (z_lo + z_hi) / 2
+        y0, length, zc = -skin_out + sheet, z_hi - z_lo, (z_lo + z_hi) / 2
         channel = box(sc, sd, length, (xc, y0 + sd / 2, zc)).cut(
             box(sc - 2 * sheet, sd - sheet, length, (xc, y0 + (sd - sheet) / 2, zc)))
         return channel.fuse(*[box(sf, sheet, length, (xc + d * (sc + sf) / 2, y0 + sheet / 2, zc)) for d in (-1, 1)])
@@ -804,7 +1107,8 @@ def body_b(p, add, h):
     add("center_wall", box(cw, inner * 2, 106, (0, 0, base + 53)), (.55, .58, .57), "frame", (0, 0, 0),
         "Centre wall carrying both inner slides", "laser", mount_mat)
     for s, name in ((-1, "left"), (1, "right")):
-        add(f"slide_mount_{name}", box(mt, inner * 2, 106, (s * (inner - mt / 2), 0, base + 53)),
+        mount_y = half - 5 if style == "vlo" else inner
+        add(f"slide_mount_{name}", box(mt, 2 * mount_y, 106, (s * (inner - mt / 2), 0, base + 53)),
             (.55, .58, .57), "frame", (0, 0, 0),
             "Plate carrying the outer slide" + (f"; bolted to the front and rear posts through {f['vlo']['mount_spacer_mm']:.0f} mm spacers"
                                                  if style == "vlo" else ", on the bottom rail"), "laser", mount_mat)
@@ -815,15 +1119,34 @@ def body_b(p, add, h):
         add(f"drawer_{name}", tray, (.62, .65, .64), "drawers", (0, -420, 0),
             "Drawer tray holding the front and the rear bin", "laser",
             f"Formex {db:.0f} mm floor, PP 3 mm walls riveted" if style == "vlo" else "Aluminium composite 4 mm, riveted angles")
-        if style == "vlo":
-            add(f"drawer_front_{name}", box(half - 1, f["vlo"]["skin_mm"], door_h, (s * (half + 1) / 2, -(half + f["vlo"]["skin_mm"] / 2), 2 + door_h / 2)),
-                skin, "drawers", (0, -420, 0), "Drawer front, full height, with a pull handle", "laser", f["vlo"]["skin_material"])
+        if style == "vlo" and stainless:
+            vs = f["vlo"]
+            hw_, hh_ = vs["handle_slot_mm"]
+            front = hemmed_panel(half - 1, door_h, sheet, hem).translate((s * (half + 1) / 2, -skin_out, door_z0 + door_h / 2))
+            slot_z = door_z0 + door_h - vs["handle_below_top_mm"] - hh_ / 2
+            front = front.cut(box(hw_, 2 * sheet + 2, hh_, (s * (half + 1) / 2, -skin_out + sheet, slot_z)))
+            assert half - (off + w / 2) >= 35, "finger room behind the pull slot"
+            add_skin(f"drawer_front_{name}", front, skin, "drawers", (0, -420, 0),
+                     f"Drawer front, stainless with closed hems, recessed pull slot {hw_:.0f} x {hh_:.0f} mm; two "
+                     "stiffeners keep the sheet flat", half - 1, door_h,
+                     slot={"size_mm": [hw_, hh_], "from_top_mm": vs["handle_below_top_mm"]})
+        elif style == "vlo":
+            vs = f["vlo"]
+            hw_, hh_ = vs["handle_slot_mm"]
+            front = box(half - 1, vs["skin_mm"], door_h, (s * (half + 1) / 2, -(half + vs["skin_mm"] / 2), door_z0 + door_h / 2))
+            # Recessed pull: a slot cut through the board near its top edge; the gap in front of the
+            # front bin leaves room for the fingers behind it.
+            slot_z = door_z0 + door_h - vs["handle_below_top_mm"] - hh_ / 2
+            front = front.cut(box(hw_, vs["skin_mm"] + 2, hh_, (s * (half + 1) / 2, -(half + vs["skin_mm"] / 2), slot_z)))
+            assert half - (off + w / 2) >= 35, "finger room behind the pull slot"
+            add(f"drawer_front_{name}", front, skin, "drawers", (0, -420, 0),
+                f"Drawer front, full height, with a recessed pull slot {hw_:.0f} x {hh_:.0f} mm", "laser", vs["skin_material"])
         else:
           add_skin(f"drawer_front_{name}", hemmed_panel(half - 1, door_h, sheet, hem).translate(
-            (s * (half + 1) / 2, -skin_out, 2 + door_h / 2)), skin, "drawers", (0, -420, 0),
+            (s * (half + 1) / 2, -skin_out, door_z0 + door_h / 2)), skin, "drawers", (0, -420, 0),
             "Drawer front, full height, with a pull handle; two stiffeners keep the sheet flat", half - 1, door_h)
         # One stiffener just inside each tray wall, clear of the hems, the tray floor and the frame.
-        for i, xc in enumerate(() if style == "vlo" else (in_x0 + dw + 1 + sc / 2 + sf, out_x1 - dw - 1 - sc / 2 - sf), 1):
+        for i, xc in enumerate((in_x0 + dw + 1 + sc / 2 + sf, out_x1 - dw - 1 - sc / 2 - sf) if stainless else (), 1):
             stiff = hat(s * xc, *stiffener_z)
             add(f"drawer_stiffener_{name}_{i}", stiff, (.70, .72, .74), "drawers", (0, -420, 0),
                 "Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall",
@@ -832,10 +1155,19 @@ def body_b(p, add, h):
         for x, tag in ((in_x0 - st / 2, "inner"), (out_x1 + st / 2, "outer")):
             add(f"slide_{name}_{tag}", box(st, sl, sh, (s * x, -inner + sl / 2, z0 + 8 + sh / 2)), steel,
                 "frame", (0, 0, 0), f"Full-extension ball slide {sl:.0f} mm", "buy",
-                f"Ball-bearing drawer slide {sl:.0f} mm, full extension, 35 kg")
-        add(f"drawer_switch_{name}", box(20, 8, 12, (s * off, tray_y1 + 5, z0 + 30)), (.85, .2, .2), "frame",
+                f"Ball-bearing drawer slide {sl:.0f} mm, 3-section full extension, {sh:.0f} x {st:.1f}, 45 kg per pair (First Slide)")
+        # TIAIHUA 1 A subminiature switch (13 x 6.8 x 6, lever about as long as the body, 2 M2 holes 6.5 apart).
+        sw_ = box(13, 6.8, 6, (s * off, tray_y1 + 6, z0 + 30)).fuse(box(13, 0.6, 4, (s * off - s * 1, tray_y1 + 2.3, z0 + 30)))
+        add(f"drawer_switch_{name}", sw_, (.85, .2, .2), "frame",
             (0, 0, 0), "Microswitch the closed drawer presses; open drawer locks its two bins", "buy",
-            "Microswitch with lever, KW11")
+            "Subminiature lever switch TIAIHUA 1 A 125 VAC, 13 x 6.8 x 6")
+    if style == "vlo":
+        for s in (-1, 1):
+            for y in (-(half - f["vlo"]["angle_leg_mm"] / 2), half - f["vlo"]["angle_leg_mm"] / 2):
+                for zz in (base + 23, base + 83):
+                    body_fasteners.append({"joint": "slide_mount_to_post", "size": "M5 x 40, 18 mm sleeve", "head": "hex",
+                                           "start_mm": [round(s * (inner - mt), 2), round(y, 2), round(zz, 2)],
+                                           "axis": [s, 0, 0], "length_mm": round(half - inner + mt + 4, 1)})
     # Each bin is folded from PP sheet: a wall strip wrapped into a square tube with a rim flange
     # turned outwards (it stiffens the 590 mm walls and the bag folds over it), and a floor whose
     # flaps turn up inside the walls. No purchased bin of this size exists.
@@ -874,9 +1206,17 @@ def body_b(p, add, h):
     # The rear bin must leave the head's footprint when the drawer is fully out, so it lifts free.
     assert off + w / 2 - sl < -(p["spider_reach_mm"] + 10), "rear bin clears the head when pulled out"
     # The stiffener's flat strip: flange, web, crown, web, flange with four 90 degree bends.
+    if stainless:
+        bend = fold_allowance(sd, sheet, k)
+        ba = bend["corner_relief"] - (sd - 2 * sheet)
+        legs = [sf - 2 * sheet, sd - 4 * sheet, sc - 4 * sheet, sd - 4 * sheet, sf - 2 * sheet]
+        edges = [sum(legs[:i + 1]) + ba * i for i in range(4)]
+        shell["stiffener"] = {"quantity": 4, "section_mm": f"{sf:.0f}-{sd:.0f}-{sc:.0f}-{sd:.0f}-{sf:.0f}",
+                              "blank_mm": [round(sum(legs) + 4 * ba, 2), round(stiffener_z[1] - stiffener_z[0], 1)],
+                              "bends_from_edge_mm": [round(e + ba / 2, 2) for e in edges]}
     if style == "vlo":
         shell["stainless_mass_kg"] = round(shell.pop("volume") * f["panel_density_kg_m3"] / 1e9, 1)
-        return {"body": "B", "style": "vlo", "outer_mm": [2 * co, 2 * co], "shell": shell,
+        return {"body": "B", "style": "vlo", "outer_mm": [2 * co, 2 * co], "shell": shell, "fasteners": body_fasteners,
                 "bin_rim_z": z0 + bh, "bin_floor_z": z0 + bt,
                 "capacity_l_each": round((w - 2 * bt) ** 2 * (bh - bt) / 1e6, 1),
                 "bin_center_radius": off * math.sqrt(2),
@@ -884,12 +1224,6 @@ def body_b(p, add, h):
                 "flat_pieces": {"drawer_bottom_formex_x2": [out_x1 - in_x0, tray_y1 - tray_y0],
                                 "drawer_side_wall_pp_x4": [tray_y1 - tray_y0, dwh],
                                 "drawer_back_wall_pp_x2": [out_x1 - in_x0, dwh]}}
-    bend = fold_allowance(sd, sheet, k)
-    ba = bend["corner_relief"] - (sd - 2 * sheet)
-    legs = [sf - 2 * sheet, sd - 4 * sheet, sc - 4 * sheet, sd - 4 * sheet, sf - 2 * sheet]
-    edges = [sum(legs[:i + 1]) + ba * i for i in range(4)]
-    shell["stiffener"] = {"quantity": 4, "section_mm": f"{sf:.0f}-{sd:.0f}-{sc:.0f}-{sd:.0f}-{sf:.0f}", "blank_mm": [round(sum(legs) + 4 * ba, 2), round(stiffener_z[1] - stiffener_z[0], 1)],
-                          "bends_from_edge_mm": [round(e + ba / 2, 2) for e in edges]}
     shell["stainless_mass_kg"] = round(shell.pop("volume") * f["panel_density_kg_m3"] / 1e9, 1)
     return {"body": "B", "outer_mm": [2 * co, 2 * co], "shell": shell,
             "bin_rim_z": z0 + bh, "bin_floor_z": z0 + bt,
@@ -989,6 +1323,8 @@ def build(p):
         "exit_gap_at_full_tilt_mm": round(h["exit_gap"], 1),
         "skirt_gap_at_full_tilt_mm": round(h["skirt_gap"], 1),
         "belt_center_distance_mm": round(h["belt_center_mm"], 2),
+        "tilt_drive_fasteners": h["fasteners"],
+        "body_fasteners": info.get("fasteners", []),
         "plate_mass_kg": round(plate_mass, 3),
         "hinge_torque_needed_nm": round(hinge_torque, 3),
         "servo_torque_needed_nm": round(servo_need, 3),
@@ -1005,6 +1341,7 @@ def build(p):
         "camera_hidden_plate_edge_samples_of_72": h["camera_hidden_edge_samples"],
         "camera_required_full_fov_degrees": h["camera_required_full_fov_degrees"],
         "camera_sight_margin_at_throat_mm": round(h["camera_sight_margin"], 1),
+        "camera_ribbon_reach_mm": round(h["camera_cable_reach"], 1),
         "camera_aim_from_vertical_degrees": round(h["camera_aim_from_vertical"], 1),
         "console_mm": [p["console_width_mm"], p["console_back_y_mm"] - p["console_chin_front_y_mm"],
                        p["console_height_mm"]],
@@ -1055,7 +1392,7 @@ def flat_dxf(shape, path):
     cq.exporters.export(section, str(path), exportType="DXF")
 
 
-def sheet_dxf(path, outline, bends, note, hole=None):
+def sheet_dxf(path, outline, bends, note, hole=None, cuts=()):
     """Flat blank of a folded sheet part for a laser-and-bend shop: outline (and hole) on layer
     CUT, dashed bend centre lines on layer BEND, the fold note under the blank on layer NOTE."""
     import ezdxf
@@ -1066,6 +1403,8 @@ def sheet_dxf(path, outline, bends, note, hole=None):
     msp.add_lwpolyline(outline, close=True, dxfattribs={"layer": "CUT"})
     if hole:
         msp.add_circle(hole[0], hole[1], dxfattribs={"layer": "CUT"})
+    for c in cuts:
+        msp.add_lwpolyline(c, close=True, dxfattribs={"layer": "CUT"})
     for a, b in bends:
         msp.add_line(a, b, dxfattribs={"layer": "BEND", "linetype": "DASHED"})
     for i, line in enumerate(note):
@@ -1086,9 +1425,14 @@ def shell_dxfs(shell, out):
         how = (f"closed hem {shell['hem_mm']:.0f} mm folded back on all 4 edges" if blank["fold"] == "hem" else
                f"skirt {shell['top_skirt_mm']:.0f} mm bent 90 deg down on all 4 edges, inside radius {t:.0f} mm")
         hole = ((W / 2, H / 2), blank["hole_d"] / 2) if "hole_d" in blank else None
+        cuts = []
+        if "slot" in blank:
+            (sw, sh), past = blank["slot"]["size_mm"], (H - blank["finished_mm"][1]) / 2
+            y1 = H - past - blank["slot"]["from_top_mm"]
+            cuts.append([(W / 2 - sw / 2, y1 - sh), (W / 2 + sw / 2, y1 - sh), (W / 2 + sw / 2, y1), (W / 2 - sw / 2, y1)])
         sheet_dxf(out / f"{name}.dxf", outline, bends, [
             f"{name}: stainless 304, {t:.1f} mm. Finished {blank['finished_mm'][0]} x {blank['finished_mm'][1]} mm, {how}.",
-            f"Blank {W} x {H} mm. Dashed = bend centre lines, K {k}. Confirm the allowance with the shop before cutting."], hole)
+            f"Blank {W} x {H} mm. Dashed = bend centre lines, K {k}. Confirm the allowance with the shop before cutting."], hole, cuts)
     if "stiffener" not in shell:
         return
     st = shell["stiffener"]
@@ -1293,7 +1637,7 @@ def export_option(p, out):
         writer = csv.writer(stream)
         writer.writerow(["profile", "length_mm", "quantity"])
         for length, qty in sorted(lengths.items(), reverse=True):
-            writer.writerow(["Slotted steel angle 30 x 30 x 2" if vlo else "Aluminium 20 x 20", length, qty])
+            writer.writerow(["Slotted steel angle 3x3 x 2 (26 x 26 real)" if vlo else "Aluminium 20 x 20", length, qty])
         report["profile_total_length_mm"] = sum(k * v for k, v in lengths.items())
     (out / "dimensions.json").write_text(json.dumps(metrics_e1, indent=2) + "\n")
     report["cadquery_version"] = cq.__version__

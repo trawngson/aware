@@ -119,7 +119,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
 <main>
 <header style="display:flex;flex-direction:column;gap:8px">
   <span class="eyebrow">aware · design/ab · thiết kế chi tiết · E1</span>
-  <h1>Thùng phân loại: phương án B (khung sắt V lỗ, vỏ Formex, nắp inox)</h1>
+  <h1>Thùng phân loại: phương án B (khung sắt V lỗ, vỏ và nắp inox)</h1>
   <p class="lead">Mỗi phần thiết kế nằm ở một tab. Lưới 3D, số đo và danh sách chi tiết lấy thẳng từ CAD ở <code>aware/design/ab/</code>, sinh bởi <code>cad/smart_bin_ab.py</code>. Giá tiền phần lớn đã tra tháng 10/2026, xem tab Vật tư.</p>
 </header>
 
@@ -171,11 +171,11 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <h2>Đã chốt</h2>
       <ul>
         <li>Chỉ làm thân <b>B</b>. Thân A (phuy 220 L) bỏ hẳn ngày 17/10.</li>
-        <li>Bộ não chỉ dùng <b>E1</b> (ESP32-S3 Cam + màn hình 10,1" có bo điều khiển riêng). Bỏ E2 nên hết rủi ro pin điện thoại phồng (#38, #39).</li>
+        <li>Bộ não theo <b>mạch S3-1</b> (chốt 19–20/10): board ESP32-S3-N16R8 CAM với camera OV2640 120° cáp 75 mm, cộng màn Guition JC4827W543 4,3" có ESP32-S3 riêng, nối nhau bằng UART. Bỏ E2 nên hết rủi ro pin điện thoại phồng (#38, #39).</li>
         <li>4 ngăn: <b>1 Nhựa</b> (sau phải), <b>2 Giấy</b> (sau trái), <b>3 Kim loại</b> (trước trái), <b>4 Khác</b> (trước phải). Vật không chắc loại thì vào ngăn 4.</li>
         <li>Cơ cấu nghiêng theo <b>phương án D</b> (chốt 9/10): MG90S xoay ±45°, MG996R nghiêng ±45° qua đai GT2 2:1, bản lề sát mặt đĩa trên 2 gối đỡ. Đĩa nhôm 1,5 mm.</li>
         <li>Đưa các đề xuất T vào CAD, chạy lại kiểm tra va chạm và kiểm tra tầm nhìn camera.</li>
-        <li><b>Mix 2</b> (chốt 19/10, để hạ giá): khung <b>sắt V lỗ</b> bắt bulông, vỏ <b>Formex 8 mm</b>, chỉ riêng <b>nắp trên bằng inox 304</b>. Thay cho khung nhôm và vỏ inox toàn bộ (chốt 16/10). Muốn quay lại bản nhôm và inox: đặt <code>frame.style</code> khác <code>vlo</code> rồi chạy lại.</li>
+        <li><b>Mix 2</b> (chốt 19/10, để hạ giá): khung <b>sắt V lỗ</b> bắt bulông. Ngày 31/10 đổi vỏ (2 hông, lưng, tấm che trước, 2 mặt ngăn kéo) từ Formex 8 mm sang <b>inox 304 dày 1 mm gấp mép kín</b>, cùng loại với nắp trên. Thay cho khung nhôm và vỏ inox toàn bộ (chốt 16/10). Muốn quay lại bản nhôm và inox: đặt <code>frame.style</code> khác <code>vlo</code> rồi chạy lại.</li>
       </ul>
     </div>
     <div class="card">
@@ -262,10 +262,10 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   <div class="cols">
     <div class="card"><h3>Truyền động</h3>
 <pre class="sk">giá chữ C (trên thanh chữ thập)
-  └ MG90S ─ horn tròn ─ miếng nối in ─ trục đứng Ø8 trong 2 gối đỡ KFL08 ─ đế xoay
+  └ MG90S ─ horn chữ thập ─ miếng nối in ─ trục đứng Ø8 trong 2 gối KFL08 ─ mặt bích Ø32 ─ đế xoay
 đế xoay
-  ├ 2 trụ ─ 2 gối đỡ KP08 ─ trục bản lề Ø8 ─ 2 tai ─ đĩa nhôm
-  └ MG996R ─ puly 20T ═ đai GT2 158 ═ puly 40T trên trục bản lề</pre>
+  ├ 2 trụ 60×10 ─ 2 gối KP08 ─ trục bản lề Ø8 ─ 2 tai ─ đĩa nhôm
+  └ MG996R ─ horn nhôm 25T ─ miếng nối in ─ puly 20T ═ đai GT2 158 ═ puly 40T trên trục bản lề</pre>
       <div class="tbl"><table>
       <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
       <tr><td>Servo nghiêng / xoay</td><td class="n">MG996R / MG90S</td></tr>
@@ -273,9 +273,14 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <tr><td>Mô-men kẹt MG996R ở 6 V (số thận trọng, shop ghi 15 kg·cm)</td><td class="n">khoảng 11 kg·cm = 1,08 N·m</td></tr>
       <tr><td>Puly, tỉ số</td><td class="n">GT2 20T → 40T, 2:1</td></tr>
       <tr><td>Đai kín GT2 rộng 6 mm / khoảng cách tâm puly</td><td class="n">158 mm / 48,58 mm</td></tr>
-      <tr><td>Trục bản lề (cách mặt đĩa 22 mm)</td><td class="n">Ø8 × 180 mm, z = 878</td></tr>
-      <tr><td>Trục đứng</td><td class="n">Ø8 × 70 mm</td></tr>
-      <tr><td>Đế xoay, nhôm 4 mm</td><td class="n">180 × 192 mm, z = 792–797</td></tr>
+      <tr><td>Trục bản lề (cách mặt đĩa 22 mm)</td><td class="n">Ø8 × 200 mm, z = 878</td></tr>
+      <tr><td>Trục đứng</td><td class="n">Ø8 × 93 mm</td></tr>
+      <tr><td>Đế xoay, nhôm 4 mm (13 lỗ, 4 lỗ ren M4 cho mặt bích)</td><td class="n">196 × 192 mm, z = 797–802</td></tr>
+      <tr><td>Puly 20T / 40T (dài theo trục, gồm vành và cổ)</td><td class="n">16 / 17 mm, vành Ø16 / Ø29</td></tr>
+      <tr><td>Mặt phẳng đai / mép puly 40T tới gối KP08</td><td class="n">x = 67–73 / 1,75 mm</td></tr>
+      <tr><td>Gối KP08 / KFL08: lỗ bắt</td><td class="n">cách 42 / 37 mm, bulông M4</td></tr>
+      <tr><td>Mặt bích nối trục 8 mm</td><td class="n">Ø32 × 13, 4 × M4 trên vòng Ø24</td></tr>
+      <tr><td>Trụ đỡ gối KP08</td><td class="n">nhôm dẹt 60×10 × 61 mm, taro M4</td></tr>
     </table></div></div>
     <div class="card"><h3>Mô-men và tải</h3><div class="tbl"><table>
       <tr><th>Trường hợp (đĩa nghiêng 45°, vật ở mép)</th><th class="n">Giá trị</th></tr>
@@ -291,11 +296,11 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   <div class="cols">
     <div class="card"><h3>Đĩa nghiêng</h3>
       <ul>
-        <li>Nhôm 1,5 mm, Ø320, nặng 0,326 kg, bắt vào 2 tai PETG bằng 4 vít M4. Hai tai kẹp chặt vào trục bản lề.</li>
+        <li>Nhôm 1,5 mm, Ø320, nặng 0,326 kg, bắt vào 2 tai PETG bằng 4 vít M4 × 6 đầu bằng vào đai ốc cấy nhiệt. Mỗi tai kẹp trục bản lề bằng 1 vít trí M3 trên mặt D.</li>
         <li>Mặt đĩa ở cao độ 900 mm, trục bản lề ở 878 mm. Bản lề sát mặt đĩa nên đĩa nặng hơn PP vẫn nhẹ tải.</li>
         <li>Đổi từ PP sang nhôm: không chảy khi gặp tàn thuốc, khó xước, dễ lau.</li>
       </ul>
-      <div class="note"><b>Lưu ý:</b> nhôm trần bóng sẽ hắt ánh đèn LED vào camera. Nên <b>sơn tĩnh điện màu xám mờ</b>. Không dán decal, vì decal sẽ chảy khi gặp đồ nóng.</div>
+      <div class="note"><b>Lưu ý:</b> nhôm trần bóng sẽ hắt ánh đèn LED vào camera. Đã chốt bỏ sơn (20/10): chà mặt đĩa bằng miếng Scotch-Brite cho mờ, rồi chụp thử xem còn chói không. Không dán decal, vì decal sẽ chảy khi gặp đồ nóng.</div>
     </div>
     <div class="card"><h3>Cục chặn cứng 47° trên đế xoay</h3>
       <ul>
@@ -314,7 +319,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   </div>
   <div class="card"><h3>Đi dây động cơ qua khớp xoay (đã vẽ trong CAD)</h3>
     <p>Dây MG996R và IMU phải đi qua khớp xoay. Khớp này uốn khoảng 36.000 lần mỗi năm (ước tính 100 lần đổ mỗi ngày), nên không thả vòng chùng tự do mà dùng <b>vòng lăn trong rãnh tròn</b>: cáp dẹt gập chữ U, nằm giữa một thành cố định và một trống quay theo đế. Khi đế xoay, chỗ gập chỉ lăn dọc theo rãnh, nên cáp luôn uốn ở cùng một bán kính và không bị kéo căng.</p>
-<pre class="sk">Nhìn từ trên xuống, dưới đế xoay (z 658–671):
+<pre class="sk">Nhìn từ trên xuống, dưới đế xoay (z 783–797):
 
         thành ngoài cố định (r 40–43), có 2 vấu chặn ở ±70°
       ╭─────────────────────────╮
@@ -341,15 +346,16 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <p>MG90S chuẩn chỉ quay trong 180°. Trục xoay vẫn có thể quay tự do nếu <b>miếng nối trượt trên trục</b>, <b>tuốt răng servo</b>, <b>lắp nhầm bản MG90S 360°</b>, hoặc có người lấy tay xoay đĩa. Khi đó dây có thể bị quấn quanh trục và giật đứt. Có 4 lớp bảo vệ:</p>
     <ol>
       <li><b>Chặn cứng ±70° (đã vẽ):</b> chốt M4 có ống lót dưới đế xoay, chạm vào 2 vấu trên rãnh. Dù servo hay miếng nối hỏng thì cụm vẫn không quay quá ±70°, đúng tầm rãnh được thiết kế. Đã kiểm tra: ở 68° chốt chưa chạm, ở 72° thì đã chạm. Tay ấn mạnh ở mép đĩa (khoảng 8 N·m) tạo khoảng 150 N lên chốt, nên vấu phải in đặc 100% và dán cao su.</li>
-      <li><b>Miếng nối servo xoay:</b> không dùng khớp nối mềm. Khớp 5 × 8 mm dài 25 mm, không lọt dưới tay gối dưới, mà nửa 5 mm chỉ ôm được đầu then hoa ngắn của MG90S. Thay bằng một miếng nối in PETG đặc 100%, Ø20 × 11 mm: bắt vào horn tròn đi kèm servo bằng 2 vít của horn (khoan lỗ mồi theo horn thật), kẹp trục bằng vít trí M3 và đai ốc thả từ trên xuống. Mài mặt phẳng (mặt D) trên trục ở chỗ vít trí, bôi keo khoá ren. Miếng nối không bù được lệch tâm, nên căn servo thẳng trục trước khi siết. Trước khi in giá chữ C, đo MG90S thật: CAD giả định đầu then hoa nhô 4 mm trên mặt kệ để lắp horn.</li>
+      <li><b>Miếng nối servo xoay:</b> không dùng khớp nối mềm. Khớp 5 × 8 mm dài 25 mm, không lọt dưới tay gối dưới, mà nửa 5 mm chỉ ôm được đầu then hoa ngắn của MG90S. Thay bằng một miếng nối in PETG đặc 100%, Ø20 × 11 mm. MG90S chỉ kèm horn dạng tay, không có horn tròn: miếng nối bắt vào <b>horn chữ thập</b> bằng 2 vít M2 tự ren qua 2 lỗ trên tay horn, mặt dưới có hốc tránh đầu vít tâm. Trục kẹp bằng vít trí M3 và đai ốc thả từ trên xuống, lên mặt D, bôi keo khoá ren. MG90S treo qua lỗ trên kệ, 2 tai tì lên mặt kệ (TowerPro: mặt dưới tai cách đáy 18,5 mm, trục then hoa nhô 4,1 mm). Kích thước horn chữ thập trong CAD là số tạm: đo horn thật trước khi in.</li>
       <li><b>Phần mềm phát hiện:</b> con quay trong IMU đo được <b>tốc độ</b> xoay quanh trục đứng. Thấy xoay khi không có lệnh, hoặc xoay quá xa so với lệnh, thì ngắt relay servo và báo lỗi. Ngắt xung PWM khi đứng yên để servo không rung làm mỏi dây. Lệnh xoay luôn giới hạn trong ±65°.</li>
       <li><b>Khoanh vùng hỏng:</b> cầu chì tự phục hồi 3 A trên đường 6 V, để dây có chập thì cũng không cháy mạch. Kẹp neo giữ vỏ cáp, để lực kéo không truyền vào mối hàn.</li>
     </ol>
     <p class="lead">Khi lắp: cấp xung 1500 µs cho MG90S. Nếu servo cứ quay mãi thì đó là bản 360°, lắp nhầm hàng. Mình chưa thử tuổi thọ của cáp dẹt bán ở VN với bán kính uốn 10 mm. Nên in thử rãnh, cho chạy vài nghìn lần rồi đo thông mạch.</p>
   </div>
   <div class="card"><h3>Lỗi hay gặp</h3><ul>
-    <li><b>Đai chùng hoặc quá căng:</b> đai kín không có bộ căng đai, nên khoảng cách tâm 48,58 mm phải đúng. Giá bắt MG996R có lỗ rãnh ±1 mm để chỉnh căng.</li>
-    <li><b>Puly 20T không lắp thẳng vào spline 25T của MG996R:</b> cần một miếng nối in 3D bắt vít vào horn tròn.</li>
+    <li><b>Đai chùng hoặc quá căng:</b> đai kín không có bộ căng đai, nên khoảng cách tâm 48,58 mm phải đúng. Giá bắt MG996R có rãnh <b>đứng</b> 2 mm (khoảng cách 2 puly là theo chiều đứng): kéo servo xuống cho đai căng rồi siết 4 vít M3.</li>
+    <li><b>Puly 20T không lắp thẳng vào spline 25T của MG996R:</b> lắp horn nhôm 25T Ø20 (4 lỗ ren M3), bắt miếng nối in vào horn bằng 4 vít M3, rồi lồng puly lên trụ Ø5,9 của miếng nối. Puly dài 16 mm: <b>cổ puly quay về phía servo</b>, vì 2 vít trí nằm trên cổ; mài mặt vát trên trụ cách đầu cổ 4 mm.</li>
+    <li><b>Puly 40T dài 17 mm</b> (2 vành Ø29, cổ một phía): lắp <b>cổ quay vào giữa</b>, vành ngoài cách gối KP08 khoảng 1,7 mm. Quay cổ ra ngoài là đụng gối.</li>
     <li><b>Puly 40T</b> có shop ghi lỗ 8 mm nhưng đường link lại ghi 5 mm. Hỏi shop trước, nếu là lỗ 5 mm thì khoan lên 8 mm.</li>
     <li><b>MG996R giá rẻ hay là hàng nhái:</b> mua 1 con, đo mô-men bằng cân treo rồi mới mua thêm. Gắn tay đòn 2,5 cm ở 6 V: cân phải lên tới khoảng 3,5 kg servo mới chịu thua (tức 9 kg·cm, đủ để tải 0,435 N·m chỉ chiếm 50%). Tháo đáy xem mọi bánh răng đều là kim loại. Shop đang chọn có bán cả bản MG996R-360: cấp xung 1500 µs, servo phải đứng yên ở giữa chứ không quay mãi.</li>
     <li><b>Xoay khi đĩa đang nghiêng:</b> phần mềm phải luôn đưa đĩa về nằm ngang trước, rồi mới xoay sang ngăn khác.</li>
@@ -385,7 +391,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   </div>
   <div class="card"><h3>Sức chứa</h3><div class="tbl"><table>
     <tr><th></th><th class="n">Hình học (CAD)</th><th class="n">Dùng được thật (ước tính)</th><th class="n">Cả 4 ngăn</th></tr>
-    <tr><td>B · thùng 270×270×590</td><td class="n">40,9 L</td><td class="n">25–31 L</td><td class="n">khoảng 164 L</td></tr>
+    <tr><td>B · thùng 270×270×573</td><td class="n">39,7 L</td><td class="n">25–31 L</td><td class="n">khoảng 164 L</td></tr>
   </table></div>
   <p>Rác luôn rơi vào cùng một chỗ nên chất thành hình nón, chỉ dùng được 60–75% thể tích. <b>T17 · rải đều:</b> mỗi lần đổ, đổi góc xoay lệch khoảng ±20° quanh đường chéo ngăn (MG90S làm được, vì xoay tới ±65° vẫn trong 180° của servo) và đổi góc nghiêng trong khoảng 35–45°, để dịch điểm rơi. Cách này có thể nâng phần dùng được lên khoảng 80%, nhưng mới là <i>plausible</i>, phải thử với rác thật.</p></div>
   <div class="card"><h3>Khi đầy</h3><div class="tbl"><table>
@@ -440,7 +446,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
 <section class="panel" id="p-console" role="tabpanel" hidden>
   <div class="card">
     <h2>Bệ màn hình và camera</h2>
-    <p>Bệ màn hình gồm hai phần: một <b>tấm màn hình 10,1 inch</b> ngả ra sau 12°, to cỡ máy tính bảng để người đi ngang cách vài mét vẫn đọc được, và một <b>đế thấp</b> phía sau chứa các bo mạch. Màn hình là <b>TJC X5 10,1" (TJC1060X5101), loại không cảm ứng</b>: tấm IPS 1024×600, 300 nit, có bo điều khiển riêng. Tấm in chỉ là một khung mỏng 5 mm quanh bo màn hình 258 × 152 mm. Mặt kính lộ ra 235 × 143 mm, trong đó vùng sáng 222,7 × 125,3 mm, quanh là viền đen của chính tấm LCD. Lúc không có rác, màn hình lần lượt hiện các thông tin về rác; khi có vật thì hiện kết quả phân loại. Phần cằm của đế chìa vào trên miệng phễu tới y = 132 mm, camera giấu dưới cằm. Nhờ vậy camera nhìn được qua gờ cổ phễu tới tận mép sau của đĩa.</p>
+    <p>Bệ màn hình gồm hai phần: một <b>tấm màn hình 4,3 inch</b> ngả ra sau 12° và một <b>đế thấp</b> phía sau chứa các bo mạch. Màn hình là <b>Guition JC4827W543</b>: tấm IPS 480×272 gắn sẵn ESP32-S3 riêng, nối với board camera qua cổng UART JST 1,25 mm 4 chân. Ngoài hiển thị, board màn còn đọc 4 cảm biến siêu âm báo đầy. Tấm in là khung mỏng 5 mm quanh bo màn 120 × 70 mm (số của shop, phải đo). Sơ đồ chân ở <a href="https://claude.ai/artifact/641f6wND7d8yH814VZVqmR" target="_blank" rel="noopener">trang mạch S3-1</a>.</p>
   </div>
   <div class="vslot" id="slot-console"></div>
   <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
@@ -449,30 +455,31 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
       <tr><td>Đế: rộng × sâu × cao</td><td class="n">160 × 156 × 46 mm</td></tr>
       <tr><td>Cằm: mép trước / cao</td><td class="n">y = 132 / 20 mm</td></tr>
-      <tr><td>Màn hình 10,1": mặt kính / tấm</td><td class="n">235 × 143 / 268 × 162 × 22 mm, ngả 12°</td></tr>
-      <tr><td>Mép trên màn hình (thân B)</td><td class="n">cao 1348,5 mm so với sàn</td></tr>
+      <tr><td>Màn hình 4,3": vùng hiển thị / tấm</td><td class="n">95 × 54 / 130 × 80 × 22 mm, ngả 12°</td></tr>
+      <tr><td>Mép trên màn hình (thân B)</td><td class="n">cao 1268,3 mm so với sàn</td></tr>
+      <tr><td>Cáp camera 75 mm: khoảng cách từ camera tới đầu cắm trên board</td><td class="n">16,8 mm, dư khoảng 58 mm</td></tr>
       <tr><td>Ống kính camera</td><td class="n">(0; 154,9; 1178,7)</td></tr>
       <tr><td>Trục camera so với phương thẳng đứng</td><td class="n">29,1°, chĩa vào tâm đĩa</td></tr>
       <tr><td>Góc nhìn cần có (hình nón)</td><td class="n">60,2° → dùng ống 120°</td></tr>
       <tr><td>Mép đĩa bị khuất</td><td class="n">0 / 72 điểm</td></tr>
       <tr><td>Khoảng dư của tia nhìn tại gờ cổ phễu</td><td class="n">khoảng 6,1 mm</td></tr>
-      <tr><td>Dải LED trắng</td><td class="n">120 mm, y = 174</td></tr>
+      <tr><td>Dải LED trắng 2835 (cắt mỗi 50 mm), rãnh rộng 9</td><td class="n">100 mm, y = 174</td></tr>
       <tr><td>Vành bắt vít trên mép phễu</td><td class="n">cao 5 mm, từ y = 235 ra sau</td></tr>
     </table></div></div>
     <div class="card"><h3>Bên trong bệ (vỏ in rỗng)</h3><ul>
-      <li>Board ESP32-S3 camera, ống kính 120° chĩa qua ô kính dưới cằm, hướng vào tâm đĩa.</li>
-      <li>Màn hình TJC X5 10,1" có bo điều khiển riêng ở mặt sau (cả cụm 258 × 152 × 11,5 mm), nằm gọn trong tấm màn hình, nối với board camera bằng UART TTL 4 chân. Giao diện màn hình làm bằng phần mềm của TJC, có thể chỉ có tiếng Trung.</li>
-      <li>Dải LED 5 V có tấm khuếch tán, bật tắt qua module 2 MOSFET XY-MOS. Module nhận tín hiệu từ 3,3 V nên chân GPIO của ESP32 mở hết MOSFET, đèn sáng tối đa. Lúc camera chụp thì bật 100%, không làm mờ bằng PWM để ảnh không bị sọc.</li>
-      <li>Cầu đấu nguồn 5 V, tụ 2200 µF, module relay cắt nguồn servo (xem tab Điện).</li>
+      <li>Board ESP32-S3-N16R8 CAM nằm trong đế. Camera OV2640 ống 120° tách khỏi board, nối bằng cáp dẹt 75 mm, gắn sau ô kính dưới cằm, chĩa vào tâm đĩa. Script kiểm tra cáp với tới đầu cắm trên board, còn dư ít nhất 15 mm.</li>
+      <li>Màn Guition 4,3" (bo 120 × 70 mm, khoảng 13 mm dày tính cả đầu cắm, số tạm) nằm gọn trong tấm màn, nối board camera bằng UART và nhận 5 V riêng từ mạch hạ áp. Giao diện làm bằng Guition Editor hoặc Arduino. Chừa lối cắm cổng USB-C của cả 2 board để nạp code không phải tháo bệ.</li>
+      <li>Dải LED 5 V dài 100 mm (dải chỉ cắt được ở mốc 50 mm), bật tắt qua module 2 MOSFET XY-MOS. Module nhận tín hiệu từ 3,3 V nên chân GPIO của ESP32 mở hết MOSFET, đèn sáng tối đa. Lúc camera chụp thì bật 100%, không làm mờ bằng PWM để ảnh không bị sọc.</li>
+      <li>Cầu đấu nguồn 5 V kèm tấm mạch nhỏ 8 điện trở chia áp, tụ 2200 µF, module relay cắt nguồn servo (xem tab Điện).</li>
       <li>Bệ in PETG làm 2 nửa, ghép bằng vít M3 và đai ốc cấy nhiệt. Bệ nằm trên mép trên của phễu, <b>ra khỏi đường nước</b>, bắt xuống mép phễu qua một vành thấp hai bên.</li>
-      <li><b>Chỗ cho mạch:</b> script kiểm tra 7 khối đặt vừa trong đế, mỗi khối có vách 2,5 mm bao quanh và không chạm màn hình, hốc camera hay nhau: board ESP32-S3 (70×30×16), relay (50×26×19), 2 mạch hạ áp (54×26×18 và 45×22×14), tụ, cầu đấu và MOSFET đèn. Màn hình cùng bo điều khiển của nó (258×152×11,5, theo datasheet) nằm vừa trong tấm. Kích thước các bo trong đế là số tạm.</li>
+      <li><b>Chỗ cho mạch (tra ngày 01/11):</b> script kiểm tra 8 khối đặt vừa trong đế, mỗi khối có vách 2,5 mm bao quanh và không chạm màn hình, hốc camera hay nhau: board ESP32-S3 CAM 57×28×15 (2 cổng USB-C quay ra khe ở vách trái), cầu đấu 12P cắt còn 4 cực (37×18), tấm chia áp 24×20, tụ 13×26, XL4015 54×23 cộng chỗ dây hai đầu (66×23×18), mạch hạ áp 5 V 59×21×17 hàn dây ở hai đầu (62×21×17), relay 50×26 cộng phía cầu đấu (60×26×19), XY-MOS 34×17×12. Màn Guition 120×70,2 có 4 lỗ M3 cách 112,6 × 62,1, cổng USB-C và JST nguồn/UART ở mép trái ra qua khe trên thành tấm màn, vùng hiển thị lệch lên 1,7 mm so với tâm bo. Camera đặt sâu 3 mm trong lỗ Ø22 nên thành lỗ nằm ngoài nón 120°. Cáp camera 75 mm: từ camera tới đầu cắm giữa board khoảng 58 mm.</li>
     </ul></div>
   </div>
   <div class="card"><h3>Lỗi hay gặp</h3><ul>
     <li><b>Tấm màn hình dễ bị tì tay hoặc va:</b> mép trên cao hơn miệng thùng khoảng 180 mm, lực bẻ dồn vào vành bắt vít ở mép phễu. Chưa kiểm tra độ bền chỗ này.</li>
     <li><b>Khoảng dư tia nhìn chỉ khoảng 6,1 mm:</b> lắp camera lệch quá mức đó là khuất mất mép sau đĩa. In ổ camera có rãnh chỉnh và căn bằng một ảnh mẫu đĩa trống.</li>
     <li><b>Ống 120° làm méo ảnh kiểu mắt cá:</b> hiệu chỉnh một lần bằng ảnh bàn cờ, hoặc huấn luyện mô hình nhận dạng luôn trên ảnh đã méo.</li>
-    <li><b>LED chiếu thẳng xuống đĩa nhôm bóng gây chói:</b> dùng tấm khuếch tán và mặt đĩa xám mờ.</li>
+    <li><b>LED chiếu thẳng xuống đĩa nhôm bóng gây chói:</b> chà mặt đĩa cho mờ; nếu còn chói thì dán một dải nhựa mờ (không có trong danh sách mua) lên rãnh LED.</li>
   </ul></div>
   <div class="card"><h3>Chi tiết trong CAD</h3><div class="tbl"><table data-parts="b_frame" data-prefix="display_console,tft_screen,camera_window,led_strip"></table></div></div>
 </section>
@@ -499,15 +506,15 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <div class="card"><h3>Gán chân dự kiến</h3><div class="tbl"><table>
       <tr><th>Khối</th><th class="n">Số chân</th></tr>
       <tr><td>Camera (có sẵn trên board)</td><td class="n">không tính</td></tr>
-      <tr><td>Màn hình 10,1" (bo điều khiển riêng): UART TX, RX</td><td class="n">2</td></tr>
+      <tr><td>Màn Guition (ESP32-S3 riêng): UART TX, RX</td><td class="n">2</td></tr>
       <tr><td>Servo PWM: MG996R, MG90S</td><td class="n">2</td></tr>
       <tr><td>I²C (IMU)</td><td class="n">2</td></tr>
-      <tr><td>HC-SR04: 4 TRIG + 4 ECHO, mỗi cái một cặp riêng</td><td class="n">8</td></tr>
+      <tr><td>HC-SR04: 4 TRIG + 4 ECHO, nối vào board màn Guition, không tính cho board camera</td><td class="n">0</td></tr>
       <tr><td>2 công tắc ngăn kéo đọc vào</td><td class="n">2</td></tr>
-      <tr><td>LED MOSFET</td><td class="n">1</td></tr>
-      <tr><td><b>Tổng</b></td><td class="n"><b>17</b></td></tr>
+      <tr><td>LED XY-MOS, relay</td><td class="n">2</td></tr>
+      <tr><td><b>Tổng trên board camera</b></td><td class="n"><b>10</b></td></tr>
     </table></div>
-    <p class="lead">Mình <b>chưa kiểm tra</b> số chân rảnh trên board ESP32-S3 camera cụ thể. Nếu thiếu thì thêm bộ mở rộng PCF8574 trên I²C (khoảng 30k) cho các công tắc, LED và 4 chân TRIG: TRIG chỉ cần một xung ngắn nên đi qua I²C được. 4 chân ECHO thì phải nối thẳng vào GPIO của ESP32, vì phải đo độ rộng xung chính xác tới micro giây. Màn hình 10,1" cần bo điều khiển riêng vì một ESP32-S3 không đủ chân để vừa chạy camera vừa chạy màn hình cỡ này. Màn hình ăn khoảng 800 mA ở 5 V khi sáng tối đa (theo datasheet). Cộng ESP32-S3 camera, LED, relay và cảm biến thì nhánh 5 V khoảng 1,6–1,7 A (ước tính), còn dư so với mạch hạ áp 5 V 3 A.</p></div>
+    <p class="lead">Board ESP32-S3-N16R8 WROOM CAM còn khoảng 11 chân trống (suy ra từ board Freenove cùng kiểu, chưa đếm trên board thật), đủ cho 10 chân trên. 4 cảm biến siêu âm cần 8 chân nên đặt trên board màn Guition, mỗi cái 1 chân TRIG riêng. Chi tiết gán chân ở <a href="https://claude.ai/artifact/641f6wND7d8yH814VZVqmR" target="_blank" rel="noopener">trang mạch S3-1</a>.</p>
   </div>
   <div class="cols">
     <div class="card"><h3>Cảm biến đầy</h3><ul>
@@ -516,7 +523,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <li><b>Mỗi đầu phát và đầu thu có một loa in</b>: dài 15 mm, loe từ Ø16 ra Ø24. Miệng rộng hơn thì chùm sóng hẹp hơn: theo ước tính, sóng yếu đi một nửa ở ±11° thay vì ±16°. In ở trường nên không tốn thêm tiền.</li>
       <li>Thân B: miệng loa ở cao 995 mm. Ngăn trống đo ra khoảng 962 mm, đầy 90% khoảng 434 mm.</li>
       <li>B: khi rút thùng ra, cảm biến đo xa hơn mốc ngăn trống, nên máy biết ngăn đó đang thiếu thùng.</li>
-      <li>Khoảng cách giữa 2 đầu (26 mm) là số tạm. Mua 1 board, đo lại rồi sửa <code>fill_sensor</code> trước khi in.</li>
+      <li>Khoảng cách giữa 2 đầu đổi thành 27 mm theo 2 footprint độc lập (trước để 26). Vẫn nên mua 1 board, đo lại rồi sửa <code>fill_sensor</code> trước khi in.</li>
       <li>Nếu thử thật vẫn đo sai thì đổi sang VL53L1X (laser, khoảng 200k một cái) và in lại hộp.</li>
     </ul></div>
     <div class="card"><h3>Lỗi hay gặp</h3><ul>
@@ -545,47 +552,49 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
 <section class="panel" id="p-bodyB" role="tabpanel" hidden>
   <div class="card">
     <h2>Thân B · khung sắt V lỗ, 2 ngăn kéo</h2>
-    <p>Khung sắt V lỗ 30×30 dày 2 mm bắt bulông như kệ kho, khung 680 × 680 mm (698 mm tính cả vỏ Formex 8 mm và mép nắp), cao 1170 mm. Bốn thùng <b>gấp từ tấm nhựa PP 3 mm</b> đặt trên <b>2 ngăn kéo</b>, mỗi ngăn kéo chở 1 thùng trước và 1 thùng sau. Mặt sau là tấm cố định nên thùng kê sát tường được. Cụm đầu <b>bắt vít cố định</b> vào tấm đỡ, vì đổ rác không cần nhấc đầu.</p>
+    <p>Khung sắt V lỗ "3×3" dày 2 mm (cánh thực tế khoảng 26 mm theo các shop) bắt bulông như kệ kho: thanh ngang <b>chồng lên mặt trong cánh cột</b> và bắt bulông M8 qua lỗ V. Khung 680 × 680 mm đứng trên 4 chân tăng chỉnh M8; vỏ inox 1 mm cách cột 6 mm để chừa mũ bulông, ngoài cùng 698 × 698 mm, cao 1170 mm. Bốn thùng <b>gấp từ tấm nhựa PP 3 mm</b> đặt trên <b>2 ngăn kéo</b>, mỗi ngăn kéo chở 1 thùng trước và 1 thùng sau. Mặt sau là tấm cố định nên thùng kê sát tường được. Cụm đầu <b>bắt vít cố định</b> vào tấm đỡ, vì đổ rác không cần nhấc đầu.</p>
   </div>
   <div class="vslot" id="slot-bodyB"></div>
   <p class="lead vcap">Phần đậm là chi tiết của tab này, phần mờ là phần còn lại của thùng (nút “Hiện phần còn lại” để bật hoặc tắt). Bấm một dòng trong bảng “Chi tiết trong CAD” ở cuối tab để làm nổi chi tiết đó và xoay camera tới.</p>
   <div class="cols">
     <div class="card"><h3>Khung và tấm</h3><div class="tbl"><table>
       <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
-      <tr><td>Sắt V lỗ 30×30×2: cột đứng</td><td class="n">4 × 1170 mm</td></tr>
-      <tr><td>Sắt V lỗ: thanh ngang (dưới 3, giữa 3, trên 4; không có thanh dưới phía trước để ngăn kéo chạy ra)</td><td class="n">10 × 620 mm</td></tr>
-      <tr><td>Tổng chiều dài sắt V lỗ</td><td class="n">10,9 m (mua 12 m)</td></tr>
-      <tr><td>Tấm sàn, Formex 15 mm, nằm trên 3 thanh dưới</td><td class="n">676 × 676</td></tr>
-      <tr><td>Tấm đỡ đầu Formex 15 mm trên 4 thanh trên, mặt ở z = 1044</td><td class="n">676 × 676, lỗ Ø560 + lỗ chốt</td></tr>
-      <tr><td>Vách giữa và 2 tấm bắt ray, alu composite 6 mm cắt lẻ</td><td class="n">640 × 106</td></tr>
-      <tr><td>Tấm bắt ray bắt vào cột qua ống lót</td><td class="n">18 mm</td></tr>
-      <tr><td>Vỏ: 2 hông, mặt sau, tấm che trước, Formex 8 mm</td><td class="n">hông 696 × 1170, sau 680 × 1170</td></tr>
-      <tr><td>Nắp trên inox 304 dày 1 mm, mép gập xuống 15 mm</td><td class="n">698 × 698, lỗ Ø598, khoảng 2 kg</td></tr>
+      <tr><td>Sắt V lỗ: cột đứng, đứng trên bản đế chân</td><td class="n">4 × 1155 mm</td></tr>
+      <tr><td>Sắt V lỗ: thanh ngang chồng trong cột (dưới 3, giữa 3, trên 4; không có thanh dưới phía trước)</td><td class="n">9 × 671 + 1 × 665 mm</td></tr>
+      <tr><td>Bulông kệ M8 bắt thanh vào cột (2 đầu mỗi thanh)</td><td class="n">16 × M8×12 + 4 × M8×15</td></tr>
+      <tr><td>Chân tăng chỉnh M8 đế Ø30 + bản đế thép 3 mm có đai ốc hàn; tai bản đế kẹp dưới thanh dưới</td><td class="n">4 bộ, cao 15 mm</td></tr>
+      <tr><td>Tấm sàn Formex 15 mm trên 3 thanh dưới, khoét 4 góc, 3 bulông M8×30</td><td class="n">666 × 672</td></tr>
+      <tr><td>Tấm đỡ đầu Formex 15 mm trên 4 thanh trên, khoét 4 góc, 4 bulông M8×30</td><td class="n">672 × 672, lỗ Ø560 + lỗ chốt</td></tr>
+      <tr><td>Vách giữa / 2 tấm bắt ray, alu composite 6 mm</td><td class="n">640 × 106 / 670 × 106</td></tr>
+      <tr><td>Tấm bắt ray bắt vào lỗ cột qua ống lót 18 mm</td><td class="n">8 bộ M5×40</td></tr>
+      <tr><td>Vỏ inox 1 mm gấp mép kín 10 mm: 2 hông / lưng / tấm che trước</td><td class="n">696 × 1155 / 692 × 1155 / 692 × 161</td></tr>
+      <tr><td>Nắp trên inox 304 dày 1 mm, mép gập xuống 15 mm</td><td class="n">698 × 698, lỗ Ø598</td></tr>
+      <tr><td>Tổng inox (vỏ, 2 mặt ngăn kéo, 4 nẹp, nắp)</td><td class="n">khoảng 30,7 kg</td></tr>
     </table></div></div>
     <div class="card"><h3>Ngăn kéo</h3><div class="tbl"><table>
       <tr><th>Hạng mục</th><th class="n">Giá trị</th></tr>
-      <tr><td>Ray bi trượt hết cỡ, chịu 35 kg</td><td class="n">4 × 600 mm (2 cặp)</td></tr>
+      <tr><td>Ray bi 3 tầng First Slide 46 × 12,7, 45 kg/cặp</td><td class="n">4 × 600 mm (2 cặp)</td></tr>
       <tr><td>Đáy khay, Formex 8 mm</td><td class="n">2 × 285,6 × 647</td></tr>
       <tr><td>Thành hông khay, PP 3 mm phần dư</td><td class="n">4 × 647 × 60</td></tr>
       <tr><td>Thành sau khay, PP 3 mm phần dư</td><td class="n">2 × 285,6 × 60</td></tr>
-      <tr><td>Mặt ngăn kéo Formex 8 mm, có tay nắm</td><td class="n">2 × 339 × 995</td></tr>
-      <tr><td>Thùng gấp từ tấm PP 3 mm, tâm ở (±158,5; ±158,5)</td><td class="n">270 × 270 × 590</td></tr>
+      <tr><td>Mặt ngăn kéo inox 1 mm gấp mép, lỗ tay nắm 120 × 30, 2 nẹp gân mũ phía sau</td><td class="n">2 × 339 × 990</td></tr>
+      <tr><td>Thùng gấp từ tấm PP 3 mm, tâm ở (±158,5; ±158,5)</td><td class="n">270 × 270 × 573</td></tr>
       <tr><td>Mép miệng gấp ra ngoài / 2 lỗ tay nắm</td><td class="n">15 mm / 90 × 30</td></tr>
       <tr><td>Lỗ thông khí ở đáy mỗi thùng</td><td class="n">4 × Ø10, cách tâm (±80; ±80)</td></tr>
       <tr><td>Vòng chun ép túi, bản 10 mm, dày 2 mm</td><td class="n">4 vòng, cách miệng 12 mm</td></tr>
-      <tr><td>Mép trên thùng / đáy thanh chữ thập</td><td class="n">620 / 645 mm</td></tr>
+      <tr><td>Mép trên thùng / đáy thanh chữ thập</td><td class="n">617 / 645 mm</td></tr>
     </table></div></div>
   </div>
   <div class="card"><h3>Thùng gấp từ tấm PP 3 mm</h3>
-    <p>Không có thùng bán sẵn nào hẹp mà cao như cần (270 × 270 × 590): thùng 27 × 27 cm thì chỉ cao 30–37 cm, thùng cao 50–60 cm thì rộng 38–44 cm. Vì vậy mỗi thùng được <b>cắt phẳng từ tấm PP rồi gấp lại</b>, giống gấp hộp carton. Đáy thùng nằm trên khay ngăn kéo, nên khay chịu sức nặng của rác, thành thùng chỉ giữ rác khỏi tràn ra ngang.</p>
+    <p>Không có thùng bán sẵn nào hẹp mà cao như cần (270 × 270 × 573): thùng 27 × 27 cm thì chỉ cao 30–37 cm, thùng cao 50–60 cm thì rộng 38–44 cm. Vì vậy mỗi thùng được <b>cắt phẳng từ tấm PP rồi gấp lại</b>, giống gấp hộp carton. Đáy thùng nằm trên khay ngăn kéo, nên khay chịu sức nặng của rác, thành thùng chỉ giữ rác khỏi tràn ra ngang.</p>
     <div class="cols">
       <div><pre class="sk"> Miếng 1 · thân  (bin_wall_strip_x4.dxf)
  ┌──────┬──────┬──────┬──────┬─┐ ← mép miệng 15 mm, xẻ ở góc
  │      │ ▭    │      │ ▭    │•│ ← mép dán 15 mm, 8 rivet
  │ mặt 1│ mặt 2│ mặt 3│ mặt 4│•│   ▭ lỗ tay nắm 90×30
- │ 270  │ 270  │ 270  │ 270  │•│   cao 590 mm
+ │ 270  │ 270  │ 270  │ 270  │•│   cao 573 mm
  └──•─•─┴──•─•─┴──•─•─┴──•─•─┴─┘ ← 8 rivet bắt vạt đáy
-   1095 × 605 mm
+   1095 × 588 mm
 
  Miếng 2 · đáy  (bin_floor_x4.dxf)
       ┌────┐
@@ -616,18 +625,19 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
     <p class="lead">Rẻ hơn: tấm PP 2 mm (thành mềm hơn, dễ phồng) hoặc tấm PP rỗng (danpla, loại làm thùng carton nhựa; rất nhẹ và rẻ nhưng khe rỗng dễ đọng nước). Cả hai loại này chưa tra giá. Thùng tự gấp không kín nước hoàn toàn, vì nước rỉ qua rivet và lỗ thông khí xuống khay ngăn kéo.</p>
   </div>
   <div class="card"><h3>Màu nắp inox</h3>
-    <p>Chỉ <b>nắp trên</b> bằng <b>inox 304 dày 1 mm</b>, vì đó là chỗ hay chạm tay, hay dính nước và dễ thấy nhất. Hông, lưng, tấm che trước và 2 mặt ngăn kéo bằng <b>Formex 8 mm trắng mờ</b>. Muốn đổi màu Formex thì dán decal hoặc sơn. Màu nắp:</p>
+    <p>Nắp trên, 2 hông, lưng, tấm che trước và 2 mặt ngăn kéo đều bằng <b>inox 304 dày 1 mm</b> (đổi từ Formex ngày 31/10). Mỗi tấm gấp mép kín 10 mm ở cả 4 cạnh, mặt gấp quay vào khung, nên không lộ cạnh cắt. Màu nắp:</p>
     <div class="seg finish"></div>
     <p class="lead">Bạc là inox phun cát hoặc để mặt 2B. Các màu khác cần mạ PVD, đắt so với một tấm nắp nhỏ. Ở tab này vỏ được vẽ trong suốt để thấy khung; mở tab “Tổng quan · 3D” để xem vỏ đặc.</p>
   </div>
-  <div class="card"><h3>Khung V lỗ, vỏ Formex: lắp</h3><ul>
-    <li><b>Khung:</b> lắp như kệ: 4 cột, thanh ngang nối vào cột bằng ke góc tam giác và bulông. Đo 2 đường chéo, phải bằng nhau. Siết chặt kèm long đền vênh vì servo chạy gây rung.</li>
-    <li><b>Không có thanh dưới phía trước:</b> chỗ đó để khay ngăn kéo chạy ra. Tấm sàn Formex bắt bulông vào 3 thanh dưới còn lại và giữ cho chân trước không xô.</li>
-    <li><b>Tấm bắt ray:</b> alu composite 6 mm, bắt vào cột trước và cột sau qua 4 ống lót 18 mm mỗi tấm, nên lòng ngăn kéo giữ đúng bề rộng như bản khung nhôm.</li>
-    <li><b>Vỏ Formex:</b> bắt bulông M4 đầu dù qua lỗ của thanh V. Khoan lỗ trên Formex rộng hơn bulông 1 mm và dùng long đền to, vì Formex nở theo nhiệt (tấm cao 1,17 m dài thêm khoảng 1 mm khi nóng hơn 15 °C).</li>
-    <li><b>Nắp inox:</b> mép gập trùm xuống ngoài vỏ Formex, bắt 2 bulông ở mỗi góc vào đầu cột.</li>
+  <div class="card"><h3>Khung V lỗ, vỏ inox: lắp</h3><ul>
+    <li><b>Chân:</b> bắt chân tăng chỉnh M8 vào đai ốc hàn dưới 4 bản đế. Đặt chân cột lên bản đế.</li>
+    <li><b>Khung:</b> lắp như kệ kho: thanh ngang đặt <b>chồng lên mặt trong cánh cột</b>, bulông kệ M8 đầu tròn cổ vuông xuyên lỗ V từ ngoài vào, đai ốc ở trong. Thanh dưới hai bên kẹp luôn tai của bản đế chân (dùng M8×15). Hai thanh gặp nhau ở góc thì cánh nằm của thanh này đè lên cánh nằm của thanh kia. Đo 2 đường chéo, phải bằng nhau; siết kèm long đền vênh vì servo chạy gây rung.</li>
+    <li><b>Không có thanh dưới phía trước:</b> chỗ đó để khay ngăn kéo chạy ra. Tấm sàn bắt 3 bulông M8×30 vào 3 thanh dưới còn lại; 4 góc tấm khoét 28 × 28 để chừa tai bản đế và đai ốc bulông khung.</li>
+    <li><b>Tấm bắt ray:</b> alu composite 6 mm dài 670 mm, bắt vào lỗ cột trước và cột sau qua 4 ống lót 18 mm mỗi tấm. Vách giữa mang 2 ray quay lưng vào nhau: dùng vít đầu thấp và so le lỗ 2 ray để đai ốc bên này không cọ ray bên kia.</li>
+    <li><b>Vỏ inox:</b> cách mặt ngoài cột 6 mm (chừa mũ bulông kệ cao khoảng 4–5 mm và ke ốp ngoài nếu dùng). Bắt vít M4 inox có ống cách 6 mm vào lỗ V.</li>
+    <li><b>Nắp inox:</b> mép gập trùm xuống ngoài vỏ, bắt 2 vít ở mỗi góc vào đầu cột.</li>
   </ul>
-  <div class="note">Chưa có: lỗ bulông trong các file DXF của vỏ Formex và nắp inox. Khoan theo lỗ thật của thanh V khi lắp, hoặc thêm vào file trước khi gửi xưởng.</div></div>
+  <div class="note">Đã có trong CAD: 35 bulông khung (cỡ và vị trí trong <code>dimensions.json</code>, mục <code>body_fasteners</code>). Chưa có: lỗ V của thanh (chưa đo được khoảng cách tâm lỗ tới góc) và lỗ vít trên vỏ inox. Đo 1 thanh V thật trước khi khoan vỏ.</div></div>
   <div class="cols">
     <div class="card"><h3>Thay túi</h3>
 <pre class="sk"> ┌─────────┬─────────┐
@@ -648,9 +658,9 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
       <p class="lead">Túi cần rộng ít nhất 55 cm, dài ít nhất 82 cm. Nên dùng túi có dây rút để buộc nhanh. Ngăn kéo kéo ra hết thì thanh ngang trước của khung (rộng 20 mm) vẫn nằm phía trên miệng thùng sau, cách mép sau của miệng 10–30 mm và cao hơn miệng 404 mm. Khi nhấc túi, nghiêng túi về phía trước một chút là qua.</p></div>
     <div class="card"><h3>Lỗi hay gặp</h3><ul>
       <li><b>Hai ray không song song:</b> ngăn kéo sẽ bị kẹt. Bắt ray lên tấm phẳng, đo hai đầu lệch nhau không quá 1 mm.</li>
-      <li><b>Ngăn kéo nặng:</b> 2 thùng đầy giấy ướt có thể tới 19–25 kg, nên chọn ray chịu 35 kg trở lên.</li>
+      <li><b>Ngăn kéo nặng:</b> 2 thùng đầy giấy ướt có thể tới 19–25 kg; ray First Slide chịu 45 kg/cặp.</li>
       <li><b>Khung bị lệch vuông góc:</b> lắp xong đo hai đường chéo của khung, phải bằng nhau.</li>
-      <li><b>Formex bị móp:</b> mặt Formex mềm. Chỗ hay bị va (mặt ngăn kéo) có thể dán thêm tấm bảo vệ hoặc chọn Formex dày hơn.</li>
+      <li><b>Cạnh inox sắc:</b> mép đã gấp kín, nhưng lỗ tay nắm 120 × 30 trên mặt ngăn kéo vẫn là cạnh cắt: mài cạnh hoặc nẹp viền cao su.</li>
       <li><b>Siết bulông V lỗ không đủ chặt:</b> khung rung theo servo và kêu. Dùng long đền vênh, kiểm tra lại sau 1 tuần chạy.</li>
       <li><b>Thùng nặng khoảng 40 kg (ước tính):</b> sắt V lỗ nặng hơn nhôm. Lắp 4 chân tăng chỉnh, hoặc chân có bánh xe khoá.</li>
       <li><b>Ngân sách:</b> <span id="budgetB">B khoảng 9–14 triệu</span>, vượt ngân sách 5 triệu chủ yếu vì cụm đầu (xem tab Vật tư).</li>
@@ -719,20 +729,22 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   <div class="cols">
     <div class="card"><h3>Gửi đi gia công</h3><ul>
       <li><b>Cắt laser hoặc CNC:</b> lấy các file trong <code>dxf/</code>, tỉ lệ 1:1, đơn vị mm. Gồm mâm, đĩa, đế xoay, phễu trải phẳng, các tấm, khay ngăn kéo và 2 file thùng gấp PP <code>bin_wall_strip_x4</code>, <code>bin_floor_x4</code>.</li>
-      <li><b>Cắt CNC tấm Formex:</b> gửi tiệm cắt biển quảng cáo các file <code>side_panel_left/right</code>, <code>back_panel</code>, <code>head_panel_front</code>, <code>drawer_front_left/right</code>, <code>drawer_bottom_formex_x2</code> (Formex 8 mm) và <code>floor_plate</code>, <code>head_seat_plate</code> (Formex 15 mm). Alu 6 mm cắt lẻ: <code>slide_mount_left/right</code>, <code>center_wall</code>.</li>
-      <li><b>Cắt laser + chấn nắp inox:</b> chỉ file <code>top_cover</code> (lớp CUT, BEND, NOTE).</li>
-      <li><b>In 3D:</b> lấy các file trong <code>parts/*.stl</code>: giá chữ C, giá MG996R, miếng nối servo xoay (<code>yaw_hub</code>, đặc 100%), 2 tai đĩa, 2 cục chặn, hộp cảm biến, bệ màn hình.</li>
-      <li><b>Cắt thanh:</b> nhôm hộp 30×30 và 40×30, thanh nhôm 30×13, trục inox Ø8 (180 mm và 70 mm). Sắt V lỗ cắt theo <code>cut_list_slotted_angle.csv</code>: 4 cây 1170 mm, 10 cây 620 mm.</li>
+      <li><b>Cắt CNC tấm Formex:</b> <code>floor_plate</code>, <code>head_seat_plate</code> (Formex 15 mm, khoét góc), <code>drawer_bottom_formex_x2</code> (Formex 8 mm). Alu 6 mm cắt lẻ: <code>slide_mount_left/right</code>, <code>center_wall</code>.</li>
+      <li><b>Cắt laser + chấn inox 1 mm:</b> phôi có đường gấp (lớp CUT, BEND, NOTE): <code>side_panel_left/right</code>, <code>back_panel</code>, <code>head_panel_front</code>, <code>drawer_front_left/right</code> (có lỗ tay nắm), <code>drawer_stiffener_x4</code>, <code>top_cover</code>. Thêm 4 bản đế chân thép 3 mm (<code>foot_plate_1..4</code>, hàn đai ốc M8).</li>
+      <li><b>In 3D:</b> lấy các file trong <code>parts/*.stl</code>: giá chữ C, giá MG996R, miếng nối servo xoay (<code>yaw_hub</code>, đặc 100%), miếng nối puly 20T (<code>tilt_pulley_adapter</code>, đặc 100%), 2 tai đĩa, 2 cục chặn, rãnh và trống vòng cáp, hộp cảm biến, bệ màn hình.</li>
+      <li><b>Cắt thanh:</b> nhôm hộp 30×30 và 40×30, nhôm dẹt 60×10 (2 đoạn 61 mm, taro M4 hai đầu), trục inox Ø8 (200 mm và 93 mm). Sắt V lỗ cắt theo <code>cut_list_slotted_angle.csv</code>: 4 cây 1155 mm, 9 cây 671 mm, 1 cây 665 mm.</li>
+      <li><b>Bulông cơ cấu nghiêng:</b> 42 con, CAD ghi cỡ và vị trí trong <code>dimensions.json</code> (mục <code>tilt_drive_fasteners</code>): phần lớn M4, thêm M3, M2 và 2 bulông M5 bắt giá chữ C. Xem trang lắp ráp <a href="https://claude.ai/artifact/4bjrufrW9ZDk44Mt1UgGmx" target="_blank" rel="noopener">Lắp truyền động D</a>.</li>
       <li><b>File cho xưởng:</b> <code>assembly_e1.step</code>, <code>exploded_e1.step</code>, <code>tilt_to_bin_1..4.step</code>, <code>components.csv</code>.</li>
     </ul></div>
     <div class="card"><h3>Phải đo trước khi cắt</h3><ul>
       <li>Thùng gấp PP: gấp thử 1 thùng trước, đo lại kích thước ngoài và độ phồng của thành khi chứa đầy.</li>
-      <li>Servo MG996R và MG90S thật: kích thước tai, vị trí trục. Đo mô-men MG996R bằng cân treo.</li>
-      <li>Puly 40T: lỗ 8 mm hay 5 mm.</li>
+      <li>Servo MG996R và MG90S thật: lỗ tai (MG996R đang lấy 48,5 × 10 theo số cộng đồng tự đo), horn chữ thập của MG90S, số răng trục then hoa MG90S (20 hay 21). Đo mô-men MG996R bằng cân treo.</li>
+      <li>Puly: lỗ 8 mm hay 5 mm (40T), chiều dài (17 hay 18 mm), đường kính vành 40T (26–29 mm).</li>
+      <li>Gối KFL08: khoảng cách lỗ (36–37 mm, giá đã khoét rãnh ±1 mm) và chiều cao (11,5–13 mm). Đường kính trục inox mua về.</li>
       <li>Board ESP32-S3 camera thật: kích thước, số chân rảnh.</li>
-      <li>Màn hình TJC X5 10,1" thật: vị trí lỗ bắt, và vùng hiển thị có nằm giữa bo không (CAD đang giả sử nằm giữa).</li>
+      <li>Màn Guition 4,3" thật: kích thước bo, độ dày tính cả đầu cắm, lỗ bắt, vùng hiển thị có nằm giữa bo không (CAD đang giả sử nằm giữa). Board CAM thật: kích thước, vị trí đầu cắm camera và cổng USB-C.</li>
       <li>Ray trượt thật: độ dày, chiều cao, khoảng cách lỗ bắt.</li>
-      <li>Sắt V lỗ thật: khoảng cách lỗ và cỡ bulông, để khoan lỗ Formex trùng lỗ thanh. Nắp inox: hỏi xưởng lượng bù khi gấp mép 1 mm (file tính theo K = 0,44).</li>
+      <li>Sắt V lỗ thật: bề rộng cánh (26 hay 30 mm), khoảng cách lỗ tới góc và bước lỗ, để khoan lỗ vỏ inox và tấm bắt ray trùng lỗ thanh. Nắp inox: hỏi xưởng lượng bù khi gấp mép 1 mm (file tính theo K = 0,44).</li>
     </ul></div>
   </div>
 </section>
@@ -826,7 +838,7 @@ const B_SHELL=['top_cover'];
 // Miệng phễu, đĩa nghiêng và bệ màn hình tô cùng tông với vỏ, kiểu cụm camera trên lưng điện thoại
 const B_TRIM=['intake_funnel','tipping_plate','display_console'];
 const FOCUS=new THREE.Color(0x8a5a00).convertSRGBToLinear(),NO_GLOW=new THREE.Color(0),WHITE=new THREE.Color(0xffffff);
-// Màn hình chờ mẫu trên màn 10,1": một thông tin về rác, chữ to để người đi ngang đọc được
+// Màn hình chờ mẫu trên màn 4,3": một thông tin về rác, chữ to để người đi ngang đọc được
 function idleScreen(){
   const c=document.createElement('canvas');c.width=1260;c.height=767;const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;
   if(renderer)t.anisotropy=renderer.capabilities.getMaxAnisotropy();
@@ -1244,58 +1256,66 @@ requestAnimationFrame(loop);fillPartTables();
   var ITEMS=[
     ['head','Servo MG996R','Servo nghiêng đĩa, kéo qua đai 2:1. Chọn mẫu Mg996r. Shop ghi full 100% bánh răng kim loại, 0–180°, 15 kg·cm ở 6 V (thông số ghi cho MG995), thiết kế vẫn tính 11 kg·cm. Shop có bán cả bản MG996R-360, nhận hàng phải thử',1,'cái',89000,[['Shopee, MG995/MG996R full kim loại (4,7★, đã bán 40k+, có hoả tốc)','https://shopee.vn/%C4%90%E1%BB%99ng-C%C6%A1-Servo-MG995-MG996-MG996R-Full-100-b%C3%A1nh-r%C4%83ng-kim-lo%E1%BA%A1i-g%C3%B3c-quay-180-%C4%91%E1%BB%99-i.81431289.16762476269?extraParams=%7B%22display_model_id%22%3A144254823331%2C%22model_selection_logic%22%3A3%7D&rModelId=144254823331&vItemId=51759213760&vModelId=425816630006&vShopId=1506174776']],'ok'],
     ['head','Servo MG90S','Servo xoay đĩa ±45° về phía ngăn cần đổ. Trang bán không ghi bánh răng kim loại hay nhựa, nhận hàng mở ra xem',1,'cái',39000,[['Linh Kiện 3M','https://chotroihn.vn/dong-co-servo-mg90s']],'ok'],
-    ['head','Puly GT2 20 răng','Puly nhỏ, gắn trên servo nghiêng. Lỗ 6 mm, đai bản 6 mm',1,'cái',22000,[['Linh Kiện 3M','https://chotroihn.vn/pulley-gt2-puly-20-rang-lo-lap-truc-phi-6-mm-co-dai-rong-6mm']],'ok'],
+    ['head','Puly GT2 20 răng','Puly nhỏ, gắn trên miếng nối của servo nghiêng. Lỗ 6 mm, đai bản 6 mm, dài 16 mm gồm vành và cổ Ø16, 2 vít trí M3 trên cổ',1,'cái',22000,[['Linh Kiện 3M','https://chotroihn.vn/pulley-gt2-puly-20-rang-lo-lap-truc-phi-6-mm-co-dai-rong-6mm']],'ok'],
     ['head','Puly GT2 40 răng','Puly lớn, gắn trên trục nghiêng. Cùng puly 20 răng tạo tỉ số 2:1, gấp đôi lực của servo. Lỗ 8 mm, chọn mẫu "40 răng lỗ 8mm" (listing có cả bản lỗ 5 mm cùng giá)',1,'cái',49000,[['Tôi Thích Điện Tử (Lazada)','https://www.lazada.vn/products/puly-gt2-cac-loai-16-20-30-36-40-60-rang-lo-5mm-va-8mm-i2101394822-s9874495920.html']],'ok'],
     ['head','Đai GT2 vòng kín','Nối puly 20 và 40 răng. Chọn mẫu 158mm: GT2 vòng kín, bản 6 mm, phải đúng chiều dài vì giá servo chỉ chỉnh được ±1 mm. Shop không ghi lõi thép hay sợi thủy tinh, mới có 3 đánh giá, giao khoảng 5 ngày',1,'cái',39505,[['Shopee, đai GT2 vòng kín 2GT rộng 6 mm','https://shopee.vn/%C4%90ai-%C4%91%E1%BB%8Bnh-gi%E1%BB%9D-v%C3%B2ng-k%C3%ADn-GT2-%C4%90ai-%C4%91%E1%BB%93ng-b%E1%BB%99-cao-su-2GT-Chi%E1%BB%81u-r%E1%BB%99ng-6mm-110-160-200-280-400-610-690-852-1220mm-Ph%E1%BB%A5-ki%E1%BB%87n-m%C3%A1y-in-3D-i.1251647761.45518070160?extraParams=%7B%22display_model_id%22%3A292968735584%2C%22model_selection_logic%22%3A3%7D']],'ok'],
     ['head','Gối đỡ KP08','Đỡ 2 đầu trục nghiêng. Cùng listing với KFL08 bên dưới: link mở sẵn mẫu KFL08, đổi sang mẫu KP08 - Phi 8mm, mua 2 cái',2,'cái',12000,[['Shopee, gối đỡ KP/KFL (Yêu thích, 4,9★, 391 đánh giá, có hoả tốc)','https://shopee.vn/G%E1%BB%91i-%C4%91%E1%BB%A1-tr%E1%BB%A5c-KP-KFL-D%C3%B9ng-cho-tr%E1%BB%A5c-phi-8-10-12%E2%80%A6-25mm-i.145382920.40672303340?extraParams=%7B%22display_model_id%22%3A296814233306%2C%22model_selection_logic%22%3A3%7D']],'ok'],
-    ['head','Gối đỡ KFL08','Đỡ trục xoay, 1 trên 1 dưới. Chọn mẫu KFL08 - Phi 8mm, mua 2 cái. Giá chữ C trong CAD chưa có lỗ bắt vít gối: đo khoảng cách lỗ trên gối thật rồi mới khoan hoặc sửa CAD',2,'cái',12000,[['Shopee, gối đỡ KP/KFL (Yêu thích, 4,9★, 391 đánh giá, có hoả tốc)','https://shopee.vn/G%E1%BB%91i-%C4%91%E1%BB%A1-tr%E1%BB%A5c-KP-KFL-D%C3%B9ng-cho-tr%E1%BB%A5c-phi-8-10-12%E2%80%A6-25mm-i.145382920.40672303340?extraParams=%7B%22display_model_id%22%3A296814233306%2C%22model_selection_logic%22%3A3%7D']],'ok'],
-    ['head','Trục inox 304 Ø8','Dài 0,5 m, cắt 2 đoạn 180 và 70 mm',1,'cây',52000,[['Hải Minh Stainless Steel (Shopee)','https://shopee.vn/product/1847029796/47361778054']],'ok'],
+    ['head','Gối đỡ KFL08','Đỡ trục xoay, 1 trên 1 dưới. Chọn mẫu KFL08 - Phi 8mm, mua 2 cái. Bích 48 × 27, lỗ cách 36–37 mm, bulông M4 (giá chữ C đã khoét rãnh ±1 mm)',2,'cái',12000,[['Shopee, gối đỡ KP/KFL (Yêu thích, 4,9★, 391 đánh giá, có hoả tốc)','https://shopee.vn/G%E1%BB%91i-%C4%91%E1%BB%A1-tr%E1%BB%A5c-KP-KFL-D%C3%B9ng-cho-tr%E1%BB%A5c-phi-8-10-12%E2%80%A6-25mm-i.145382920.40672303340?extraParams=%7B%22display_model_id%22%3A296814233306%2C%22model_selection_logic%22%3A3%7D']],'ok'],
+    ['head','Trục inox 304 Ø8','Dài 0,5 m, cắt 2 đoạn 200 và 93 mm',1,'cây',52000,[['Hải Minh Stainless Steel (Shopee)','https://shopee.vn/product/1847029796/47361778054']],'ok'],
     ['head','Khoá trục 8 mm','Bộ 3 cái: 2 cho trục nghiêng, 1 cho trục xoay',1,'bộ',19800,[['STEM ROBOCON SHOP (Shopee)','https://shopee.vn/product/1536807761/54464444015']],'ok'],
-    ['head','Vít trí M3 và đai ốc M3','Kẹp miếng nối in của servo xoay vào mặt D của trục 8 mm. Vít bắt horn đi kèm servo',1,'bộ',5000,[],'est'],
-    ['head','Board ESP32-S3 N16R8 CAM','Kèm camera OV2640',1,'cái',[213000,275000],[['Daves.vn (Shopee)','https://shopee.vn/product/1670553084/51715729345'],['TL Quantum (Shopee)','https://shopee.vn/product/1887340926/49667269628']],'ok'],
+    ['head','Vít trí M3 và đai ốc M3','Kẹp miếng nối in của servo xoay và 2 tai đĩa vào mặt D của trục 8 mm',1,'bộ',5000,[],'est'],
+    ['head','Horn nhôm 25T Ø20 cho MG996R','4 lỗ ren M3 cách tâm 7 mm, có cổ. Miếng nối puly bắt vào bằng 4 vít M3 × 6. Chưa tra giá',1,'cái',[25000,40000],[],'est'],
+    ['head','Mặt bích nối trục 8 mm','Loại thép bích Ø32 × 3, cổ Ø16, cao 13, 4 lỗ M4 trên vòng Ø24, 2 vít trí M4. Nối trục đứng vào đế xoay. Chưa tra giá',1,'cái',[25000,45000],[],'est'],
+    ['head','Bulông, vít cơ cấu nghiêng','42 con theo CAD: M4 × 16 (gối, trụ), M4 × 8 (mặt bích), M4 đầu bằng (đĩa, giá servo), M3 × 12 (tai MG996R), M3 × 6 (horn), M2, kèm đai ốc và 4 đai ốc cấy nhiệt M4. Chưa tra giá',1,'bộ',[50000,90000],[],'est'],
+    ['head','Board ESP32-S3 N16R8 CAM','ESP32-S3-WROOM-1 N16R8, 2 cổng USB-C, kèm camera OV2640 cáp ngắn',1,'cái',[213000,275000],[['Daves.vn (Shopee)','https://shopee.vn/product/1670553084/51715729345'],['TL Quantum (Shopee)','https://shopee.vn/product/1887340926/49667269628']],'ok'],
+    ['head','Điện trở 1 kΩ và 2 kΩ','8 cặp chia áp: 4 chân ECHO của HC-SR04, 2 công tắc ngăn kéo, 2 dự phòng',1,'bộ',5000,[],'est'],
     ['head','Camera OV2640 góc rộng','Ống kính 120°, chọn bản lọc hồng ngoại 650 nm cho màu đúng; giá tuỳ biến thể; shop nước ngoài',1,'cái',[136000,250000],[['YILIN_TECH (Shopee)','https://shopee.vn/product/934626898/18070874823']],'ref'],
-    ['head','Màn hình TJC X5 10,1"','TJC1060X5101, không cảm ứng, IPS 1024×600, UART',1,'cái',1172000,[['Thế Giới Tech (Shopee)','https://shopee.vn/product/658464304/52117992790'],['Thế Giới Tech Automation (Shopee)','https://shopee.vn/product/1220096432/26383863672']],'ok'],
+    ['head','Màn Guition JC4827W543 4,3"','ESP32-S3 riêng, IPS 480×272, UART JST 1,25 (+5V TX RX GND). Hiển thị và đọc 4 HC-SR04. Bản không cảm ứng rẻ nhất',1,'cái',[370000,450000],[['AliExpress','https://www.aliexpress.com/item/1005006729377800.html'],['Alibaba (hỏi giá 1 cái)','https://www.alibaba.com/product-detail/ESP32-S3-8M-PSRAM-4M-FLASH_1601817125516.html']],'ref'],
     ['head','Cảm biến góc MPU-6050','GY-521, gắn trên đĩa',1,'cái',40000,[['Linh Kiện 3M','https://chotroihn.vn/module-cam-bien-gia-toc-goc-tai-linh-kien-dien-tu-3m']],'ok'],
     ['head','Cảm biến siêu âm HC-SR04','Đo mức đầy, mỗi ngăn 1 cái',4,'cái',25000,[['Linh Kiện 3M','https://chotroihn.vn/cam-bien-sieu-am-srf04']],'ok'],
     ['head','Module 2 MOSFET XY-MOS','Bật tắt dải LED. 2 con D4184 song song, không cách ly quang, tín hiệu 3,3–20 V nên ESP32 mở hết được. VIN lấy 5 V từ mạch hạ áp, LED nối OUT+ và OUT−. Tên listing không ghi XY-MOS hay D4184 và chưa xem được đánh giá shop: nhận hàng xem 2 con MOSFET có chữ D4184. Không dùng module cách ly quang của Linh Kiện 3M: nguồn 5 V chỉ cho cổng MOSFET khoảng 2,3 V',1,'cái',[18000,40000],[['Linh kiện điện tử Hưng Yên (Shopee)','https://shopee.vn/product/119714962/27855010200'],['Linhkien888, Hà Nội (Shopee)','https://shopee.vn/product/81293376/26745330889']],'ok'],
     ['head','Module relay 5 V','Cắt nguồn servo khi mở nắp hoặc kéo ngăn',1,'cái',15000,[['Linh Kiện 3M','https://chotroihn.vn/module-relay-5vdc']],'ok'],
     ['head','Cầu chì ống 5×20 mm','3 A',1,'cái',1000,[['Linh Kiện 3M','https://chotroihn.vn/cau-chi-ong-5x20mm-250v']],'ok'],
     ['head','Đế cầu chì ống','',1,'cái',3990,[['Linh Kiện 3M','https://chotroihn.vn/de-cau-chi-ong']],'ok'],
-    ['head','LED dây 5 V trắng','Chip 2835, cuộn 1 m, đầu cắm USB, dùng 120 mm dưới cằm bệ màn hình. Cắt đoạn ở đầu có dây, bỏ phích USB, nối dây + và − vào OUT+ và OUT− của module MOSFET. Không cắm vào cổng USB của board ESP32',1,'cuộn',61600,[['Topick_Lifestyle (Shopee)','https://shopee.vn/product/1613056660/48319016543']],'ok'],
+    ['head','LED dây 5 V trắng','Chip 2835, cuộn 1 m, đầu cắm USB, dùng 100 mm (dải cắt ở mốc 50 mm) dưới cằm bệ màn hình. Cắt đoạn ở đầu có dây, bỏ phích USB, nối dây + và − vào OUT+ và OUT− của module MOSFET. Không cắm vào cổng USB của board ESP32',1,'cuộn',61600,[['Topick_Lifestyle (Shopee)','https://shopee.vn/product/1613056660/48319016543']],'ok'],
     ['head','Cáp dẹt 10 sợi','Bước 1,27 mm, dài 1 m, cho vòng cáp xoay',1,'m',15750,[['Linh Kiện SMD, Hà Nội (Shopee, đang hết hàng)','https://shopee.vn/product/134796651/25204950254']],'ok'],
     ['head','Adapter 12 V 5 A','Jack 5,5 × 2,1 mm',1,'cái',95000,[['Linh Kiện 3M','https://chotroihn.vn/nguon-adapter-12v-5a-5-5-2-1mm']],'ok'],
     ['head','Mạch hạ áp XL4015 5 A','Hạ 12 V xuống 6 V cho 2 servo',1,'cái',35000,[['Linh Kiện 3M','https://chotroihn.vn/module-buck-dc-dc-5a-xl4015']],'ok'],
-    ['head','Mạch hạ áp 5 V 3 A','Cho ESP32-S3, màn hình, cảm biến, LED',1,'cái',19000,[['Linh Kiện 3M','https://chotroihn.vn/module-buck-dc-dc-3a-2-dau-ra-v1']],'ok'],
+    ['head','Mạch hạ áp 5 V 3 A','Cho ESP32-S3, màn hình, cảm biến, LED. Thực tế 59 × 21 × 17, đầu ra là 2 cổng USB-A: hàn dây thẳng vào pad',1,'cái',19000,[['Linh Kiện 3M','https://chotroihn.vn/module-buck-dc-dc-3a-2-dau-ra-v1']],'ok'],
     ['head','Tụ hoá 2200 µF 16 V','Giá trên trang là giá thấp nhất của dòng tụ 16 V',1,'cái',[1000,5000],[['Linh Kiện 3M','https://chotroihn.vn/tu-hoa-16v']],'ref'],
-    ['head','Cầu đấu điện 12P','',1,'cái',15000,[['Linh Kiện 3M','https://chotroihn.vn/cau-dau-dien-12p-trang']],'ok'],
+    ['head','Cầu đấu điện 12P','Loại 6 A dài 110 mm: cắt lấy 4 cực (khoảng 37 mm) cho vừa ô trong đế bệ',1,'cái',15000,[['Linh Kiện 3M','https://chotroihn.vn/cau-dau-dien-12p-trang']],'ok'],
     ['head','Dây điện, đầu cos, ống co nhiệt','',1,'bộ',30000,[],'est'],
     ['head','Nhôm tấm A5052 cắt lẻ','Phôi mâm 594×594×3, đĩa 320×320×1,5, đế xoay 192×180×4 mm. 118–121k/kg cộng 10–20% phí cắt lẻ',3.6,'kg',[130000,145000],[['Nhôm Đông Đô, 486 Ngọc Hồi','https://nhomhopkim.net/product/nhom-tam-3mm/']],'ref'],
     ['head','Cắt laser nhôm','Mâm, đĩa, đế xoay, khoảng 5 m đường cắt',5,'m',[6000,9000],[['Xưởng laser 32–36 Tam Trinh, 96 Kim Ngưu','https://khaclaserhanoi.com.vn/8-co-so-cat-laser-kim-loai-inox-dong-nhom-uy-tin-tai-ha-noi-sai-gon.html']],'ref'],
-    ['head','Sơn tĩnh điện đĩa','Xám mờ. Có thể bỏ, phun cát đĩa nhôm cùng vỏ',1,'cái',60000,[],'est'],
+    ['head','Sơn tĩnh điện đĩa','Đã bỏ (20/10): chà mặt đĩa bằng Scotch-Brite cho mờ',0,'cái',60000,[],'est'],
     ['head','Tấm nhựa PP 2 mm','Khổ 1000×2000, cắt phễu và vành cổ phễu. Chưa tìm được nơi bán ở Hà Nội',1,'tấm',[250000,450000],[['Tân Đại Phong (bảng giá chung)','https://tandaiphong.com.vn/san-pham/bang-gia-tam-nhua-pp/']],'ref'],
     ['head','Dải PP 3 mm cắt lẻ','1,8 m × 20 mm, cuộn thành vòng định vị',1,'dải',50000,[],'est'],
     ['head','Rèm PVC dải 2 mm','Khoảng 1,1 m, làm diềm cổ phễu',1,'m',50000,[],'est'],
     ['head','Nhôm hộp 30×30×2','1,5 m (4 thanh treo 375 mm), khoảng 0,9 kg. Ước theo giá nhôm/kg',0.9,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
     ['head','Nhôm hộp 40×30×2','1,1 m (2 thanh chữ thập 540 mm), khoảng 0,8 kg. Ước theo giá nhôm/kg',0.8,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
-    ['head','Nhôm thanh dẹt 30×13','0,15 m (2 trụ bản lề), khoảng 0,2 kg. Ước theo giá nhôm/kg',0.2,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
+    ['head','Nhôm thanh dẹt 60×10','2 đoạn 61 mm làm trụ đỡ gối KP08 (rộng 60 cho lỗ gối cách 42), khoảng 0,2 kg. Ước theo giá nhôm/kg',0.2,'kg',[115000,140000],[['Nhôm Đông Đô (giá nhôm tấm/kg)','https://nhomhopkim.net/product/nhom-tam-3mm/']],'est'],
     ['head','In 3D PETG','0,8–1,0 kg: bệ màn hình rỗng, giá chữ C, giá servo, miếng nối servo xoay, tai, 4 hộp cảm biến có loa (khoảng 38 cm³ mỗi hộp). In ở trường nên không mất tiền. Nếu phải tự trả: mua 1 cuộn eSUN 1 kg 317k để tự in, hoặc thuê in 0,8–1,0 kg × 800–1.500đ/g = 0,64–1,5 triệu, có nơi tính tối thiểu 50k mỗi chi tiết',1,'lô',0,[['NGE 3D Printer, eSUN PETG 1 kg (Shopee)','https://shopee.vn/product/1458987144/28924391297'],['3DMaster, Hà Nội (thuê in)','https://3dmaster.com.vn/dich-vu-in-3d-theo-yeu-cau-ha-noi-o-dau-gia-tot-in-dep/']],'free'],
     ['head','Keo dán Alteco 110','',1,'tuýp',18000,[['Linh Kiện 3M','https://chotroihn.vn/keo-dan-alteco-110-japan']],'ok'],
     ['head','Rivet nhôm, đệm cao su tự dính 30×30','',1,'bộ',80000,[],'est'],
-    ['b','Sắt V lỗ 3×3 dày 2 mm, sơn sẵn','4 cây 1170 mm và 10 cây 620 mm (cut_list_slotted_angle), tổng 10,9 m. Nhờ cửa hàng cắt sẵn',12,'m',[18200,28500],[['Kệ Sắt Việt Nhật','https://kesatvietnhat.com/sat-v-lo-3x3/'],['Kệ Sắt Gia Phạm','https://kesatgiapham.com/sat-v-lo/']],'ok','frame'],
-    ['b','Ke góc tam giác V lỗ','Nối thanh ngang vào cột, mỗi đầu thanh 1 cái',20,'cái',[1000,4000],[['Siêu thị Nguyễn Kim (bộ ốc + ke)','https://sieuthinguyenkim.com/bulong-oc-vit-ke-goc-lap-ke-sat-nti108205070.html']],'ref','frame'],
-    ['b','Bulông kệ V lỗ M8×12 đầu tròn cổ vuông','Gói 100 cái, cờ lê 13: khung, tấm sàn, tấm đỡ đầu',[1,2],'gói',[40000,45000],[['Sha Việt Nam','https://www.shavietnam.vn/bulong-dai-oc-lap-gia-ke']],'ok','frame'],
-    ['b','Chân tăng chỉnh M8','Cần thêm bản đế hoặc ke để bắt vào thanh V, hỏi cửa hàng kệ',4,'cái',[5500,35000],[['Hugiasmart','https://www.hugiasmart.vn/products/chan-ban-tang-chinh-ban-ghe-lac-leo'],['Lovi-Tech','https://lovitechic.com/san-pham/chan-tang-chinh-m8-xoay']],'ok','frame'],
-    ['b','Tấm Formex 15 mm 1220×2440','Sàn 676×676 và tấm đỡ đầu 676×676 lỗ Ø560',1,'tấm',[362000,550000],[['Gỗ Hiếu Hương','https://gohieuhuong.vn/san-pham/nhua-fomex/'],['Minh Anh Homes','https://minhanhhomes.vn/bao-gia-tam-formex-2928.html']],'ok','frame'],
-    ['b','Alu composite 6 mm cắt lẻ','2 tấm bắt ray và vách giữa 640×106. Mua ở tiệm biển quảng cáo',1,'lô',[80000,150000],[],'est','frame'],
+    ['b','Sắt V lỗ 3×3 dày 2 mm, sơn sẵn','4 cây 1155 mm, 9 cây 671 mm và 1 cây 665 mm (cut_list_slotted_angle), tổng 11,3 m. Thanh ngang chồng trong cột. Nhờ cửa hàng cắt sẵn',12,'m',[18200,28500],[['Kệ Sắt Việt Nhật','https://kesatvietnhat.com/sat-v-lo-3x3/'],['Kệ Sắt Gia Phạm','https://kesatgiapham.com/sat-v-lo/']],'ok','frame'],
+    ['b','Ke góc tam giác V lỗ','Tuỳ chọn: ốp ngoài chỗ nối thanh với cột để khung cứng hơn (thanh đã bắt chồng bằng bulông); vỏ cách cột 6 mm chừa chỗ',20,'cái',[1000,4000],[['Siêu thị Nguyễn Kim (bộ ốc + ke)','https://sieuthinguyenkim.com/bulong-oc-vit-ke-goc-lap-ke-sat-nti108205070.html']],'ref','frame'],
+    ['b','Bulông kệ V lỗ M8×12 đầu tròn cổ vuông','Gói 100 cái, cờ lê 13: 16 con bắt thanh vào cột (CAD). 4 chỗ thanh dưới kẹp tai bản đế cần M8×15',[1,2],'gói',[40000,45000],[['Sha Việt Nam','https://www.shavietnam.vn/bulong-dai-oc-lap-gia-ke']],'ok','frame'],
+    ['b','Chân tăng chỉnh M8 đế Ø30','Mẫu M8×15×30 đế đen, vặn vào đai ốc hàn dưới bản đế',4,'cái',4500,[['Hugiasmart','https://www.hugiasmart.vn/products/chan-ban-tang-chinh-ban-ghe-lac-leo']],'ok','frame'],
+    ['b','Bản đế chân thép 3 mm','4 cái 26 × 26 có tai 28 mm, hàn đai ốc M8 (file foot_plate_1..4). Tai kẹp dưới thanh dưới hai bên. Chưa tra giá',4,'cái',[10000,20000],[],'est','frame'],
+    ['b','Bulông M8×30 và M8×15 kèm đai ốc','7 con M8×30 bắt tấm sàn và tấm đỡ đầu; 4 con M8×15 ở chỗ kẹp tai bản đế. Chưa tra giá',1,'bộ',[15000,30000],[],'est','frame'],
+    ['b','Tấm Formex 15 mm 1220×2440','Sàn 666×672 và tấm đỡ đầu 672×672 lỗ Ø560, khoét 4 góc',1,'tấm',[362000,550000],[['Gỗ Hiếu Hương','https://gohieuhuong.vn/san-pham/nhua-fomex/'],['Minh Anh Homes','https://minhanhhomes.vn/bao-gia-tam-formex-2928.html']],'ok','frame'],
+    ['b','Alu composite 6 mm cắt lẻ','2 tấm bắt ray 670×106 và vách giữa 640×106. Tấm 6 mm ít gặp ở tiệm biển (thường 3–4 mm): hỏi trước',1,'lô',[80000,150000],[],'est','frame'],
     ['b','Bulông M5×40 kèm ống lót 18 mm','Bắt tấm bắt ray vào cột, 4 bộ mỗi tấm',8,'bộ',[3000,6000],[],'est','frame'],
     ['b','Bulông M4×12 bắt ray','Ray bắt xuyên tấm alu 6 mm, 6 con mỗi ray',24,'bộ',[500,1000],[],'est','frame'],
-    ['b','Tấm Formex 8 mm 1220×2440','2 hông 696×1170, lưng 680×1170, tấm che trước 680×171, 2 mặt ngăn kéo 339×995, 2 đáy khay 285,6×647',2,'tấm',[205000,320000],[['Gỗ Hiếu Hương','https://gohieuhuong.vn/san-pham/nhua-fomex-8mm/'],['Sơn Băng','https://sonbang.vn/tam-formex/']],'ok','shell'],
-    ['b','Cắt tấm Formex','CNC theo m² khoảng 430–640k cho 4,5 m²; rẻ hơn nếu kho cắt thẳng tấm chữ nhật, chỉ CNC lỗ Ø560',1,'lô',[200000,640000],[['Bí Ẩn Việt (bảng giá CNC)','https://bianviet.com/cat-cnc-mica-alu-go/bang-bao-gia-gia-cong-cat-cnc-tren-moi-chat-lieu-bi-an-viet.htm']],'ref','shell'],
+    ['b','Tấm Formex 8 mm 1220×2440','Chỉ còn 2 đáy khay 285,6×647 (vỏ đã đổi sang inox). Hỏi mua cắt lẻ',1,'tấm',[205000,320000],[['Gỗ Hiếu Hương','https://gohieuhuong.vn/san-pham/nhua-fomex-8mm/'],['Sơn Băng','https://sonbang.vn/tam-formex/']],'ok','shell'],
+    ['b','Cắt tấm Formex','Sàn, tấm đỡ đầu (lỗ Ø560, khoét góc) và 2 đáy khay, khoảng 1,3 m²',1,'lô',[100000,250000],[['Bí Ẩn Việt (bảng giá CNC)','https://bianviet.com/cat-cnc-mica-alu-go/bang-bao-gia-gia-cong-cat-cnc-tren-moi-chat-lieu-bi-an-viet.htm']],'ref','shell'],
     ['b','Inox 304 tấm 1 mm cắt lẻ cho nắp','Phôi khoảng 730×730, khoảng 4,2 kg (mua cắt theo kích thước)',4.2,'kg',58500,[['Inox Cường Thịnh, kho Thanh Trì (bảng giá 17/7/2026)','https://cuongthinhinox.com/bang-bao-gia-inox-tam-cuon-304-re-nhat-mien-bac.html']],'ok','shell'],
     ['b','Cắt laser và chấn nắp inox','Cắt khoảng 4,9 m × 4–8k/m, chấn khoảng 2,8 m × 8–12k/m, cộng phí tối thiểu',1,'lô',[45000,120000],[['OTP (bảng giá)','https://otp.com.vn/bang-gia/']],'ok','shell'],
     ['b','Phun cát nắp inox (tuỳ chọn)','Không phun thì để mặt 2B',1,'tấm',[0,300000],[],'est','shell'],
-    ['b','Bulông M4 đầu dù kèm long đền to','Bắt vỏ Formex vào thanh V và nắp vào cột, khoảng 70 bộ',1,'bộ',[50000,110000],[],'est','shell'],
-    ['b','Ray bi 3 tầng 600 mm','First Slide, tải 45 kg/cặp, mở toàn phần',2,'cặp',106000,[['CSPS','https://www.csps.vn/products/ray-truot-3-tang-ri-ve-tai-trong-45-kg'],['Bếp Hoàng Cường (Shopee)','https://shopee.vn/product/1627491863/55607663401']],'ok'],
+    ['b','Inox 304 tấm 1 mm cho vỏ','2 hông 696×1155, lưng 692×1155, tấm che trước 692×161, 2 mặt ngăn kéo 339×990, 4 nẹp gân 65×948; gấp mép kín 10 mm. Khoảng 29,6 kg (CAD: 30,7 kg cả nắp)',29.6,'kg',[58500,70000],[['Inox Cường Thịnh','https://cuongthinhinox.com/bang-bao-gia-inox-tam-cuon-304-re-nhat-mien-bac.html']],'est','shell'],
+    ['b','Cắt laser và chấn vỏ inox','Các file side_panel, back_panel, head_panel_front, drawer_front, drawer_stiffener_x4. Gộp đơn với nắp',1,'lô',[250000,600000],[['OTP (bảng giá)','https://otp.com.vn/bang-gia/']],'est','shell'],
+    ['b','Vít M4 inox kèm ống cách 6 mm','Bắt vỏ inox vào lỗ V (vỏ cách cột 6 mm) và nắp vào cột, khoảng 70 bộ',1,'bộ',[70000,150000],[],'est','shell'],
+    ['b','Ray bi 3 tầng 600 mm','First Slide BBZZ463001, 46 × 12,7, tải 45 kg/cặp, mở toàn phần',2,'cặp',106000,[['CSPS','https://www.csps.vn/products/ray-truot-3-tang-ri-ve-tai-trong-45-kg'],['Bếp Hoàng Cường (Shopee)','https://shopee.vn/product/1627491863/55607663401']],'ok'],
     ['b','Tấm nhựa PP 3 mm 1220×2440','4 miếng thân thùng gấp (file bin_wall_strip_x4). Giá tuỳ nhà bán',1,'tấm',[350000,680000],[['Tân Đại Phong (bảng giá chung)','https://tandaiphong.com.vn/san-pham/bang-gia-tam-nhua-pp/'],['Plastic Xcep (bảng giá 2026)','https://vn.plastic-xcep.com/bang-gia-tam-nhua-pp-2026/']],'ref'],
     ['b','Tấm PP 3 mm cắt lẻ 0,65×0,65 m','4 miếng đáy thùng gấp (file bin_floor_x4). Theo giá m² của tấm nguyên, cộng phí cắt lẻ',1,'miếng',[80000,130000],[],'est'],
     ['b','Cắt CNC thùng PP và rạch rãnh gấp','Khoảng 23 m đường cắt và 18 m rãnh gấp. Bảng giá cũ khoảng 1.800 đ/m, nhưng xưởng thường tính phí tối thiểu',1,'lô',[100000,200000],[['Nhựa Tổng Hợp (bảng giá cắt CNC)','https://nhuatonghop.com/bang-gia-nhua-pp-pe/']],'est'],
@@ -1303,7 +1323,7 @@ requestAnimationFrame(loop);fillPartTables();
     ['b','Vòng chun ép túi bản 10 mm','Mỗi vòng khoảng 92 cm',4,'vòng',5000,[],'est'],
     ['b','Tay nắm ngăn kéo','',2,'cái',30000,[],'est'],
     ['b','Rivet, ke nhôm cho khay','',1,'bộ',40000,[],'est'],
-    ['b','Công tắc hành trình','Báo ngăn kéo đang mở',2,'cái',2000,[['Linh Kiện 3M','https://chotroihn.vn/cong-tac-hanh-trinh-tiaihua-1a-125vac']],'ok']
+    ['b','Công tắc hành trình','TIAIHUA 1 A, 13 × 6,8 × 6, 2 lỗ M2 cách 6,5. Báo ngăn kéo đang mở',2,'cái',2000,[['Linh Kiện 3M','https://chotroihn.vn/cong-tac-hanh-trinh-tiaihua-1a-125vac']],'ok']
   ];
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
   var host=document.getElementById('caseGroups');
@@ -1333,7 +1353,7 @@ requestAnimationFrame(loop);fillPartTables();
     var milR=function(a,b){return Math.round(a/1e5)===Math.round(b/1e5)?mil(a):mil(a)+'–'+mil(b);};
     var host=function(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return u;}};
     var ST={ok:['st-ok','Đã tra 10/2026'],ref:['st-ref','Tham khảo'],est:['st-est','Ước tính'],none:['st-none','Chưa tìm thấy'],free:['st-ok','In ở trường']};
-    var SEC={head:'Cụm đầu',b:'Thân B · khung sắt V lỗ, vỏ Formex, nắp inox'};
+    var SEC={head:'Cụm đầu',b:'Thân B · khung sắt V lỗ, vỏ và nắp inox'};
     var SUB={head:'Cộng cụm đầu',b:'Cộng riêng thân B'};
     var sum={},grp={},no=0,rows='';
     ['head','b'].forEach(function(k){
@@ -1360,7 +1380,7 @@ requestAnimationFrame(loop);fillPartTables();
     ct.innerHTML='<tr><th class="n">#</th><th>Hạng mục</th><th>Quy cách, ghi chú</th><th class="n">SL</th><th class="n">Đơn giá (₫)</th><th class="n">Thành tiền (₫)</th><th>Nơi bán</th><th>Link</th><th>Tình trạng</th></tr>'+rows;
     var b=sum.all_b,hd=sum.head,sh=grp.shell,fr=grp.frame;
     var cl=document.getElementById('costLead');
-    if(cl)cl.textContent='Thân B khoảng '+milR(b[0],b[1])+' triệu'+(b[0]>5e6?', vượt ngân sách 5 triệu khoảng '+milR(b[0]-5e6,b[1]-5e6)+' triệu':'')+'. Cụm đầu '+milR(hd[0],hd[1])+' triệu (trong đó màn hình), khung sắt V lỗ và các tấm bên trong '+milR(fr[0],fr[1])+' triệu, vỏ Formex và nắp inox '+milR(sh[0],sh[1])+' triệu. Cách hạ thêm: không phun cát nắp, đổi màn TJC 10,1\" sang màn nhỏ theo mạch S3-1, tự cắt tấm Formex và thùng PP.';
+    if(cl)cl.textContent='Thân B khoảng '+milR(b[0],b[1])+' triệu'+(b[0]>5e6?', vượt ngân sách 5 triệu khoảng '+milR(b[0]-5e6,b[1]-5e6)+' triệu':'')+'. Cụm đầu '+milR(hd[0],hd[1])+' triệu (trong đó màn hình), khung sắt V lỗ và các tấm bên trong '+milR(fr[0],fr[1])+' triệu, vỏ Formex và nắp inox '+milR(sh[0],sh[1])+' triệu. Cách hạ thêm: nhờ kho cắt thẳng tấm Formex thay vì cắt CNC, chọn bản màn Guition không cảm ứng.';
     var bb=document.getElementById('budgetB');if(bb)bb.textContent='B khoảng '+milR(b[0],b[1])+' triệu';
   }
 })();

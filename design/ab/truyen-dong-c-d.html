@@ -1,0 +1,408 @@
+<title>Truyền động C và D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Bố cục: khung 3D với 2 nút C / D, bên cạnh là phiếu của phương án đang xem; bên dưới là bảng so sánh, các bước lắp, giá và phép tính */
+:root{
+  --bg:#edf0ef; --surface:#fbfcfb; --ink:#1c2524; --muted:#5a6866; --line:#cfd8d5;
+  --c:#2f6fa6; --c-soft:#dde9f4; --d:#b8700c; --d-soft:#f5e6cc; --good:#2f7a4a; --bad:#a83a3a;
+  --scene:#dfe5e2; --fixed:#97a3a0; --yaw:#3d8fb3; --tilt:#d08a2c; --motor:#2a3033; --plate:#c3ccd0; --ghost:#a9b4b1;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"Be Vietnam Pro",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131918; --surface:#1a2221; --ink:#e3eae8; --muted:#97a6a2; --line:#2c3836;
+  --c:#6aa9dc; --c-soft:#1b2d3d; --d:#eba64a; --d-soft:#3a2c16; --good:#6cc08a; --bad:#e58a80;
+  --scene:#1b2422; --fixed:#5f6b68; --yaw:#4aa3c8; --tilt:#e09a3c; --motor:#0c0f10; --plate:#7d8b8f; --ghost:#55625f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131918; --surface:#1a2221; --ink:#e3eae8; --muted:#97a6a2; --line:#2c3836;
+  --c:#6aa9dc; --c-soft:#1b2d3d; --d:#eba64a; --d-soft:#3a2c16; --good:#6cc08a; --bad:#e58a80;
+  --scene:#1b2422; --fixed:#5f6b68; --yaw:#4aa3c8; --tilt:#e09a3c; --motor:#0c0f10; --plate:#7d8b8f; --ghost:#55625f; color-scheme:dark}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 56px}
+.wrap{max-width:1200px;margin:0 auto;display:grid;gap:26px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;margin:0;text-wrap:balance;line-height:1.12}
+h1{font-size:clamp(28px,4.2vw,40px)} h2{font-size:24px} h3{font-size:18px}
+p{margin:0;max-width:72ch}
+.eyebrow{font:500 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:grid;gap:10px}
+header p{color:var(--muted)}
+.verdict{display:grid;gap:6px;border-left:4px solid var(--d);background:var(--surface);padding:14px 16px;border-radius:0 8px 8px 0}
+.verdict b{color:var(--d)}
+.stage{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:940px){.stage{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}}
+.viewer{display:grid;gap:10px;min-width:0}
+.pick{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:500 17px var(--f-display);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:7px;cursor:pointer;display:flex;gap:8px;align-items:baseline}
+.opt b{font-family:var(--f-mono);font-size:14px}
+.opt[data-k="c"] b{color:var(--c)} .opt[data-k="d"] b{color:var(--d)}
+.opt[aria-selected="true"][data-k="c"]{border-color:var(--c);background:var(--c-soft)}
+.opt[aria-selected="true"][data-k="d"]{border-color:var(--d);background:var(--d-soft)}
+.box{position:relative;width:100%;aspect-ratio:4/3;max-width:100%;max-height:70vh;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--scene)}
+.box canvas{display:block;width:100%;height:100%;touch-action:none}
+#loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);padding:16px;text-align:center}
+.legend{position:absolute;right:10px;top:10px;display:grid;gap:3px;font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 9px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.hud{position:absolute;left:10px;bottom:10px;font:12px var(--f-mono);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-variant-numeric:tabular-nums;max-width:calc(100% - 20px)}
+#tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:4px 8px;border-radius:5px;max-width:260px;transform:translate(12px,12px)}
+.ctrl{display:flex;flex-wrap:wrap;gap:6px}
+.btn{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 11px;border-radius:6px;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--ink)}
+.btn.main{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.opt:focus-visible,.btn:focus-visible{outline:2px solid var(--d);outline-offset:2px}
+.hint{font-size:13px;color:var(--muted)}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:grid;gap:12px;min-width:0}
+.sheet.c{border-top:4px solid var(--c)} .sheet.d{border-top:4px solid var(--d)}
+.flow{font:12px/1.5 var(--f-mono);background:var(--bg);border-radius:6px;padding:10px;overflow-x:auto;white-space:pre;margin:0}
+.sheet ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:480px){.pc{grid-template-columns:1fr}}
+.pc h3{font-size:15px} .pro h3{color:var(--good)} .con h3{color:var(--bad)}
+section{display:grid;gap:12px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font:600 15px var(--f-display);background:var(--bg)}
+th.c{color:var(--c)} th.d{color:var(--d)}
+tr:last-child td{border-bottom:0}
+td.win{font-weight:600}
+td.win::before{content:"✓ ";color:var(--good)}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.tot td{font-weight:600;background:var(--bg)}
+.cols{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:820px){.cols{grid-template-columns:1fr 1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:grid;gap:10px;min-width:0;align-content:start}
+.card.c h3{color:var(--c)} .card.d h3{color:var(--d)}
+.card ol,.card ul{margin:0;padding-left:20px;display:grid;gap:4px}
+pre.calc{margin:0;font:12px/1.6 var(--f-mono);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+.note{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:14px 18px;display:grid;gap:8px}
+.note ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+a{color:var(--d)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">aware · thân B · cụm đầu · đĩa nhôm Ø320 × 1,5, mặt đĩa cao 900 mm</span>
+  <h1>Truyền động C và D cho đĩa nghiêng</h1>
+  <p>Hai phương án chuyển động giống nhau: xoay cụm quanh trục đứng cho mép đĩa hướng về ngăn, rồi nghiêng đĩa 45° để rác trượt xuống. Chúng chỉ khác ở chỗ ai đỡ đĩa và lực đi từ servo tới đĩa bằng đường nào.</p>
+  <div class="verdict">
+    <span class="eyebrow">Kết luận</span>
+    <p><b>Chọn D.</b> Cùng gánh khoảng 40% sức servo, nhưng D rẻ hơn khoảng 0,3–0,4 triệu, mọi linh kiện mua được ở Việt Nam, đĩa gần như cân bằng khi mất điện và đã được kiểm tra trong CAD. C chỉ hơn ở chỗ ít chi tiết và lắp nhanh hơn.</p>
+  </div>
+</header>
+
+<div class="stage">
+  <div class="viewer">
+    <div class="pick" role="tablist" aria-label="Phương án">
+      <button class="opt" role="tab" data-k="c" id="opt-c" aria-selected="false"><b>C</b>Servo khoẻ nối thẳng</button>
+      <button class="opt" role="tab" data-k="d" id="opt-d" aria-selected="true"><b>D</b>MG996R qua đai 2:1</button>
+    </div>
+    <div class="box" id="box">
+      <div id="loading">Đang tải mô hình CAD cụm đầu (khoảng 5 MB)…</div>
+      <div class="legend" aria-hidden="true">
+        <span><i style="background:var(--fixed)"></i>Cố định</span>
+        <span><i style="background:var(--yaw)"></i>Khâu xoay</span>
+        <span><i style="background:var(--tilt)"></i>Khâu nghiêng</span>
+        <span><i style="background:var(--motor)"></i>Servo</span>
+        <span><i style="background:var(--plate)"></i>Đĩa</span>
+      </div>
+      <div class="hud" id="hud">Đứng yên</div>
+      <div id="tip" hidden></div>
+    </div>
+    <div class="ctrl">
+      <button class="btn" type="button" data-bin="1">Ngăn 1 · Nhựa</button>
+      <button class="btn" type="button" data-bin="2">Ngăn 2 · Giấy</button>
+      <button class="btn" type="button" data-bin="3">Ngăn 3 · Kim loại</button>
+      <button class="btn" type="button" data-bin="4">Ngăn 4 · Khác</button>
+      <button class="btn main" type="button" id="cycle">Chạy 4 ngăn</button>
+      <button class="btn" type="button" id="btnPlate" aria-pressed="false">Ẩn đĩa</button>
+      <button class="btn" type="button" id="btnCtx" aria-pressed="true">Hiện phễu và thùng</button>
+    </div>
+    <p class="hint" id="srcNote"></p>
+  </div>
+  <aside class="sheet" id="sheet" aria-live="polite"></aside>
+</div>
+
+<section>
+  <h2>So theo tiêu chí</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Tiêu chí</th><th class="c">C · DS3235SG nối thẳng, ổ lazy-susan</th><th class="d">D · MG996R + đai 2:1, gối đỡ</th></tr></thead>
+    <tbody>
+      <tr><td>Tiền bộ truyền động</td><td>Khoảng 0,67 triệu <b>chưa tính ổ xoay Ø100</b> (chưa tìm thấy shop VN)</td><td class="win">Khoảng 0,39 triệu, giá đã tra trong sheet</td></tr>
+      <tr><td>Số chi tiết truyền động</td><td class="win">11</td><td>24 (đếm trong CAD, chưa tính cục chặn và dây)</td></tr>
+      <tr><td>Số bước lắp</td><td class="win">5</td><td>9</td></tr>
+      <tr><td>Khâu phải căn chỉnh</td><td class="win">Tâm servo xoay trùng tâm ổ lazy-susan</td><td>2 gối KFL08 thẳng hàng, 2 gối KP08 thẳng hàng, căng đai đúng 48,58 mm</td></tr>
+      <tr><td>Tải servo nghiêng, vật 0,5 kg ở mép, nghiêng 45°</td><td>1,25 / 3,14 N·m = <b>40%</b></td><td>0,435 / 1,08 N·m = <b>40%</b></td></tr>
+      <tr><td>Vật nặng nhất ở mép (servo ≤ 50%)</td><td>0,66 kg</td><td>0,63 kg</td></tr>
+      <tr><td>Ai đỡ trọng lượng đĩa</td><td>Ổ bi trong DS3235SG và cốc ổ bi trục phụ</td><td class="win">2 gối KP08; servo chỉ kéo đai</td></tr>
+      <tr><td>Khi mất điện</td><td>Trọng tâm đĩa cao hơn bản lề 73 mm, đĩa đổ hẳn về một phía</td><td class="win">Trọng tâm chỉ cao hơn 21 mm, đĩa gần cân bằng, cục chặn 47° đỡ</td></tr>
+      <tr><td>Mép đĩa quét ra xa nhất (tâm 0)</td><td>176 mm, sát diềm cổ phễu ở r166–168: phải kiểm lại va chạm</td><td class="win">Mép thấp ra tới khoảng 128 mm; đã kiểm 25 tư thế không chạm</td></tr>
+      <tr><td>Mua ở Việt Nam</td><td>DS3235SG có (khoảng 550k); ổ lazy-susan cỡ nhỏ chưa thấy</td><td class="win">Đủ cả, link trong sheet</td></tr>
+      <tr><td>Đã có trong CAD</td><td>Chưa. Hình bên là mô hình phác</td><td class="win">Có, kèm kiểm tra va chạm và tầm nhìn camera</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Các bước lắp</h2>
+  <div class="cols">
+    <div class="card c"><h3>C · 5 bước</h3><ol>
+      <li>Bắt MG996R đứng trong giá in trên tâm thanh chữ thập.</li>
+      <li>Bắt ổ lazy-susan lên giá, đặt đế xoay lên ổ, nối horn MG996R vào đế xoay bằng miếng nối in. Căn tâm servo trùng tâm ổ.</li>
+      <li>Bắt DS3235SG lên khối đế nối trên đế xoay.</li>
+      <li>Lắp giá U: một đầu vào horn 25T, đầu kia vào cốc ổ bi trục phụ.</li>
+      <li>Bắt đĩa lên thanh ngang của giá U bằng 4 vít.</li>
+    </ol></div>
+    <div class="card d"><h3>D · 9 bước</h3><ol>
+      <li>Bắt giá chữ C lên thanh chữ thập, bắt 2 gối KFL08 vào giá.</li>
+      <li>Lắp MG90S, horn, miếng nối in; luồn trục đứng qua 2 gối, kẹp vít trí vào mặt D, đặt khoá trục.</li>
+      <li>Bắt đế xoay lên đầu trục đứng.</li>
+      <li>Dựng 2 trụ nhôm dẹt trên đế xoay, bắt 2 gối KP08.</li>
+      <li>Luồn trục bản lề qua 2 gối, lắp puly 40T, 2 tai PETG, 2 khoá trục.</li>
+      <li>Bắt MG996R lên giá có lỗ rãnh, lắp miếng nối và puly 20T.</li>
+      <li>Lồng đai 158 mm, kéo servo theo rãnh cho đai căng, siết vít.</li>
+      <li>Bắt đĩa lên 2 tai bằng 4 vít M4.</li>
+      <li>Lắp 2 cục chặn 47°, chốt chặn ±70° và vòng cáp dẹt.</li>
+    </ol></div>
+  </div>
+</section>
+
+<section>
+  <h2>Linh kiện và giá</h2>
+  <div class="cols">
+    <div class="tbl"><table style="min-width:420px">
+      <thead><tr><th class="c">C</th><th class="num">Giá</th></tr></thead>
+      <tbody>
+        <tr><td>Servo nghiêng DS3235SG 35 kg·cm</td><td class="num">550.000</td></tr>
+        <tr><td>Servo xoay MG996R</td><td class="num">89.000</td></tr>
+        <tr><td>Ổ xoay lazy-susan Ø100 chịu mô-men lật</td><td class="num">chưa có giá</td></tr>
+        <tr><td>Giá U nhôm cho servo, kèm cốc ổ bi trục phụ</td><td class="num">khoảng 30.000</td></tr>
+        <tr><td>Giá servo xoay, miếng nối, đế nối (in PETG)</td><td class="num">0</td></tr>
+        <tr class="tot"><td>Cộng (chưa tính ổ xoay)</td><td class="num">khoảng 669.000</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tbl"><table style="min-width:420px">
+      <thead><tr><th class="d">D (giá trong sheet, 31/10)</th><th class="num">Giá</th></tr></thead>
+      <tbody>
+        <tr><td>Servo MG996R + MG90S</td><td class="num">128.000</td></tr>
+        <tr><td>Puly GT2 20T + 40T, đai 158 mm</td><td class="num">110.505</td></tr>
+        <tr><td>2 gối KP08 + 2 gối KFL08</td><td class="num">48.000</td></tr>
+        <tr><td>Trục inox Ø8 0,5 m, bộ 3 khoá trục, vít M3</td><td class="num">76.800</td></tr>
+        <tr><td>Nhôm dẹt 30×13 làm 2 trụ</td><td class="num">23.000–28.000</td></tr>
+        <tr class="tot"><td>Cộng</td><td class="num">386.305–391.305</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <p class="hint">Phần chung không tính: đĩa nhôm, đế xoay nhôm 4 mm, IMU, dây, nguồn 6 V. Giá DS3235SG theo mohinhdieukhien.net (10/2026). Giá giá U là ước tính, chưa tra.</p>
+</section>
+
+<section>
+  <h2>Phép tính mô-men (vật 0,5 kg ở mép, nghiêng 45°)</h2>
+  <div class="cols">
+<pre class="calc">C · bản lề dưới mặt đĩa 74 mm, servo nối thẳng
+đĩa  0,326 kg × 9,81 × 0,0733 m × sin45° = 0,166
+vật  0,5 × 9,81 × (0,160 cos45° + 0,124 sin45°) = 0,985
+gá (giá U, horn) dự trù                    = 0,10
+cần tại servo                       ≈ 1,25 N·m
+DS3235SG kẹt 3,14 N·m @6 V          → 40%
+vật nặng nhất ở 50%                 ≈ 0,66 kg</pre>
+<pre class="calc">D · bản lề dưới mặt đĩa 22 mm, đai 2:1
+cần tại bản lề (CAD tính)           = 0,783 N·m
+qua đai 2:1, hiệu suất 90%
+cần tại servo  0,783 / 2 / 0,9      ≈ 0,435 N·m
+MG996R kẹt 1,08 N·m @6 V (số thận trọng)
+                                    → 40%
+vật nặng nhất ở 50%                 ≈ 0,63 kg</pre>
+  </div>
+</section>
+
+<section class="note">
+  <h2>Chưa kiểm</h2>
+  <ul>
+    <li>Mô hình C là mô hình phác dựng theo kích thước của trang so sánh ngày 9/10, đặt vào cụm đầu thân B. Chưa kiểm va chạm như D.</li>
+    <li>Số của C là tính tay. Số của D lấy từ CAD (<code>dimensions.json</code>, mục mô-men và mép đĩa).</li>
+    <li>Mô-men thật của MG996R và DS3235SG mua ở VN: phải đo bằng cân treo trên mẫu đầu tiên.</li>
+    <li>Nếu muốn bớt chi tiết mà vẫn giữ ưu điểm của D: giữ bản lề sát đĩa và 2 gối đỡ, bỏ đai, gắn DS3235SG thẳng vào trục bản lề (tải khoảng 25%, đắt thêm khoảng 350k).</li>
+  </ul>
+</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+const D2R=Math.PI/180, DIRS=[45,135,225,315], BIN_NAMES=['Nhựa','Giấy','Kim loại','Khác'];
+const OPT={
+  c:{name:'C · Servo khoẻ nối thẳng vào trục nghiêng',
+    lead:'Một servo lớn DS3235SG (35 kg·cm) gắn thẳng vào trục nghiêng qua giá chữ U, nên ổ bi trong servo đỡ luôn đĩa. Trục xoay đặt trên một ổ lazy-susan Ø100, do MG996R quay. Bản lề nằm dưới mặt đĩa 74 mm.',
+    flow:'thanh chữ thập ─ giá in ─ MG996R (xoay) ─ miếng nối ─ đế xoay\n                 └ ổ lazy-susan Ø100 đỡ đế xoay\nđế xoay ─ đế nối ─ DS3235SG ─ horn 25T + cốc ổ bi trục phụ ─ giá U ─ đĩa',
+    pro:['Ít chi tiết nhất: 11 chi tiết, 5 bước lắp','Không có đai nên không phải căng đai','Servo dư sức như D (40%)'],
+    con:['Đắt hơn D khoảng 0,3–0,4 triệu, chưa tính ổ xoay','Ổ lazy-susan cỡ nhỏ chưa mua được ở VN','Ổ bi nhỏ trong servo phải đỡ đĩa','Mất điện thì đĩa đổ hẳn (trọng tâm cao 73 mm)','Mép đĩa quét tới r176, sát diềm cổ phễu','Chưa có trong CAD'],
+    src:'C là mô hình phác (hình hộp), dựng theo kích thước trang so sánh 9/10. Đĩa, phễu, thùng và thanh chữ thập lấy từ CAD.'},
+  d:{name:'D · MG996R kéo qua đai 2:1, gối đỡ chịu tải',
+    lead:'MG90S xoay cụm quanh trục đứng Ø8 nằm trong 2 gối KFL08. MG996R nghiêng đĩa qua đai GT2 tỉ số 2:1. Bản lề chỉ cách mặt đĩa 22 mm và nằm trên 2 gối KP08, nên đĩa gần cân bằng và servo không phải đỡ trọng lượng.',
+    flow:'thanh chữ thập ─ giá chữ C ─ MG90S ─ horn ─ miếng nối ─ trục đứng Ø8 (2 gối KFL08) ─ đế xoay\nđế xoay ─ 2 trụ ─ 2 gối KP08 ─ trục bản lề Ø8 ─ 2 tai ─ đĩa\nđế xoay ─ MG996R ─ puly 20T ═ đai GT2 158 ═ puly 40T trên trục bản lề',
+    pro:['Rẻ nhất: khoảng 0,39 triệu, đã có link mua','Servo không đỡ đĩa, bền hơn','Đĩa gần cân bằng, mất điện không đổ mạnh','Đã kiểm 25 tư thế trong CAD, camera thấy đủ mép đĩa'],
+    con:['24 chi tiết, 9 bước lắp','Phải căng đai đúng khoảng cách tâm 48,58 mm','Phải in miếng nối puly 20T vào horn MG996R'],
+    src:'D là chi tiết CAD thật từ b_frame/mesh.json, chuyển động đúng như trong CAD.'}
+};
+const VI={yaw_bracket:'Giá chữ C (in) trên thanh chữ thập',yaw_bearing_lower:'Gối đỡ KFL08 dưới',yaw_bearing_upper:'Gối đỡ KFL08 trên',yaw_servo:'Servo xoay MG90S',
+  yaw_servo_horn:'Horn tròn MG90S',yaw_hub:'Miếng nối in, vít trí M3 kẹp mặt D',yaw_shaft:'Trục đứng Ø8 × 70',yaw_collar:'Khoá trục 8 mm',yaw_platform:'Đế xoay nhôm 4 mm',
+  hinge_post_1:'Trụ nhôm dẹt 30×13',hinge_post_2:'Trụ nhôm dẹt 30×13',hinge_block_1:'Gối đỡ KP08',hinge_block_2:'Gối đỡ KP08',tilt_servo:'Servo nghiêng MG996R',
+  tilt_servo_bracket:'Giá MG996R, lỗ rãnh để căng đai',tilt_pulley_small:'Puly GT2 20T',tilt_belt:'Đai GT2 vòng kín 158 mm',tilt_pulley_large:'Puly GT2 40T',
+  hinge_shaft:'Trục bản lề Ø8 × 180',hinge_collar_1:'Khoá trục 8 mm',hinge_collar_2:'Khoá trục 8 mm',plate_lug_1:'Tai PETG kẹp trục',plate_lug_2:'Tai PETG kẹp trục',
+  tipping_plate:'Đĩa nhôm Ø320 × 1,5',tilt_stop_pad_1:'Cục chặn 47°',tilt_stop_pad_2:'Cục chặn 47°',tilt_imu:'IMU MPU-6050',yaw_cable_channel:'Rãnh vòng cáp',
+  yaw_cable_drum:'Trống quay vòng cáp',yaw_stop_pin:'Chốt chặn ±70°',yaw_ribbon_loop:'Cáp dẹt 10 sợi',cable_clip_stage:'Kẹp cáp',
+  joint_beam:'Thanh chữ thập 40×30',head_deck:'Mâm đầu',intake_funnel:'Phễu',flexible_throat_skirt:'Diềm PVC cổ phễu',display_console:'Bệ màn hình'};
+const viName=n=>VI[n]||(n.startsWith('hanger_')?'Thanh treo 30×30':n.startsWith('motor_cable')?'Dây servo':/^bin_\d$/.test(n)?'Thùng '+n.slice(4)+' · '+BIN_NAMES[+n.slice(4)-1]:n.startsWith('fill_sensor')?'Hộp cảm biến đầy':n);
+
+const box=document.getElementById('box'),hud=document.getElementById('hud'),tip=document.getElementById('tip');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let active='d';
+
+function renderSheet(k){
+  const o=OPT[k],el=document.getElementById('sheet');el.className='sheet '+k;
+  el.innerHTML='<span class="eyebrow">Phương án '+k.toUpperCase()+'</span><h2></h2><p class="lead"></p><pre class="flow"></pre>'+
+    '<div class="pc"><div class="pro"><h3>Ưu</h3><ul>'+o.pro.map(x=>'<li>'+x+'</li>').join('')+'</ul></div><div class="con"><h3>Nhược</h3><ul>'+o.con.map(x=>'<li>'+x+'</li>').join('')+'</ul></div></div>';
+  el.querySelector('h2').textContent=o.name;el.querySelector('.lead').textContent=o.lead;el.querySelector('.flow').textContent=o.flow;
+  document.getElementById('srcNote').textContent='Kéo để xoay, cuộn để phóng to, rê chuột lên chi tiết để xem tên. '+o.src;
+}
+
+// ---------- Cảnh 3D (toạ độ CAD: Z hướng lên, đơn vị mm) ----------
+let renderer=null;try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){}
+if(!renderer){document.getElementById('loading').textContent='Trình duyệt không mở được WebGL. Bảng so sánh bên dưới vẫn đọc được.';}
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34,4/3,10,10000);let controls=null;
+if(renderer){renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.outputEncoding=THREE.sRGBEncoding;box.prepend(renderer.domElement);
+  controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.minDistance=200;controls.maxDistance=3000;}
+camera.position.set(330,930,400);if(controls){controls.target.set(0,800,0);controls.update();}
+scene.add(new THREE.HemisphereLight(0xffffff,0x56636a,.8));
+const sun=new THREE.DirectionalLight(0xffffff,.6);sun.position.set(500,1700,900);scene.add(sun);
+const fill=new THREE.DirectionalLight(0xffffff,.25);fill.position.set(-700,600,-500);scene.add(fill);
+const root=new THREE.Group();root.rotation.x=-Math.PI/2;scene.add(root);
+
+const mats=[];   // {m, key} để đổi màu theo giao diện sáng/tối
+function M(key,o){const m=new THREE.MeshStandardMaterial(Object.assign({roughness:.6,metalness:.1,side:THREE.DoubleSide},o||{}));mats.push({m,key});return m;}
+function applyTheme(){if(!renderer)return;renderer.setClearColor(new THREE.Color(css('--scene')));
+  mats.forEach(({m,key})=>{if(key)m.color.set(css('--'+key)).convertSRGBToLinear();});}
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);}catch(e){}
+new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+const pickables=[];
+function add(geo,mat,label,parent){const o=new THREE.Mesh(geo,mat);o.userData.label=label;if(label)pickables.push(o);parent.add(o);return o;}
+// Hộp theo khoảng toạ độ CAD [x0,x1] × [y0,y1] × [z0,z1]
+function cuboid(x0,x1,y0,y1,z0,z1,mat,label,parent){const o=add(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),mat,label,parent);o.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2);return o;}
+// Trụ tròn trục Z (đứng) hoặc trục X
+function disc(r,z0,z1,mat,label,parent,axis,cx,cy,cz){const g=new THREE.CylinderGeometry(r,r,z1-z0,40);
+  if(axis==='x')g.rotateZ(Math.PI/2);else g.rotateX(Math.PI/2);const o=add(g,mat,label,parent);
+  if(axis==='x')o.position.set((z0+z1)/2,cy||0,cz||0);else o.position.set(cx||0,cy||0,(z0+z1)/2);return o;}
+
+// Cả hai phương án dùng cùng quy ước với CAD: xoay quanh Z, nghiêng quanh trục X
+function angles(n){if(!n)return{yaw:0,tilt:0};const dir=DIRS[n-1];let yaw=((dir-270+180)%360+360)%360-180,tl=45;
+  if(Math.abs(yaw)>90){yaw=((dir-90+180)%360+360)%360-180;tl=-45;}return{yaw:yaw*D2R,tilt:tl*D2R};}
+
+const rigs={};
+function buildD(mesh,byName){
+  const g=new THREE.Group();root.add(g);const yawG=new THREE.Group();g.add(yawG);
+  const tiltG=new THREE.Group();tiltG.position.set(0,0,878);yawG.add(tiltG);
+  const keyOf=(p)=>/_servo$/.test(p.name)?'motor':p.name==='tipping_plate'?'plate':p.group==='tilt_plate'?'tilt':p.group==='yaw'?'yaw':'fixed';
+  const plates=[];
+  for(const p of mesh){if(!['tilt_fixed','yaw','tilt_plate'].includes(p.group))continue;
+    const geo=byName[p.name];const mat=M(keyOf(p),{roughness:p.name==='tipping_plate'?.4:.6,metalness:p.name==='tipping_plate'?.3:.1});
+    const o=add(geo,mat,viName(p.name),p.group==='tilt_plate'?tiltG:p.group==='yaw'?yawG:g);
+    if(p.group==='tilt_plate')o.position.z=-878;
+    if(p.name==='tipping_plate')plates.push(o);}
+  return{group:g,plates,apply(a){yawG.rotation.z=a.yaw;tiltG.rotation.x=a.tilt;}};
+}
+function buildC(byName){
+  const g=new THREE.Group();root.add(g);const F=M('fixed'),Y=M('yaw'),T=M('tilt'),S=M('motor',{roughness:.45}),P=M('plate',{roughness:.4,metalness:.3});
+  // Phần cố định: giá in trên tâm thanh chữ thập, MG996R đứng, ổ lazy-susan
+  cuboid(-34,34,-20,20,675,681,F,'Giá in đỡ servo xoay và ổ lazy-susan',g);
+  cuboid(-46,-40,-20,20,681,748,F,'Giá in đỡ servo xoay và ổ lazy-susan',g);cuboid(40,46,-20,20,681,748,F,'Giá in đỡ servo xoay và ổ lazy-susan',g);
+  cuboid(-10,30.7,-9.85,9.85,681,719,S,'Servo xoay MG996R (trục ra đứng)',g);
+  cuboid(-17,37.7,-9.85,9.85,707,710,S,'Servo xoay MG996R (trục ra đứng)',g);
+  disc(50,748,752,F,'Ổ xoay lazy-susan Ø100, vòng dưới cố định',g);
+  const yawG=new THREE.Group();g.add(yawG);
+  disc(50,752,756,Y,'Ổ xoay lazy-susan Ø100, vòng trên quay',yawG);
+  disc(10,719,752,Y,'Miếng nối in từ horn MG996R lên đế xoay',yawG);
+  disc(55,756,761,Y,'Đế xoay',yawG);
+  cuboid(-16,16,-14,14,761,806,Y,'Đế nối (in) giữ thân DS3235SG',yawG);
+  // DS3235SG: trục ra theo phương X ở cao độ bản lề 826, thân 40,5 × 20 × 40 mm
+  cuboid(-20.25,20.25,-10,10,806,846,S,'Servo nghiêng DS3235SG 35 kg·cm (trục ra theo X)',yawG);
+  cuboid(-20.25,20.25,-10,10,806,846,S,null,yawG).visible=false;
+  const tiltG=new THREE.Group();tiltG.position.set(0,0,826);yawG.add(tiltG);
+  disc(10,20.5,23.5,T,'Horn 25T của DS3235SG',tiltG,'x',0,0,0);
+  disc(10,-23.5,-20.5,T,'Cốc ổ bi trục phụ',tiltG,'x',0,0,0);
+  cuboid(23.5,26.5,-20,20,-12,72.5,T,'Giá U mang đĩa (bắt vào horn)',tiltG);
+  cuboid(-26.5,-23.5,-20,20,-12,72.5,T,'Giá U mang đĩa (bắt vào cốc ổ bi)',tiltG);
+  cuboid(-26.5,26.5,-20,20,69.5,72.5,T,'Thanh ngang giá U, bắt 4 vít vào đĩa',tiltG);
+  const pl=add(byName.tipping_plate,P,'Đĩa nhôm Ø320 × 1,5 (dùng lại đĩa của CAD)',tiltG);pl.position.z=-826;
+  return{group:g,plates:[pl],apply(a){yawG.rotation.z=a.yaw;tiltG.rotation.x=a.tilt;}};
+}
+const ctx=[];
+function buildContext(mesh,byName){
+  const keep=p=>p.group==='head'||p.group==='brain'||/^bin_\d$/.test(p.name);
+  const ghost=M('ghost',{transparent:true,opacity:.16,depthWrite:false});
+  const binMats=['#4a8fb8','#c9873a','#5e9e6a','#9a6bb0'].map(h=>{const m=new THREE.MeshStandardMaterial({color:new THREE.Color(h).convertSRGBToLinear(),transparent:true,opacity:.22,depthWrite:false,side:THREE.DoubleSide});return m;});
+  const beam=M('fixed');
+  for(const p of mesh){if(!keep(p))continue;
+    const solid=p.name==='joint_beam'||p.name.startsWith('hanger_');
+    const mat=solid?beam:/^bin_\d$/.test(p.name)?binMats[+p.name.slice(4)-1]:ghost;
+    const o=add(byName[p.name],mat,viName(p.name),root);if(!solid)ctx.push(o);}
+}
+
+// ---------- Chuyển động: xoay 0,7 s, nghiêng 1 s, giữ 0,8 s, nghiêng về 1 s, xoay về 0,7 s ----------
+let run=null,queue=[];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ease=f=>{f=Math.min(Math.max(f,0),1);return f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;};
+function play(n){run={n,t0:performance.now()};}
+function frameAt(t,n){const a=angles(n);const fy=t<3.5?ease(t/.7):1-ease((t-3.5)/.7),ft=t<2.5?ease((t-.7)/1):1-ease((t-2.5)/1);
+  return{yaw:a.yaw*fy,tilt:a.tilt*ft,ft,fy};}
+function tick(now){requestAnimationFrame(tick);if(!renderer)return;
+  const r=rigs[active];
+  if(run&&r){const t=reduce?1.7:(now-run.t0)/1000,f=frameAt(t,run.n);r.apply(f);
+    hud.textContent='Ngăn '+run.n+' · '+BIN_NAMES[run.n-1]+' · xoay '+Math.round(f.yaw/D2R)+'° · nghiêng '+Math.round(f.tilt/D2R)+'°';
+    if(t>=(reduce?1.7:4.3)&&!reduce){run=null;r.apply({yaw:0,tilt:0});if(queue.length)play(queue.shift());else{hud.textContent='Đứng yên';setCycle(false);}}}
+  controls.update();renderer.render(scene,camera);}
+function setCycle(b){const c=document.getElementById('cycle');c.textContent=b?'Dừng':'Chạy 4 ngăn';c.dataset.busy=b?'1':'';}
+function stop(){run=null;queue=[];Object.values(rigs).forEach(r=>r.apply({yaw:0,tilt:0}));hud.textContent='Đứng yên';setCycle(false);}
+
+function select(k){if(!OPT[k])k='d';active=k;stop();
+  document.querySelectorAll('.opt').forEach(b=>b.setAttribute('aria-selected',b.dataset.k===k?'true':'false'));
+  Object.entries(rigs).forEach(([key,r])=>r.group.visible=key===k);renderSheet(k);}
+document.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{location.hash=b.dataset.k;}));
+window.addEventListener('hashchange',()=>select(location.hash.slice(1)));
+document.querySelectorAll('[data-bin]').forEach(b=>b.addEventListener('click',()=>{stop();play(+b.dataset.bin);}));
+document.getElementById('cycle').addEventListener('click',e=>{if(e.currentTarget.dataset.busy){stop();return;}stop();queue=[2,3,4];play(1);setCycle(true);});
+document.getElementById('btnPlate').addEventListener('click',e=>{const on=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',on);
+  e.currentTarget.textContent=on?'Hiện đĩa':'Ẩn đĩa';Object.values(rigs).forEach(r=>r.plates.forEach(p=>p.visible=!on));});
+document.getElementById('btnCtx').addEventListener('click',e=>{const on=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',on);ctx.forEach(o=>o.visible=on);});
+
+// Rê chuột lên chi tiết để xem tên
+if(renderer){const ray=new THREE.Raycaster(),v=new THREE.Vector2(),cv=renderer.domElement;
+  const shown=o=>{while(o){if(!o.visible)return false;o=o.parent;}return true;};
+  cv.addEventListener('pointermove',e=>{const rc=cv.getBoundingClientRect();v.set((e.clientX-rc.left)/rc.width*2-1,-(e.clientY-rc.top)/rc.height*2+1);ray.setFromCamera(v,camera);
+    const h=ray.intersectObjects(pickables.filter(shown),false)[0];
+    if(h){tip.hidden=false;tip.textContent=h.object.userData.label;tip.style.left=(e.clientX-rc.left)+'px';tip.style.top=(e.clientY-rc.top)+'px';}else tip.hidden=true;});
+  cv.addEventListener('pointerleave',()=>tip.hidden=true);}
+
+function resize(){if(!renderer)return;const w=box.clientWidth,h=box.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+new ResizeObserver(resize).observe(box);resize();
+
+select(location.hash.slice(1)||'d');
+if(renderer){
+  fetch('b_frame/mesh.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(mesh=>{
+    const byName={};
+    for(const p of mesh){if(!['tilt_fixed','yaw','tilt_plate','head','brain'].includes(p.group)&&!/^bin_\d$/.test(p.name))continue;
+      const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p.vertices.flat(),3));g.setIndex(p.triangles.flat());g.computeVertexNormals();byName[p.name]=g;}
+    buildContext(mesh,byName);rigs.d=buildD(mesh,byName);rigs.c=buildC(byName);
+    applyTheme();select(active);document.getElementById('loading').hidden=true;
+  }).catch(err=>{document.getElementById('loading').textContent='Không tải được mô hình CAD ('+err.message+'). Tải lại trang để thử lại.';});
+  requestAnimationFrame(tick);
+}
+})();
+</script>
