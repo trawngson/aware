@@ -1380,7 +1380,7 @@ requestAnimationFrame(loop);fillPartTables();
     ct.innerHTML='<tr><th class="n">#</th><th>Hạng mục</th><th>Quy cách, ghi chú</th><th class="n">SL</th><th class="n">Đơn giá (₫)</th><th class="n">Thành tiền (₫)</th><th>Nơi bán</th><th>Link</th><th>Tình trạng</th></tr>'+rows;
     var b=sum.all_b,hd=sum.head,sh=grp.shell,fr=grp.frame;
     var cl=document.getElementById('costLead');
-    if(cl)cl.textContent='Thân B khoảng '+milR(b[0],b[1])+' triệu'+(b[0]>5e6?', vượt ngân sách 5 triệu khoảng '+milR(b[0]-5e6,b[1]-5e6)+' triệu':'')+'. Cụm đầu '+milR(hd[0],hd[1])+' triệu (trong đó màn hình), khung sắt V lỗ và các tấm bên trong '+milR(fr[0],fr[1])+' triệu, vỏ Formex và nắp inox '+milR(sh[0],sh[1])+' triệu. Cách hạ thêm: nhờ kho cắt thẳng tấm Formex thay vì cắt CNC, chọn bản màn Guition không cảm ứng.';
+    if(cl)cl.textContent='Thân B khoảng '+milR(b[0],b[1])+' triệu'+(b[0]>5e6?', vượt ngân sách 5 triệu khoảng '+milR(b[0]-5e6,b[1]-5e6)+' triệu':'')+'. Cụm đầu '+milR(hd[0],hd[1])+' triệu (trong đó màn hình), khung sắt V lỗ và các tấm bên trong '+milR(fr[0],fr[1])+' triệu, vỏ và nắp inox '+milR(sh[0],sh[1])+' triệu. Cách hạ thêm: nhờ kho cắt thẳng tấm Formex thay vì cắt CNC, chọn bản màn Guition không cảm ứng.';
     var bb=document.getElementById('budgetB');if(bb)bb.textContent='B khoảng '+milR(b[0],b[1])+' triệu';
   }
 })();

@@ -96,7 +96,7 @@ a{color:var(--accent)}
     <p class="lead" style="margin-top:10px">Giá khung và vỏ lấy từ tab 3 của sheet vật tư (giá tấm, thanh từ trang báo giá; tiền cắt, hàn, chấn, dán cạnh là ước tính). Hai phương án mix và cân nặng là ước tính của mình, chưa tra.</p>
   </section>
 
-  <div class="note">Hình 3D dựng từ kích thước thiết kế để so sánh hình dáng và vật liệu, chưa phải CAD đã kiểm tra va chạm. Trừ phương án nhôm (đang có trong CAD), các phương án khác phải sửa CAD và chạy lại kiểm tra trước khi gửi xưởng.</div>
+  <div class="note">Hình 3D dựng từ kích thước thiết kế để so sánh hình dáng và vật liệu, chưa phải CAD đã kiểm tra va chạm. Chỉ Mix 2 (đã chọn) đang có trong CAD và đã qua kiểm tra 25 tư thế; các phương án khác phải sửa CAD và chạy lại kiểm tra trước khi gửi xưởng.</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -130,22 +130,22 @@ function mfcBody(){var M='mfc',F='fmx';return [
  ['pp',[3,633,60],[-22.7,-6.5,62],'drawerL'],['pp',[3,633,60],[-308.8,-6.5,62],'drawerL'],['pp',[283,3,60],[-165.75,308.5,62],'drawerL'],
  ['pp',[3,633,60],[22.7,-6.5,62],'drawerR'],['pp',[3,633,60],[308.8,-6.5,62],'drawerR'],['pp',[283,3,60],[165.75,308.5,62],'drawerR']];}
 var OPTS=[
- {id:'inox',name:'Nhôm + vỏ inox',short:'đang có trong CAD',cost:[4.48,7.92],kg:'khoảng 45',parts:function(){return frameAl().concat(inside('alu'),skins('inox',1),topPlate('inox',1,true),trays('alu'));},bin:270,
-  lead:'Khung nhôm định hình 20×20, toàn bộ vỏ inox 304 dày 1 mm gập mép kín, phun cát mờ. Là thiết kế hiện tại của đồng đội.',
+ {id:'inox',name:'Nhôm + vỏ inox',short:'thiết kế cũ',cost:[4.48,7.92],kg:'khoảng 45',parts:function(){return frameAl().concat(inside('alu'),skins('inox',1),topPlate('inox',1,true),trays('alu'));},bin:270,
+  lead:'Khung nhôm định hình 20×20, toàn bộ vỏ inox 304 dày 1 mm gập mép kín, phun cát mờ. Là thiết kế cũ của đồng đội (chốt 16/10).',
   mats:[['inox','Nóc, 2 hông, lưng, tấm che trước, 2 mặt ngăn kéo'],['prof','Khung 4 cột, 11 thanh ngang'],['alu','Sàn, tấm đỡ đầu, vách giữa, khay']],
-  pros:['Đẹp và bền nhất, chống nước, chống xước','Đã có file cắt và chấn cho từng tấm','Không phải sửa CAD'],cons:['Đắt nhất: vỏ inox chiếm 2,9–5,6 triệu','Nặng, cần 2 người khiêng','Màu khác bạc phải mạ PVD, thêm 1,7–3,7 triệu']},
+  pros:['Đẹp và bền nhất, chống nước, chống xước','Đã từng có file cắt và chấn cho từng tấm (CAD cũ)'],cons:['Đắt nhất: vỏ inox chiếm 2,9–5,6 triệu','Nặng, cần 2 người khiêng','Màu khác bạc phải mạ PVD, thêm 1,7–3,7 triệu']},
  {id:'acp',name:'Nhôm + vỏ alu',short:'đổi vật liệu vỏ',cost:[2.34,3.42],kg:'khoảng 34',parts:function(){return frameAl().concat(inside('alu'),skins('acp',3),topPlate('acp',3),trays('alu'));},bin:270,
   lead:'Giữ nguyên khung nhôm, thay vỏ inox bằng tấm nhôm composite 3 mm bắt vít vào rãnh khung. Nhìn gần như bản inox, có nhiều màu.',
   mats:[['acp','Nóc, 2 hông, lưng, tấm che trước, 2 mặt ngăn kéo'],['prof','Khung 4 cột, 11 thanh ngang'],['alu','Sàn, tấm đỡ đầu, vách giữa, khay']],
-  pros:['Rẻ hơn bản inox 2–4,5 triệu','Nhẹ, chống nước hoàn toàn','CAD chỉ cần đổi độ dày tấm vỏ'],cons:['Cạnh cắt lộ lõi nhựa, cần nẹp góc','Mặt alu dễ móp nếu va mạnh','Vẫn đắt hơn MFC khoảng 1 triệu']},
+  pros:['Rẻ hơn bản inox 2–4,5 triệu','Nhẹ, chống nước hoàn toàn','Giữ hình tấm vỏ, chỉ đổi vật liệu'],cons:['Cạnh cắt lộ lõi nhựa, cần nẹp góc','Mặt alu dễ móp nếu va mạnh','Vẫn đắt hơn MFC khoảng 1 triệu']},
  {id:'mix1',name:'Mix 1 · nhôm + nóc inox',short:'Formex 8 mm',cost:[2.4,3.8],est:true,kg:'khoảng 34',parts:function(){return frameAl().concat(inside('alu'),skins('fmx',8),topPlate('inox',1,true),trays('alu'));},bin:270,
   lead:'Khung nhôm như CAD. Chỉ riêng nóc làm inox gập mép, vì đó là chỗ hay chạm tay, hay dính nước và dễ thấy nhất. Hông, lưng, mặt ngăn kéo bằng Formex 8 mm.',
   mats:[['inox','Nóc (có sẵn file cắt, mép gập 15 mm)'],['fmx','2 hông, lưng, tấm che trước, 2 mặt ngăn kéo (8 mm)'],['prof','Khung 4 cột, 11 thanh ngang'],['alu','Sàn, tấm đỡ đầu, vách giữa, khay']],
-  pros:['Nóc inox bền ở chỗ chịu nhiều tác động nhất','Chống nước toàn bộ','Sửa CAD ít: chỉ đổi tấm vỏ'],cons:['Giá gần bằng vỏ alu, không rẻ hơn','Formex mặt mềm, dễ móp khi va mạnh','Formex nở theo nhiệt: khoan lỗ vít rộng hơn 1 mm']},
- {id:'mix2',name:'Mix 2 · V lỗ + nóc inox',short:'đã chọn',cost:[1.73,3.48],est:true,kg:'khoảng 40',parts:function(){return frameV().concat(inside('fmx','fmx'),skins('fmx',8),topPlate('inox',1,true),trays('fmx','pp'));},bin:270,
-  lead:'Phương án đã chọn (19/10), đã có trong CAD và qua kiểm tra 24 tư thế. Khung sắt V lỗ 3×3 bắt bulông như kệ kho, không cần hàn. Nóc inox, vỏ Formex 8 mm, bên trong Formex 15 mm. Vách giữa nên giữ tấm mỏng 6 mm để thùng 270 vẫn lọt.',
-  mats:[['inox','Nóc'],['fmx','Vỏ 8 mm; sàn, tấm đỡ đầu, khay 15 mm'],['vlo','Khung sắt V lỗ 30×30, sơn sẵn'],['pp','Thành khay']],
-  pros:['Gần rẻ bằng tủ MFC','Chống nước toàn bộ, có nóc inox','Tự lắp bằng cờ lê, không cần xưởng hàn'],cons:['Thanh V 30 mm to hơn 20 mm: phải sửa CAD','Tấm đỡ đầu Formex có thể võng theo thời gian, cần kiểm tra','Lỗ V lỗ lộ ra nếu không che kín']},
+  pros:['Nóc inox bền ở chỗ chịu nhiều tác động nhất','Chống nước toàn bộ','Giữ hình tấm vỏ, chỉ đổi vật liệu'],cons:['Giá gần bằng vỏ alu, không rẻ hơn','Formex mặt mềm, dễ móp khi va mạnh','Formex nở theo nhiệt: khoan lỗ vít rộng hơn 1 mm']},
+ {id:'mix2',name:'Mix 2 · V lỗ + vỏ inox',short:'đã chọn',cost:[3.48,5.17],est:true,kg:'khoảng 50–55',parts:function(){return frameV().concat(inside('fmx','fmx'),skins('inox',1),topPlate('inox',1,true),trays('fmx','pp'));},bin:270,
+  lead:'Phương án đã chọn (19/10), đã có trong CAD và qua kiểm tra 25 tư thế. Khung sắt V lỗ 3×3 bắt bulông như kệ kho, không cần hàn, đứng trên 4 bản đế có chân tăng chỉnh. Ngày 31/10 đổi vỏ từ Formex 8 mm sang inox 304 dày 1 mm gấp mép kín, cùng loại với nóc. Sàn và tấm đỡ đầu Formex 15 mm, đáy khay Formex 8 mm. Vách giữa giữ tấm mỏng 6 mm để thùng 270 vẫn lọt.',
+  mats:[['inox','Nóc, 2 hông, lưng, tấm che trước, 2 mặt ngăn kéo (1 mm, gấp mép kín)'],['fmx','Sàn, tấm đỡ đầu 15 mm; đáy khay 8 mm'],['vlo','Khung sắt V lỗ 3×3 (cánh thực tế khoảng 26 mm), sơn sẵn'],['pp','Thành khay']],
+  pros:['Vỏ inox cứng, không móp, lau rửa được','Chống nước toàn bộ, che kín khung V lỗ','Tự lắp bằng cờ lê, không cần xưởng hàn'],cons:['Đắt hơn bản vỏ Formex khoảng 1,7 triệu','Nặng hơn bản vỏ Formex khoảng 10–15 kg','Tấm đỡ đầu Formex có thể võng theo thời gian, cần kiểm tra']},
  {id:'mfc',name:'Tủ MFC chống ẩm',short:'rẻ nhất',cost:[1.26,2.45],kg:'khoảng 58',parts:mfcBody,bin:264,link:'https://claude.ai/artifact/4Vgcu3Rv1XnRo4Nz8TxvyS',
   lead:'Không có khung: thân làm như tủ bếp bằng ván MFC chống ẩm 17 mm, sàn và khay Formex 15 mm. Mặt melamine là vỏ hoàn thiện luôn.',
   mats:[['mfc','Nóc, 2 hông, lưng, tấm đỡ đầu, tấm che trước, mặt ngăn kéo, vách giữa'],['fmx','Sàn, đáy khay (15 mm)'],['pp','Thành khay']],
@@ -209,10 +209,10 @@ var nav=document.getElementById('opts');
 OPTS.forEach(function(o){var b=el('button');b.type='button';b.setAttribute('role','tab');b.dataset.id=o.id;b.append(document.createTextNode(o.name),el('small',null,money(o.cost)+(o.est?' *':'')));b.onclick=function(){show(o.id);};nav.append(b);});
 var cmp=document.getElementById('cmp');
 cmp.innerHTML='<tr><th>Phương án</th><th>Khung</th><th>Nóc</th><th>Hông, lưng, mặt ngăn kéo</th><th>Bên trong</th><th>Khung + vỏ</th><th>Nặng (ước tính)</th><th>Sửa CAD</th></tr>';
-[['inox','Nhôm 20×20','Inox','Inox','Alu','Không'],['acp','Nhôm 20×20','Alu composite','Alu composite','Alu','Đổi độ dày vỏ'],['mix1','Nhôm 20×20','Inox','Formex 8 mm','Alu','Đổi độ dày vỏ'],
- ['mix2','Sắt V lỗ','Inox','Formex 8 mm','Formex 15 mm','Nhiều (thanh 30 mm)'],['mfc','Không (ván 17 mm)','MFC','MFC','MFC, Formex','Nhiều (dạng tủ, thùng 264)']].forEach(function(r){
+[['inox','Nhôm 20×20','Inox','Inox','Alu','Về lại khung nhôm'],['acp','Nhôm 20×20','Alu composite','Alu composite','Alu','Về lại khung nhôm, đổi vỏ'],['mix1','Nhôm 20×20','Inox','Formex 8 mm','Alu','Về lại khung nhôm, đổi vỏ'],
+ ['mix2','Sắt V lỗ','Inox','Inox 1 mm','Formex 15 mm','Không (đang dùng)'],['mfc','Không (ván 17 mm)','MFC','MFC','MFC, Formex','Nhiều (dạng tủ, thùng 264)']].forEach(function(r){
   var o=OPTS.find(function(x){return x.id===r[0];}),tr=el('tr');tr.dataset.id=r[0];tr.style.cursor='pointer';tr.onclick=function(){show(r[0]);document.querySelector('.stage').scrollIntoView({block:'nearest',behavior:'smooth'});};
-  var n=el('td');n.append(el('b',null,o.name));if(r[0]==='mfc'){n.append(document.createTextNode(' '),el('span','tag','rẻ nhất'));}if(r[0]==='mix2'){n.append(document.createTextNode(' '),el('span','tag','rẻ + chống nước'));}
+  var n=el('td');n.append(el('b',null,o.name));if(r[0]==='mfc'){n.append(document.createTextNode(' '),el('span','tag','rẻ nhất'));}if(r[0]==='mix2'){n.append(document.createTextNode(' '),el('span','tag','đã chọn'));}
   tr.append(n,el('td',null,r[1]),el('td',null,r[2]),el('td',null,r[3]),el('td',null,r[4]),el('td','n',money(o.cost)+(o.est?' *':'')),el('td','n',o.kg+' kg'),el('td',null,r[5]));cmp.append(tr);});
 document.getElementById('bExp').onclick=function(){exp=exp?0:1;this.setAttribute('aria-pressed',!!exp);home();};
 document.getElementById('bDrw').onclick=function(){drw=drw?0:1;this.setAttribute('aria-pressed',!!drw);};
