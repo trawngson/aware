@@ -108,7 +108,7 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
 <header style="display:flex;flex-direction:column;gap:8px">
   <span class="eyebrow">aware · design/ab · thiết kế chi tiết · E1</span>
   <h1>Thiết kế thùng rác tự phân loại</h1>
-  <p class="lead">Phương án cuối: thân B, khung sắt V lỗ, vỏ và nắp inox. Số đo lấy từ CAD. Danh sách vật tư và giá xem ở trang <a href="https://claude.ai/artifact/5nJeV9B7Xnti5N8VQk3BP4" target="_blank" rel="noopener">Vật tư trên CAD</a>.</p>
+  <p class="lead">Thùng 698 × 698 mm, cao 1170 mm tới miệng phễu. Bên dưới là 2 ngăn kéo chứa 4 thùng, mỗi thùng khoảng 40 L (tạm tính): <b>1 Nhựa</b> (sau phải), <b>2 Giấy</b> (sau trái), <b>3 Kim loại</b> (trước trái), <b>4 Khác</b> (trước phải). Rác thả vào phễu Ø550 rơi xuống đĩa nhôm Ø320. Camera OV2640 nhận loại, MG90S xoay đĩa ±45° về phía ngăn, rồi MG996R nghiêng đĩa 45° qua đai GT2 2:1 để đổ. Vật 0,5 kg ở mép đĩa dùng 40% sức MG996R. Vật không chắc loại thì vào ngăn 4. Khung sắt V lỗ bắt bulông, vỏ và nắp inox 304 dày 1 mm. Mạch: board ESP32-S3 CAM và màn Guition 4,3" có ESP32-S3 riêng. Vật tư khoảng 8,3 triệu, chi tiết ở trang <a href="https://claude.ai/artifact/5nJeV9B7Xnti5N8VQk3BP4" target="_blank" rel="noopener">Vật tư trên CAD</a>.</p>
 </header>
 
 <nav class="tabs" role="tablist" aria-label="Các phần thiết kế">
@@ -152,44 +152,6 @@ pre.sk{font:400 .8rem/1.35 var(--f-mono);background:var(--bg);border:1px solid v
   <div class="grid">
     <div class="card"><h2>Số đo chính</h2><dl id="metrics"></dl></div>
     <div class="card"><h2>Chi tiết theo cách gia công</h2><div class="tbl"><table id="parts"></table></div></div>
-  </div>
-  <div class="cols">
-    <div class="card">
-      <h2>Đã chốt</h2>
-      <ul>
-        <li>Chỉ làm thân <b>B</b>, đây là phương án cuối (chốt 04/11). Thân A (phuy 220 L) bỏ hẳn ngày 17/10.</li>
-        <li>Bộ não theo <b>mạch S3-1</b> (chốt 19–20/10): board ESP32-S3-N16R8 CAM với camera OV2640 120° cáp 75 mm, cộng màn Guition JC4827W543 4,3" có ESP32-S3 riêng, nối nhau bằng UART. Bỏ E2 nên hết rủi ro pin điện thoại phồng (#38, #39).</li>
-        <li>4 ngăn: <b>1 Nhựa</b> (sau phải), <b>2 Giấy</b> (sau trái), <b>3 Kim loại</b> (trước trái), <b>4 Khác</b> (trước phải). Vật không chắc loại thì vào ngăn 4.</li>
-        <li>Cơ cấu nghiêng theo <b>phương án D</b> (chốt 9/10): MG90S xoay ±45°, MG996R nghiêng ±45° qua đai GT2 2:1, bản lề sát mặt đĩa trên 2 gối đỡ. Đĩa nhôm 1,5 mm.</li>
-        <li>Đưa các đề xuất T vào CAD, chạy lại kiểm tra va chạm và kiểm tra tầm nhìn camera.</li>
-        <li><b>Mix 2</b> (chốt 19/10, để hạ giá): khung <b>sắt V lỗ</b> bắt bulông. Ngày 31/10 đổi vỏ (2 hông, lưng, tấm che trước, 2 mặt ngăn kéo) từ Formex 8 mm sang <b>inox 304 dày 1 mm gấp mép kín</b>, cùng loại với nắp trên. Thay cho khung nhôm và vỏ inox toàn bộ (chốt 16/10). Muốn quay lại bản nhôm và inox: đặt <code>frame.style</code> khác <code>vlo</code> rồi chạy lại.</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h2>Kết quả kiểm tra</h2>
-      <ul>
-        <li>Không có chi tiết nào chồng lên nhau ở 25 tư thế: 1 tư thế đứng yên và 4 ngăn × (xoay nửa, xoay hết, rồi nghiêng 25/50/75/100%).</li>
-        <li>Mép thấp nhất của đĩa nằm đúng hướng của từng ngăn: 45°, 135°, 225°, 315°.</li>
-        <li>Camera thấy đủ <b>72/72</b> điểm mép đĩa.</li>
-        <li>Đĩa nghiêng 45° với vật 0,5 kg nằm ở mép: MG996R chịu <b>40%</b> sức kéo tối đa.</li>
-        <li>Mở file lắp ráp STEP ra lại, đếm thấy đủ số chi tiết.</li>
-      </ul>
-      <div class="note">Chưa kiểm tra: độ võng, chuyển động liên tục giữa các tư thế, bu lông và dây điện. Kích thước các món mua sẵn vẫn là số tạm.</div>
-    </div>
-  </div>
-  <div class="card">
-    <h2>Đề xuất bị đổi hoặc bỏ sau khi tính lại</h2>
-    <div class="tbl"><table>
-      <tr><th>Đề xuất</th><th>Số tính lại</th><th>Thay bằng</th></tr>
-      <tr><td><span class="chip alt">Sửa</span> Khớp các-đăng 2 trục, 2 servo</td><td>Bản CAD trước dùng khớp 2 trục, không đúng với phương án D đã chốt ngày 9/10</td><td>Làm lại theo phương án D: MG90S xoay ±45°, MG996R nghiêng ±45° qua đai GT2 158 mm (tâm puly 48,58 mm), bản lề cách mặt đĩa 22 mm trên 2 gối đỡ KP08</td></tr>
-      <tr><td><span class="chip drop">Bỏ</span> T14 · đầu lật bản lề</td><td>Cụm đầu thòng sâu khoảng 370 mm dưới mâm. Lật 10° đã quét lùi 64 mm, lật 30° quét lùi 185 mm vào thành thân</td><td>Nhấc đầu thẳng lên. Đầu <b>tự đứng trên 4 chân cao su</b> ở đầu thanh chữ thập, vì đây là điểm thấp nhất của cụm đầu. Đầu bắt vít vào tấm đỡ</td></tr>
-      <tr><td><span class="chip drop">Bỏ</span> T4 · đối trọng</td><td>Với phương án D, bản lề chỉ cách mặt đĩa 22 mm, nên trọng tâm đĩa nằm trên trục có khoảng 21 mm: đĩa gần cân bằng, không cần đối trọng</td><td>Cục chặn 47° trên đế xoay (T3): mất điện thì đĩa cùng lắm đổ tới cục chặn. Khi có điện lại, IMU đọc góc rồi đưa đĩa về nằm ngang</td></tr>
-      <tr><td><span class="chip drop">Bỏ</span> T7 · diềm cao su chồm lên mép đĩa</td><td>Khi nghiêng, góc đĩa quét ra tới r168,7, mà diềm thì ở r166. Khe 5 mm là bắt buộc khi trục xoay nằm dưới đĩa</td><td>Giữ diềm bằng các dải PVC mềm sẵn có: kẹp tay vào thì chỉ chạm nhựa mềm. Vật nhỏ hơn 5 mm lọt khe sẽ rơi vào một ngăn bất kỳ, chấp nhận được</td></tr>
-      <tr><td><span class="chip alt">Đổi</span> T5 · chụp cao su che khớp</td><td>Nước rời mép đĩa ở bán kính 128–160 mm, còn servo và đai nằm trong khoảng 75 mm dưới đĩa, nên nước rơi thẳng xuống ngăn</td><td>Chỉ cần dời mạch điều khiển từ dưới mâm lên trong bệ màn hình, ra khỏi đường nước</td></tr>
-      <tr><td><span class="chip alt">Đổi</span> T1 · cảm biến góc AS5600</td><td>Cần bo mạch và nam châm ở từng trục</td><td>1 IMU MPU-6050 dán dưới đĩa, đọc hướng trọng lực nên biết góc nghiêng thật. Góc xoay thì không đo, thêm AS5600 nếu thử thấy cần</td></tr>
-      <tr><td><span class="chip alt">Đổi</span> T8 · vòng định vị có khấc</td><td>Vòng định vị nằm trong lòng thân, không có chỗ để khoét khấc</td><td>Một chốt thép Ø6 ở mép sau mâm, cắm vào lỗ trên tấm đỡ đầu</td></tr>
-      <tr><td><span class="chip alt">Đổi</span> Khung B 600 → 680 mm</td><td>Ngăn kéo cần chỗ cho ray trượt 12,7 mm và thành khay 3 mm ở cả hai bên</td><td>Khung ngoài 686 mm tính cả vỏ. Tổng chiều dài nhôm định hình là 11,7 m (thêm thanh giữa phía sau để đỡ tấm inox)</td></tr>
-    </table></div>
   </div>
   <div class="cols">
     <div class="card"><h3>Gửi đi gia công</h3><ul>
