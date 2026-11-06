@@ -1,0 +1,282 @@
+<title>Lắp truyền động D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Bố cục: 9 bước lắp bên trái, khung 3D dựng dần theo bước bên phải; dưới là phần CAD vừa sửa và danh sách bulông */
+:root{
+  --bg:#edf0ef; --surface:#fbfcfb; --ink:#1c2524; --muted:#5a6866; --line:#cfd8d5;
+  --cur:#c8790f; --cur-soft:#f6e6cc; --bolt:#24955a; --bolt-soft:#d9efe2; --new:#2f6fa6; --new-soft:#dde9f4;
+  --scene:#dfe5e2; --done:#9ba7a4; --ghost:#aab5b2;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"Be Vietnam Pro",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131918; --surface:#1a2221; --ink:#e3eae8; --muted:#97a6a2; --line:#2c3836;
+  --cur:#eda646; --cur-soft:#3a2c16; --bolt:#55c487; --bolt-soft:#173326; --new:#6aa9dc; --new-soft:#1b2d3d;
+  --scene:#1b2422; --done:#6c7976; --ghost:#55625f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131918; --surface:#1a2221; --ink:#e3eae8; --muted:#97a6a2; --line:#2c3836;
+  --cur:#eda646; --cur-soft:#3a2c16; --bolt:#55c487; --bolt-soft:#173326; --new:#6aa9dc; --new-soft:#1b2d3d;
+  --scene:#1b2422; --done:#6c7976; --ghost:#55625f; color-scheme:dark}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 56px}
+.wrap{max-width:1240px;margin:0 auto;display:grid;gap:24px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;margin:0;line-height:1.12;text-wrap:balance}
+h1{font-size:clamp(28px,4vw,40px)} h2{font-size:24px} h3{font-size:18px}
+p{margin:0;max-width:74ch}
+.eyebrow{font:500 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:grid;gap:10px} header p{color:var(--muted)}
+.key{display:flex;flex-wrap:wrap;gap:14px;font-size:13px}
+.key span{display:flex;align-items:center;gap:6px}
+.key i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.app{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.steps{display:grid;gap:6px;min-width:0;order:1;align-content:start}
+.view{order:0;display:grid;gap:10px;min-width:0}
+@media (min-width:960px){.app{grid-template-columns:380px minmax(0,1fr);align-items:start}
+  .steps{order:0}.view{order:1;position:sticky;top:max(12px,env(safe-area-inset-top,0px))}}
+.st{display:grid;gap:4px;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer;width:100%}
+.st .hd{display:flex;gap:10px;align-items:baseline}
+.st .no{font:600 13px var(--f-mono);color:var(--muted)}
+.st .tt{font-weight:600}
+.st .bd{display:none;font-size:14px;gap:6px}
+.st[aria-current="true"]{border-color:var(--cur);background:var(--cur-soft)}
+.st[aria-current="true"] .no{color:var(--cur)}
+.st[aria-current="true"] .bd{display:grid}
+.st:focus-visible,.btn:focus-visible{outline:2px solid var(--cur);outline-offset:2px}
+.bd ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font:500 11px var(--f-mono);padding:2px 6px;border-radius:4px}
+.tag.bolt{background:var(--bolt-soft);color:var(--bolt)} .tag.new{background:var(--new-soft);color:var(--new)}
+.box{position:relative;width:100%;aspect-ratio:4/3;max-height:74vh;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--scene)}
+.box canvas{display:block;width:100%;height:100%;touch-action:none}
+#loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);padding:16px;text-align:center}
+.hud{position:absolute;left:10px;top:10px;font:12px var(--f-mono);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 8px;max-width:calc(100% - 20px)}
+#tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:4px 8px;border-radius:5px;max-width:300px;transform:translate(12px,12px)}
+.ctrl{display:flex;flex-wrap:wrap;gap:6px}
+.btn{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 11px;border-radius:6px;cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--ink)}
+.hint{font-size:13px;color:var(--muted)}
+section{display:grid;gap:12px}
+.grid{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:8px;align-content:start;min-width:0;border-left:4px solid var(--new)}
+.card.warn{border-left-color:var(--cur)}
+.card ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:14px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:8px 12px;border-bottom:1px solid var(--line)}
+th{font:600 15px var(--f-display);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+code{font-family:var(--f-mono);font-size:.88em}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">aware · thân B · cụm đầu · phương án D · CAD sinh lại ngày 01/11 theo kích thước thật</span>
+  <h1>Lắp truyền động D</h1>
+  <p>Mọi chi tiết và mọi bulông trên trang lấy từ CAD (<code>b_frame/mesh.json</code> và <code>dimensions.json</code>). Các linh kiện mua sẵn đã vẽ theo kích thước tra từ catalogue và bảng của nhà sản xuất (gối KP08, KFL08, mặt bích, puly, servo, horn). 25 tư thế xoay và nghiêng không chi tiết nào chồng nhau, 42 bulông và vít đều đi qua lỗ thông.</p>
+  <div class="key">
+    <span><i style="background:var(--cur)"></i>Chi tiết của bước đang xem</span>
+    <span><i style="background:var(--done)"></i>Đã lắp ở bước trước</span>
+    <span><i style="background:var(--bolt)"></i>Bulông, vít của bước đang xem</span>
+    <span><i style="background:var(--new)"></i>Chi tiết mới thêm vào CAD</span>
+  </div>
+</header>
+
+<div class="app">
+  <nav class="steps" id="steps" aria-label="Các bước lắp"></nav>
+  <div class="view">
+    <div class="box" id="box">
+      <div id="loading">Đang tải mô hình CAD (khoảng 5 MB)…</div>
+      <div class="hud" id="hud"></div>
+      <div id="tip" hidden></div>
+    </div>
+    <div class="ctrl">
+      <button class="btn" type="button" id="prev">← Bước trước</button>
+      <button class="btn" type="button" id="next">Bước sau →</button>
+      <button class="btn" type="button" id="all">Xem đủ 9 bước</button>
+      <button class="btn" type="button" id="btnLater" aria-pressed="false">Hiện mờ các bước sau</button>
+      <button class="btn" type="button" id="btnFocus">Nhìn vào bước này</button>
+    </div>
+    <p class="hint">Kéo để xoay, cuộn để phóng to, rê chuột lên chi tiết hoặc bulông để xem tên. Phễu, mâm và thùng đã ẩn cho dễ nhìn; thanh chữ thập giữ lại làm mốc.</p>
+  </div>
+</div>
+
+<section>
+  <h2>Sửa theo kích thước thật (01/11)</h2>
+  <div class="grid">
+    <div class="card"><h3>Gối KFL08 và KP08</h3><p>KFL08 trước vẽ theo loại trục 10 mm. Nay là bích <b>48 × 27</b>, thân tròn Ø27, cao 12,5, lỗ cách <b>37 mm</b> (cánh giá khoét rãnh ±1 mm). KP08 giữ 55 × 13 × 29, nhưng lỗ chỉ Ø4,8 nên mọi bulông gối đổi sang <b>M4</b>; vẽ thêm vòng trong nhô 1,5 mm.</p></div>
+    <div class="card"><h3>Mặt bích nối trục 8 mm</h3><p>Loại phổ biến cho trục 8 mm là bích <b>Ø32 × 3</b>, cổ Ø16, cao 13, <b>4 lỗ M4</b> trên vòng Ø24, 2 vít trí M4. Đế xoay taro 4 lỗ M4. Trục đứng cắt 93 mm.</p></div>
+    <div class="card"><h3>Puly thật dài 16 và 17 mm</h3><p>Puly 20T dài 16 (vành Ø16, cổ Ø16), cổ quay về servo để 2 vít trí bám trụ miếng nối. Puly 40T dài 17, 2 vành Ø29, cổ quay vào giữa để không đụng gối. Trục bản lề 200 mm. Đai nằm trong vùng răng của cả 2 puly.</p></div>
+    <div class="card"><h3>Servo và horn</h3><p>MG996R cao <b>37 mm</b> tới mặt bệ (42,7 là tới đỉnh trục then hoa), lùi vào trong để chứa horn nhôm Ø20 (4 lỗ ren M3) và miếng nối. Rãnh căng đai chuyển sang chiều đứng. Dây ra ở đầu gần trục. MG90S treo tai lên kệ, dùng horn chữ thập vì không kèm horn tròn.</p></div>
+  </div>
+  <div class="card warn"><h3>Vẫn phải đo hàng thật trước khi cắt và in</h3><ul>
+    <li>Horn chữ thập của MG90S (kích thước đang để tạm) và số răng trục then hoa (20 hay 21).</li>
+    <li>Khoảng cách lỗ tai MG996R (48,5 × 10, số cộng đồng tự đo) và lỗ có cao su đệm.</li>
+    <li>Chiều dài 2 puly (17 hay 18 mm), đường kính vành puly 40T (26–29).</li>
+    <li>Lỗ KFL08 (36–37), chiều cao KFL08 (11,5–13), đường kính trục inox mua về.</li>
+  </ul></div>
+</section>
+
+<section>
+  <h2>Bulông và vít (CAD đếm)</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Mối nối</th><th>Cỡ</th><th>Bước</th><th class="num">SL</th></tr></thead>
+    <tbody id="boltRows"><tr><td colspan="4">Đang đọc danh sách từ CAD…</td></tr></tbody>
+  </table></div>
+  <p class="hint">Chưa tính: vít trí đi kèm puly và gối, chốt chặn M4 + ống lót (<code>yaw_stop_pin</code>), keo khoá ren, đai ốc cấy nhiệt M4 cho tai đĩa.</p>
+</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+// Mỗi bước: chi tiết CAD (tên hoặc tiền tố có "_" ở cuối) và các mối bulông (tên joint trong dimensions.json)
+const STEPS=[
+ {t:'Bắt giá chữ C lên thanh chữ thập',cad:['yaw_bracket'],bolts:['yaw_bracket_to_beam'],
+  do:['Khoan 2 lỗ Ø5,5 xuyên thanh chữ thập và tấm nối bên dưới, đúng lỗ trên chân giá.','Bắt giá bằng 2 bulông M5 × 45 đầu bằng vặn từ dưới tấm nối lên, đai ốc nằm trên chân giá: dưới thanh chữ thập không được có gì nhô thấp hơn đệm cao su.']},
+ {t:'Bắt 2 gối KFL08 vào 2 cánh giá',cad:['yaw_bearing_'],bolts:['yaw_bearing_lower_to_bracket','yaw_bearing_upper_to_bracket'],
+  do:['Lỗ trên cánh giá là rãnh dài: KFL08 có lỗ cách nhau 36–37 mm tuỳ hãng.','Mỗi gối 2 bulông M4 × 16 vặn từ dưới cánh lên. Chỉ siết tay để gối còn tự căn khi luồn trục.','Đai ốc của gối trên để sau: nó chìm vào đáy rãnh cáp ở bước 9.']},
+ {t:'Lắp MG90S, horn, miếng nối, trục đứng',cad:['yaw_servo','yaw_servo_horn','yaw_hub','yaw_shaft','yaw_collar'],bolts:['yaw_servo_to_shelf','yaw_horn_to_hub'],
+  do:['Thả MG90S qua lỗ trên kệ, 2 tai tì lên mặt kệ, bắt 2 vít M2 × 10.','Cấp xung 1500 µs cho MG90S để servo về giữa, rồi lắp horn chữ thập đi kèm servo (MG90S không có horn tròn).','Bắt miếng nối in lên horn bằng 2 vít M2 tự ren qua 2 lỗ trên tay horn.','Cắt trục đứng 93 mm, mài 2 mặt D. Luồn qua 2 gối, đặt khoá trục tì lên vòng trong gối trên, siết vít trí M3 của miếng nối, rồi siết chặt 2 gối.']},
+ {t:'Nối đế xoay vào trục bằng mặt bích',cad:['yaw_platform','yaw_flange'],bolts:['yaw_flange_to_platform','yaw_flange_set_screw'],newParts:['yaw_flange'],
+  do:['Cắt laser đế xoay theo file yaw_platform.dxf. Taro M4 cho 4 lỗ quanh tâm (vòng Ø24).','Lồng đế qua đầu trục, đặt mặt bích Ø32 lên, bắt 4 vít M4 × 8.','Siết 2 vít trí của mặt bích lên mặt D. Quay tay: đế phải quay nhẹ, không rít.']},
+ {t:'Dựng 2 trụ và 2 gối KP08',cad:['hinge_post_','hinge_block_'],bolts:['hinge_post_to_platform','hinge_block_to_post'],
+  do:['Cắt 2 đoạn nhôm dẹt 60×10 dài 61 mm, taro 2 lỗ M4 mỗi đầu (lỗ trên cách nhau 42 mm, đúng lỗ KP08).','Bắt trụ vào đế bằng 2 vít M4 × 16 từ dưới lên.','Bắt gối KP08 lên đầu trụ bằng 2 vít M4 × 16 (lỗ gối chỉ Ø4,5–4,8, M5 không lọt). Vòng trong nhô ra quay ra phía ngoài.']},
+ {t:'Lắp trục bản lề, puly 40T, 2 tai',cad:['hinge_shaft','hinge_collar_','tilt_pulley_large','plate_lug_'],bolts:['plate_lug_set_screw'],
+  do:['Cắt trục bản lề 200 mm, mài 3 mặt D: chỗ cổ puly 40T và 2 chỗ tai.','Luồn trục qua 2 gối, lồng 2 tai và puly 40T (dài 17 mm) với cổ quay vào giữa, vành ngoài cách gối khoảng 1,7 mm.','Đặt 2 khoá trục sát phần vòng trong nhô ra của gối. Siết vít trí của puly và vít trí M3 của 2 tai.']},
+ {t:'Lắp MG996R, horn, miếng nối, puly 20T và đai',cad:['tilt_servo','tilt_servo_bracket','tilt_servo_horn','tilt_pulley_adapter','tilt_pulley_small','tilt_belt'],
+  bolts:['tilt_servo_bracket_to_platform','tilt_servo_to_bracket','tilt_horn_to_adapter'],newParts:['tilt_servo_horn','tilt_pulley_adapter'],
+  do:['Bắt giá MG996R vào đế bằng 2 vít M4 đầu bằng từ dưới lên (đầu vít chìm, không chạm vấu chặn).','Cấp 1500 µs cho MG996R, lắp horn nhôm 25T Ø20. Bắt miếng nối vào horn bằng 4 vít M3 × 6 vặn vào ren có sẵn trên horn (đầu vít chìm trong lỗ khoét).','Lồng puly 20T (dài 16 mm) lên trụ miếng nối với cổ quay về phía servo; mài mặt vát trên trụ cách đầu cổ 4 mm cho 2 vít trí của puly.','Bắt servo vào giá bằng 4 vít M3 × 12 qua rãnh đứng. Lồng đai, kéo servo xuống cho đai căng (ấn giữa đai lún 2–3 mm), siết. Dây servo ra ở đầu gần trục, đi xuống sát đế.']},
+ {t:'Bắt đĩa vào 2 tai',cad:['tipping_plate','tilt_imu'],bolts:['plate_to_lug'],
+  do:['Khoét côn 4 lỗ Ø4,4 trên đĩa.','Ép đai ốc cấy nhiệt M4 vào tai, bắt 4 vít M4 × 6 đầu bằng. Mặt đĩa phải phẳng.','Dán IMU dưới đĩa.']},
+ {t:'Rãnh cáp, cục chặn, chốt chặn và cáp',cad:['yaw_cable_channel','yaw_cable_drum','yaw_ribbon_loop','tilt_stop_pad_','yaw_stop_pin','motor_cable_','cable_clip_stage'],bolts:['tilt_stop_pad_to_platform'],
+  do:['Đặt rãnh vòng cáp lên tai gối KFL08 trên, thả 2 đai ốc M4 vào hốc trên đáy rãnh, siết bulông gối từ dưới lên.','Bắt 2 cục chặn 47° bằng vít M3 từ dưới đế, dán cao su lên mặt.','Bắt chốt M4 có ống lót dưới đế. Đi cáp dẹt qua rãnh, kẹp neo vỏ cáp.','Thử bằng tay: nghiêng đĩa tới cục chặn, xoay tới chốt ±70°, không chỗ nào chạm.']}
+];
+const VI={yaw_bracket:'Giá chữ C (in), có chân đế',yaw_bearing_lower:'Gối KFL08 dưới (48 × 27, lỗ cách 37)',yaw_bearing_upper:'Gối KFL08 trên',yaw_servo:'Servo xoay MG90S',yaw_servo_horn:'Horn chữ thập MG90S (kích thước tạm)',
+  yaw_hub:'Miếng nối in MG90S',yaw_shaft:'Trục đứng Ø8 × 93',yaw_collar:'Khoá trục 8 mm (tì lên gối trên)',yaw_platform:'Đế xoay nhôm 4 mm, 196 × 192',yaw_flange:'Mặt bích nối trục 8 mm, Ø32 × 13',
+  hinge_post_1:'Trụ nhôm dẹt 60×10 × 61',hinge_post_2:'Trụ nhôm dẹt 60×10 × 61',hinge_block_1:'Gối KP08 (lỗ M4 cách 42)',hinge_block_2:'Gối KP08 (lỗ M4 cách 42)',tilt_servo:'Servo nghiêng MG996R',
+  tilt_servo_bracket:'Giá MG996R (lỗ rãnh)',tilt_servo_horn:'Horn nhôm 25T Ø20, 4 lỗ ren M3',tilt_pulley_adapter:'Miếng nối puly 20T (in)',tilt_pulley_small:'Puly GT2 20T, dài 16, cổ về phía servo',tilt_belt:'Đai GT2 158 mm',
+  tilt_pulley_large:'Puly GT2 40T, dài 17, cổ vào giữa',hinge_shaft:'Trục bản lề Ø8 × 200',hinge_collar_1:'Khoá trục 8 mm',hinge_collar_2:'Khoá trục 8 mm',plate_lug_1:'Tai PETG, vít trí M3',plate_lug_2:'Tai PETG, vít trí M3',
+  tipping_plate:'Đĩa nhôm Ø320',tilt_imu:'IMU MPU-6050',tilt_stop_pad_1:'Cục chặn 47°',tilt_stop_pad_2:'Cục chặn 47°',yaw_stop_pin:'Chốt chặn ±70°',yaw_cable_channel:'Rãnh vòng cáp, hốc chìm đai ốc',
+  yaw_cable_drum:'Trống vòng cáp',yaw_ribbon_loop:'Cáp dẹt 10 sợi',cable_clip_stage:'Kẹp cáp',joint_beam:'Thanh chữ thập 40×30'};
+const JOINT_VI={yaw_servo_to_shelf:'Tai MG90S lên kệ',yaw_horn_to_hub:'Horn chữ thập vào miếng nối',yaw_bracket_to_beam:'Giá chữ C vào thanh chữ thập',yaw_bearing_lower_to_bracket:'Gối KFL08 dưới vào giá',yaw_bearing_upper_to_bracket:'Gối KFL08 trên vào giá (đai ốc chìm trong rãnh cáp)',
+  yaw_flange_to_platform:'Mặt bích vào đế xoay (ren taro)',yaw_flange_set_screw:'Vít trí mặt bích lên trục',hinge_post_to_platform:'Trụ vào đế xoay',hinge_block_to_post:'Gối KP08 vào trụ',
+  plate_lug_set_screw:'Vít trí tai đĩa lên trục bản lề',tilt_servo_bracket_to_platform:'Giá MG996R vào đế (đầu bằng)',tilt_servo_to_bracket:'Tai MG996R vào giá',tilt_horn_to_adapter:'Horn vào miếng nối puly',
+  plate_to_lug:'Đĩa vào tai (đầu bằng, đai ốc cấy nhiệt)',tilt_stop_pad_to_platform:'Cục chặn vào đế'};
+const hit=(p,n)=>p.endsWith('_')?n.startsWith(p):n===p;
+const stepOfJoint={};STEPS.forEach((s,i)=>s.bolts.forEach(j=>stepOfJoint[j]=i+1));
+
+// ---------- Danh sách bước ----------
+const nav=document.getElementById('steps');let cur=0;
+STEPS.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='st';b.dataset.i=i+1;
+  b.innerHTML='<div class="hd"><span class="no">'+String(i+1).padStart(2,'0')+'</span><span class="tt"></span></div><div class="bd"><ul></ul><div class="tags"></div></div>';
+  b.querySelector('.tt').textContent=s.t;const ul=b.querySelector('ul');
+  s.do.forEach(x=>{const li=document.createElement('li');li.textContent=x;ul.appendChild(li);});
+  (s.newParts||[]).forEach(n=>{const t=document.createElement('span');t.className='tag new';t.textContent='Mới: '+VI[n];b.querySelector('.tags').appendChild(t);});
+  b.dataset.tagBolts='1';
+  b.addEventListener('click',()=>{location.hash='buoc-'+(i+1);});nav.appendChild(b);});
+
+// ---------- Cảnh 3D, toạ độ CAD (Z lên, mm) ----------
+const box=document.getElementById('box'),hud=document.getElementById('hud'),tip=document.getElementById('tip');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let renderer=null;try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){}
+if(!renderer)document.getElementById('loading').textContent='Trình duyệt không mở được WebGL. Các bước và danh sách bulông vẫn đọc được.';
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(32,4/3,5,8000);let controls=null;
+if(renderer){renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.outputEncoding=THREE.sRGBEncoding;box.prepend(renderer.domElement);
+  controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;}
+const HOME={p:[300,930,330],t:[0,795,0]};
+function home(){camera.position.set(...HOME.p);if(controls){controls.target.set(...HOME.t);controls.update();}}home();
+scene.add(new THREE.HemisphereLight(0xffffff,0x56636a,.85));
+const sun=new THREE.DirectionalLight(0xffffff,.55);sun.position.set(500,1700,900);scene.add(sun);
+const fl=new THREE.DirectionalLight(0xffffff,.25);fl.position.set(-700,500,-600);scene.add(fl);
+const root=new THREE.Group();root.rotation.x=-Math.PI/2;scene.add(root);
+
+const items=[],pick=[];   // {obj,m,step,kind:'cad'|'bolt'|'ref',base,isNew}
+function mk(geo,kind,label,step,base,isNew){const m=new THREE.MeshStandardMaterial({roughness:.55,metalness:.15,side:THREE.DoubleSide});
+  const o=new THREE.Mesh(geo,m);o.userData.label=label;root.add(o);pick.push(o);items.push({obj:o,m,step,kind,base,isNew});return o;}
+// Bulông theo dữ liệu CAD: thân từ đầu bulông theo trục vào chi tiết, mũ phía ngược lại
+const RAD={M2:1,M3:1.5,M4:2,M5:2.5};
+function bolt(f,step){const r=RAD[(f.size.match(/M\d/)||['M4'])[0]]||2,L=f.length_mm,a=new THREE.Vector3(...f.axis).normalize(),s=new THREE.Vector3(...f.start_mm);
+  const label=(JOINT_VI[f.joint]||f.joint)+' · '+f.size;
+  const place=(geo,from,to)=>{const o=mk(geo,'bolt',label,step);const mid=from.clone().add(to).multiplyScalar(.5);o.position.copy(mid);
+    o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),to.clone().sub(from).normalize());return o;};
+  const end=s.clone().add(a.clone().multiplyScalar(L));place(new THREE.CylinderGeometry(r*.92,r*.92,L,16),s,end);
+  if(f.head==='set screw')return;
+  const hh=f.head==='countersunk'?r*.6:r*1.3,hr=f.head==='countersunk'?r*1.9:r*1.75;
+  // Đầu bằng nằm chìm trong lỗ côn nên vẽ mỏng sát mặt; mũ lục giác vẽ nhô ra ngoài
+  const h0=f.head==='countersunk'?s.clone():s.clone().sub(a.clone().multiplyScalar(hh));const h1=f.head==='countersunk'?s.clone().add(a.clone().multiplyScalar(hh)):s.clone();
+  place(new THREE.CylinderGeometry(hr,hr,hh,f.head==='countersunk'?24:6),h0,h1);}
+
+let laterGhost=false;
+function paint(){
+  const C=n=>new THREE.Color(css(n)).convertSRGBToLinear();
+  const CUR=C('--cur'),DONE=C('--done'),BOLT=C('--bolt'),NEW=C('--new'),GH=C('--ghost');
+  items.forEach(it=>{const s=it.step;let vis=true,col,op=1;
+    if(it.kind==='ref'){col=DONE;}
+    else if(cur===0){col=it.kind==='bolt'?BOLT:it.isNew?NEW:it.base;}
+    else if(s<cur){col=it.kind==='bolt'?DONE:it.isNew?NEW:DONE;}
+    else if(s===cur){col=it.kind==='bolt'?BOLT:it.isNew?NEW:CUR;}
+    else{vis=laterGhost;col=GH;op=.12;}
+    it.obj.visible=vis;it.m.color.copy(col);it.m.opacity=op;it.m.transparent=op<1;it.m.depthWrite=op===1;it.m.needsUpdate=true;});
+  if(renderer)renderer.setClearColor(new THREE.Color(css('--scene')));
+}
+function focusStep(){if(!controls)return;const sel=items.filter(it=>it.step===cur&&it.obj.visible);if(!cur||!sel.length){home();return;}
+  root.updateMatrixWorld(true);const b=new THREE.Box3();sel.forEach(it=>b.expandByObject(it.obj));
+  const c=b.getCenter(new THREE.Vector3()),r=Math.max(b.getSize(new THREE.Vector3()).length()/2,60);
+  const dir=camera.position.clone().sub(controls.target).normalize();controls.target.copy(c);
+  camera.position.copy(c.clone().add(dir.multiplyScalar(r/Math.sin(camera.fov*Math.PI/360)*1.2)));controls.update();}
+function show(i){cur=Math.max(0,Math.min(9,i|0));
+  document.querySelectorAll('.st').forEach(b=>b.setAttribute('aria-current',+b.dataset.i===cur?'true':'false'));
+  hud.textContent=cur?'Bước '+cur+'/9 · '+STEPS[cur-1].t:'Đủ 9 bước · xanh lá là bulông, xanh dương là chi tiết mới thêm vào CAD';paint();}
+function fromHash(){const m=/^#buoc-(\d)$/.exec(location.hash);show(m?+m[1]:0);}
+window.addEventListener('hashchange',()=>{fromHash();focusStep();});
+document.getElementById('prev').addEventListener('click',()=>{location.hash='buoc-'+Math.max(1,cur-1);});
+document.getElementById('next').addEventListener('click',()=>{location.hash='buoc-'+Math.min(9,cur+1);});
+document.getElementById('all').addEventListener('click',()=>{history.replaceState(null,'',location.pathname+location.search);show(0);home();});
+document.getElementById('btnFocus').addEventListener('click',focusStep);
+document.getElementById('btnLater').addEventListener('click',e=>{laterGhost=!laterGhost;e.currentTarget.setAttribute('aria-pressed',laterGhost);paint();});
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paint);}catch(e){}
+new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+if(renderer){const ray=new THREE.Raycaster(),v=new THREE.Vector2(),cv=renderer.domElement;
+  cv.addEventListener('pointermove',e=>{const rc=cv.getBoundingClientRect();v.set((e.clientX-rc.left)/rc.width*2-1,-(e.clientY-rc.top)/rc.height*2+1);ray.setFromCamera(v,camera);
+    const h=ray.intersectObjects(pick.filter(o=>o.visible),false)[0];
+    if(h){tip.hidden=false;tip.textContent=h.object.userData.label;tip.style.left=(e.clientX-rc.left)+'px';tip.style.top=(e.clientY-rc.top)+'px';}else tip.hidden=true;});
+  cv.addEventListener('pointerleave',()=>tip.hidden=true);}
+function resize(){if(!renderer)return;const w=box.clientWidth,h=box.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+new ResizeObserver(resize).observe(box);resize();
+fromHash();
+
+// Bảng bulông: gom theo mối nối, đọc từ dimensions.json
+function boltTable(fs){const g={};fs.forEach(f=>{const k=f.joint+'|'+f.size;(g[k]=g[k]||{f,n:0}).n++;});
+  const rows=Object.values(g).sort((a,b)=>(stepOfJoint[a.f.joint]||9)-(stepOfJoint[b.f.joint]||9));
+  const tb=document.getElementById('boltRows');tb.innerHTML='';
+  rows.forEach(({f,n})=>{const tr=document.createElement('tr');[JOINT_VI[f.joint]||f.joint,f.size,String(stepOfJoint[f.joint]||'–'),String(n)].forEach((t,i)=>{const td=document.createElement('td');td.textContent=t;if(i===3)td.className='num';tr.appendChild(td);});tb.appendChild(tr);});
+  const tr=document.createElement('tr');tr.innerHTML='<td><b>Tổng</b></td><td></td><td></td><td class="num"><b>'+fs.length+'</b></td>';tb.appendChild(tr);
+  document.querySelectorAll('.st').forEach(b=>{const s=STEPS[+b.dataset.i-1],n=fs.filter(f=>s.bolts.includes(f.joint)).length;
+    if(n){const t=document.createElement('span');t.className='tag bolt';t.textContent=n+' bulông, vít';b.querySelector('.tags').prepend(t);}});}
+
+Promise.all([fetch('b_frame/dimensions.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}),
+  renderer?fetch('b_frame/mesh.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}):Promise.resolve(null)]).then(([dims,mesh])=>{
+  const fs=dims.tilt_drive_fasteners||[];boltTable(fs);
+  if(!mesh)return;
+  const NEW=['yaw_flange','tilt_servo_horn','tilt_pulley_adapter'];
+  for(const p of mesh){let step=-2;
+    STEPS.forEach((s,i)=>{if(s.cad.some(c=>hit(c,p.name)))step=i+1;});
+    const ref=p.name==='joint_beam';if(step===-2&&!ref)continue;
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p.vertices.flat(),3));g.setIndex(p.triangles.flat());g.computeVertexNormals();
+    mk(g,ref?'ref':'cad',VI[p.name]||(p.name.startsWith('motor_cable')?'Dây servo':p.name),ref?-1:step,new THREE.Color(...p.color).convertSRGBToLinear(),NEW.includes(p.name));}
+  fs.forEach(f=>bolt(f,stepOfJoint[f.joint]||9));
+  document.getElementById('loading').hidden=true;paint();if(cur)focusStep();
+}).catch(err=>{document.getElementById('loading').textContent='Không tải được dữ liệu CAD ('+err.message+'). Tải lại trang để thử lại.';});
+if(renderer)(function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);})();
+})();
+</script>

@@ -1,0 +1,366 @@
+<title>Lộ trình chế tạo thùng B</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Bố cục: cột trái là danh sách bước (tab dọc), cột phải là nội dung bước. Tab đầu là sơ đồ lộ trình 3 làn: cơ khí, điện tử, phần mềm. */
+:root{
+  --bg:#f3f5f2; --paper:#ffffff; --fg:#1b211c; --muted:#5d6960; --line:#d6ddd6; --soft:#e9eee8;
+  --accent:#2d6a8f; --accent-soft:#e1edf4;
+  --done:#2f7d4f; --done-bg:#e2f1e8; --doing:#a26a00; --doing-bg:#f8eed6; --todo:#6b756d; --todo-bg:#eceeea;
+  --mech:#8a5a2b; --elec:#2d6a8f; --soft-w:#6d4fb3;
+  --f-head:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131815; --paper:#1b221d; --fg:#e3eae4; --muted:#9aa79d; --line:#2f3a32; --soft:#232c26;
+  --accent:#7ab6dc; --accent-soft:#1d2f3a;
+  --done:#6cc690; --done-bg:#173326; --doing:#e8b45a; --doing-bg:#33290f; --todo:#a3ada5; --todo-bg:#252c27;
+  --mech:#d9a06a; --elec:#7ab6dc; --soft-w:#b39bf2; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131815; --paper:#1b221d; --fg:#e3eae4; --muted:#9aa79d; --line:#2f3a32; --soft:#232c26;
+  --accent:#7ab6dc; --accent-soft:#1d2f3a;
+  --done:#6cc690; --done-bg:#173326; --doing:#e8b45a; --doing-bg:#33290f; --todo:#a3ada5; --todo-bg:#252c27;
+  --mech:#d9a06a; --elec:#7ab6dc; --soft-w:#b39bf2; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--f-head);margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-block:26px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:20px}
+h1{font-size:clamp(1.55rem,3vw,2.1rem);line-height:1.2;margin:0;text-wrap:balance}
+h2{font-size:1.25rem;margin:0;text-wrap:balance}
+h3{font-size:.95rem;margin:0 0 8px}
+p{margin:0;max-width:70ch}
+.eyebrow{font:600 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lead{color:var(--muted)}
+.head{display:grid;gap:10px}
+.summary{display:flex;flex-wrap:wrap;gap:8px}
+.pill{font:500 .74rem var(--f-mono);padding:3px 10px;border-radius:999px;white-space:nowrap}
+.s-done{background:var(--done-bg);color:var(--done)} .s-doing{background:var(--doing-bg);color:var(--doing)} .s-todo{background:var(--todo-bg);color:var(--todo)}
+.layout{display:grid;grid-template-columns:270px 1fr;gap:20px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+nav.steps{display:grid;gap:4px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+@media (max-width:860px){nav.steps{position:static;display:flex;overflow-x:auto;gap:6px;padding-bottom:6px}}
+nav.steps button{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:8px;text-align:left;border:1px solid transparent;background:none;color:var(--fg);padding:7px 9px;border-radius:7px;font:500 .86rem var(--f-head);cursor:pointer}
+@media (max-width:860px){nav.steps button{flex:0 0 auto;grid-template-columns:auto auto;white-space:nowrap}nav.steps button .st{display:none}}
+nav.steps button:hover{background:var(--soft)}
+nav.steps button[aria-selected="true"]{background:var(--paper);border-color:var(--line);font-weight:600}
+nav.steps button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.num{font:600 .74rem var(--f-mono);color:var(--muted);text-align:center}
+.st{width:9px;height:9px;border-radius:50%}
+.st.done{background:var(--done)} .st.doing{background:var(--doing)} .st.todo{background:var(--line)}
+.panel{display:grid;gap:16px;min-width:0}
+.how{margin-top:12px}.how p{margin:4px 0 0;line-height:1.55}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:18px 20px;min-width:0}
+.title-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.track{font:600 .7rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:4px;border:1px solid currentColor}
+.t-mech{color:var(--mech)} .t-elec{color:var(--elec)} .t-soft{color:var(--soft-w)} .t-all{color:var(--accent)}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.meta div{background:var(--soft);border-radius:7px;padding:9px 12px;min-width:0}
+.meta small{display:block;font:500 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.meta b{font-weight:600;font-variant-numeric:tabular-nums}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.cols{grid-template-columns:1fr}}
+ul,ol{margin:0;padding-left:20px;display:grid;gap:4px}
+.outputs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.out{border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:6px;align-content:start;background:var(--paper)}
+.out .kind{font:600 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.out .name{font-weight:600}
+.out .pass{font-size:.85rem;color:var(--muted)}
+.out .pass b{color:var(--fg);font-weight:600}
+.out.ok{border-color:var(--done)} .out.ok .kind{color:var(--done)}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{font-size:.86rem;color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px}
+.links a:hover{background:var(--accent-soft)}
+.links a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.note{border-left:3px solid var(--doing);background:var(--doing-bg);padding:10px 14px;border-radius:0 6px 6px 0;font-size:.9rem}
+/* lộ trình 3 làn */
+.lanes{overflow-x:auto}
+.lanegrid{display:grid;grid-template-columns:110px repeat(6,minmax(120px,1fr));gap:6px;min-width:860px;font-size:.8rem}
+.lanegrid .ph{font:600 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:4px 6px}
+.lanegrid .ln{font-weight:600;padding:8px 6px;align-self:center}
+.chipstep{border-radius:6px;padding:6px 8px;border:1px solid var(--line);background:var(--soft);cursor:pointer;text-align:left;font:500 .78rem var(--f-head);color:var(--fg)}
+.chipstep:hover{border-color:var(--accent)}
+.chipstep:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.chipstep.done{background:var(--done-bg);border-color:transparent}
+.chipstep.doing{background:var(--doing-bg);border-color:transparent}
+.chipstep b{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);margin-right:4px}
+.gate{grid-column:2 / -1;border:1px dashed var(--doing);border-radius:6px;padding:6px 10px;color:var(--doing);font:500 .76rem var(--f-mono)}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <div class="eyebrow">Thùng rác phân loại 4 ngăn · thân B · từ con số 0 đến thành phẩm</div>
+    <h1>Lộ trình chế tạo thùng B</h1>
+    <p class="lead">Mỗi bước là một việc có đầu ra kiểm tra được. Làm phần rủi ro trước (thử trên bàn), gia công và lắp từ trong ra ngoài, vỏ inox làm sau cùng. Phần mềm chạy song song từ lúc đặt hàng.</p>
+    <div class="summary" id="summary"></div>
+  </header>
+
+  <div class="layout">
+    <nav class="steps" id="steps" role="tablist" aria-label="Các bước"></nav>
+    <main class="panel" id="panel" role="tabpanel" aria-live="polite"></main>
+  </div>
+</div>
+
+<script>
+var DESIGN='https://claude.ai/artifact/EfkerBiujJ9imVzDJiKsa7';
+var CIRCUIT='https://claude.ai/artifact/641f6wND7d8yH814VZVqmR';
+var TRACK={mech:['t-mech','Cơ khí'],elec:['t-elec','Điện tử'],soft:['t-soft','Phần mềm'],all:['t-all','Cả nhóm']};
+var STATUS={done:['s-done','Xong'],doing:['s-doing','Đang làm'],todo:['s-todo','Chưa làm']};
+var SHEET='https://docs.google.com/spreadsheets/d/1vzqrNroD9JphUqxbcaRoN8dWD1GZd_ALjCfd4plWBCY/edit';
+var OPTIONS='https://claude.ai/artifact/LmpTTGTHpTmY31gDXuiTsj';
+// Mỗi bước: số, tên, làn, trạng thái, thời gian, tiền, cần trước, lý do, việc cần làm, cách làm chi tiết [tiêu đề, nội dung], lỗi hay gặp, công cụ, đầu ra [loại, tên, đạt khi, đã có?], link
+var STEPS=[
+ {n:0,t:'Chốt thiết kế và ngân sách',tr:'all',st:'done',time:'Xong 20/10',cost:'0',dep:'—',
+  why:'Mọi việc mua và gia công dựa trên các quyết định này. Đổi ý sau khi đã cắt vật liệu thì tốn tiền gấp đôi.',
+  do:['Thân B: khung 680 × 680 × 1170 mm, 2 ngăn kéo trên ray bi 600 mm, mỗi ngăn kéo chở 2 thùng','Cơ cấu phương án D: MG90S xoay ±45°, MG996R nghiêng ±45° qua đai GT2 2:1, đĩa nhôm Ø320 dày 1,5 mm','Mạch S3-1: board ESP32-S3-N16R8 CAM (não, chụp ảnh, servo) và màn Guition JC4827W543 4,3" (hiển thị, đọc 4 cảm biến báo đầy), nối UART','Khung và vỏ Mix 2: khung sắt V lỗ bắt bulông trên 4 bản đế chân, sàn và tấm đỡ đầu Formex 15 mm, vỏ và nắp bằng inox 304 dày 1 mm gấp mép kín','4 thùng gấp từ tấm PP 3 mm, 270 × 270 × 590 mm, thay túi tại chỗ bằng vòng chun','Vật tư nhỏ: nắp inox để mặt 2B, đĩa để mặt nhôm, tay nắm khoét âm, thùng PP thuê CNC','Ngân sách: càng thấp càng tốt, sheet vật tư cộng khoảng 7,4–10,7 triệu (vỏ bọc inox từ 31/10)'],
+  how:[['Quyết định nằm ở đâu','Mỗi quyết định có trong artifact thiết kế (tab Tổng quan, mục Đã chốt), sheet vật tư (tab 1–4) và trang so sánh phương án thân.'],['Khi nào được đổi','Chỉ đổi khi thử trên bàn (bước 2) hoặc đo hàng thật (bước 1) cho thấy không làm được. Đổi thì sửa CAD, chạy lại kiểm tra rồi mới mua.']],
+  risk:['Đổi ý sau khi đã cắt tấm: mất tiền vật liệu và công cắt.','Chọn theo giá rẻ nhất mà bỏ qua độ khớp: tiết kiệm ở bề mặt, không tiết kiệm ở độ chính xác.'],
+  tools:['Artifact thiết kế','Sheet vật tư','Trang so sánh phương án thân'],
+  out:[['Thẻ quyết định','Thân, cơ cấu, mạch, khung và vỏ, thùng','Đã ghi trong artifact thiết kế',1],['Bảng ngân sách','Sheet vật tư 4 tab','Tổng khoảng 7,4–10,7 triệu, đợt 1 đã chốt đủ',1]],
+  links:[['Artifact thiết kế',DESIGN],['Mạch S3-1',CIRCUIT],['Sheet vật tư',SHEET],['So sánh phương án thân',OPTIONS]]},
+
+ {n:1,t:'Đặt linh kiện đợt 1 và đo',tr:'elec',st:'doing',time:'1–3 tuần (chờ hàng)',cost:'khoảng 1,6–2,0 triệu',dep:'Bước 0',
+  why:'CAD đang dùng số của nhà bán. Phải có hàng thật trong tay để đo, và để thử trên bàn ở bước 2. Đợt 1 chỉ gồm điện tử và bộ truyền động, không có vật liệu lớn.',
+  do:['Đặt 26 món ở tab 1 của sheet và 3 món đầu tab 2 (camera 120° cáp 75 mm, màn Guition, cáp dẹt)','Tích "Đã đặt" ngay khi đặt, ghi mã đơn vào cột Ghi chú','Nhận hàng: quay video lúc mở hộp','Đo và thử từng món theo cột "Việc khi nhận hàng", tích "Đã nhận" và "Đã đo / thử"','Ghi số đo thật vào Ghi chú để sửa CAD ở bước 3'],
+  how:[['Đặt hàng','Gom theo shop để giảm phí ship: Linh Kiện 3M có khoảng 12 món; Shopee gối đỡ KP08 và KFL08 cùng 1 shop; AliExpress cho màn Guition. Hàng AliExpress đặt trước vì lâu về nhất.'],['Nguồn điện trước tiên','Cắm adapter 12 V, chỉnh XL4015 ra đúng 6,0 V và mạch hạ áp ra 5,0 V bằng đồng hồ, khi chưa nối gì. Mạch mới mua có thể ra tới 12 V và đốt servo.'],['Board ESP32-S3 CAM','Chụp ảnh 2 mặt board, đối chiếu số chân in trên bo. Nạp code camera mẫu của Arduino (ví dụ CameraWebServer), xem có lên hình. Đếm chân trống, cần ít nhất 10.'],['Màn Guition','Cấp 5 V qua đầu JST 1,25. Đo điện áp chân TX (khoảng 3,3 V). Đo bo bằng thước cặp: dài, rộng, dày tính cả đầu cắm, vị trí lỗ bắt.'],['Servo và truyền động','MG996R phải quay 0–180° (không phải bản 360°). Lắp thử puly 40T lên trục Ø8, đai 158 mm lên 2 puly.'],['Cảm biến','HC-SR04: đo thử khoảng cách tới tường ở khoảng 434 mm và 962 mm. MPU-6050: đọc góc qua I²C, nghiêng tay xem số đổi đúng chiều.']],
+  risk:['Nối servo trước khi chỉnh áp: servo cháy ngay.','Nối thẳng ECHO 5 V của HC-SR04 vào chân ESP32 3,3 V: phải qua cầu chia áp 1 kΩ / 2 kΩ.','Không quay video mở hộp: khó đổi trả khi hàng vỡ hoặc sai mã.'],
+  tools:['Thước cặp','Đồng hồ vạn năng','Cáp USB-C','Máy tính có Arduino IDE'],
+  out:[['Danh sách đặt hàng','Đợt 1 trong sheet','Mọi món đã chốt (20/10)',1],['Đơn hàng','Mã đơn từng shop','Tab 1 cột "Đã đặt" tích đủ 26/26',0],['Bảng đo','Kích thước thật so với CAD','Ghi trong sheet, lệch ≤ 1 mm hoặc có số mới để sửa CAD',0],['Số đo điện','Nguồn 6,0 V và 5,0 V, TX màn khoảng 3,3 V','Đo bằng đồng hồ',0]],
+  links:[['Sheet vật tư (tab 1)',SHEET],['Mạch S3-1',CIRCUIT]]},
+
+ {n:2,t:'Thử trên bàn các phần rủi ro',tr:'elec',st:'todo',time:'3–5 ngày',cost:'khoảng 0',dep:'Bước 1',
+  why:'Nếu servo không đủ lực, camera không thấy đĩa hay cáp dẹt nhanh đứt thì phải sửa thiết kế. Phát hiện lúc này rẻ hơn nhiều so với lúc đã cắt khung và vỏ. Đây là cổng kiểm tra: không đạt thì chưa đặt đợt 2.',
+  do:['Dựng giá thử cơ cấu nghiêng: trục Ø8 trên 2 gối KP08, đĩa thử, đai GT2 2:1, MG996R','Thử nghiêng 45° với vật 0,5 kg ở mép đĩa','Đặt camera ở khoảng cách thật tới đĩa, chụp ảnh','Nối 2 board qua UART, gửi lệnh đổi màn hình','Thử 4 HC-SR04 có loa in, mỗi cái 1 TRIG riêng, đo lần lượt','Thử vòng cáp dẹt 3000 lần','Thử khoá an toàn: nhả công tắc thì servo mất điện'],
+  how:[['Giá thử cơ cấu','Bắt 2 gối KP08 lên tấm gỗ hoặc nhôm phẳng, cách nhau khoảng 150 mm. Đĩa thử có thể là tấm mica hoặc gỗ Ø320 tạm, khoan lỗ bắt vào trục qua tai in 3D. Servo MG996R kèm puly 20T, căng đai 158 mm tới puly 40T trên trục.'],['Đo lực','Đặt vật 0,5 kg ở mép đĩa, cho nghiêng 45° rồi về ngang 50 lần. Sờ servo sau 50 lần, không được nóng tới mức không giữ tay được. Thiết kế tính servo dùng khoảng 40% lực tối đa.'],['Camera','Đặt camera cao hơn đĩa đúng như CAD (lens ở khoảng 280 mm phía trên mặt đĩa, nghiêng 29°). Chụp đĩa có rác đặt ở mép, phải thấy đủ 4 mép đĩa.'],['UART và màn','Cho board camera gửi lần lượt 7 lệnh: STATE:IDLE, STATE:SORTING, RESULT:1,0.92, LOCK:2,3, ERROR:OFFLINE, rồi nhận FILL và HB từ màn. Màn phải đổi đúng.'],['Cáp dẹt','Gắn cáp dẹt 10 sợi vào vòng cuộn in 3D, cho MG90S xoay qua lại ±45° liên tục 3000 lần (khoảng 1 giờ). Đo thông mạch cả 10 sợi.'],['Dòng điện','Đo dòng đường 5 V lúc board camera gửi ảnh qua WiFi và dòng đường 6 V lúc servo bị giữ kẹt (ngắn, dưới 2 giây).']],
+  risk:['Bỏ qua bước này để đặt luôn khung và vỏ: nếu phải sửa thì vật liệu đã cắt bỏ đi.','Cho servo kẹt lâu khi đo dòng: servo nóng và hỏng bánh răng.','Thử camera dưới ánh sáng khác thực tế: ảnh trong thùng tối hơn, phải bật dải LED khi chụp.'],
+  tools:['Breadboard, dây Dupont','Đồng hồ vạn năng','Cân nhà bếp, vật thử 0,5 kg','Tấm gỗ hoặc nhôm làm đế thử'],
+  out:[['Đạt / không','Servo nghiêng 45° vật 0,5 kg','50 lần không kẹt, không quá nóng',0],['Ảnh','Camera thấy trọn đĩa','Thấy cả 4 mép đĩa ở góc 120°',0],['Đạt / không','UART 2 board','Màn đổi đúng theo 7 lệnh',0],['Số đo','HC-SR04 có loa in','Sai ≤ 10 mm ở 434 và 962 mm, không nghe nhầm nhau',0],['Số đo','Cáp dẹt sau 3000 lần','10/10 sợi còn thông',0],['Số đo','Dòng 5 V và 6 V','5 V ≤ 1,2 A; 6 V khi kẹt ≤ 3 A',0]],
+  links:[['Khoá an toàn và dòng điện',CIRCUIT],['Tab Động cơ và cơ cấu nghiêng',DESIGN]]},
+
+ {n:3,t:'Cập nhật CAD theo số đo thật',tr:'mech',st:'doing',time:'1–2 ngày',cost:'0',dep:'Bước 1, 2',
+  why:'File cắt gửi xưởng và file in 3D sinh ra từ CAD. Sửa số trước khi cắt và in thì mọi chi tiết khớp nhau. CAD đã sửa theo mạch S3-1 bằng số của nhà bán (20/10), còn phải chỉnh theo hàng thật.',
+  do:['Đã làm 20/10: bệ màn cho Guition 4,3", camera cáp 75 mm, tay nắm khoét âm, khung Mix 2','Sửa parameters_ab.json theo bảng đo: bo Guition, board CAM, servo, gối đỡ, puly, ray, V lỗ','Vẽ thêm lối cắm USB-C của 2 board và giá kẹp camera','Nếu bước 2 phải đổi gì (đai, góc, vị trí camera) thì sửa luôn','Chạy lại script, commit, đăng lại artifact'],
+  how:[['Chạy CAD','Trong thư mục design: uv run --no-project --python 3.12 --with cadquery==2.8.0 --with ezdxf python cad/smart_bin_ab.py. Xoá ab/b_frame trước khi chạy để không còn file cũ. Mất khoảng 10 phút.'],['Script tự kiểm tra','25 tư thế xoay và nghiêng không va chạm; camera thấy 72/72 điểm mép đĩa; servo dùng ≤ 50% lực; các bo nằm gọn trong bệ; cáp camera với tới board; thùng không chạm khung; miệng thùng cách thanh chữ thập ≥ 20 mm.'],['Kiểm tra file','Mở vài file DXF xem có đủ lỗ, mở STEP lắp ráp xem có đủ chi tiết. Các file chỉ khác dấu thời gian thì trả về bản cũ để commit gọn.']],
+  risk:['Quên xoá thư mục đầu ra cũ: còn file của chi tiết đã bỏ.','Sửa số mà không chạy lại kiểm tra: lỗi chỉ lộ ra lúc lắp.'],
+  tools:['uv và cadquery 2.8.0','Git'],
+  out:[['File','CAD theo mạch S3-1','Đã có, theo số của nhà bán (20/10)',1],['File','dimensions.json theo hàng thật','Mọi số mua sẵn đã thay bằng số đo',0],['Kiểm tra','25 tư thế, camera 72/72','0 va chạm, 72/72 điểm',0]],
+  links:[['Artifact thiết kế',DESIGN]]},
+
+ {n:4,t:'Đặt gia công và vật liệu đợt 2',tr:'mech',st:'todo',time:'1–2 tuần',cost:'khoảng 5,7–8,7 triệu (đợt 2 + khung, vỏ bọc inox, đủ bulông theo CAD)',dep:'Bước 2 đạt, bước 3',
+  why:'Đây là phần tốn tiền nhất. Chỉ đặt khi cơ cấu đã thử đạt và CAD đã sửa theo hàng thật.',
+  do:['Sắt V lỗ 3×3 dày 2 mm: 12 m, nhờ cửa hàng cắt sẵn 4 cây 1155 mm, 9 cây 671 mm và 1 cây 665 mm, mua kèm ke góc, bulông M8, 4 chân tăng chỉnh M8 đế Ø30','Formex: 1 tấm 15 mm (sàn, tấm đỡ đầu) và 1 tấm 8 mm (2 đáy khay), gửi file cắt','Alu composite 6 mm cắt lẻ: 2 tấm bắt ray và vách giữa','Inox 304 1 mm: nắp trên, 2 hông, lưng, tấm che trước, 2 mặt ngăn kéo, 4 nẹp gân; cắt laser và gấp mép kín 10 mm. Cùng đơn: 4 bản đế chân thép 3 mm hàn đai ốc M8','Nhôm tấm A5052: mâm, đĩa, đế xoay, cắt laser','Nhôm hộp 30×30, 40×30, thanh dẹt 30×13 cho cụm đầu','Tấm PP 2 mm (phễu) và PP 3 mm (4 thùng), cắt CNC gộp với Formex','In 3D ở trường: giá chữ C, giá servo, hub trục xoay, tai đĩa, cục chặn, 4 hộp cảm biến, bệ màn','Ray bi 600 mm 2 cặp, rivet, vòng chun, bulông nhỏ'],
+  how:[['Gom theo xưởng','Xưởng 1 (tiệm biển quảng cáo): Formex 8 và 15 mm, PP 3 mm thùng, PP 2 mm phễu, alu 6 mm cắt lẻ. Xưởng 2 (laser kim loại): nhôm tấm cụm đầu, vỏ và nắp inox kèm chấn, 4 bản đế chân. Cửa hàng kệ: sắt V lỗ cắt sẵn và phụ kiện. Gom như vậy chỉ chịu mỗi nơi một lần phí tối thiểu.'],['File gửi đi','Mọi file nằm trong design/ab/b_frame: dxf/ cho tấm cắt (đơn vị mm, tỉ lệ 1:1), cut_list_slotted_angle.csv cho sắt V lỗ, parts/*.stl cho in 3D. Vỏ và nắp inox gửi side_panel_left/right, back_panel, head_panel_front, drawer_front_left/right, drawer_stiffener_x4, top_cover, mỗi file có lớp CUT, BEND, NOTE. Bản đế chân gửi parts/foot_plate_*.step.'],['Tiết kiệm công cắt','Các tấm Formex chữ nhật nhờ kho cắt thẳng bằng máy cưa tấm. Chỉ tấm đỡ đầu (lỗ Ø560) và thùng PP (rãnh gấp, lỗ) mới cần CNC.'],['Hỏi trước khi đặt','Giá đã gồm VAT và ship chưa; có cắt theo kích thước không; thời gian giao. Ghi giá thật vào sheet.']],
+  risk:['Mua sắt V lỗ dày 1,5 mm vì rẻ: khung yếu, rung theo servo.','Mua bulông M6 cho V lỗ: lỗ chuẩn của thanh là cho M8.','Đặt CNC cả các tấm chữ nhật: tốn gấp 2–3 lần.'],
+  tools:['File DXF, STL, cut list trong design/ab/b_frame','Sheet vật tư tab 2'],
+  out:[['Gói file','Gửi từng xưởng','Mỗi xưởng nhận đúng file và số lượng',0],['Báo giá','So với sheet','Lệch ≤ 30%, giá thật đã ghi vào sheet',0]],
+  links:[['Sheet vật tư (tab 2)',SHEET],['Artifact thiết kế',DESIGN]]},
+
+ {n:5,t:'Lắp khung sắt V lỗ và ngăn kéo',tr:'mech',st:'todo',time:'1–2 ngày',cost:'đã tính ở bước 4',dep:'Bước 4',
+  why:'Khung là nền cho mọi phần khác. Khung lệch thì ngăn kéo kẹt, cụm đầu không ngồi đúng chỗ.',
+  do:['Lắp 4 cột và 10 thanh ngang bằng ke góc và bulông M8','Đặt tấm sàn Formex 15 mm lên 3 thanh dưới, bắt bulông','Bắt 2 tấm bắt ray alu 6 mm vào cột qua ống lót 18 mm, đặt vách giữa','Bắt ray bi, lắp khay ngăn kéo (đáy Formex 8 mm, thành PP 3 mm tán rivet)','Gắn 2 công tắc hành trình cuối khay','Đặt tấm đỡ đầu Formex 15 mm lên 4 thanh trên','Kẹp tai 4 bản đế chân giữa cột và thanh dưới, vặn 4 chân tăng chỉnh vào đai ốc hàn'],
+  how:[['Thứ tự thanh','Thanh dưới chỉ có 3 (2 hông và sau), phía trước để trống cho khay chạy ra. Thanh giữa ở z = 450 có 3 thanh (2 hông và sau). Thanh trên có đủ 4, đỡ tấm đỡ đầu ở z = 1044.'],['Vuông góc','Siết tạm bulông, đo 2 đường chéo của từng mặt và của mặt đáy, chỉnh tới khi bằng nhau (lệch ≤ 2 mm), rồi mới siết chặt. Dùng long đền vênh vì servo chạy gây rung.'],['Ray','Bắt ray song song, đo khoảng cách 2 đầu ray, lệch ≤ 1 mm. Kéo khay ra hết và đẩy vào vài lần, không được kẹt.'],['Kiểm tra','Đặt 2 thùng PP rỗng vào khay, kéo ra đẩy vào, công tắc phải nhả khi kéo khay ra.']],
+  risk:['Siết chặt ngay từ đầu: không chỉnh được vuông góc nữa.','Hai ray không song song: ngăn kéo kẹt hoặc trượt nặng.'],
+  tools:['Cờ lê 13 (bulông M8), cờ lê 8','Thước dây, thước vuông','Máy khoan, mũi 5,5 mm','Kìm rút rivet'],
+  out:[['Số đo','2 đường chéo khung','Lệch ≤ 2 mm',0],['Đạt / không','Ngăn kéo trượt','Kéo ra hết, đẩy vào êm, không kẹt',0],['Đạt / không','Công tắc ngăn kéo','Nhả khi khay mở',0]],
+  links:[['Tab Thân B',DESIGN]]},
+
+ {n:6,t:'Gấp 4 thùng PP',tr:'mech',st:'todo',time:'1 ngày',cost:'đã tính ở bước 4',dep:'Bước 4',
+  why:'Gấp thử 1 thùng trước để biết độ dày tấm làm kích thước lệch bao nhiêu. Thùng phải lọt khít khay.',
+  do:['Gấp thử 1 thùng: thân thành ống vuông, tán 8 rivet mép dán','Lắp đáy: gấp 4 vạt lên, đẩy vào trong ống, tán 8 rivet','Gấp 4 mảnh mép miệng ra ngoài','Đo, đặt thử vào khay, rồi làm 3 thùng còn lại','Lồng vòng chun, lót túi thử'],
+  how:[['Gấp theo rãnh','Rãnh chữ V đã được CNC rạch sẵn (lớp BEND trong file). Gấp từ từ, nếu tấm cứng thì hơ nóng nhẹ bằng máy khò dọc rãnh.'],['Tán rivet','Rivet nhôm Ø4 kèm long đền ở mặt trong, vì PP mềm, đầu rivet dễ rút qua lỗ.'],['Thử túi','Túi rộng ít nhất 55 cm, dài ít nhất 82 cm, lộn miệng ra ngoài vành khoảng 5 cm, lồng vòng chun cách miệng 12 mm.']],
+  risk:['Cắt và gấp cả 4 thùng cùng lúc: nếu lệch thì sai cả 4.','Rivet không long đền: đầu rivet tuột qua PP.'],
+  tools:['Kìm rút rivet','Máy khò','Thước cặp'],
+  out:[['Số đo','Kích thước ngoài','270 ± 3 mm, cao 590 ± 3 mm',0],['Đạt / không','Đặt vào khay','Thùng trước và sau còn khe ngón tay ≥ 15 mm',0]],
+  links:[['Tab Thân B: thùng gấp PP',DESIGN],['Tab Lấy rác khi đầy',DESIGN]]},
+
+ {n:7,t:'Lắp cụm đầu cơ khí',tr:'mech',st:'todo',time:'2–3 ngày',cost:'đã tính ở bước 1, 4',dep:'Bước 2, 4',
+  why:'Cụm đầu chứa cơ cấu xoay và nghiêng, phần khó nhất về cơ.',
+  do:['Lắp mâm nhôm, 4 thanh treo nhôm hộp 30×30, thanh chữ thập 40×30','Lắp giá chữ C in 3D, trục xoay Ø8 trên 2 gối KFL08, hub in nối càng MG90S với trục','Lắp đế xoay nhôm 4 mm, 2 trụ bản lề, 2 gối KP08, trục nghiêng, tai đĩa, đĩa','Lắp MG996R, puly 20T và 40T, đai 158 mm','Lắp chốt chặn cứng ±70° và 2 cục chặn 47°','Luồn cáp dẹt qua rãnh vòng cuộn, kẹp chống giật'],
+  how:[['Trục xoay','Mài mặt phẳng (mặt D) trên đoạn trục 70 mm, siết vít trí M3 của hub vào mặt D, nhỏ keo khoá ren.'],['Căng đai','Đai 158 mm chỉ chỉnh được ±1 mm qua giá servo, nên đo khoảng cách tâm 2 puly đúng 48,58 mm trước khi siết.'],['Kiểm tra bằng tay','Chưa cấp điện: xoay tay đế ±45°, nghiêng tay đĩa ±45° về 4 hướng, không cạ, không rơ.']],
+  risk:['Không mài mặt D: hub trượt trên trục, đĩa xoay lệch hướng ngăn.','Căng đai quá chặt: servo nặng tải, gối đỡ mòn nhanh.'],
+  tools:['Lục giác','Keo khoá ren','Thước đo góc','Dũa hoặc máy mài nhỏ'],
+  out:[['Đạt / không','Quay tay xoay ±45°','Êm, không rơ',0],['Đạt / không','Chặn cứng','Chạm ở khoảng ±70°',0],['Số đo','Đĩa nghiêng 45° đủ 4 hướng','Mép thấp hướng đúng 45/135/225/315°',0]],
+  links:[['Tab Động cơ và cơ cấu nghiêng',DESIGN]]},
+
+ {n:8,t:'Phễu, cổ phễu, diềm và hộp cảm biến',tr:'mech',st:'todo',time:'1 ngày',cost:'đã tính ở bước 4',dep:'Bước 7',
+  why:'Phễu dẫn rác xuống đĩa. Khe thoát phải đủ rộng để vật lớn lọt qua, và 4 cảm biến báo đầy treo dưới gờ cổ phễu.',
+  do:['Cuộn 2 nửa phễu PP 2 mm, chồng mép 15 mm, tán rivet','Lắp vành cổ phễu, dải gờ, diềm PVC','Treo 4 hộp HC-SR04 có loa in dưới gờ cổ phễu ở bán kính 215 mm, mỗi hộp nhìn thẳng xuống một ngăn','Lắp phễu lên mâm'],
+  how:[['Hướng cảm biến','Mỗi hộp nằm đúng phía trên tâm một ngăn (45°, 135°, 225°, 315°). Đi dây 4 cảm biến về bệ màn qua lỗ ở vành phễu.'],['Kiểm tra','Cho đĩa nghiêng đủ 4 hướng, đo khe thoát dưới gờ cổ phễu.']],
+  risk:['Hộp cảm biến lệch hướng: đo vào thành thùng thay vì đáy, báo đầy sai.'],
+  tools:['Kìm rút rivet','Thước dây'],
+  out:[['Số đo','Khe thoát khi nghiêng 45°','Khoảng 180 mm',0],['Đạt / không','Đĩa nghiêng đủ 4 hướng','Không cạ phễu, diềm, hộp cảm biến',0]],
+  links:[['Tab Cụm đầu và phễu',DESIGN]]},
+
+ {n:9,t:'Điện và đi dây',tr:'elec',st:'todo',time:'2–3 ngày',cost:'đã tính ở bước 1',dep:'Bước 2, 7',
+  why:'Đi dây theo sơ đồ đã chốt, có khoá an toàn bằng phần cứng: kéo ngăn kéo là servo mất điện, kể cả khi phần mềm treo.',
+  do:['Lắp đường nguồn: adapter 12 V, cầu chì 3 A, XL4015 ra 6 V, mạch hạ áp 5 V, relay, tụ 2200 µF','Mắc 2 công tắc ngăn kéo nối tiếp trên đường cuộn relay','Đi dây servo theo vòng cáp xoay, kẹp chống giật','Nối 4 HC-SR04 vào màn Guition: 4 TRIG riêng, 4 ECHO qua chia áp','Nối UART board camera với màn (TX vào RX), nối chung GND','Cắt đoạn LED 120 mm, nối vào module XY-MOS'],
+  how:[['Theo sơ đồ','Sơ đồ khối, bảng chân, dòng điện từng đường và khoá an toàn đều ở trang mạch S3-1.'],['Kiểm tra trước khi cấp điện','Đo thông mạch từng đường, đo không chập giữa 12 V, 6 V, 5 V và GND. Cấp điện lần đầu khi chưa cắm board, đo lại áp.'],['Thử khoá an toàn','Cho servo chạy, kéo ngăn kéo ra: servo phải mất điện ngay.']],
+  risk:['Quên nối chung GND giữa 2 board, mạch hạ áp và servo: tín hiệu UART và PWM chập chờn.','Lấy 5 V cho màn từ chân 5V của board camera: sụt áp khi gửi ảnh.'],
+  tools:['Mỏ hàn','Ống co nhiệt','Đồng hồ vạn năng'],
+  out:[['Số đo','Điện áp từng đường','6,0 V và 5,0 V lệch ≤ 0,1 V',0],['Đạt / không','Kéo ngăn kéo khi servo chạy','Servo mất điện ngay',0],['Ảnh','Bó dây đã gọn','Không dây nào chạm phần quay',0]],
+  links:[['Sơ đồ mạch S3-1',CIRCUIT]]},
+
+ {n:10,t:'Bệ màn hình, camera, LED',tr:'elec',st:'todo',time:'1–2 ngày',cost:'đã tính ở bước 1, 4',dep:'Bước 3, 9',
+  why:'Camera phải nhìn thấy trọn đĩa từ dưới cằm bệ, màn phải quay về phía người dùng.',
+  do:['In bệ PETG (bản đã sửa theo số đo ở bước 3), 2 nửa ghép vít M3','Lắp màn Guition vào tấm màn, board CAM và các mạch vào đế','Gắn camera OV2640 120° sau ô kính dưới cằm, cáp 75 mm về board','Gắn dải LED dưới cằm','Bắt bệ lên vành phễu qua vành thấp'],
+  how:[['Camera','Trục camera nghiêng 29,1° so với phương thẳng đứng, chĩa vào tâm đĩa. Chụp thử ngay sau khi lắp, xem đủ 4 mép đĩa.'],['Cổng nạp code','Đảm bảo cắm được cáp USB-C vào cả 2 board mà không tháo bệ.']],
+  risk:['In bệ trước khi đo bo thật: shop ghi sai số tới 2 cm, phải in lại.'],
+  tools:['Vít M3, đai ốc cấy nhiệt','Mỏ hàn (cấy đai ốc)'],
+  out:[['Ảnh','Khung hình camera lắp thật','Thấy cả 4 mép đĩa',0],['Đạt / không','Màn hiển thị','Đọc rõ từ 1,5 m',0]],
+  links:[['Tab Bệ màn hình và camera',DESIGN],['Mạch S3-1',CIRCUIT]]},
+
+ {n:11,t:'Firmware cho 2 board',tr:'soft',st:'todo',time:'1–2 tuần, song song từ bước 1',cost:'0',dep:'Bắt đầu ngay, thử thật ở bước 2',
+  why:'Board camera giữ an toàn tại chỗ, không phụ thuộc mạng. Board màn lo giao diện và cảm biến báo đầy.',
+  do:['Board camera: điều khiển 2 servo có tăng tốc và giảm tốc, đọc IMU, đưa đĩa về ngang khi khởi động','Board camera: giới hạn lệnh ±65°, watchdog, phát hiện xoay mất kiểm soát, đọc công tắc ngăn kéo, bật relay','Board camera: chụp ảnh JPEG 640×480, gửi server, chờ tối đa 3 giây, mất mạng thì cho vào ngăn 4','Board màn: giao diện (chờ, đang phân loại, kết quả, khoá ngăn, mất mạng), đọc 4 HC-SR04 lần lượt cách 60 ms, lấy trung vị, gửi FILL mỗi giây','Giao thức UART giữa 2 board: STATE, RESULT, LOCK, ERROR, FILL, HB'],
+  how:[['Bắt đầu sớm','Viết và thử từng phần trên bất kỳ board ESP32-S3 nào có sẵn, không cần chờ đủ hàng.'],['An toàn trước','Relay chỉ bật khi cả 2 công tắc đóng và IMU báo đĩa nằm ngang. Màn treo thì board camera vẫn đổ rác an toàn.']],
+  risk:['Để board camera chờ server mãi: mạng chậm là thùng đứng im.','Cho server quyết định an toàn: an toàn phải xử lý tại chỗ.'],
+  tools:['Arduino IDE hoặc PlatformIO','Guition Editor'],
+  out:[['Log','Một lần đổ đủ chu trình','Xoay, nghiêng, giữ, về, đúng thời gian',0],['Đạt / không','Mất mạng','Vật vào ngăn 4 Khác, màn báo',0],['Đạt / không','Màn treo','Board camera vẫn đổ rác an toàn',0]],
+  links:[['Lệnh UART',CIRCUIT]]},
+
+ {n:12,t:'Server phân loại',tr:'soft',st:'todo',time:'1–3 tuần, song song từ bước 1',cost:'0 (máy có sẵn)',dep:'Bắt đầu ngay bằng ảnh điện thoại',
+  why:'Độ chính xác phân loại quyết định thùng có dùng được không. Đây là việc tốn thời gian nhất, nên làm sớm.',
+  do:['Chụp 200–500 ảnh mỗi loại (Nhựa, Giấy, Kim loại, Khác) trên nền giống đĩa','Huấn luyện mô hình phân 4 lớp, đo độ chính xác','Viết API nhận ảnh JPEG, trả nhãn và độ tin cậy','Thay ảnh điện thoại bằng ảnh từ camera thật khi có hàng'],
+  how:[['Ảnh giống thực tế','Chụp trên tấm nhôm hoặc giấy xám giống mặt đĩa, ánh sáng trắng từ trên xuống, góc nghiêng khoảng 30°, đủ loại rác hay gặp (chai, lon, hộp giấy, túi nilon, vỏ trái cây).'],['Vật không chắc','Độ tin cậy thấp thì cho vào ngăn 4 Khác.']],
+  risk:['Chỉ chụp rác sạch, đẹp: thực tế rác bẩn, méo, nên mô hình sai nhiều.'],
+  tools:['Điện thoại','Python','Máy tính có GPU hoặc dịch vụ cloud'],
+  out:[['Bảng','Độ chính xác từng loại','Mỗi loại ≥ 85% trên ảnh thử',0],['Số đo','Thời gian trả lời','≤ 2 giây qua WiFi',0]],
+  links:[]},
+
+ {n:13,t:'Tích hợp và hiệu chỉnh',tr:'all',st:'todo',time:'3–5 ngày',cost:'0',dep:'Bước 6–12',
+  why:'Lần đầu mọi phần chạy cùng nhau trên thùng thật.',
+  do:['Bỏ 100 vật thật, ghi kết quả từng lần','Chỉnh ngưỡng báo đầy: ngăn trống đo khoảng 962 mm, đầy 90% khoảng 434 mm','Chỉnh thời gian giữ nghiêng, góc rải đều','Thử thay túi theo tab Lấy rác khi đầy'],
+  how:[['Ghi kết quả','Mỗi lần ghi: vật gì, nhãn server trả về, ngăn thực tế, có kẹt không. Tính tỉ lệ đúng.']],
+  risk:['Chỉnh ngưỡng báo đầy khi túi chưa phồng: túi nilon phồng lên làm báo đầy sai.'],
+  tools:['Rác thật 4 loại','Bảng ghi'],
+  out:[['Bảng','100 lần bỏ rác','≥ 95% vào đúng ngăn theo nhãn trả về',0],['Đạt / không','Báo đầy','Báo đúng ngăn, không báo sai vì túi phồng',0]],
+  links:[['Tab Lấy rác khi đầy',DESIGN]]},
+
+ {n:14,t:'Thử bad case và độ bền',tr:'all',st:'todo',time:'1 tuần',cost:'0',dep:'Bước 13',
+  why:'Thùng đặt nơi công cộng sẽ gặp đủ kiểu dùng sai.',
+  do:['Thử 45 bad case: vật nặng, vật to, nước, tay thò vào, mất điện','Chạy 1000 lần đổ liên tục, theo dõi nhiệt và độ rơ','Kiểm tra lại cáp dẹt, đai và bulông khung sau 1000 lần'],
+  how:[['Danh sách','45 bad case và cách xử lý nằm ở tab Bad case của artifact thiết kế.']],
+  risk:['Chỉ thử trường hợp đúng: lỗi thật nằm ở trường hợp dùng sai.'],
+  tools:['Danh sách bad case'],
+  out:[['Checklist','45 bad case','Mỗi case đạt hoặc có cách xử lý ghi rõ',0],['Số đo','1000 lần đổ','Không kẹt, servo không quá nóng',0]],
+  links:[['Tab Bad case',DESIGN]]},
+
+ {n:15,t:'Vỏ inox, nắp và hoàn thiện',tr:'mech',st:'todo',time:'2–3 ngày',cost:'đã tính ở bước 4',dep:'Bước 14 đạt',
+  why:'Vỏ lắp sau cùng để trong lúc thử vẫn dễ sửa bên trong.',
+  do:['Bắt 2 hông, lưng, tấm che trước inox 1 mm vào lỗ thanh V bằng vít M4 inox kèm ống cách 6 mm','Bắt 4 nẹp gân vào mặt trong 2 mặt ngăn kéo inox, rồi bắt mặt ngăn kéo (có lỗ tay nắm) vào khay','Đậy nắp inox, mép gập trùm xuống vỏ, bắt vít vào cột','Bóc màng bảo vệ inox sau khi lắp xong'],
+  how:[['Bắt vỏ inox','Ống cách 6 mm giữ vỏ cách cột để chừa chỗ mũ bulông kệ. Vị trí lỗ trên tấm inox chưa có trong DXF: ướm tấm lên khung, đánh dấu theo lỗ V rồi mới khoan.']],
+  risk:['Khoan lỗ inox lệch lỗ V: phải khoan lại, để lại lỗ thừa trên mặt vỏ.','Thiếu ống cách: vỏ đè lên mũ bulông kệ, phồng tấm.'],
+  tools:['Máy khoan, mũi khoan inox 4,5 mm','Tua vít, cờ lê','Găng tay (mép inox sắc khi chưa gấp)'],
+  out:[['Ảnh','Thùng thành phẩm','Khe vỏ đều, không mép sắc',0],['Đạt / không','Ngăn kéo có mặt inox','Vẫn trượt êm, tay nắm cầm được',0]],
+  links:[['Tab Thân B',DESIGN]]},
+
+ {n:16,t:'Bàn giao',tr:'all',st:'todo',time:'1 ngày',cost:'0',dep:'Bước 15',
+  why:'Người dùng và người bảo trì cần biết cách dùng, thay túi và xử lý lỗi.',
+  do:['Viết hướng dẫn dùng và thay túi','Ghi lịch bảo trì: kiểm tra đai, cáp dẹt, bulông khung, cảm biến','Bàn giao file CAD, firmware, server'],
+  how:[['Thay túi','Theo tab Lấy rác khi đầy: kéo ngăn kéo, tháo vòng chun, buộc túi, nhấc lên, lót túi mới.']],
+  risk:['Không ghi lịch bảo trì: đai và cáp hỏng dần mà không ai biết.'],
+  tools:[],
+  out:[['Tài liệu','Hướng dẫn dùng','Người mới tự thay túi được',0],['Tài liệu','Lịch bảo trì','Có mốc thời gian cho từng phần',0]],
+  links:[['Tab Lấy rác khi đầy',DESIGN]]}
+];
+var LANES=[['mech','Cơ khí'],['elec','Điện tử'],['soft','Phần mềm'],['all','Cả nhóm']];
+var PHASES=['Chốt','Mua và thử','Gia công','Lắp','Tích hợp','Hoàn thiện'];
+var PHASE_OF={0:0,1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:3,9:3,10:3,11:1,12:1,13:4,14:4,15:5,16:5};
+
+function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+var nav=document.getElementById('steps'),panel=document.getElementById('panel');
+var cur='road';
+
+function renderSummary(){
+  var c={done:0,doing:0,todo:0};STEPS.forEach(function(s){c[s.st]++;});
+  var box=document.getElementById('summary');
+  [['done','bước xong'],['doing','bước đang làm'],['todo','bước chưa làm']].forEach(function(k){box.append(el('span','pill '+STATUS[k[0]][0],c[k[0]]+' '+k[1]));});
+}
+function renderNav(){
+  nav.innerHTML='';
+  var road=el('button');road.setAttribute('role','tab');road.dataset.id='road';
+  road.append(el('span','num','◇'),el('span',null,'Lộ trình tổng'),el('span'));nav.append(road);
+  STEPS.forEach(function(s){
+    var b=el('button');b.setAttribute('role','tab');b.dataset.id=String(s.n);
+    b.append(el('span','num',String(s.n).padStart(2,'0')),el('span',null,s.t),el('span','st '+s.st));
+    b.title=STATUS[s.st][1];nav.append(b);
+  });
+  nav.querySelectorAll('button').forEach(function(b){b.onclick=function(){open(b.dataset.id);};});
+}
+function open(id){
+  cur=id;try{localStorage.setItem('aware-plan-step',id);}catch(e){}
+  nav.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.id===id);});
+  panel.innerHTML='';
+  if(id==='road')renderRoad();else renderStep(STEPS[+id]);
+  if(window.innerWidth<860)panel.scrollIntoView({block:'start',behavior:'smooth'});
+}
+function renderRoad(){
+  var c=el('section','card');
+  c.append(el('h2',null,'Lộ trình tổng'));
+  var p=el('p','lead','Ba làn chạy song song. Phần mềm bắt đầu ngay từ lúc đặt hàng, không chờ phần cứng. Bấm một ô để mở bước đó.');p.style.margin='6px 0 14px';c.append(p);
+  var wrap=el('div','lanes'),g=el('div','lanegrid');
+  g.append(el('div'));PHASES.forEach(function(ph){g.append(el('div','ph',ph));});
+  LANES.forEach(function(l){
+    var lab=el('div','ln '+TRACK[l[0]][0],l[1]);g.append(lab);
+    PHASES.forEach(function(ph,i){
+      var cell=el('div');cell.style.display='grid';cell.style.gap='6px';cell.style.alignContent='start';
+      STEPS.filter(function(s){return s.tr===l[0]&&PHASE_OF[s.n]===i;}).forEach(function(s){
+        var b=el('button','chipstep '+s.st);b.type='button';b.append(el('b',null,String(s.n).padStart(2,'0')),document.createTextNode(s.t));
+        b.onclick=function(){open(String(s.n));};cell.append(b);});
+      g.append(cell);});
+    if(l[0]==='elec'){g.append(el('div'));var gate=el('div','gate','Cổng kiểm tra: bước 2 thử trên bàn phải đạt rồi mới đặt gia công đợt 2 và vỏ');g.append(gate);}
+  });
+  wrap.append(g);c.append(wrap);panel.append(c);
+  var now=el('section','card');now.append(el('h3',null,'Đang ở đâu (cập nhật 20/10)'));
+  var ul=el('ul');
+  ['Bước 0 xong: thân B, cơ cấu D, thùng gấp PP, mạch S3-1, khung và vỏ Mix 2, các vật tư nhỏ đều đã chốt. Sheet vật tư cộng khoảng 7,4–10,7 triệu (vỏ đổi sang inox 31/10).',
+   'Bước 1 đang làm: đợt 1 đã chốt đủ (26 món tab 1, 3 món đầu tab 2 và 3 món cơ khí #38–40 ở tab 1, khoảng 1,6–2,0 triệu). Chưa đặt hàng.',
+   'Thay đổi thiết kế từ 17/10 đến 20/10 chưa commit lên nhánh.'].forEach(function(t){ul.append(el('li',null,t));});
+  now.append(ul);panel.append(now);
+  var nx=el('section','card');nx.append(el('h3',null,'Việc tiếp theo'));
+  var tw=el('div');tw.style.overflowX='auto';var tb=el('table');tb.style.width='100%';tb.style.borderCollapse='collapse';tb.style.fontSize='.88rem';tb.style.minWidth='620px';
+  var rows=[['#','Việc','Ai','Khi nào','Thuộc bước'],
+    ['1','Đặt hàng đợt 1: 26 món tab 1, 3 món đầu tab 2 và 3 món cơ khí #38–40 (khoảng 1,6–2,0 triệu)','Bro','Ngay','1'],
+    ['2','Commit và push toàn bộ thay đổi lên nhánh feat/ab-bin-design','Mình','Ngay','—'],
+    ['3','CAD đã sửa theo mạch S3-1 (20/10). Còn vẽ lối cắm USB-C, giá kẹp camera, rồi chỉnh theo số đo hàng thật','Mình','Khi hàng về','3'],
+    ['4','Thêm lỗ tay nắm âm vào file cắt mặt ngăn kéo','Mình','Trong lúc chờ hàng','3'],
+    ['5','Thu ảnh rác: mỗi loại 200–500 ảnh trên nền giống đĩa','Bro, nhóm','Trong lúc chờ hàng','12'],
+    ['6','Viết khung firmware: servo, IMU, UART với màn, khoá an toàn','Mình','Trong lúc chờ hàng','11'],
+    ['7','Tra giá 17 món đợt 2 còn lại (vật liệu cụm đầu, thùng PP)','Mình','Trong lúc chờ hàng','4'],
+    ['8','Nhận hàng: đo từng món theo cột "Việc khi nhận hàng", tích Đã nhận, Đã đo','Bro','Khi hàng về','1'],
+    ['9','Thử trên bàn: servo qua đai, camera thấy đĩa, UART, HC-SR04, khoá an toàn','Bro, mình','Khi hàng về','2'],
+    ['10','Bước 2 đạt thì đặt đợt 2: khung V lỗ, Formex, vỏ và nắp inox, nhôm cụm đầu, PP thùng','Bro','Sau bước 2','4']];
+  rows.forEach(function(r,i){var tr=el('tr');r.forEach(function(c){var td=el(i?'td':'th',null,c);td.style.textAlign='left';td.style.padding='6px 8px';td.style.borderBottom='1px solid var(--line)';td.style.verticalAlign='top';tr.append(td);});tb.append(tr);});
+  tw.append(tb);nx.append(tw);panel.append(nx);
+}
+function renderStep(s){
+  var head=el('section','card'),row=el('div','title-row');
+  row.append(el('span','num','Bước '+String(s.n).padStart(2,'0')),el('h2',null,s.t),el('span','track '+TRACK[s.tr][0],TRACK[s.tr][1]),el('span','pill '+STATUS[s.st][0],STATUS[s.st][1]));
+  head.append(row);
+  var why=el('p','lead',s.why);why.style.marginTop='8px';head.append(why);
+  var meta=el('div','meta');meta.style.marginTop='14px';
+  [['Thời gian',s.time],['Chi phí',s.cost],['Cần xong trước',s.dep]].forEach(function(m){var d=el('div');d.append(el('small',null,m[0]),el('b',null,m[1]));meta.append(d);});
+  head.append(meta);panel.append(head);
+
+  var cols=el('div','cols');
+  var a=el('section','card');a.append(el('h3',null,'Việc cần làm'));var ol=el('ol');s.do.forEach(function(t){ol.append(el('li',null,t));});a.append(ol);
+  var b=el('section','card');b.append(el('h3',null,'Công cụ và tài liệu'));
+  if(s.tools.length){var ul=el('ul');s.tools.forEach(function(t){ul.append(el('li',null,t));});b.append(ul);}else b.append(el('p','lead','Không cần công cụ riêng.'));
+  if(s.links.length){var lk=el('div','links');lk.style.marginTop='12px';s.links.forEach(function(l){var x=el('a',null,l[0]+' ↗');x.href=l[1];x.target='_blank';x.rel='noopener';lk.append(x);});b.append(lk);}
+  cols.append(a,b);panel.append(cols);
+
+  var o=el('section','card');o.append(el('h3',null,'Đầu ra của bước'));
+  var p=el('p','lead','Bước chỉ xong khi mọi đầu ra đạt tiêu chí. Thẻ viền xanh là đầu ra đã có.');p.style.marginBottom='12px';o.append(p);
+  var grid=el('div','outputs');
+  s.out.forEach(function(x){var c=el('div','out'+(x[3]?' ok':''));c.append(el('span','kind',x[0]+(x[3]?' · đã có':'')),el('span','name',x[1]));
+    var pass=el('span','pass');pass.append(el('b',null,'Đạt khi: '),document.createTextNode(x[2]));c.append(pass);grid.append(c);});
+  o.append(grid);panel.append(o);
+
+  if(s.how&&s.how.length){var h=el('section','card');h.append(el('h3',null,'Cách làm chi tiết'));
+    s.how.forEach(function(x){var d=el('div','how');d.append(el('b',null,x[0]),el('p',null,x[1]));h.append(d);});panel.append(h);}
+  if(s.risk&&s.risk.length){var r=el('section','card');r.append(el('h3',null,'Lỗi hay gặp'));var ur=el('ul');s.risk.forEach(function(t){ur.append(el('li',null,t));});r.append(ur);panel.append(r);}
+}
+renderSummary();renderNav();
+var start='road';try{start=localStorage.getItem('aware-plan-step')||'road';}catch(e){}
+if(start!=='road'&&!STEPS[+start])start='road';
+open(start);
+</script>

@@ -1,0 +1,392 @@
+{
+  "rim_height_mm": 1170.0,
+  "head_deck_height_mm": 1050.0,
+  "deck_thickness_mm": 3.0,
+  "deck_outer_radius_mm": 297.0,
+  "deck_inner_radius_mm": 200.0,
+  "locating_ring_outer_radius_mm": 278.0,
+  "locating_ring_wall_mm": 3.0,
+  "locating_ring_depth_mm": 20.0,
+  "head_shell_wall_mm": 3.0,
+  "funnel_mouth_radius_mm": 275.0,
+  "funnel_height_mm": 140.0,
+  "funnel_wall_mm": 2.0,
+  "rim_collar_thickness_mm": 6.0,
+  "throat_lip_height_mm": 30.0,
+  "throat_clearance_mm": 5.0,
+  "plate_below_throat_lip_mm": 100.0,
+  "skirt_strip_count": 36,
+  "skirt_strip_width_mm": 14.0,
+  "plate_radius_mm": 160.0,
+  "plate_thickness_mm": 1.5,
+  "plate_density_kg_m3": 2700.0,
+  "plate_bottom_above_pivot_mm": 20.5,
+  "maximum_plate_tilt_degrees": 45.0,
+  "spider_top_below_pivot_mm": 203.0,
+  "spider_height_mm": 30.0,
+  "spider_width_mm": 40.0,
+  "spider_reach_mm": 270.0,
+  "hanger_size_mm": 30.0,
+  "hanger_radius_mm": 255.0,
+  "servo_body_mm": [
+    40.9,
+    20.0,
+    37.0
+  ],
+  "servo_shaft_from_top_mm": 10.0,
+  "servo_stall_torque_nm": 1.08,
+  "yaw_servo_body_mm": [
+    22.8,
+    12.4,
+    28.4
+  ],
+  "tilt_belt_center_x_mm": 70.0,
+  "servo_dims_mm": {
+    "mg996r": {"spline_d": 5.8, "spline_above_bed": 5.7, "ear_below_bed": 7.7, "ear_thickness": 2.5,
+               "ear_length": 54.0, "ear_holes": [48.5, 10.0], "cable_from_base": 4.0},
+    "mg90s": {"spline_d": 4.8, "spline_above_bed": 4.1, "ear_below_bed": 7.4, "ear_thickness": 2.5,
+              "ear_length": 32.1, "ear_hole_pitch": 27.8}
+  },
+  "tilt_pulley_adapter_mm": {
+    "horn_hub": [9.0, 3.0],
+    "horn_disc": [20.0, 2.0],
+    "horn_hole_radius": 7.0,
+    "disc_length": 6.0,
+    "boss_d": 5.9
+  },
+  "pulley_mm": {
+    "small": {"length": 16.0, "flange_d": 16.0, "hub_d": 16.0, "tooth_od": 12.2, "flange_t": 0.95,
+              "tooth_w": 6.5, "belt_from_flange_face": 4.2, "bore": 6.0},
+    "large": {"length": 17.0, "flange_d": 29.0, "hub_d": 16.0, "tooth_od": 24.96, "flange_t": 1.5,
+              "tooth_w": 6.5, "belt_from_flange_face": 4.75, "bore": 8.0}
+  },
+  "hinge_block_x_mm": 83.0,
+  "hinge_post_mm": [
+    10.0,
+    60.0
+  ],
+  "pillow_blocks_mm": {
+    "kp08": {"bolt_spacing": 42.0, "bolt_hole_d": 4.8, "inner_ring_proud": 1.5},
+    "kfl08": {"bolt_spacing": 37.0, "bolt_hole_d": 4.8, "flange_length": 48.0, "body_d": 27.0,
+              "flange_t": 4.5, "body_height": 9.5, "total_height": 12.5}
+  },
+  "yaw_flange_mm": {
+    "flange": [32.0, 3.0],
+    "hub": [16.0, 10.0],
+    "screw_radius": 12.0,
+    "screw_count": 4
+  },
+  "yaw_bracket_foot_mm": [
+    31.0,
+    5.0
+  ],
+  "plate_lug_x_mm": 40.0,
+  "yaw_platform_below_pivot_mm": 81.0,
+  "yaw_platform_half_y_mm": 96.0,
+  "yaw_stack_mm": {
+    "servo_shelf_z_offset": 26.0,
+    "lower_arm_z_offset": 57.0,
+    "upper_arm_z_offset": 92.0
+  },
+  "yaw_hub_mm": {
+    "horn_disc": [
+      20.0,
+      2.0
+    ],
+    "diameter": 20.0,
+    "height": 11.0,
+    "shaft_depth": 9.0,
+    "horn_screw_radius": 7.0
+  },
+  "maximum_yaw_degrees": 45.0,
+  "joinery": {
+    "tube_insert_mm": {"flange": 2.0, "depth": 15.0, "thread": "M6"},
+    "spider_pad_mm": [30.0, 5.0],
+    "spider_pad_radius_mm": 223.0,
+    "splice_plate_mm": [80.0, 170.0, 3.0],
+    "splice_bolts_xy_mm": [[0, 35], [0, -35], [0, 70], [0, -70], [30, 9], [30, -9]],
+    "deck_bolt_radius_mm": 287.0,
+    "deck_bolt_angles": [45, 135, 225, 315],
+    "clip_angle_mm": [15.0, 2.0, 15.0],
+    "shell_clip_angles": [30, 150, 210, 330],
+    "locating_clip_angles": [45, 135, 225, 315],
+    "console_bolt_radius_mm": 286.0,
+    "console_bolt_angles": [60, 72, 108, 120],
+    "rivet_pitch_mm": 80.0,
+    "skin_screw_pitch_mm": 250.0,
+    "tray_screw_pitch_mm": 80.0,
+    "center_wall_clip_mm": [10.0, 1.5, 30.0],
+    "tray_corner_angle_mm": [10.0, 1.5, 50.0],
+    "switch_bracket_mm": [20.0, 50.0]
+  },
+  "motor_cable": {
+    "radius_mm": 1.75,
+    "offset_x_mm": 8.0,
+    "hanger_gap_mm": 4.0,
+    "shell_y_mm": 278.0,
+    "ribbon_cores": 10,
+    "ribbon_width_mm": 12.7,
+    "ribbon_thickness_mm": 1.0,
+    "drum_radius_mm": [
+      15.0,
+      18.0
+    ],
+    "channel_wall_radius_mm": [
+      40.0,
+      43.0
+    ],
+    "entry_angle_degrees": 60.0,
+    "fold_angle_degrees": -50.0,
+    "exit_angle_degrees": 30.0,
+    "riser_radius_mm": 46.0
+  },
+  "tilt_stop_degrees": 47.0,
+  "tilt_stop_pad_y_mm": 88.0,
+  "orientation_pin_radius_mm": 284.0,
+  "pulley_small_teeth": 20,
+  "pulley_large_teeth": 40,
+  "belt_loop_length_mm": 158.0,
+  "belt_width_mm": 6.0,
+  "belt_efficiency": 0.9,
+  "fill_sensor_radial_position_mm": 215.0,
+  "fill_sensor": {
+    "board_mm": [
+      45.0,
+      20.0,
+      1.6
+    ],
+    "transducer_diameter_mm": 16.0,
+    "transducer_height_mm": 12.0,
+    "transducer_pitch_mm": 27.0,
+    "space_above_board_mm": 6.0,
+    "connector_space_mm": 18.0,
+    "wall_mm": 2.5,
+    "horn_length_mm": 15.0,
+    "horn_mouth_diameter_mm": 24.0,
+    "horn_wall_mm": 1.6,
+    "full_fraction": 0.9
+  },
+  "item_mass_kg": 0.5,
+  "item_diameter_mm": 60.0,
+  "console_width_mm": 160.0,
+  "console_height_mm": 46.0,
+  "console_chin_front_y_mm": 132.0,
+  "console_chin_height_mm": 20.0,
+  "console_back_y_mm": 288.0,
+  "console_back_height_mm": 34.0,
+  "console_edge_radius_mm": 4.0,
+  "console_wall_mm": 2.5,
+  "console_saddle_from_y_mm": 235.0,
+  "console_saddle_height_mm": 5.0,
+  "display_lean_back_degrees": 12.0,
+  "display_slab_mm": [
+    130.0,
+    22.0,
+    80.0
+  ],
+  "display_glass_mm": [
+    95.0,
+    3.0,
+    54.0
+  ],
+  "display_module_mm": [
+    120.0,
+    13.0,
+    70.0
+  ],
+  "display_corner_radius_mm": 6.0,
+  "camera_cable_mm": 75.0,
+  "camera_y_mm": 150.0,
+  "led_strip_length_mm": 100.0,
+  "console_electronics_mm": {
+    "esp32_s3_board": {
+      "size": [
+        57.0,
+        28.0,
+        15.0
+      ],
+      "at": [
+        -43.5,
+        184.0,
+        15.5
+      ]
+    },
+    "terminal_4p": {
+      "size": [
+        37.0,
+        18.0,
+        15.0
+      ],
+      "at": [
+        9.0,
+        182.0,
+        15.5
+      ]
+    },
+    "divider_board": {
+      "size": [
+        24.0,
+        20.0,
+        8.0
+      ],
+      "at": [
+        44.5,
+        182.0,
+        12.0
+      ]
+    },
+    "supply_capacitor": {
+      "size": [
+        13.0,
+        26.0,
+        13.0
+      ],
+      "at": [
+        70.0,
+        184.0,
+        14.5
+      ]
+    },
+    "servo_buck_xl4015": {
+      "size": [
+        66.0,
+        23.0,
+        18.0
+      ],
+      "at": [
+        -37.5,
+        222.0,
+        17.0
+      ]
+    },
+    "logic_buck_5v": {
+      "size": [
+        62.0,
+        21.0,
+        17.0
+      ],
+      "at": [
+        35.5,
+        222.0,
+        16.5
+      ]
+    },
+    "relay_module": {
+      "size": [
+        60.0,
+        26.0,
+        19.0
+      ],
+      "at": [
+        -13.0,
+        255.0,
+        17.5
+      ]
+    },
+    "led_switch_xy_mos": {
+      "size": [
+        34.0,
+        17.0,
+        12.0
+      ],
+      "at": [
+        39.0,
+        248.0,
+        14.0
+      ]
+    }
+  },
+  "bin_categories": [
+    "Nhựa",
+    "Giấy",
+    "Kim loại",
+    "Khác"
+  ],
+  "frame": {
+    "style": "vlo",
+    "vlo": {
+      "angle_leg_mm": 26.0,
+      "angle_thick_mm": 2.0,
+      "angle_material": "Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",
+      "board_mm": 15.0,
+      "board_material": "Formex (PVC foam) 15 mm",
+      "skin_mm": 8.0,
+      "skin_kind": "stainless",
+    "skin_gap_mm": 6.0,
+    "foot": {
+      "height_mm": 15.0,
+      "plate_mm": 3.0,
+      "pad_d_mm": 30.0,
+      "pad_h_mm": 5.0
+    },
+    "skin_material": "Stainless 304 sheet 1 mm, closed hems",
+      "tray_bottom_mm": 8.0,
+      "mount_material": "Aluminium composite 6 mm, offcut",
+      "mount_spacer_mm": 18.0,
+      "mid_rail_z_mm": 450.0,
+      "handle_slot_mm": [
+        120.0,
+        30.0
+      ],
+      "handle_below_top_mm": 40.0
+    },
+    "outer_mm": 680.0,
+    "profile_mm": 20.0,
+    "panel_mm": 1.0,
+    "panel_hem_mm": 10.0,
+    "panel_material": "Stainless 304 sheet 1 mm",
+    "panel_density_kg_m3": 7930.0,
+    "bend_k_factor": 0.44,
+    "top_skirt_mm": 15.0,
+    "drawer_stiffener_mm": {
+      "crown": 20.0,
+      "depth": 18.0,
+      "flange": 8.0
+    },
+    "floor_plate_mm": 4.0,
+    "seat_plate_mm": 6.0,
+    "center_wall_mm": 6.0,
+    "slide_thickness_mm": 12.7,
+    "slide_height_mm": 46.0,
+    "slide_length_mm": 600.0,
+    "slide_mount_mm": 6.0,
+    "drawer_wall_mm": 3.0,
+    "drawer_bottom_mm": 4.0,
+    "drawer_wall_height_mm": 60.0
+  },
+  "bin": {
+    "width_mm": 270.0,
+    "height_mm": 573.0,
+    "wall_mm": 3.0,
+    "center_offset_mm": 158.5,
+    "bag_band_width_mm": 10.0,
+    "bag_band_thickness_mm": 2.0,
+    "bag_band_below_rim_mm": 12.0,
+    "vent_hole_diameter_mm": 10.0,
+    "vent_hole_offset_mm": 80.0,
+    "sheet_material": "PP sheet 3 mm",
+    "rim_flange_mm": 15.0,
+    "glue_tab_mm": 15.0,
+    "bottom_flap_mm": 30.0,
+    "handle_slot_mm": [
+      90.0,
+      30.0
+    ],
+    "handle_below_rim_mm": 60.0,
+    "rivet_hole_mm": 4.1,
+    "seam_rivets": 8,
+    "stock_sheet_mm": [
+      1220.0,
+      2440.0
+    ]
+  },
+  "purchased_dimensions_status": "Provisional. Measure the four square bins and one HC-SR04 board (transducer pitch), then update bin and fill_sensor before cutting or printing anything.",
+  "yaw_hard_stop": {
+    "travel_degrees": 70.0,
+    "pin_radius_mm": 55.0,
+    "pin_r_mm": 4.0,
+    "lug_width_mm": 10.0,
+    "lug_outer_radius_mm": 62.0
+  },
+  "console_electronics_status": "Sizes from shop pages and maker drawings (01/11): ESP32-S3 CAM 57 x 28 (Freenove), XL4015 54 x 23 plus wiring at both ends, 5 V buck 59 x 21 x 17 with wires soldered at the ends, relay 50 x 26 plus its terminal side, the 12P terminal strip cut to 4 poles, the divider perfboard in its own slot. Measure the clones on arrival before printing the console."
+}

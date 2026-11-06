@@ -1,0 +1,151 @@
+component,quantity,process,material,variant,description
+head_deck,1,laser,Aluminium sheet 3 mm,E1,"Head deck ring carrying all head loads; rests on the seat board, 4 bolts into inserts in that board"
+orientation_pin,1,buy,"Hex bolt M6 x 30, fully threaded",E1,"Orientation pin: an M6 bolt screwed down into the tapped deck, its shank below the deck goes into the seat board's rear hole, so the head seats one way only"
+head_locating_ring,1,laser,"PP sheet 3 mm, rolled and riveted",E1,Spigot under the deck that centres the head in the body
+locating_ring_clip_1,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,"Angle clip holding the locating ring under the deck: one rivet into the ring, one into the deck"
+locating_ring_clip_2,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,"Angle clip holding the locating ring under the deck: one rivet into the ring, one into the deck"
+locating_ring_clip_3,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,"Angle clip holding the locating ring under the deck: one rivet into the ring, one into the deck"
+locating_ring_clip_4,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,"Angle clip holding the locating ring under the deck: one rivet into the ring, one into the deck"
+head_shell_ring,1,laser,"Aluminium composite 3 mm, rolled",E1,"Raised wall between deck and funnel collar, held by 4 angle clips at each edge"
+shell_ring_clip_low_1,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the deck
+shell_ring_clip_high_1,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the funnel collar
+shell_ring_clip_low_2,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the deck
+shell_ring_clip_high_2,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the funnel collar
+shell_ring_clip_low_3,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the deck
+shell_ring_clip_high_3,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the funnel collar
+shell_ring_clip_low_4,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the deck
+shell_ring_clip_high_4,1,cut,"Aluminium angle 15 x 15 x 2, 15 mm long",E1,Angle clip joining the shell ring to the funnel collar
+intake_funnel,1,laser,PP sheet 2 mm,E1,"Collar, cone and throat lip; cone, collar and lip band are cut flat and riveted"
+flexible_throat_skirt,1,laser,Soft PVC strip curtain 2 mm,E1,Flexible strip fringe under the throat lip
+hanger_1,1,cut,Aluminium square tube 30 x 30 x 2,E1,"Square aluminium tube hanging the joint beam from the deck; cut 371 mm, a threaded insert in each end"
+hanger_insert_top_1,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the deck
+hanger_insert_bottom_1,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the beam
+hanger_2,1,cut,Aluminium square tube 30 x 30 x 2,E1,"Square aluminium tube hanging the joint beam from the deck; cut 371 mm, a threaded insert in each end"
+hanger_insert_top_2,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the deck
+hanger_insert_bottom_2,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the beam
+hanger_3,1,cut,Aluminium square tube 30 x 30 x 2,E1,"Square aluminium tube hanging the joint beam from the deck; cut 371 mm, a threaded insert in each end"
+hanger_insert_top_3,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the deck
+hanger_insert_bottom_3,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the beam
+hanger_4,1,cut,Aluminium square tube 30 x 30 x 2,E1,"Square aluminium tube hanging the joint beam from the deck; cut 371 mm, a threaded insert in each end"
+hanger_insert_top_4,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the deck
+hanger_insert_bottom_4,1,buy,"Square tube insert 30 x 30 (2 mm wall), M6 thread",E1,Threaded insert pressed into the tube end; its flange sits between the tube and the beam
+joint_beam,1,cut,Aluminium rectangular tube 40 x 30 x 2,E1,"Cross beam: one tube along X (540 mm) and two half tubes along Y (250 mm) butted against it, bolted to the splice plate underneath; its arms lie above the bin dividers"
+beam_splice_plate,1,laser,Aluminium sheet 3 mm,E1,Splice plate under the beam crossing: the Y half tubes and the X tube bolt to it
+spider_foot_1,1,buy,"Rubber pad 30 x 30 x 5, self-adhesive",E1,Rubber foot under a beam arm: the head stands on the four feet when lifted out
+spider_foot_2,1,buy,"Rubber pad 30 x 30 x 5, self-adhesive",E1,Rubber foot under a beam arm: the head stands on the four feet when lifted out
+spider_foot_3,1,buy,"Rubber pad 30 x 30 x 5, self-adhesive",E1,Rubber foot under a beam arm: the head stands on the four feet when lifted out
+spider_foot_4,1,buy,"Rubber pad 30 x 30 x 5, self-adhesive",E1,Rubber foot under a beam arm: the head stands on the four feet when lifted out
+yaw_bracket,1,print,"PETG, 60 % infill (or bent aluminium 3 mm)",E1,"Fixed C-bracket on the beam hub: two arms for the yaw bearings, a shelf the MG90S hangs through and a foot bolted through the hub"
+yaw_bearing_lower,1,buy,"Flanged pillow block KFL08, bore 8 mm",E1,"Flanged bearing for the vertical yaw shaft, 2 M4 bolts through the bracket arm"
+yaw_bearing_upper,1,buy,"Flanged pillow block KFL08, bore 8 mm",E1,"Flanged bearing for the vertical yaw shaft, 2 M4 bolts through the bracket arm"
+yaw_servo,1,buy,"MG90S, metal gears",E1,MG90S turning the tilt stage plus or minus 45 degrees toward the bin
+yaw_servo_horn,1,buy,Comes with the servo,E1,"Cross horn that ships with the MG90S, screwed into the hub (sizes provisional, measure the horn)"
+yaw_hub,1,print,"PETG, 100 % infill",E1,"Hub from the yaw servo horn to the 8 mm shaft: horn screws below, M3 set screw and nut on the shaft flat"
+yaw_shaft,1,cut,Stainless 304 rod 8 mm,E1,"Vertical yaw shaft in the two flanged bearings, through the platform into the flange coupling; cut 93 mm, flats for the hub and coupling set screws"
+yaw_collar,1,buy,Shaft collar 8 mm,E1,Shaft collar resting on the upper bearing inner ring: carries the stage weight
+yaw_flange,1,buy,Rigid flange coupling 8 mm (32 x 13),E1,"Flange coupling on top of the platform: 2 set screws on the shaft flat, 4 M4 screws into the platform"
+yaw_platform,1,laser,Aluminium sheet 4 mm,E1,"Turning platform carrying the hinge posts, the tilt servo and the stop pads; holes for the shaft, coupling (M4 tapped), posts, servo bracket and stop pads"
+hinge_post_1,1,cut,Aluminium flat bar 60 x 10,E1,"Post from the platform to a hinge pillow block, tapped M4 at both ends; cut 61 mm"
+hinge_block_1,1,buy,"Pillow block KP08, bore 8 mm",E1,Horizontal pillow block carrying the hinge shaft; takes the plate load off the servo
+hinge_post_2,1,cut,Aluminium flat bar 60 x 10,E1,"Post from the platform to a hinge pillow block, tapped M4 at both ends; cut 61 mm"
+hinge_block_2,1,buy,"Pillow block KP08, bore 8 mm",E1,Horizontal pillow block carrying the hinge shaft; takes the plate load off the servo
+tilt_servo,1,buy,"MG996R, metal gears",E1,MG996R driving the hinge through the 2:1 belt; cable leaves the end near the output shaft
+tilt_servo_bracket,1,print,"PETG, 60 % infill",E1,Bracket the MG996R ears bolt to; vertical slots set the belt tension; 2 M4 countersunk screws from under the platform
+tilt_servo_horn,1,buy,"Aluminium disc horn 25T, Ø20",E1,"Aluminium 25T disc horn on the MG996R, 4 tapped M3 holes"
+tilt_pulley_adapter,1,print,"PETG, 100 % infill",E1,"Adapter from the MG996R horn to the 20T pulley: 4 M3 screws into the horn, the pulley's set screws on a boss flat 4 mm from its hub end"
+tilt_pulley_small,1,buy,"GT2 20T, 6 mm belt, 6 mm bore",E1,"GT2 20-tooth pulley, 16 mm long, hub toward the servo, on the printed adapter boss"
+tilt_belt,1,buy,GT2 closed loop 158 mm,E1,"GT2 closed belt, hinge axis"
+tilt_stop_pad_1,1,print,PETG block with a rubber bumper on top,E1,Stop pad: the plate lands on it at 47 degrees
+tilt_stop_pad_2,1,print,PETG block with a rubber bumper on top,E1,Stop pad: the plate lands on it at 47 degrees
+hinge_shaft,1,cut,Stainless 304 rod 8 mm,E1,"Hinge shaft 22 mm under the plate surface, turning in the two pillow blocks"
+hinge_collar_1,1,buy,Shaft collar 8 mm,E1,Shaft collar holding the hinge shaft in place
+hinge_collar_2,1,buy,Shaft collar 8 mm,E1,Shaft collar holding the hinge shaft in place
+plate_lug_1,1,print,"PETG, 60 % infill; M4 heat-set inserts for the plate screws",E1,"Lug under the plate, clamped to the hinge shaft by an M3 set screw on a flat"
+plate_lug_2,1,print,"PETG, 60 % infill; M4 heat-set inserts for the plate screws",E1,"Lug under the plate, clamped to the hinge shaft by an M3 set screw on a flat"
+tilt_pulley_large,1,buy,"GT2 40T, 6 mm belt, 8 mm bore (check: some are 5 mm)",E1,"GT2 40-tooth pulley, 17 mm long with two flanges, hub toward the plate centre, clamped to the hinge shaft"
+tipping_plate,1,laser,"Aluminium sheet 1.5 mm, matt grey powder coat",E1,320 mm tipping plate bolted to the two lugs; does not melt under a hot ember
+tilt_imu,1,buy,MPU-6050 (GY-521),E1,IMU under the plate: true tilt angle for jam detection and homing after a power cut
+motor_cable_yaw_servo,1,buy,"Servo extension 3 x 22 AWG, about 1 m",E1,"MG90S cable: console, rear hanger, beam top to the yaw servo; no moving joint"
+yaw_cable_channel,1,print,"PETG, 100 % infill at the stop lugs; rubber pads on the lug faces",E1,"Fixed rolling-loop channel on the upper bearing, with the two yaw stop lugs at +/-70 degrees"
+yaw_cable_drum,1,print,PETG,E1,"Drum under the platform, turning with it: the inner face of the rolling loop"
+yaw_stop_pin,1,buy,M4 steel bolt with an 8 mm sleeve,E1,Stop pin under the platform: hits a lug at the yaw limit even if the hub slips
+yaw_ribbon_loop,1,buy,"Flat ribbon cable 10 cores, 1.27 mm pitch, high-flex",E1,"10-core ribbon in the rolling loop (drawn at mid travel): 6 V x2, GND x2, PWM, GND, SDA, GND, SCL, 3.3 V"
+motor_cable_tilt_servo,1,buy,"Ribbon cable, same as the loop",E1,"MG996R and IMU cable, fixed part: console to the rolling-loop channel; becomes the ribbon at the wall"
+motor_cable_tilt_servo_stage,1,buy,"Same ribbon, split to the servo plug and the IMU lead",E1,"Cable on the turning platform: up through the platform, on the -x side of the servo, clear of the belt"
+cable_clip_stage,1,print,PETG clip with a cable tie,E1,Clip on the platform: strain relief where the ribbon leaves the loop
+fill_sensor_pod_1,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
+fill_sensor_arm_1,1,print,PETG,E1,Sensor arm from the throat lip
+fill_sensor_pod_2,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
+fill_sensor_arm_2,1,print,PETG,E1,Sensor arm from the throat lip
+fill_sensor_pod_3,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
+fill_sensor_arm_3,1,print,PETG,E1,Sensor arm from the throat lip
+fill_sensor_pod_4,1,print,PETG,E1,"HC-SR04 pod above one bin, face down, with a printed horn on each transducer"
+fill_sensor_arm_4,1,print,PETG,E1,Sensor arm from the throat lip
+display_console,1,print,"PETG, printed in 2 halves",E1,"Rear console, hollow shell: a 4.3 inch display slab leaning back on a low base; ESP32-S3 camera board, supplies, voltage dividers and wiring in the base, camera and LED strip under the chin, clear of any liquid in the funnel; leave the USB-C ports of both boards reachable"
+tft_screen,1,buy,"Guition JC4827W543, ESP32-S3 N4R8, IPS 480x272, UART on a 4-pin JST 1.25, board 120 x 70 x 13 mm (shop figures, measure)",E1,4.3 inch display: sorting status and fill levels; its own ESP32-S3 also reads the 4 fill sensors
+camera_window,1,buy,"OV2640, 120 degree lens, 75 mm 24-pin ribbon",E1,"OV2640 camera behind the chin window, 120 degree lens, on a 75 mm ribbon to the board in the base"
+led_strip,1,buy,"5 V white 2835 LED strip, 100 mm (cuts every 50 mm), 8 mm wide, in a 9 mm groove",E1,White LED strip under the chin lighting the plate evenly for recognition
+post_1,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Corner post, slotted angle, standing on a foot plate"
+foot_plate_1,1,bend,"Steel plate 3 mm, 26 x 26 with a 28 mm tab, M8 nut welded",E1,"Foot plate under a post: its tab is clamped by the bottom rail bolts, M8 nut welded underneath"
+foot_1,1,buy,"Levelling foot M8, pad 30 mm",E1,Levelling foot M8 under a post
+post_2,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Corner post, slotted angle, standing on a foot plate"
+foot_plate_2,1,bend,"Steel plate 3 mm, 26 x 26 with a 28 mm tab, M8 nut welded",E1,"Foot plate under a post: its tab is clamped by the bottom rail bolts, M8 nut welded underneath"
+foot_2,1,buy,"Levelling foot M8, pad 30 mm",E1,Levelling foot M8 under a post
+post_3,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Corner post, slotted angle, standing on a foot plate"
+foot_plate_3,1,bend,"Steel plate 3 mm, 26 x 26 with a 28 mm tab, M8 nut welded",E1,"Foot plate under a post: its tab is clamped by the bottom rail bolts, M8 nut welded underneath"
+foot_3,1,buy,"Levelling foot M8, pad 30 mm",E1,Levelling foot M8 under a post
+post_4,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Corner post, slotted angle, standing on a foot plate"
+foot_plate_4,1,bend,"Steel plate 3 mm, 26 x 26 with a 28 mm tab, M8 nut welded",E1,"Foot plate under a post: its tab is clamped by the bottom rail bolts, M8 nut welded underneath"
+foot_4,1,buy,"Levelling foot M8, pad 30 mm",E1,Levelling foot M8 under a post
+rail_bottom_xn,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Bottom rail, slotted angle bolted inside the posts; the floor board rests on it"
+rail_mid_xn,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Mid rail, slotted angle bolted inside the posts"
+rail_bottom_xp,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Bottom rail, slotted angle bolted inside the posts; the floor board rests on it"
+rail_mid_xp,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Mid rail, slotted angle bolted inside the posts"
+rail_bottom_yp,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Bottom rail, slotted angle bolted inside the posts; the floor board rests on it"
+rail_mid_yp,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Mid rail, slotted angle bolted inside the posts"
+rail_seat_xn,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Seat rail, slotted angle bolted inside the posts; the head seat board rests on it"
+rail_seat_xp,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Seat rail, slotted angle bolted inside the posts; the head seat board rests on it"
+rail_seat_yn,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Seat rail, slotted angle bolted inside the posts; the head seat board rests on it"
+rail_seat_yp,1,cut,"Slotted steel angle 3x3 (about 26 x 26 real) x 2 mm (sat V lo), painted",E1,"Seat rail, slotted angle bolted inside the posts; the head seat board rests on it"
+floor_plate,1,laser,Formex (PVC foam) 15 mm,E1,Floor board on the bottom rails; waterproof
+head_seat_plate,1,laser,Formex (PVC foam) 15 mm,E1,"Head seat board on the four seat rails; the rear hole takes the deck orientation pin, 4 M6 insert nuts take the deck bolts"
+side_panel_left,1,bend,Stainless 304 sheet 1 mm,E1,"Side skin, stainless with closed hems; covers the edges of the back and front panels; M4 screws with spacers into the angle holes"
+side_panel_right,1,bend,Stainless 304 sheet 1 mm,E1,"Side skin, stainless with closed hems; covers the edges of the back and front panels; M4 screws with spacers into the angle holes"
+back_panel,1,bend,Stainless 304 sheet 1 mm,E1,"Fixed back skin, stainless with closed hems: the bin can stand against a wall"
+head_panel_front,1,bend,Stainless 304 sheet 1 mm,E1,"Front panel around the head, stainless with closed hems"
+top_cover,1,bend,Stainless 304 sheet 1 mm,E1,Stainless top cover with the funnel opening; its skirt folds down over the skins
+center_wall,1,laser,"Aluminium composite 6 mm, offcut",E1,Centre wall carrying both inner slides
+slide_mount_left,1,laser,"Aluminium composite 6 mm, offcut",E1,Plate carrying the outer slide; bolted to the front and rear posts through 18 mm spacers
+drawer_left,1,laser,"Formex 8 mm floor, PP 3 mm walls screwed into its edges",E1,Drawer tray holding the front and the rear bin
+tray_corner_left_1,1,cut,"Aluminium angle 10 x 10 x 1.5, 50 mm long",E1,"Angle inside a rear tray corner, riveted to the back and the side wall"
+tray_corner_left_2,1,cut,"Aluminium angle 10 x 10 x 1.5, 50 mm long",E1,"Angle inside a rear tray corner, riveted to the back and the side wall"
+drawer_front_left,1,bend,Stainless 304 sheet 1 mm,E1,"Drawer front, stainless with closed hems, recessed pull slot 120 x 30 mm; two stiffeners keep the sheet flat"
+drawer_stiffener_left_1,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
+drawer_stiffener_left_2,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
+slide_left_inner,1,buy,"Ball-bearing drawer slide 600 mm, 3-section full extension, 46 x 12.7, 45 kg per pair (First Slide)",E1,Full-extension ball slide 600 mm
+slide_left_outer,1,buy,"Ball-bearing drawer slide 600 mm, 3-section full extension, 46 x 12.7, 45 kg per pair (First Slide)",E1,Full-extension ball slide 600 mm
+drawer_switch_left,1,buy,"Subminiature lever switch TIAIHUA 1 A 125 VAC, 13 x 6.8 x 6",E1,Microswitch the closed drawer presses; open drawer locks its two bins
+drawer_switch_bracket_left,1,print,PETG,E1,Printed L bracket on the floor board holding the drawer switch
+slide_mount_right,1,laser,"Aluminium composite 6 mm, offcut",E1,Plate carrying the outer slide; bolted to the front and rear posts through 18 mm spacers
+drawer_right,1,laser,"Formex 8 mm floor, PP 3 mm walls screwed into its edges",E1,Drawer tray holding the front and the rear bin
+tray_corner_right_1,1,cut,"Aluminium angle 10 x 10 x 1.5, 50 mm long",E1,"Angle inside a rear tray corner, riveted to the back and the side wall"
+tray_corner_right_2,1,cut,"Aluminium angle 10 x 10 x 1.5, 50 mm long",E1,"Angle inside a rear tray corner, riveted to the back and the side wall"
+drawer_front_right,1,bend,Stainless 304 sheet 1 mm,E1,"Drawer front, stainless with closed hems, recessed pull slot 120 x 30 mm; two stiffeners keep the sheet flat"
+drawer_stiffener_right_1,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
+drawer_stiffener_right_2,1,bend,"Stainless 304 sheet 1 mm, top-hat 20 x 18 with 8 mm flanges",E1,Top-hat stiffener bonded to the back of the drawer front with VHB tape; its foot bolts to the tray wall
+slide_right_inner,1,buy,"Ball-bearing drawer slide 600 mm, 3-section full extension, 46 x 12.7, 45 kg per pair (First Slide)",E1,Full-extension ball slide 600 mm
+slide_right_outer,1,buy,"Ball-bearing drawer slide 600 mm, 3-section full extension, 46 x 12.7, 45 kg per pair (First Slide)",E1,Full-extension ball slide 600 mm
+drawer_switch_right,1,buy,"Subminiature lever switch TIAIHUA 1 A 125 VAC, 13 x 6.8 x 6",E1,Microswitch the closed drawer presses; open drawer locks its two bins
+drawer_switch_bracket_right,1,print,PETG,E1,Printed L bracket on the floor board holding the drawer switch
+center_wall_clip_1,1,cut,"Aluminium angle 10 x 10 x 1.5, 30 mm long",E1,Angle at the foot of the centre wall
+center_wall_clip_2,1,cut,"Aluminium angle 10 x 10 x 1.5, 30 mm long",E1,Angle at the foot of the centre wall
+center_wall_clip_3,1,cut,"Aluminium angle 10 x 10 x 1.5, 30 mm long",E1,Angle at the foot of the centre wall
+center_wall_clip_4,1,cut,"Aluminium angle 10 x 10 x 1.5, 30 mm long",E1,Angle at the foot of the centre wall
+bin_1,1,laser,PP sheet 3 mm,E1,"Bin 1 (Nhựa), folded from sheet: wall strip and floor riveted, rim flange 15 mm, 2 hand slots, 4 vent holes of 10 mm"
+bin_bag_band_1,1,buy,"Flat elastic 10 mm, loop of about 92 cm",E1,Elastic band holding the bag folded over the bin rim
+bin_2,1,laser,PP sheet 3 mm,E1,"Bin 2 (Giấy), folded from sheet: wall strip and floor riveted, rim flange 15 mm, 2 hand slots, 4 vent holes of 10 mm"
+bin_bag_band_2,1,buy,"Flat elastic 10 mm, loop of about 92 cm",E1,Elastic band holding the bag folded over the bin rim
+bin_3,1,laser,PP sheet 3 mm,E1,"Bin 3 (Kim loại), folded from sheet: wall strip and floor riveted, rim flange 15 mm, 2 hand slots, 4 vent holes of 10 mm"
+bin_bag_band_3,1,buy,"Flat elastic 10 mm, loop of about 92 cm",E1,Elastic band holding the bag folded over the bin rim
+bin_4,1,laser,PP sheet 3 mm,E1,"Bin 4 (Khác), folded from sheet: wall strip and floor riveted, rim flange 15 mm, 2 hand slots, 4 vent holes of 10 mm"
+bin_bag_band_4,1,buy,"Flat elastic 10 mm, loop of about 92 cm",E1,Elastic band holding the bag folded over the bin rim
