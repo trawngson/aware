@@ -133,11 +133,11 @@ struct DeviceBenchmarkView: View {
                 Text(verbatim: String(format: "%d:%02d left", Int(remaining) / 60, Int(remaining) % 60))
                     .font(.title.monospacedDigit().bold())
                 Text(verbatim: String(
-                    format: "%d frames · %.1f FPS · %.1f ms median (last 10 s)",
+                    format: "%d frames, %.1f FPS, %.1f ms median (last 10 s)",
                     live.frames, live.recentFPS, live.recentMedianMs
                 ))
                 Text(verbatim: String(
-                    format: "%.0f MB · thermal %@ · battery %d%%",
+                    format: "%.0f MB, thermal %@, battery %d%%",
                     live.memoryMB, live.thermal, live.batteryPercent
                 ))
                 Text(verbatim: String(format: "Items detected in %.0f%% of frames", live.detectionPercent))

@@ -101,9 +101,9 @@ struct UserOptionsView: View {
                     .font(.system(size: 20, weight: .bold))
                     .tracking(-0.5)
                     .foregroundStyle(.white)
-                HStack(spacing: 4) {
+                HStack(spacing: 10) {
                     LeafAmount(value: Community.myPoints, size: 13, color: .white.opacity(0.8), leafColor: Theme.mint)
-                    Text("· Rank \(Community.myRank)")
+                    Text("Rank \(Community.myRank)")
                         .font(.system(size: 13))
                         .foregroundStyle(.white.opacity(0.8))
                 }

@@ -88,10 +88,10 @@ struct PostAuthorRow: View {
                 Text(post.author.name)
                     .font(.system(size: avatarSize > 40 ? 16 : 15, weight: .semibold))
                     .foregroundStyle(Theme.ink)
-                HStack(spacing: 4) {
+                HStack(spacing: 10) {
                     LeafAmount(value: post.author.id == Community.me.id ? Community.myPoints : post.author.points,
                                size: 12, color: Theme.ink.opacity(0.55))
-                    Text("· \(post.time)")
+                    Text(post.time)
                         .font(.system(size: 12))
                         .foregroundStyle(Theme.ink.opacity(0.55))
                 }

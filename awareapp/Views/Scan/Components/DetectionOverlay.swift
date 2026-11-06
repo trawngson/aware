@@ -51,7 +51,7 @@ struct DetectionOverlay: View {
                 .shadow(color: Theme.scanShade.opacity(0.35), radius: 8, y: 6)
                 .frame(width: rect.width, height: rect.height)
 
-            Text("\(LabelMappings.formatLabel(detection.label)) · \(Int((detection.confidence * 100).rounded()))%")
+            Text("\(LabelMappings.formatLabel(detection.label)) \(Int((detection.confidence * 100).rounded()))%")
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(.white)
                 .lineLimit(1)
