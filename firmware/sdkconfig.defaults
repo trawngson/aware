@@ -1,0 +1,26 @@
+# Settings for the IDF build. PlatformIO turns them into sdkconfig.<env>;
+# delete that file after changing this one so the change takes effect.
+
+# Arduino as an IDF component
+CONFIG_AUTOSTART_ARDUINO=y
+CONFIG_FREERTOS_HZ=1000
+# Arduino's NetworkClientSecure only compiles with the PSK key exchanges on
+CONFIG_MBEDTLS_PSK_MODES=y
+CONFIG_MBEDTLS_KEY_EXCHANGE_PSK=y
+
+# ESP32-S3 N16R8: 16 MB quad flash, 8 MB octal PSRAM, 240 MHz
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+
+# Upload speed. The prebuilt Arduino core lets only 5,760 bytes be in flight
+# on a TCP connection, about 25 KB/s at the 230 ms round trip to the server.
+# A 64 KB send buffer lets a whole photo be in flight at once.
+CONFIG_LWIP_TCP_SND_BUF_DEFAULT=65534
+CONFIG_LWIP_TCP_WND_DEFAULT=65534

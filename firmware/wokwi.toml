@@ -1,0 +1,8 @@
+# Wokwi simulator: build env:sim first (pio run -e sim), then start the
+# simulator from VS Code (F1 -> "Wokwi: Start Simulator").
+[wokwi]
+version = 1
+firmware = '.pio/build/sim/wokwi-flash.bin'
+elf = '.pio/build/sim/firmware.elf'
+# Lets scripts/viewer.py connect: viewer.py rfc2217://localhost:4000
+rfc2217ServerPort = 4000

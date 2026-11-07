@@ -1,0 +1,4 @@
+# The prebuilt Arduino core bundles the camera driver; as an IDF component it
+# comes from the component registry.
+dependencies:
+  espressif/esp32-camera: "2.1.8"
