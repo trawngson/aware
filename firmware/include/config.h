@@ -6,7 +6,7 @@
 
 #include "esp_camera.h"
 
-#define FIRMWARE_VERSION "mvp-0.2.1"
+#define FIRMWARE_VERSION "mvp-0.5.0"
 
 // Camera: ESP32-S3 N16R8 CAM boards with an OV2640 use the ESP32-S3-EYE
 // (Freenove) camera pins.
@@ -32,6 +32,10 @@ constexpr framesize_t FRAME_SIZE = FRAMESIZE_VGA;
 // 0-63, lower is better and bigger. Every byte crosses a slow upload link
 // (see server_link.h); "quality" changes it.
 constexpr int DEFAULT_JPEG_QUALITY = 12;
+// Room for one JPEG frame, in PSRAM, twice (two frame buffers). The camera
+// driver's default, 640 x 480 / 5 = 60 KB, is too small for a detailed or
+// dim (grainy) scene: frames that don't fit are dropped with "cam_hal: FB-OVF".
+constexpr size_t JPEG_BUFFER_BYTES = 160 * 1024;
 
 // Servo signal pin. GPIO 14 is free on these boards (not camera, PSRAM or USB).
 constexpr int SERVO_PIN = 14;
@@ -54,6 +58,13 @@ constexpr int DEFAULT_ANGLE_PAPER = 45;
 constexpr int DEFAULT_ANGLE_BOTTLES = 135;
 constexpr int DEFAULT_ANGLE_OTHER = 180;
 
+// RGB status LED (WS2812, status_led.h): blue while scanning, green when
+// sorted, red when held. GPIO 48 is the built-in RGB LED on ESP32-S3
+// DevKitC-1 style boards, N16R8 CAM boards included.
+constexpr uint8_t LED_PIN = 48;
+constexpr uint8_t LED_BRIGHTNESS = 40;     // of 255; full brightness is blinding
+constexpr uint32_t LED_RESULT_MS = 3000;   // how long green or red stays on
+
 // The BOOT button starts a scan once the board is running.
 constexpr int BUTTON_PIN = 0;
 constexpr uint32_t BUTTON_DEBOUNCE_MS = 50;
@@ -63,6 +74,10 @@ constexpr uint32_t BUTTON_DEBOUNCE_MS = 50;
 constexpr float DEFAULT_MIN_CONFIDENCE = 0.5f;
 
 constexpr uint32_t WIFI_CONNECT_TIMEOUT_MS = 15000;
+// Wi-Fi transmit power in dBm (2-21); "txpower" changes it, saved. 19.5 is
+// the chip's maximum. Some boards' power supply or antenna can't keep up at
+// full power, and their packets get through more often a little lower.
+constexpr float DEFAULT_WIFI_TX_DBM = 19.5f;
 constexpr int32_t HTTP_CONNECT_TIMEOUT_MS = 10000;
 constexpr int TLS_HANDSHAKE_TIMEOUT_S = 30;
 // The server may need a cold start after it has been idle.
@@ -73,6 +88,24 @@ constexpr uint32_t LINK_CHECK_INTERVAL_MS = 1000;
 constexpr uint32_t LINK_RETRY_MIN_MS = 2000;
 constexpr uint32_t LINK_RETRY_MAX_MS = 60000;
 constexpr size_t MAX_REPLY_BYTES = 16384;
+
+// Tasks (see main.cpp). Both stacks have room for a TLS handshake.
+constexpr uint32_t WORKER_TASK_STACK_BYTES = 16384;
+constexpr uint32_t LINK_TASK_STACK_BYTES = 12288;
+// Commands for the camera and servo ("scan", "snap", "servo", "angle") that
+// can wait while one runs.
+constexpr int WORK_QUEUE_LENGTH = 8;
+
+// Serial speed for the log, commands, photos and the live view. The USB chip
+// (CH343) and the ESP32-S3 both handle 2 Mbit/s; a 640 x 480 frame of about
+// 11 KB then takes about 75 ms, so the live view runs near 10 frames a second.
+// The chip's own boot messages stay at 115200, so a few garbled characters at
+// reset are normal. platformio.ini (monitor_speed) and scripts/viewer.py use
+// the same speed.
+constexpr uint32_t SERIAL_BAUD = 2000000;
+// The viewer sends a heartbeat every second while it shows the live view;
+// the board stops streaming this long after the last one.
+constexpr uint32_t LIVE_HOLD_MS = 3000;
 
 // Optional untracked include/local_settings.h (see local_settings.example.h)
 // supplies defaults that stay out of git, such as the server address.

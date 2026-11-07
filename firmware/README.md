@@ -13,8 +13,20 @@ when you press the board's **BOOT** button (or type `scan`), it:
 If anything fails (no Wi-Fi, no server, a bad reply), it **holds**: the servo
 stays home and the serial log says why.
 
-Not in the MVP: fill sensors, the IMU, the display, the LED, the drawer
-switches and relay, and the yaw-then-tilt pair of servos.
+The board's RGB LED shows where a scan is:
+
+| LED | Means |
+|---|---|
+| blue | an item was spotted (or BOOT, or `scan`): scanning |
+| green | sorted: the servo turned to a bin |
+| red | held: something failed and the servo stayed home |
+
+Green and red stay on for 3 s, then the LED goes dark. The LED is the
+WS2812 on GPIO 48, built into ESP32-S3 DevKitC-1 style boards; `LED_PIN`,
+`LED_BRIGHTNESS` and `LED_RESULT_MS` in `include/config.h` change it.
+
+Not in the MVP: fill sensors, the IMU, the display, the drawer switches and
+relay, and the yaw-then-tilt pair of servos.
 
 ## Automatic scans
 
@@ -95,10 +107,42 @@ and run it again. Then press **RST** to start the new firmware.
 To see the log and type commands:
 
 ```sh
-~/.platformio/penv/bin/pio device monitor -d firmware
+~/.platformio/penv/bin/pio device monitor -d firmware --no-reconnect
 ```
 
-Exit with Ctrl+C.
+Exit with Ctrl+C. `--no-reconnect` makes the monitor quit when the board is
+unplugged; without it, the monitor waits for the board to come back.
+
+Type `feed` to open the [viewer](#viewer)'s window from the monitor, with the
+live camera, the last scan and the scan's stage; the monitor keeps working
+beside it. `feed off` or closing the window stops it. Photos never print as
+text in the monitor (`monitor/filter_aware_feed.py` keeps them out); the
+window shows them.
+
+The board draws a prompt like zsh's robbyrussell theme and keeps it on the
+last line, with the log scrolling above it:
+
+```
+➜  aware-bin status
+```
+
+The arrow turns red after a command that failed. Up and Down go through the
+last 20 commands, Tab completes commands and the names after `angle` and
+`auto`, and Left/Right, Ctrl+A/E, Ctrl+W (delete a word), Ctrl+U (clear the
+line) and Ctrl+L (clear the screen) work as in a shell. `status` shows the
+bin at a glance, neofetch style.
+
+The serial speed is 2 Mbit/s (`SERIAL_BAUD` in `include/config.h`, and
+`monitor_speed` in `platformio.ini`), fast enough for the viewer's live view.
+The chip's own boot messages stay at 115200, so a few garbled characters at
+reset are normal.
+
+The log is color coded, here and in the [viewer](#viewer). Red means the
+board held (the servo stays home), a connection failed or the chip crashed;
+yellow is a warning. The steps of a scan: `[watch]` and `[camera]` cyan,
+`[scan]` green, `[route]` bold green, `[servo]` magenta, `[wifi]` and `[link]`
+blue, `[time]` grey. The rules are in `scripts/log_colors.py`;
+`NO_COLOR=1` turns the colors off.
 
 The routing rule lives in `include/routing.h` and has unit tests that run on
 the Mac, without the board:
@@ -122,10 +166,19 @@ reminder if the file is missing. A refused token shows as
 
 ## Viewer
 
-`scripts/viewer.py` opens a window with each photo the board sends: after
-every scan, with the server's boxes and the decision in the bottom-left
-corner, and after every `snap`. Use it in place of the monitor. It prints the
-same log, and lines typed in its terminal go to the board.
+`scripts/viewer.py` (or `feed` in the monitor) opens a window with the
+camera's live view on the left
+and the last scan on the right: its photo with the server's boxes and the
+decision (or the photo from the last `snap`). A bar along the bottom follows
+each scan like the LED: blue while scanning, green with the route when
+sorted, red with the reason when held. Use it in place of the monitor. It
+prints the same log, and lines typed in its terminal go to the board.
+
+The live view runs while the window is open: the viewer sends the board a
+heartbeat byte every second, and the board streams each camera frame over
+the USB cable, about 7–8 frames a second for 12 KB frames, until a few
+seconds after the window closes. It checks the plate for automatic scans on
+the same frames. During a scan the stream pauses, and the bar says so.
 
 One-time setup (Python packages in `firmware/.venv`, which git ignores):
 
@@ -134,21 +187,22 @@ python3 -m venv firmware/.venv
 firmware/.venv/bin/pip install pyserial pillow
 ```
 
-Close the monitor first (only one program can use the port), then:
+`feed` in the monitor opens the window without closing the monitor. To run
+the viewer on its own instead, close the monitor first (only one program can
+use the port), then:
 
 ```sh
 firmware/.venv/bin/python firmware/scripts/viewer.py
 ```
 
-It takes a `snap` when it starts. If more than one USB serial port is plugged
-in, name the board's: `viewer.py /dev/cu.usbserial-110`. Close the window to
-quit.
+If more than one USB serial port is plugged in, name the board's:
+`viewer.py /dev/cu.usbserial-110`. Close the window, press Ctrl+C in the
+terminal, or unplug the board to quit.
 
-The board sends each photo as text at 921,600 baud, about 0.45 s for 30 KB.
-It sends it while the servo holds at the bin, so sorting is no slower. With
-the simulator running, `viewer.py rfc2217://localhost:4000` connects to it.
-The simulator's photos are larger (up to about 120 KB), so there the servo
-holds about 2 s instead of 1 s.
+The board sends each photo as text at 2 Mbit/s, about 0.15 s for 30 KB. It
+sends a scan's photo while the servo holds at the bin, so sorting is no
+slower. With the simulator running, `viewer.py rfc2217://localhost:4000`
+connects to it. The simulator has no live camera, so only scan photos show.
 
 ## Simulator (no board needed)
 
@@ -214,8 +268,9 @@ connect
 status
 ```
 
-`status` should show `Camera: ready, PSRAM: yes, automatic scans: on`, the
-network as `connected`, and the server address. Then:
+`status` should show `Camera: 640x480, JPEG quality 12`, `Auto scan: on`,
+the network with its signal (`joining` for the first few seconds), and the
+server as `connected`. Then:
 
 0. `auto off`, so moving things around doesn't start scans while you set up.
 1. `servo 45`, `servo 135`, `servo 90`: the servo should follow.
@@ -256,9 +311,10 @@ bin, in milliseconds:
 | servo | the servo turning to the bin's angle |
 
 The board keeps one HTTPS connection to the server open between scans
-(`server_link.cpp`), opens it at start-up, and reopens it in the background
-when the server closes it, so a scan normally skips the TLS handshake. The
-log shows `[link]` lines when that happens.
+(`server_link.cpp`), opens it once Wi-Fi joins, and reopens it when the
+server closes it, so a scan normally skips the TLS handshake. A task of its
+own does this, so a slow or failed connection (40 s on weak Wi-Fi) doesn't
+hold up typed commands. The log shows `[link]` lines when that happens.
 
 The server closes a connection after 5 minutes without a request; the board
 then opens a new one in the background.
@@ -297,7 +353,7 @@ servo go at its own top speed).
 
 | Command | Does |
 |---|---|
-| `status` | settings and connection |
+| `status` | the bin at a glance: settings, connection, memory |
 | `ssid <name>`, `pass <password>`, `connect` | join Wi-Fi (2.4 GHz only); saved |
 | `server <url>` | detection server address; saved |
 | `conf <0.05-0.95>` | lowest confidence routed to a recycling liner; saved |
@@ -309,6 +365,17 @@ servo go at its own top speed).
 | `scan` | photo → server → servo, same as BOOT |
 | `auto on\|off` | [automatic scans](#automatic-scans); on after every restart |
 | `reboot` | restart |
+
+Commands work at any time, even during a scan or while the board is
+connecting to the server. The board runs three tasks (`main.cpp`): one
+reads what you type and runs the commands that only read or save settings
+at once; one owns the camera and servo; one keeps the server connection.
+`scan`, `snap`, `servo` and `angle` need the camera or servo, so while
+either is busy they wait their turn, up to 8 at a time, and a yellow
+`[busy]` line says so. A `scan` or BOOT press while a scan is running or
+waiting is skipped, so an item is never tipped twice. `connect` returns at
+once; a `[wifi]` line reports how joining went. A scan without Wi-Fi holds
+instead of joining first.
 
 ## Server contract
 

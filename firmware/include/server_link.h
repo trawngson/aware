@@ -3,8 +3,9 @@
 // Opening an HTTPS connection costs DNS, a TCP round trip, a two-round-trip
 // TLS 1.2 handshake and certificate checks done in software. From Hanoi to a
 // US server that is over 1 s per scan, so the link opens ahead of time,
-// stays open between scans, and reopens in the background when the server
-// closes it.
+// stays open between scans, and reopens when the server closes it. A task of
+// its own does the opening, so a slow or failed connection (it can take
+// 40 s on weak Wi-Fi) never holds up typed commands.
 #pragma once
 
 #include <Arduino.h>
@@ -24,20 +25,22 @@ struct LinkReply {
   LinkTiming timing;
 };
 
-// Sets the server address (https:// or http://); closes any open connection.
+// Starts the link task. Call in setup() before the other link functions.
+void linkBegin();
+
+// Checks the server address (https:// or http://). When it is good, the link
+// task closes any open connection and connects to the new server. Returns at
+// once; the [link] lines report the connection.
 bool linkSetServer(const String& url, String& error);
 
-// Opens the connection now if it is closed. Returns true when open.
-bool linkConnect();
+// Asks the link task to connect now instead of at its next retry, for
+// example when Wi-Fi has just joined.
+void linkConnectSoon();
 
-// Call from loop(): notices a connection the server closed and reopens it,
-// waiting longer after each failure.
-void linkMaintain();
+bool linkConfigured();  // a server address is set
+bool linkIsOpen();      // as of the link task's last check, at most 1 s ago
 
-bool linkIsOpen();
-void linkClose();
-
-// POSTs the body and reads the reply on the open connection, connecting
-// first if needed. A reused connection that turns out to be dead is
-// reopened once and the request sent again.
+// POSTs the body and reads the reply, connecting first if needed. A reused
+// connection that turns out to be dead is reopened once and the request sent
+// again. Waits while the link task is connecting, then uses that connection.
 LinkReply linkPost(const uint8_t* body, size_t length, const char* contentType);

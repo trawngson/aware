@@ -6,6 +6,7 @@
 #include <Arduino.h>
 
 #include "camera.h"
+#include "console.h"
 #include "sim_photos.h"
 
 namespace {
@@ -14,13 +15,15 @@ unsigned nextPhoto = 0;
 
 bool cameraBegin() {
   if (kSimPhotoCount == 0) {
-    Serial.println("[camera] simulator: no photos. Put JPEG, PNG or HEIC files in sim/photos and rebuild.");
+    say("[camera] simulator: no photos. Put JPEG, PNG or HEIC files in sim/photos and rebuild.\n");
     return false;
   }
-  Serial.printf("[camera] simulator: %u photos from sim/photos, sent in turn. Type  photos  to list them.\n",
+  say("[camera] simulator: %u photos from sim/photos, sent in turn. Type \"photos\" to list them.\n",
                 kSimPhotoCount);
   return true;
 }
+
+void cameraEnd() {}
 
 bool cameraTake(Photo& photo) {
   if (kSimPhotoCount == 0) return false;
@@ -37,15 +40,17 @@ bool cameraTake(Photo& photo) {
 
 void cameraRelease(Photo& photo) { photo = Photo(); }
 
-bool cameraThumbnail(uint8_t*) { return false; }
+bool cameraThumbnail(const Photo&, uint8_t*) { return false; }
+
+const char* cameraModel() { return "simulator"; }
 
 void cameraSetQuality(int) {
-  Serial.println("The simulator's photos are made at build time; quality applies on the board.");
+  say("The simulator's photos are made at build time; quality applies on the board.\n");
 }
 
 bool cameraListPhotos() {
   for (unsigned i = 0; i < kSimPhotoCount; ++i) {
-    Serial.printf("%s %u. %s (%ux%u, %u KB)\n", i == nextPhoto ? "next" : "    ", i + 1, kSimPhotos[i].name,
+    say("%s %u. %s (%ux%u, %u KB)\n", i == nextPhoto ? "next" : "    ", i + 1, kSimPhotos[i].name,
                   kSimPhotos[i].width, kSimPhotos[i].height, kSimPhotos[i].length / 1024);
   }
   return true;
@@ -53,11 +58,11 @@ bool cameraListPhotos() {
 
 bool cameraChoosePhoto(int number) {
   if (number < 1 || static_cast<unsigned>(number) > kSimPhotoCount) {
-    Serial.printf("Choose a photo from 1 to %u. Type  photos  to list them.\n", kSimPhotoCount);
+    say("Choose a photo from 1 to %u. Type \"photos\" to list them.\n", kSimPhotoCount);
     return false;
   }
   nextPhoto = static_cast<unsigned>(number - 1);
-  Serial.printf("Next scan sends %s\n", kSimPhotos[nextPhoto].name);
+  say("Next scan sends %s\n", kSimPhotos[nextPhoto].name);
   return true;
 }
 

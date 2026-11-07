@@ -3,27 +3,60 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 
+#include <atomic>
+
 #include "ca_certs.h"
 #include "config.h"
+#include "console.h"
 
 namespace {
 
-String host;
-String path = "/";
-uint16_t port = 443;
-bool https = true;
-bool configured = false;
+struct Target {
+  String host;
+  String path = "/";
+  uint16_t port = 443;
+  bool https = true;
+};
 
+// One task at a time uses the connection: the link task to keep it open, or
+// the worker to send a photo. Everything from here to the mutex is used only
+// by whoever holds it.
+Target target;
 WiFiClientSecure secureClient;
 WiFiClient plainClient;
-
 bool wasOpen = false;
 uint32_t openedAt = 0;
-uint32_t lastCheckAt = 0;
 uint32_t nextAttemptAt = 0;
 uint32_t retryDelayMs = LINK_RETRY_MIN_MS;
+SemaphoreHandle_t linkMutex = nullptr;
 
-WiFiClient& client() { return https ? static_cast<WiFiClient&>(secureClient) : plainClient; }
+// "server" stores the new address here; the mutex holder switches to it.
+SemaphoreHandle_t pendingMutex = nullptr;
+Target pendingTarget;
+bool hasPending = false;
+
+std::atomic<bool> configured{false};
+std::atomic<bool> linkOpen{false};
+std::atomic<bool> connectSoon{false};
+TaskHandle_t linkTaskHandle = nullptr;
+
+// Holds a FreeRTOS mutex until the end of the scope.
+class Hold {
+ public:
+  Hold(SemaphoreHandle_t mutex, TickType_t wait) : mutex_(mutex), held_(xSemaphoreTake(mutex, wait) == pdTRUE) {}
+  ~Hold() {
+    if (held_) xSemaphoreGive(mutex_);
+  }
+  Hold(const Hold&) = delete;
+  Hold& operator=(const Hold&) = delete;
+  bool held() const { return held_; }
+
+ private:
+  SemaphoreHandle_t mutex_;
+  bool held_;
+};
+
+WiFiClient& client() { return target.https ? static_cast<WiFiClient&>(secureClient) : plainClient; }
 
 bool timeIsUp(uint32_t deadline) { return static_cast<int32_t>(millis() - deadline) >= 0; }
 
@@ -32,15 +65,15 @@ void scheduleRetry() {
   retryDelayMs = min(retryDelayMs * 2, LINK_RETRY_MAX_MS);
 }
 
-bool parseUrl(const String& url, String& error) {
+bool parseUrl(const String& url, Target& out, String& error) {
   String rest;
   if (url.startsWith("https://")) {
-    https = true;
-    port = 443;
+    out.https = true;
+    out.port = 443;
     rest = url.substring(8);
   } else if (url.startsWith("http://")) {
-    https = false;
-    port = 80;
+    out.https = false;
+    out.port = 80;
     rest = url.substring(7);
   } else {
     error = "the address must start with https:// or http://";
@@ -48,7 +81,7 @@ bool parseUrl(const String& url, String& error) {
   }
   const int slash = rest.indexOf('/');
   String authority = slash < 0 ? rest : rest.substring(0, slash);
-  path = slash < 0 ? String("/") : rest.substring(slash);
+  out.path = slash < 0 ? String("/") : rest.substring(slash);
   const int colon = authority.indexOf(':');
   if (colon >= 0) {
     const long value = authority.substring(colon + 1).toInt();
@@ -56,45 +89,67 @@ bool parseUrl(const String& url, String& error) {
       error = "bad port";
       return false;
     }
-    port = static_cast<uint16_t>(value);
+    out.port = static_cast<uint16_t>(value);
     authority = authority.substring(0, colon);
   }
   if (authority.isEmpty()) {
     error = "no host name";
     return false;
   }
-  host = authority;
+  out.host = authority;
   return true;
+}
+
+// With linkMutex held: switches to the address "server" stored, if any.
+void applyPendingServer() {
+  Target next;
+  bool changed = false;
+  xSemaphoreTake(pendingMutex, portMAX_DELAY);
+  if (hasPending) {
+    next = pendingTarget;
+    hasPending = false;
+    changed = true;
+  }
+  xSemaphoreGive(pendingMutex);
+  if (!changed) return;
+  secureClient.stop();
+  plainClient.stop();
+  wasOpen = false;
+  linkOpen = false;
+  target = next;
+  nextAttemptAt = millis();
+  retryDelayMs = LINK_RETRY_MIN_MS;
 }
 
 bool openConnection(uint32_t& elapsedMs) {
   const uint32_t start = millis();
   IPAddress ip;
-  if (!WiFi.hostByName(host.c_str(), ip)) {
+  if (!WiFi.hostByName(target.host.c_str(), ip)) {
     elapsedMs = millis() - start;
-    Serial.printf("[link] could not look up %s\n", host.c_str());
+    say("[link] could not look up %s\n", target.host.c_str());
     return false;
   }
   const uint32_t dnsMs = millis() - start;
   bool ok;
-  if (https) {
+  if (target.https) {
     secureClient.setHandshakeTimeout(TLS_HANDSHAKE_TIMEOUT_S);
-    ok = secureClient.connect(ip, port, host.c_str(), kRootCaPem, nullptr, nullptr);
+    ok = secureClient.connect(ip, target.port, target.host.c_str(), kRootCaPem, nullptr, nullptr);
   } else {
-    ok = plainClient.connect(ip, port, HTTP_CONNECT_TIMEOUT_MS);
+    ok = plainClient.connect(ip, target.port, HTTP_CONNECT_TIMEOUT_MS);
   }
   elapsedMs = millis() - start;
   if (!ok) {
     char reason[96] = "";
-    if (https) secureClient.lastError(reason, sizeof(reason));
-    Serial.printf("[link] could not connect to %s after %u ms %s\n", host.c_str(), static_cast<unsigned>(elapsedMs),
-                  reason);
+    if (target.https) secureClient.lastError(reason, sizeof(reason));
+    say("[link] could not connect to %s after %u ms %s\n", target.host.c_str(), static_cast<unsigned>(elapsedMs),
+        reason);
     return false;
   }
-  Serial.printf("[link] connected to %s in %u ms (DNS %u ms, TCP%s %u ms)\n", host.c_str(),
-                static_cast<unsigned>(elapsedMs), static_cast<unsigned>(dnsMs), https ? " + TLS" : "",
-                static_cast<unsigned>(elapsedMs - dnsMs));
+  say("[link] connected to %s in %u ms (DNS %u ms, TCP%s %u ms)\n", target.host.c_str(),
+      static_cast<unsigned>(elapsedMs), static_cast<unsigned>(dnsMs), target.https ? " + TLS" : "",
+      static_cast<unsigned>(elapsedMs - dnsMs));
   wasOpen = true;
+  linkOpen = true;
   openedAt = millis();
   return true;
 }
@@ -167,8 +222,10 @@ enum class Outcome { Done, DeadBeforeReply, Failed };
 
 Outcome exchange(const uint8_t* body, size_t length, const char* contentType, LinkReply& reply) {
   WiFiClient& c = client();
-  String header = "POST " + path + " HTTP/1.1\r\nHost: " + host;
-  if ((https && port != 443) || (!https && port != 80)) header += ":" + String(port);
+  String header = "POST " + target.path + " HTTP/1.1\r\nHost: " + target.host;
+  if ((target.https && target.port != 443) || (!target.https && target.port != 80)) {
+    header += ":" + String(target.port);
+  }
   header += "\r\nUser-Agent: aware-bin/" FIRMWARE_VERSION "\r\nX-Bin-Token: " BIN_TOKEN "\r\nContent-Type: ";
   header += contentType;
   header += "\r\nContent-Length: " + String(length) + "\r\nConnection: keep-alive\r\n\r\n";
@@ -250,53 +307,76 @@ Outcome exchange(const uint8_t* body, size_t length, const char* contentType, Li
   return Outcome::Done;
 }
 
-}  // namespace
-
-bool linkSetServer(const String& url, String& error) {
-  linkClose();
-  configured = parseUrl(url, error);
-  nextAttemptAt = 0;
-  retryDelayMs = LINK_RETRY_MIN_MS;
-  return configured;
-}
-
-bool linkIsOpen() { return configured && client().connected(); }
-
-void linkClose() {
-  secureClient.stop();
-  plainClient.stop();
-  wasOpen = false;
-}
-
-bool linkConnect() {
-  if (!configured || WiFi.status() != WL_CONNECTED) return false;
-  if (client().connected()) return true;
-  uint32_t ms = 0;
-  if (openConnection(ms)) {
+// Notices a connection the server closed and reopens it, waiting longer
+// after each failure. Skips the check while a scan is using the connection.
+void maintain() {
+  Hold hold(linkMutex, 0);
+  if (!hold.held()) return;
+  applyPendingServer();
+  if (connectSoon.exchange(false)) {
+    nextAttemptAt = millis();
     retryDelayMs = LINK_RETRY_MIN_MS;
-    return true;
   }
-  scheduleRetry();
-  return false;
-}
-
-void linkMaintain() {
-  if (!configured || WiFi.status() != WL_CONNECTED) return;
-  const uint32_t now = millis();
-  if (now - lastCheckAt < LINK_CHECK_INTERVAL_MS) return;
-  lastCheckAt = now;
-  if (client().connected()) return;
+  if (!configured) return;
+  const bool connected = client().connected();
+  linkOpen = connected;
+  if (connected || WiFi.status() != WL_CONNECTED) return;
   if (wasOpen) {
-    Serial.printf("[link] the server closed the connection after %u s; reopening\n",
-                  static_cast<unsigned>((now - openedAt) / 1000));
+    say("[link] the server closed the connection after %u s; reopening\n",
+        static_cast<unsigned>((millis() - openedAt) / 1000));
     wasOpen = false;
   }
   if (!timeIsUp(nextAttemptAt)) return;
-  linkConnect();
+  uint32_t ms = 0;
+  if (openConnection(ms)) {
+    retryDelayMs = LINK_RETRY_MIN_MS;
+  } else {
+    scheduleRetry();
+  }
 }
+
+void linkTask(void*) {
+  for (;;) {
+    maintain();
+    ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(LINK_CHECK_INTERVAL_MS));  // linkConnectSoon wakes it early
+  }
+}
+
+}  // namespace
+
+void linkBegin() {
+  if (linkTaskHandle) return;
+  linkMutex = xSemaphoreCreateMutex();
+  pendingMutex = xSemaphoreCreateMutex();
+  xTaskCreatePinnedToCore(linkTask, "bin-link", LINK_TASK_STACK_BYTES, nullptr, 1, &linkTaskHandle, xPortGetCoreID());
+}
+
+bool linkSetServer(const String& url, String& error) {
+  linkBegin();  // in case setup() changes order: the mutexes must exist
+  Target next;
+  if (!parseUrl(url, next, error)) return false;
+  xSemaphoreTake(pendingMutex, portMAX_DELAY);
+  pendingTarget = next;
+  hasPending = true;
+  xSemaphoreGive(pendingMutex);
+  configured = true;
+  linkConnectSoon();
+  return true;
+}
+
+void linkConnectSoon() {
+  connectSoon = true;
+  if (linkTaskHandle) xTaskNotifyGive(linkTaskHandle);
+}
+
+bool linkConfigured() { return configured; }
+
+bool linkIsOpen() { return configured && linkOpen; }
 
 LinkReply linkPost(const uint8_t* body, size_t length, const char* contentType) {
   LinkReply reply;
+  Hold hold(linkMutex, portMAX_DELAY);
+  applyPendingServer();
   if (!configured) {
     reply.error = "no server set";
     return reply;
@@ -309,6 +389,7 @@ LinkReply linkPost(const uint8_t* body, size_t length, const char* contentType) 
       uint32_t ms = 0;
       if (!openConnection(ms)) {
         reply.error = "could not connect";
+        linkOpen = false;
         scheduleRetry();
         return reply;
       }
@@ -317,12 +398,14 @@ LinkReply linkPost(const uint8_t* body, size_t length, const char* contentType) 
     const Outcome outcome = exchange(body, length, contentType, reply);
     if (outcome == Outcome::Done) {
       retryDelayMs = LINK_RETRY_MIN_MS;
+      linkOpen = client().connected();
       return reply;
     }
     client().stop();
     wasOpen = false;
+    linkOpen = false;
     if (outcome == Outcome::DeadBeforeReply && reused && attempt == 0) {
-      Serial.println("[link] the kept-open connection was dead; reconnecting and sending again");
+      say("[link] the kept-open connection was dead; reconnecting and sending again\n");
       continue;
     }
     return reply;

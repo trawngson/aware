@@ -5,6 +5,7 @@
 #include <Arduino.h>
 
 #include "camera.h"
+#include "console.h"
 #include "config.h"
 #include "esp_camera.h"
 #include "img_converters.h"
@@ -37,20 +38,23 @@ bool cameraBegin() {
   if (psramFound()) {
     c.fb_location = CAMERA_FB_IN_PSRAM;
     c.fb_count = 2;
+    c.jpeg_buffer_size = JPEG_BUFFER_BYTES;
   } else {
-    Serial.println("[camera] no PSRAM found: is this an N16R8 board? Falling back to 320x240.");
+    say("[camera] no PSRAM found: is this an N16R8 board? Falling back to 320x240.\n");
     c.fb_location = CAMERA_FB_IN_DRAM;
     c.fb_count = 1;
     c.frame_size = FRAMESIZE_QVGA;
   }
   const esp_err_t err = esp_camera_init(&c);
   if (err != ESP_OK) {
-    Serial.printf("[camera] start failed (0x%x). Check the ribbon cable and the camera pins in config.h.\n", err);
+    say("[camera] start failed (0x%x). Check the ribbon cable and the camera pins in config.h.\n", err);
     return false;
   }
-  Serial.println("[camera] ready");
+  say("[camera] ready\n");
   return true;
 }
+
+void cameraEnd() { esp_camera_deinit(); }
 
 // CAMERA_GRAB_LATEST hands back the newest finished frame, at most one frame
 // old, so no frame is thrown away first.
@@ -72,13 +76,10 @@ void cameraRelease(Photo& photo) {
 }
 
 // Decodes the 640 x 480 JPEG at 1/8 size, then turns each pixel grey.
-bool cameraThumbnail(uint8_t* grey) {
+bool cameraThumbnail(const Photo& photo, uint8_t* grey) {
   static uint16_t rgb[THUMB_PIXELS];
-  camera_fb_t* fb = esp_camera_fb_get();
-  if (!fb) return false;
-  const bool ok = fb->width == 640 && fb->height == 480 &&
-                  jpg2rgb565(fb->buf, fb->len, reinterpret_cast<uint8_t*>(rgb), JPG_SCALE_8X);
-  esp_camera_fb_return(fb);
+  const bool ok = photo.width == 640 && photo.height == 480 &&
+                  jpg2rgb565(photo.data, photo.length, reinterpret_cast<uint8_t*>(rgb), JPG_SCALE_8X);
   if (!ok) return false;
   for (int i = 0; i < THUMB_PIXELS; ++i) {
     const int r = (rgb[i] >> 11) << 3, g = ((rgb[i] >> 5) & 0x3F) << 2, b = (rgb[i] & 0x1F) << 3;
@@ -92,8 +93,14 @@ void cameraSetQuality(int quality) {
   if (sensor) sensor->set_quality(sensor, quality);
 }
 
+const char* cameraModel() {
+  sensor_t* sensor = esp_camera_sensor_get();
+  const camera_sensor_info_t* info = sensor ? esp_camera_sensor_get_info(&sensor->id) : nullptr;
+  return info ? info->name : "unknown camera";
+}
+
 bool cameraListPhotos() {
-  Serial.println("Photo files exist only in the simulator build.");
+  say("Photo files exist only in the simulator build.\n");
   return false;
 }
 
