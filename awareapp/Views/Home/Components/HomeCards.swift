@@ -257,9 +257,9 @@ struct RecentActivityCard: View {
 
     // Points follow the reward policy: 20 for a sorted recyclable.
     private let activities = [
-        Activity(icon: "waterbottle.fill", tint: Theme.green, title: "Plastic Bottle", detail: "Recycled · 2m ago", points: RecyclingPolicy.recyclablePoints),
-        Activity(icon: "shippingbox.fill", tint: Theme.amber, title: "Cardboard Box", detail: "Recycled · 1h ago", points: RecyclingPolicy.recyclablePoints),
-        Activity(icon: "trophy.fill", tint: Theme.teal, title: "Weekly Goal", detail: "Achieved · 3h ago", points: 100),
+        Activity(icon: "waterbottle.fill", tint: Theme.green, title: "Plastic Bottle", detail: "Recycled 2m ago", points: RecyclingPolicy.recyclablePoints),
+        Activity(icon: "shippingbox.fill", tint: Theme.amber, title: "Cardboard Box", detail: "Recycled 1h ago", points: RecyclingPolicy.recyclablePoints),
+        Activity(icon: "trophy.fill", tint: Theme.teal, title: "Weekly Goal", detail: "Achieved 3h ago", points: 100),
     ]
 
     var body: some View {
@@ -310,7 +310,7 @@ struct CommunityImpactCard: View {
                             .overlay(Circle().strokeBorder(.white.opacity(0.85), lineWidth: 1.5))
                     }
                 }
-                Text("\(AwareFormat.grouped(1_247)) recyclers · \(2.4.formatted()) tons together")
+                Text("\(AwareFormat.grouped(1_247)) recyclers, \(2.4.formatted()) tons together")
                     .font(.system(size: 13))
                     .foregroundStyle(.white.opacity(0.88))
                     .lineLimit(1)

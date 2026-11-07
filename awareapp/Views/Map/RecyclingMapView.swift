@@ -164,7 +164,7 @@ struct RecyclingMapView: View {
                         .foregroundStyle(Theme.ink)
                     HStack(spacing: 5) {
                         MemberAvatar(member: spot.author, size: 16)
-                        Text("\(spot.author.name) · \(RecyclingMapData.distanceText(to: spot.coordinate)) · \(spot.age)")
+                        Text("\(spot.author.name), \(RecyclingMapData.distanceText(to: spot.coordinate)), \(spot.age)")
                             .font(.system(size: 12))
                             .foregroundStyle(Theme.ink.opacity(0.62))
                             .lineLimit(1)
