@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "author": "AWARE",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": { "flashSize": "16", "psramSize": "8", "psramType": "octal" }
+    },
+    {
+      "type": "wokwi-servo",
+      "id": "servo",
+      "top": -40,
+      "left": 230,
+      "attrs": { "horn": "single" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "scan",
+      "top": 250,
+      "left": 230,
+      "attrs": { "color": "green", "label": "BOOT (scan)" }
+    }
+  ],
+  "connections": [
+    ["esp:TX", "$serialMonitor:RX", "", []],
+    ["esp:RX", "$serialMonitor:TX", "", []],
+    ["servo:PWM", "esp:14", "orange", []],
+    ["servo:V+", "esp:5V", "red", []],
+    ["servo:GND", "esp:GND.1", "black", []],
+    ["scan:1.l", "esp:0", "green", []],
+    ["scan:2.l", "esp:GND.2", "black", []]
+  ],
+  "serialMonitor": { "display": "terminal", "convertEol": true },
+  "dependencies": {}
+}
