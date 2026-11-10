@@ -48,7 +48,7 @@ void consoleSetHeartbeat(void (*handler)());
 // Holds the console: other tasks wait to print until it ends. The outermost
 // lock clears the prompt line first and draws the prompt again at the end.
 // A quiet lock leaves the prompt line as it is: for photos, which the Mac
-// takes out of the terminal before they show (see sendPhoto in main.cpp), so
+// takes out of the terminal before they show (see sendPhoto in scan.h), so
 // the live view's frames don't make the prompt flash.
 class ConsoleLock {
  public:

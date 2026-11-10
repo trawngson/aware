@@ -1,6 +1,6 @@
-# The native env exists only to run the routing tests on the Mac. Building it
-# compiles src/ with the Mac's compiler, which has no Arduino.h, so stop early
-# with a clear message instead.
+# The native env exists only to run the unit tests (routing, LLM replies) on
+# the Mac. Building it compiles src/ with the Mac's compiler, which has no
+# Arduino.h, so stop early with a clear message instead.
 Import("env")  # noqa: F821  (provided by PlatformIO)
 
 if (
@@ -9,10 +9,10 @@ if (
     and not env.IsCleanTarget()  # noqa: F821
 ):
     print(
-        "\nThe native env only runs the routing tests; it can't build the "
+        "\nThe native env only runs the unit tests; it can't build the "
         "firmware.\n"
         "  Board firmware:     esp32s3cam → General → Build\n"
         "  Wokwi simulator:    sim → General → Build\n"
-        "  Routing tests:      native → Advanced → Test\n"
+        "  Unit tests:         native → Advanced → Test\n"
     )
     env.Exit(1)  # noqa: F821

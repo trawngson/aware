@@ -6,7 +6,8 @@ lands on the plate and stops moving ([automatic scans](#automatic-scans)), or
 when you press the board's **BOOT** button (or type `scan`), it:
 
 1. takes a 640 × 480 photo of the plate,
-2. sends it to the detection server over HTTPS,
+2. sends it to the detection server over HTTPS (or, in [LLM mode](#llm-mode),
+   straight to an OpenAI model),
 3. routes the detections with routing-v1 (below),
 4. turns the servo to that stream's angle, holds it for 1 s, and returns home.
 
@@ -349,6 +350,104 @@ BIN_TOKEN=<token> python3 scripts/measure_latency.py sim/photos/*.jpg
 `speed` sets the servo's speed in degrees a second (default 300; 0 lets the
 servo go at its own top speed).
 
+## LLM mode
+
+`mode llm` sends each photo from the board straight to an OpenAI model
+(GPT-6-Luna by default) instead of to the detection server. The model lists
+the items it sees, and routing-v1 routes them as it routes the server's
+boxes. `mode yolo` switches back. The mode is saved.
+
+The board talks to the ChatGPT Codex backend
+(`chatgpt.com/backend-api/codex/responses`), the server OpenAI's Codex CLI
+uses, with a ChatGPT sign-in of its own, so it needs no OpenAI API key. This
+is not a published API: OpenAI can change or block it at any time, and a
+ChatGPT plan's terms may not cover this use. Use it for tests.
+
+### Sign in
+
+Once, with the board on Wi-Fi:
+
+```
+llm login
+```
+
+The board prints a code. Open https://auth.openai.com/codex/device on a phone
+or the Mac, sign in to ChatGPT and enter the code within 15 minutes. `status`
+then shows `ChatGPT: signed in as <email>, token good for 9 days`. If the
+sign-in fails at once, device-code sign-in may need turning on in ChatGPT's
+security settings (as `codex login --device-auth` may need).
+
+The board saves the tokens and renews them a day before they run out (they
+last 10 days), in the background, so a scan never waits for the sign-in. It
+needs the time for that, which it gets from the internet once Wi-Fi joins.
+`llm logout` forgets the sign-in.
+
+The board signs in on its own rather than taking a copy of the Mac's Codex
+sign-in: each renewal replaces the renewal token, so two programs sharing
+one sign-in would log each other out. Anyone with the board can read the
+tokens from its flash, so sign out (`llm logout`) before you lend it.
+
+### What changes in LLM mode
+
+Expected log:
+
+```
+[scan] start
+[scan] photo 640x480, 23 KB
+[scan] asking gpt-6-luna
+[scan] gpt-6-luna saw plastic_bottle
+[route] plastic_bottles, liner 2: every item goes to plastic_bottles
+```
+
+- There are no boxes, so the viewer shows the photo and the decision only.
+- `conf` doesn't apply: the model gives no confidence.
+- The model may name an item with no v4 class (`drink_carton`, `can`,
+  `hazard`, `other`, ...). The plate then goes to other.
+- The board holds when no answer comes within 15 s (`LLM_TIMEOUT_MS`), when
+  ChatGPT refuses the sign-in (401: it renews the token; scan again), and at
+  the plan's usage limit (429).
+- `llm model <name>` picks another model, for example `gpt-6-sol`.
+
+The question the model gets is in `include/llm_prompt.h`: the 7 v4 classes
+plus 11 labels for common items with no class (drink cartons, food waste,
+foam boxes, cans, straws, chopsticks, pens, masks, glass, hazards such as
+batteries, and other). Those 11 all send the plate to other, as an item with
+no class always has. The model, its reasoning effort (`low`) and the image
+detail (`high`) are in `include/config.h`. The board sends the photo as base64 inside the JSON
+request, and the reply streams 15–25 KB of events, from which the board
+takes the answer.
+
+### Speed
+
+From a Mac in Vietnam on 2026-11-07, the answer took 1.3–4.8 s (median about
+1.8 s) over the 11 simulator photos sent twice, against about 0.4 s for the
+detection server. Most of it is the model's server: usually 0.6–1.6 s before
+the first byte comes back, then 0.5–1 s for the answer. 20 of the 22 went to
+the right stream; both misses were photo 10, where the model took the small
+paper cup among four bottles for a bottle, so a mixed plate went to
+`plastic_bottles` (in an earlier run it got the same photo right 3 times out
+of 3). The simulator photos are from the test split, so don't tune the prompt
+on them; use bin photos. These did not make it faster:
+OpenAI's priority tier, a WebSocket instead of HTTPS, HTTP/2, a 320 × 240
+photo, and dropping the JSON schema. With the 18-label prompt, reasoning
+`low` and `none` both routed all 22 right, at a median of 1.6 s and 1.8 s
+(`llm_latency.py --effort none` compares them).
+
+To time it from the Mac with the board's exact request (it uses the Mac's
+own Codex sign-in in `~/.codex/auth.json`, read only):
+
+```sh
+cd firmware
+python3 scripts/llm_latency.py --rounds 2 sim/photos/*.jpg
+```
+
+It prints each photo's time, the model's items and the stream they route
+to, checked against `sim/photos/sources.json`.
+
+Not yet: saving the photo with the model's labels and boxes as training
+data, and a mode that asks the model only when the detection server is
+unsure.
+
 ## Commands
 
 | Command | Does |
@@ -356,7 +455,11 @@ servo go at its own top speed).
 | `status` | the bin at a glance: settings, connection, memory |
 | `ssid <name>`, `pass <password>`, `connect` | join Wi-Fi (2.4 GHz only); saved |
 | `server <url>` | detection server address; saved |
-| `conf <0.05-0.95>` | lowest confidence routed to a recycling liner; saved |
+| `mode [yolo\|llm]` | who names the items: the detection server (yolo) or an LLM ([LLM mode](#llm-mode)); saved |
+| `llm login`, `llm logout` | sign the board in to ChatGPT for LLM mode, or forget the sign-in |
+| `llm model <name>` | the model LLM mode asks (default `gpt-6-luna`); saved |
+| `llm` | the ChatGPT sign-in and the model |
+| `conf <0.05-0.95>` | lowest confidence routed to a recycling liner (yolo mode); saved |
 | `speed <0-1000>` | servo speed in degrees a second, 0 for its top speed; saved (default 300) |
 | `quality <4-63>` | camera JPEG quality, lower is sharper and bigger; saved (default 12) |
 | `servo <0-180>` | turn the servo now |
@@ -367,9 +470,10 @@ servo go at its own top speed).
 | `reboot` | restart |
 
 Commands work at any time, even during a scan or while the board is
-connecting to the server. The board runs three tasks (`main.cpp`): one
+connecting to the server. The board runs four tasks (`main.cpp`): one
 reads what you type and runs the commands that only read or save settings
-at once; one owns the camera and servo; one keeps the server connection.
+at once; one owns the camera and servo; one keeps the server connection;
+one signs in to ChatGPT and renews the sign-in (`llm.cpp`).
 `scan`, `snap`, `servo` and `angle` need the camera or servo, so while
 either is busy they wait their turn, up to 8 at a time, and a yellow
 `[busy]` line says so. A `scan` or BOOT press while a scan is running or
@@ -379,8 +483,9 @@ instead of joining first.
 
 ## Server contract
 
-`POST` the raw JPEG as the body with `Content-Type: image/jpeg` and the bin
-token in `X-Bin-Token`. The reply:
+In yolo mode, `POST` the raw JPEG as the body with `Content-Type: image/jpeg`
+and the bin token in `X-Bin-Token`. ([LLM mode](#llm-mode) doesn't use this
+server.) The reply:
 
 ```json
 {"count": 1, "objects": [{"label": "plastic_bottle", "conf": 0.91, "box": [207, 108, 428, 480]}], "image_size": [640, 480]}

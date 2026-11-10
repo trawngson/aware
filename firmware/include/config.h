@@ -6,7 +6,7 @@
 
 #include "esp_camera.h"
 
-#define FIRMWARE_VERSION "mvp-0.5.0"
+#define FIRMWARE_VERSION "mvp-0.6.0"
 
 // Camera: ESP32-S3 N16R8 CAM boards with an OV2640 use the ESP32-S3-EYE
 // (Freenove) camera pins.
@@ -138,6 +138,33 @@ constexpr uint32_t LIVE_HOLD_MS = 3000;
 #define LOCAL_WIFI_SSID "Wokwi-GUEST"
 #define LOCAL_WIFI_PASS ""
 #endif
+
+// LLM mode ("mode llm"; README, LLM mode): the board sends the photo straight
+// to an OpenAI model through the ChatGPT sign-in that Codex uses ("llm login"),
+// instead of to the detection server. The question it asks is in llm_prompt.h.
+#define LLM_URL "https://chatgpt.com/backend-api/codex/responses"
+// "llm model" changes it, saved.
+#define LLM_DEFAULT_MODEL "gpt-6-luna"
+// With the 18-label prompt (2026-11-07, scripts/llm_latency.py, sim/photos
+// twice) "low" and "none" both sorted all 22 right; "low" took a median of
+// 1.6 s (slowest 3.3 s), "none" 1.8 s (slowest 2.5 s).
+#define LLM_REASONING_EFFORT "low"
+// "low" shrinks the photo to 512 px before the model sees it, and then small
+// items get mixed up (a paper cup among bottles); "high" was no slower.
+#define LLM_IMAGE_DETAIL "high"
+// The answer usually comes in 1-2 s; a stuck request holds after this.
+constexpr uint32_t LLM_TIMEOUT_MS = 15000;
+// The reply streams 15-25 KB of events; the answer is one of them.
+constexpr size_t LLM_MAX_REPLY_BYTES = 65536;
+// Sign-in: the device-code flow and client ID of OpenAI's Codex CLI.
+#define OPENAI_AUTH_HOST "auth.openai.com"
+#define CODEX_CLIENT_ID "app_EMoamEEZ73f0CkXaXp7hrann"
+// Access tokens last 10 days; the board renews its own this long before
+// they run out, in the background.
+constexpr uint32_t LLM_REFRESH_AHEAD_S = 24 * 3600;
+constexpr uint32_t LLM_LOGIN_TIMEOUT_MS = 15 * 60 * 1000;  // to type the code
+constexpr uint32_t LLM_AUTH_CHECK_MS = 60000;              // how often to check the token
+constexpr uint32_t LLM_AUTH_TASK_STACK_BYTES = 16384;      // TLS and two tokens' JSON
 
 // Detections beyond this many send the plate to other.
 constexpr size_t MAX_DETECTIONS = 32;

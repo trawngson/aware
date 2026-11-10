@@ -24,6 +24,10 @@ RULES = (
     ("[wifi] could not", RED),
     ("[camera] start failed", RED),
     ("[servo] could not", RED),
+    ("[llm] could not", RED),
+    ("[llm] the sign-in failed", RED),
+    ("[llm] ChatGPT ended", RED),
+    ("[llm] no Wi-Fi", RED),
     ("Bad server address", RED),
     ("Camera: NOT ready", RED),
     ("Guru Meditation", RED),
@@ -40,6 +44,8 @@ RULES = (
     ("[camera] simulator: no photos", YELLOW),
     ("[viewer] ", YELLOW),
     ("[busy] ", YELLOW),  # a command waits for the camera or servo, or was skipped
+    ("[llm] nobody entered", YELLOW),
+    ("[llm] sign-in stopped", YELLOW),
     ("Usage:", YELLOW),
     ("Unknown command", YELLOW),
     ("W (", YELLOW),
@@ -53,6 +59,8 @@ RULES = (
     ("[servo] ", MAGENTA),
     ("[wifi] ", BLUE),
     ("[link] ", BLUE),
+    ("[llm] To sign", BOLD),  # the sign-in code to type
+    ("[llm] ", BLUE),
     ("[time] ", GREY),
     # Background
     ("I (", GREY),

@@ -100,6 +100,21 @@ bool parseUrl(const String& url, Target& out, String& error) {
   return true;
 }
 
+bool sameTarget(const Target& a, const Target& b) {
+  return a.host == b.host && a.path == b.path && a.port == b.port && a.https == b.https;
+}
+
+// With linkMutex held: closes the connection and moves to another server.
+void switchTo(const Target& next) {
+  secureClient.stop();
+  plainClient.stop();
+  wasOpen = false;
+  linkOpen = false;
+  target = next;
+  nextAttemptAt = millis();
+  retryDelayMs = LINK_RETRY_MIN_MS;
+}
+
 // With linkMutex held: switches to the address "server" stored, if any.
 void applyPendingServer() {
   Target next;
@@ -111,14 +126,7 @@ void applyPendingServer() {
     changed = true;
   }
   xSemaphoreGive(pendingMutex);
-  if (!changed) return;
-  secureClient.stop();
-  plainClient.stop();
-  wasOpen = false;
-  linkOpen = false;
-  target = next;
-  nextAttemptAt = millis();
-  retryDelayMs = LINK_RETRY_MIN_MS;
+  if (changed) switchTo(next);
 }
 
 bool openConnection(uint32_t& elapsedMs) {
@@ -186,8 +194,8 @@ bool readLine(WiFiClient& c, uint32_t deadline, String& line) {
   return true;
 }
 
-bool readBody(WiFiClient& c, uint32_t deadline, size_t length, String& body) {
-  if (length > MAX_REPLY_BYTES) return false;
+bool readBody(WiFiClient& c, uint32_t deadline, size_t length, size_t maxBytes, String& body) {
+  if (length > maxBytes) return false;
   body.reserve(length);
   uint8_t buffer[512];
   while (length > 0) {
@@ -204,15 +212,15 @@ bool readBody(WiFiClient& c, uint32_t deadline, size_t length, String& body) {
   return true;
 }
 
-bool readChunkedBody(WiFiClient& c, uint32_t deadline, String& body) {
+bool readChunkedBody(WiFiClient& c, uint32_t deadline, size_t maxBytes, String& body) {
   String line;
   while (true) {
     if (!readLine(c, deadline, line)) return false;
     const long size = strtol(line.c_str(), nullptr, 16);
-    if (size < 0 || body.length() + static_cast<size_t>(size) > MAX_REPLY_BYTES) return false;
+    if (size < 0 || body.length() + static_cast<size_t>(size) > maxBytes) return false;
     if (size == 0) return readLine(c, deadline, line);  // the blank line after the last chunk
     String chunk;
-    if (!readBody(c, deadline, static_cast<size_t>(size), chunk)) return false;
+    if (!readBody(c, deadline, static_cast<size_t>(size), maxBytes, chunk)) return false;
     body += chunk;
     if (!readLine(c, deadline, line)) return false;
   }
@@ -220,27 +228,31 @@ bool readChunkedBody(WiFiClient& c, uint32_t deadline, String& body) {
 
 enum class Outcome { Done, DeadBeforeReply, Failed };
 
-Outcome exchange(const uint8_t* body, size_t length, const char* contentType, LinkReply& reply) {
+Outcome exchange(const LinkRequest& request, LinkReply& reply) {
   WiFiClient& c = client();
+  const uint8_t* body = request.body;
+  const size_t length = request.length;
   String header = "POST " + target.path + " HTTP/1.1\r\nHost: " + target.host;
   if ((target.https && target.port != 443) || (!target.https && target.port != 80)) {
     header += ":" + String(target.port);
   }
-  header += "\r\nUser-Agent: aware-bin/" FIRMWARE_VERSION "\r\nX-Bin-Token: " BIN_TOKEN "\r\nContent-Type: ";
-  header += contentType;
+  header += "\r\nUser-Agent: aware-bin/" FIRMWARE_VERSION "\r\n";
+  header += request.headers;
+  if (request.accept) header += String("Accept: ") + request.accept + "\r\n";
+  header += String("Content-Type: ") + request.contentType;
   header += "\r\nContent-Length: " + String(length) + "\r\nConnection: keep-alive\r\n\r\n";
 
   // Header and body go out in one write, so the header doesn't travel as a
   // tiny packet of its own.
   const uint32_t sendStart = millis();
   const size_t total = header.length() + length;
-  uint8_t* request = static_cast<uint8_t*>(psramFound() ? ps_malloc(total) : malloc(total));
+  uint8_t* packet = static_cast<uint8_t*>(psramFound() ? ps_malloc(total) : malloc(total));
   bool sent;
-  if (request) {
-    memcpy(request, header.c_str(), header.length());
-    memcpy(request + header.length(), body, length);
-    sent = writeAll(c, request, total);
-    free(request);
+  if (packet) {
+    memcpy(packet, header.c_str(), header.length());
+    memcpy(packet + header.length(), body, length);
+    sent = writeAll(c, packet, total);
+    free(packet);
   } else {
     sent = writeAll(c, reinterpret_cast<const uint8_t*>(header.c_str()), header.length()) &&
            writeAll(c, body, length);
@@ -252,14 +264,14 @@ Outcome exchange(const uint8_t* body, size_t length, const char* contentType, Li
   }
 
   const uint32_t waitStart = millis();
-  const uint32_t deadline = waitStart + HTTP_TIMEOUT_MS;
+  const uint32_t deadline = waitStart + request.timeoutMs;
   while (c.available() <= 0) {
     if (!c.connected()) {
       reply.error = "the server closed the connection without replying";
       return Outcome::DeadBeforeReply;
     }
     if (timeIsUp(deadline)) {
-      reply.error = "no reply within " + String(HTTP_TIMEOUT_MS / 1000) + " s";
+      reply.error = "no reply within " + String(request.timeoutMs / 1000) + " s";
       return Outcome::Failed;
     }
     delay(1);
@@ -290,16 +302,17 @@ Outcome exchange(const uint8_t* body, size_t length, const char* contentType, Li
   }
   bool bodyOk;
   if (chunked) {
-    bodyOk = readChunkedBody(c, deadline, reply.body);
+    bodyOk = readChunkedBody(c, deadline, request.maxReplyBytes, reply.body);
   } else if (contentLength >= 0) {
-    bodyOk = readBody(c, deadline, static_cast<size_t>(contentLength), reply.body);
+    bodyOk = readBody(c, deadline, static_cast<size_t>(contentLength), request.maxReplyBytes, reply.body);
   } else {
     reply.error = "the reply has no length";
     return Outcome::Failed;
   }
   reply.timing.readMs = millis() - readStart;
   if (!bodyOk) {
-    reply.error = "the reply body was cut off or too long";
+    reply.error = timeIsUp(deadline) ? "the reply was not finished within " + String(request.timeoutMs / 1000) + " s"
+                                      : String("the reply body was cut off or too long");
     return Outcome::Failed;
   }
   reply.status = status;
@@ -351,6 +364,11 @@ void linkBegin() {
   xTaskCreatePinnedToCore(linkTask, "bin-link", LINK_TASK_STACK_BYTES, nullptr, 1, &linkTaskHandle, xPortGetCoreID());
 }
 
+bool linkCheckUrl(const String& url, String& error) {
+  Target unused;
+  return parseUrl(url, unused, error);
+}
+
 bool linkSetServer(const String& url, String& error) {
   linkBegin();  // in case setup() changes order: the mutexes must exist
   Target next;
@@ -364,6 +382,16 @@ bool linkSetServer(const String& url, String& error) {
   return true;
 }
 
+void linkClearServer() {
+  linkBegin();
+  xSemaphoreTake(pendingMutex, portMAX_DELAY);
+  pendingTarget = Target();  // no host: nothing to connect to
+  hasPending = true;
+  xSemaphoreGive(pendingMutex);
+  configured = false;
+  linkConnectSoon();  // the link task closes the connection
+}
+
 void linkConnectSoon() {
   connectSoon = true;
   if (linkTaskHandle) xTaskNotifyGive(linkTaskHandle);
@@ -373,11 +401,21 @@ bool linkConfigured() { return configured; }
 
 bool linkIsOpen() { return configured && linkOpen; }
 
-LinkReply linkPost(const uint8_t* body, size_t length, const char* contentType) {
+LinkReply linkPost(const LinkRequest& request) {
   LinkReply reply;
   Hold hold(linkMutex, portMAX_DELAY);
   applyPendingServer();
-  if (!configured) {
+  if (!request.url.isEmpty()) {
+    Target wanted;
+    if (!parseUrl(request.url, wanted, reply.error)) {
+      reply.error = "bad server address: " + reply.error;
+      return reply;
+    }
+    if (!sameTarget(wanted, target)) {
+      if (configured && !target.host.isEmpty()) say("[link] switching to %s for this scan\n", wanted.host.c_str());
+      switchTo(wanted);
+    }
+  } else if (!configured) {
     reply.error = "no server set";
     return reply;
   }
@@ -395,7 +433,7 @@ LinkReply linkPost(const uint8_t* body, size_t length, const char* contentType) 
       }
       reply.timing.connectMs = ms;
     }
-    const Outcome outcome = exchange(body, length, contentType, reply);
+    const Outcome outcome = exchange(request, reply);
     if (outcome == Outcome::Done) {
       retryDelayMs = LINK_RETRY_MIN_MS;
       linkOpen = client().connected();

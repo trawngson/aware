@@ -50,9 +50,10 @@ PIPE = "--pipe" in sys.argv[1:]  # opened by the monitor's aware_feed filter: wi
 COLOR = sys.stdout.isatty() and log_colors.enabled()
 paint = log_colors.paint if COLOR else str
 DETECTED = re.compile(r"\[scan\] detected (\S+) ([\d.]+) box (-?\d+),(-?\d+),(-?\d+),(-?\d+)")
+SAW = re.compile(r"\[scan\] (\S+) saw (.+)")  # LLM mode: the model's items, no boxes
 BEGIN = re.compile(r"-----BEGIN (JPEG|LIVE) (\d+)-----")
 PHOTO_TEXT = re.compile(r"[A-Za-z0-9+/=]+")  # base64
-STX, ETX = b"\x02", b"\x03"  # a photo's text comes between these (sendPhoto in src/main.cpp)
+STX, ETX = b"\x02", b"\x03"  # a photo's text comes between these (sendPhoto in include/scan.h)
 ANSI = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 CLEAR_LINE = "\x1b[2K"
 FONT = ImageFont.load_default(size=16)
@@ -91,7 +92,7 @@ def pipe_chunks():
 def split_output(chunks):
     """Turns the board's output into ("line", bytes) and ("photo", bytes)
     items. A photo's text comes between the bytes STX and ETX (sendPhoto in
-    src/main.cpp), anywhere in the stream, even in the middle of the prompt
+    include/scan.h), anywhere in the stream, even in the middle of the prompt
     line; the rest is lines."""
     pending, photo = b"", None
     for chunk in chunks:
@@ -144,11 +145,13 @@ def decode(text):
     return Image.open(io.BytesIO(base64.b64decode(text))).convert("RGB")
 
 
-def render(image, boxes, decision):
+def render(image, boxes, decision, seen=""):
     draw = ImageDraw.Draw(image)
     for name, conf, x1, y1, x2, y2 in boxes:
         draw.rectangle((x1, y1, x2, y2), outline="yellow", width=3)
         label(draw, (x1 + 6, y1 + 5), f"{name} {conf:.2f}", "yellow")
+    if seen:
+        label(draw, (10, 10), seen, "yellow")
     if decision:
         label(draw, (10, image.height - 28), decision, "white")
     return image
@@ -177,7 +180,7 @@ def read_board(chunks, events, quitting, ended):
     quitting.set()
 
 
-def read_photo(data, boxes, decision, events):
+def read_photo(data, boxes, decision, seen, events):
     lines = [l.strip() for l in data.decode("ascii", "replace").split("\n")]
     header = BEGIN.match(lines[0]) if lines else None
     if not header:
@@ -191,14 +194,14 @@ def read_photo(data, boxes, decision, events):
     if header[1] == "LIVE":
         events.put(("live", image))
     else:
-        events.put(("scan", render(image, boxes, decision), decision))
+        events.put(("scan", render(image, boxes, decision, seen), decision))
 
 
 def read_items(items, events):
-    boxes, decision = [], ""
+    boxes, decision, seen = [], "", ""
     for kind, data in items:
         if kind == "photo":
-            read_photo(data, boxes, decision, events)
+            read_photo(data, boxes, decision, seen, events)
             continue
         shown, line = split_line(data)
         if not line:
@@ -207,11 +210,13 @@ def read_items(items, events):
         if stage := stage_for(line):
             events.put(("stage", *stage))
         if line == "[scan] start":
-            boxes, decision = [], ""
+            boxes, decision, seen = [], "", ""
         elif line.startswith("[camera] photo"):
-            boxes, decision = [], "snap: photo only, not sent to the server"
+            boxes, decision, seen = [], "snap: photo only, not sent to the server", ""
         elif match := DETECTED.match(line):
             boxes.append((match[1], float(match[2]), *map(int, match.groups()[2:])))
+        elif match := SAW.match(line):
+            seen = f"{match[1]}: {match[2]}"
         elif line.startswith("[route] "):
             decision = line.removeprefix("[route] ")
 
