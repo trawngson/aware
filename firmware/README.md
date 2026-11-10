@@ -483,6 +483,11 @@ instead of joining first.
 
 ## Server contract
 
+The detection server is `server/app.py`, a [Modal](https://modal.com) app
+(`smart-bin-api`). Deploy it from the repository root with
+`modal deploy server/app.py`. Its `/config` repeats routing-v1 for the demo
+page, so a change to `include/routing.h` goes there too.
+
 In yolo mode, `POST` the raw JPEG as the body with `Content-Type: image/jpeg`
 and the bin token in `X-Bin-Token`. ([LLM mode](#llm-mode) doesn't use this
 server.) The reply:

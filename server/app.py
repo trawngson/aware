@@ -3,12 +3,16 @@
 Một địa chỉ duy nhất, 3 đường (cùng host nên ESP32 giữ được 1 kết nối keep-alive cho cả 3):
 - POST /detect  : ESP32 gửi ảnh JPEG, nhận danh sách vật (label, conf, box)
 - GET  /health  : kiểm tra sống, không chạy model; ESP32 gọi để mở kết nối sẵn và giữ ấm
-- GET  /config  : bảng nhãn -> ngăn để ESP32 tự quyết định đổ vào ngăn nào
+- GET  /config  : bảng nhãn -> ngăn theo routing-v1, cho trang demo hiển thị giống thùng thật
 
 Model phải có sẵn trong Volume `smart-bin-models`: file .onnx và file record .json cùng tên,
 lấy từ thư mục models/ của repo aware và upload bằng `modal volume put`.
+
+Deploy từ thư mục gốc repo: `modal deploy server/app.py`
 """
 from __future__ import annotations
+
+from datetime import datetime, timedelta, timezone
 
 import modal
 
@@ -18,20 +22,24 @@ MODEL_VERSION = "aware-bin-v4-yolo26n-onnx-fp32"  # model phân loại rác v4, 
 MAX_BYTES = 500_000  # ảnh ESP32-CAM ở VGA thường nhỏ hơn nhiều
 MAX_STORE_BYTES = 5_000_000  # ảnh lỗi "quá lớn" vẫn lưu để tìm lỗi camera, nhưng chặn file quá khổ
 IMG_SIZE = 640  # model được export với imgsz=640
-CONF_THRESHOLD = 0.25  # server trả mọi vật từ 0,25; ESP32 tự áp ngưỡng chặt hơn từ /config
+CONF_THRESHOLD = 0.25  # server trả mọi vật từ 0,25; ESP32 tự áp ngưỡng chặt hơn (lệnh conf, mặc định 0,5)
 
-# Bảng ghép nhãn -> ngăn, ESP32 tải qua /config. Bảng TẠM, chưa chốt (ngăn 3 chưa có nhãn nào)
+# Bảng ghép nhãn -> ngăn theo routing-v1 (duyệt 2026-10-17), giống hệt include/routing.h của firmware.
+# ESP32 quyết định bằng routing.h, không tải bảng này; trang demo đọc /config để hiển thị đúng như thùng thật.
+# Sửa luật thì sửa cả hai nơi.
 BIN_CONFIG = {
-    "config_version": "2026-11-07-draft",
-    # Tên ngăn bằng tiếng Anh không dấu để ESP32 và màn hình hiển thị không lỗi font; UI tự dịch theo số ngăn
-    "bins": {"1": "Plastic", "2": "Paper", "3": "Metal", "4": "Other"},
+    "config_version": "routing-v1",
+    # Tên ngăn bằng tiếng Anh không dấu để ESP32 và màn hình hiển thị không lỗi font; UI tự dịch theo số ngăn.
+    # Số ngăn là số túi trong thùng: ngăn 3 và 4 cùng là Khác (servo chỉ có 1 góc cho Khác)
+    "bins": {"1": "Paper", "2": "Plastic bottles", "3": "Other", "4": "Other"},
     "label_to_bin": {
-        "plastic_bottle": 1, "plastic_container": 1, "plastic_cutlery": 1,
-        "paper": 2,
-        "paper_cup": 4, "tissue": 4, "food_wrapper": 4,
+        "paper": 1,
+        "plastic_bottle": 2,
+        "paper_cup": 3, "plastic_container": 3, "plastic_cutlery": 3, "tissue": 3, "food_wrapper": 3,
     },
-    "default_bin": 4,  # nhãn lạ, không thấy vật, độ tin cậy thấp -> Khác
-    "min_conf": 0.5,  # ngưỡng tạm, chốt lại sau khi đo độ chính xác
+    "default_bin": 3,  # nhãn lạ, không thấy vật -> Khác
+    "mixed_bin": 3,  # trên đĩa có vật của từ 2 ngăn trở lên -> cả đĩa vào Khác
+    "min_conf": 0.5,  # conf mặc định của firmware: có vật nào dưới ngưỡng -> cả đĩa vào Khác
 }
 
 # Giờ giữ 1 máy luôn thức (giờ Việt Nam). Ngoài giờ về 0 để tiết kiệm, request đầu chờ ~5,7 s
@@ -48,8 +56,15 @@ STORE_SAMPLES = True
 SAMPLE_PREFIX = "samples"
 VN_OFFSET_HOURS = 7  # Việt Nam UTC+7 quanh năm, không đổi giờ mùa hè; máy chủ Modal chạy giờ UTC
 
+
+def is_warm_hour() -> bool:
+    return WARM_START_HOUR <= datetime.now(timezone(timedelta(hours=VN_OFFSET_HOURS))).hour < WARM_END_HOUR
+
+
+# Ghim phiên bản để build lại image không tự đổi thư viện. onnxruntime 1.31.1 là bản đã kiểm tra
+# parity của model (models/aware-bin-v4-yolo26n-onnx-fp32.json); các gói còn lại là bản đang chạy ổn
 image = modal.Image.debian_slim(python_version="3.12").pip_install(
-    "onnxruntime", "pillow", "numpy", "fastapi[standard]"
+    "onnxruntime==1.31.1", "pillow==13.0.0", "numpy==2.5.4", "fastapi[standard]==0.161.1"
 )
 app = modal.App(APP_NAME, image=image)
 vol = modal.Volume.from_name("smart-bin-models", create_if_missing=True)
@@ -65,7 +80,6 @@ with image.imports():
     import os
     import time
     import uuid
-    from datetime import datetime, timedelta, timezone
 
     import numpy as np
     import onnxruntime as ort
@@ -75,7 +89,7 @@ with image.imports():
     from PIL import Image
 
 
-@app.function(image=modal.Image.debian_slim(python_version="3.12").pip_install("boto3"),
+@app.function(image=modal.Image.debian_slim(python_version="3.12").pip_install("boto3==1.43.120"),
               secrets=r2_secrets, timeout=60)
 def store_sample(jpeg: bytes, record: dict) -> None:
     """Lưu ảnh + kết quả lên Cloudflare R2 để huấn luyện lại. Chạy riêng, ESP32 không phải chờ."""
@@ -102,7 +116,10 @@ def store_sample(jpeg: bytes, record: dict) -> None:
 @app.cls(
     cpu=(0.25, 0.5),
     memory=(1024, 1536),
-    min_containers=1,  # giữ 1 máy thức để không cold start (~5,7 s > hạn 3 s của ESP32); lịch bên dưới tắt ban đêm
+    # Giữ 1 máy thức để scan đầu không chờ cold start ~5,7 s (ESP32 chờ tới 60 s nên chỉ chậm, không lỗi).
+    # Mỗi lần deploy, Modal đặt lại số máy thức về giá trị này, bỏ qua lịch bên dưới; nên tính theo giờ
+    # Việt Nam lúc deploy: deploy ban đêm thì 0, không thì máy thức tới 22h hôm sau
+    min_containers=1 if is_warm_hour() else 0,
     scaledown_window=600,  # giữ máy thêm 10 phút sau request cuối
     max_containers=1,  # chặn chi phí phát sinh nếu bị spam
     volumes={MODEL_DIR: vol},
@@ -119,6 +136,9 @@ class Detector:
         with open(f"{MODEL_DIR}/{MODEL_VERSION}.json") as f:
             self.names = json.load(f)["labels"]
         self.token = os.environ.get("BIN_TOKEN", "")
+        if REQUIRE_TOKEN and not self.token:
+            # Thiếu token thì không chạy, thay vì mở cửa cho mọi request (ảnh người lạ sẽ vào thẳng R2)
+            raise RuntimeError("REQUIRE_TOKEN = True nhưng Secret smart-bin-auth không có BIN_TOKEN")
 
     def letterbox(self, img: Image.Image):
         # Thu nhỏ giữ nguyên tỉ lệ rồi pad viền xám cho đủ 640x640, để vật không bị méo
@@ -146,8 +166,10 @@ class Detector:
         return sorted(objects, key=lambda o: o["conf"], reverse=True)  # vật tin cậy nhất đứng đầu
 
     def check_token(self, request: Request) -> None:
-        # Chưa tạo Secret thì self.token rỗng: bỏ qua kiểm tra (giai đoạn thử)
-        if self.token and not hmac.compare_digest(request.headers.get("x-bin-token", ""), self.token):
+        # Muốn tắt kiểm tra thì đặt REQUIRE_TOKEN = False. So sánh dạng bytes: compare_digest với str
+        # báo lỗi khi header có ký tự ngoài ASCII, thành 500 thay vì 401
+        given = request.headers.get("x-bin-token", "").encode()
+        if REQUIRE_TOKEN and not hmac.compare_digest(given, self.token.encode()):
             raise HTTPException(401, "Missing or invalid X-Bin-Token")
 
     @modal.asgi_app(label=APP_NAME)
