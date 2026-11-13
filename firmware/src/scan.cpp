@@ -10,6 +10,7 @@
 
 #include "config.h"
 #include "console.h"
+#include "imu.h"
 #include "llm.h"
 #include "llm_reply.h"
 #include "mbedtls/base64.h"
@@ -126,6 +127,25 @@ bool readModelAnswer(const LinkReply& r, const String& model, Found& found) {
   return true;
 }
 
+// After a tip (IMU in use): how far the plate went at the bin and whether it
+// came back level. Red LED if it didn't tip or isn't level now; the next
+// scan holds until it is.
+void checkTip(int angle, const ImuReading& atBin) {
+  if (!imuInUse() || !atBin.present) return;
+  const ImuReading home = imuSettle();
+  if (!home.present) return;
+  say("[imu] tipped to %.1f°, back at %.1f°\n", atBin.tiltDeg, home.tiltDeg);
+  if (angle != settings::homeAngle && atBin.tiltDeg < IMU_MIN_TIP_DEG) {
+    ledShow(LedStage::Error);
+    say("[imu] the plate tipped only %.1f° at the bin (servo %d°): stuck, or the servo stalled?\n", atBin.tiltDeg,
+        angle);
+  }
+  if (home.tiltDeg > IMU_LEVEL_TOLERANCE_DEG) {
+    ledShow(LedStage::Error);
+    say("[imu] the plate is %.1f° off level back home: scans hold until it is level\n", home.tiltDeg);
+  }
+}
+
 }  // namespace
 
 void sendPhoto(const Photo& photo, const char* kind) {
@@ -150,10 +170,18 @@ void runScan() {
   const bool llmMode = current.mode == Mode::Llm;
   ledShow(LedStage::Scanning);
   say("[scan] start\n");  // exactly: scripts/viewer.py starts a new scan on it
+  imuUseImpacts();       // whatever landed is this scan's
   if (!cameraReady) return hold("camera not ready");
   if (llmMode && !llmSignedIn()) return hold("not signed in to ChatGPT: type \"llm login\"");
   if (!llmMode && current.serverUrl.isEmpty()) return hold("no server set: type \"server <url>\"");
   if (WiFi.status() != WL_CONNECTED) return hold("no Wi-Fi: type \"status\" to check it, or \"connect\"");
+  if (imuInUse()) {
+    const ImuReading r = imuSettle();
+    if (r.present && r.tiltDeg > IMU_LEVEL_TOLERANCE_DEG) {
+      return hold("the plate is " + String(r.tiltDeg, 1) +
+                  "° off level at home. Check the home angle (\"angle home\"), or if it is level, type \"imu level\"");
+    }
+  }
 
   HeldPhoto held;
   Photo& photo = held.photo;
@@ -208,7 +236,9 @@ void runScan() {
   printTiming(photoMs, r.timing, decideMs, now - servoStart, now - start);
   sendPhoto(photo);  // during the dwell, so the viewer adds no time
   while (millis() - now < DWELL_MS) delay(1);
+  const ImuReading atBin = imuNow();
   moveServo(settings::homeAngle);
+  checkTip(angle, atBin);
   say("[scan] done\n");
 }
 

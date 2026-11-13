@@ -15,11 +15,14 @@ Mode mode = Mode::Yolo;
 String llmModel = LLM_DEFAULT_MODEL;
 int jpegQuality = DEFAULT_JPEG_QUALITY;
 float wifiTxDbm = DEFAULT_WIFI_TX_DBM;
+imu::Vec3 imuLevel;
+bool haveImuLevel = false;
 
 std::atomic<float> minConfidence{DEFAULT_MIN_CONFIDENCE};
 std::atomic<int> homeAngle{DEFAULT_ANGLE_HOME};
 std::atomic<int> servoSpeed{DEFAULT_SERVO_SPEED_DPS};
 std::atomic<bool> autoScan{true};
+std::atomic<bool> imuOn{true};
 
 Destination destinations[3] = {
     {"paper", "a_paper", DEFAULT_ANGLE_PAPER, "1", 0},
@@ -67,6 +70,8 @@ void load() {
   wifiTxDbm = prefs.isKey("tx_dbm") ? prefs.getFloat("tx_dbm", DEFAULT_WIFI_TX_DBM) : DEFAULT_WIFI_TX_DBM;
   mode = savedString("mode", "yolo") == "llm" ? Mode::Llm : Mode::Yolo;
   llmModel = savedString("llm_model", LLM_DEFAULT_MODEL);
+  imuOn = prefs.isKey("imu_on") ? prefs.getBool("imu_on", true) : true;
+  haveImuLevel = prefs.isKey("imu_level") && prefs.getBytes("imu_level", &imuLevel, sizeof(imuLevel)) == sizeof(imuLevel);
   scanSettingsMutex = xSemaphoreCreateMutex();
   publishScanSettings();
 }
@@ -134,6 +139,17 @@ void saveJpegQuality(int quality) {
 void saveWifiTxDbm(float dbm) {
   wifiTxDbm = dbm;
   prefs.putFloat("tx_dbm", dbm);
+}
+
+void saveImuOn(bool on) {
+  imuOn = on;
+  prefs.putBool("imu_on", on);
+}
+
+void saveImuLevel(imu::Vec3 level) {
+  imuLevel = level;
+  haveImuLevel = true;
+  prefs.putBytes("imu_level", &level, sizeof(level));
 }
 
 }  // namespace settings

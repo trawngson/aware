@@ -26,8 +26,9 @@ Green and red stay on for 3 s, then the LED goes dark. The LED is the
 WS2812 on GPIO 48, built into ESP32-S3 DevKitC-1 style boards; `LED_PIN`,
 `LED_BRIGHTNESS` and `LED_RESULT_MS` in `include/config.h` change it.
 
-Not in the MVP: fill sensors, the IMU, the display, the drawer switches and
-relay, and the yaw-then-tilt pair of servos.
+Not in the MVP: fill sensors, the display, the drawer switches and relay, and
+the yaw-then-tilt pair of servos. An [IMU](#imu-mpu-6050-optional) under the
+plate is optional: without one the bin runs as described here.
 
 ## Automatic scans
 
@@ -43,18 +44,21 @@ light don't trigger a scan either.
 
 Things to know:
 - A sudden lasting change, such as lights switched on, triggers one scan. The
-  server finds nothing, so the empty plate tips into `other`.
+  server finds nothing, so the empty plate tips into `other`. With the
+  [IMU](#imu-mpu-6050-optional), a change over 80% of the view that the
+  plate didn't feel is taken as the light instead.
 - An item that looks almost like the plate (white tissue on a white plate)
-  may change too little to trigger. Press **BOOT** for those. The IMU is
-  planned to catch them.
+  may change too little to trigger. Press **BOOT** for those. The IMU
+  catches the ones heavy enough to jolt the plate, but not a tissue.
 - It only watches while the servo is at home, so `servo <angle>` doesn't set
   it off.
 - `auto off` stops it, for example while you aim the camera by hand. It's
   back on after every restart.
 - The thresholds in `include/config.h` (`WATCH_*`) are first guesses. Tune
   them on the bin with the `[watch]` log lines.
-- The simulator has no live camera, so there it doesn't run. Use the green
-  button.
+- The simulator has no live camera, so there only an impact on its
+  MPU-6050 starts a scan ([Simulator](#simulator-no-board-needed)). Or use
+  the green button.
 
 ## Routing (routing-v1, approved 2026-10-17)
 
@@ -83,6 +87,71 @@ Do not power the servo from the board's 5 V pin. An MG996R can draw over 2 A
 when it starts, which resets the ESP32. Both grounds must be joined, or the
 signal has no reference. A large capacitor (470–2200 µF, 10 V or more) across
 the servo supply helps. Test with the horn free before fixing anything to it.
+
+## IMU (MPU-6050, optional)
+
+An MPU-6050 (accelerometer and gyro) fixed under the plate tells the bin how
+the plate really sits, since the servo has no feedback of its own. It can't
+weigh anything: it feels tilt and jolts.
+
+| MPU-6050 pin | Goes to |
+|---|---|
+| VCC | 3V3 |
+| GND | GND |
+| SDA | GPIO 1 |
+| SCL | GPIO 2 |
+| AD0 | leave open (address 0x68), or 3V3 for 0x69 |
+| INT, XDA, XCL | not used |
+
+It uses I²C port 0 at 100 kHz; the camera has port 1. Wire it with the board
+off. Fix it flat and close to the tilt axis, where the plate's own motion
+disturbs the reading least, and give the wires a slack loop with strain
+relief, because they bend on every tip. Twist SDA and SCL with GND if they
+run near the servo's wires. The pins and every threshold below are in
+`include/config.h` (`IMU_*`).
+
+What it does once found (the bin logs `[imu] MPU-6050 at 0x68` at start):
+
+- **Before each scan** the plate must be level within 3° at home, or the
+  scan holds: `[hold] the plate is 6.2° off level at home`.
+- **After each tip** the log says how far the plate went and whether it came
+  back: `[imu] tipped to 44.8°, back at 0.4°`. The LED turns red if the
+  plate tipped less than 10° (stuck, or the servo stalled) or isn't level
+  back home.
+- **`servo` and `angle`** print the plate's real tilt (`[imu] plate at
+  22.5° from level`), so you can set the angles by the plate rather than the
+  servo.
+- **Automatic scans** weigh what the plate felt with what the camera saw
+  (`include/presence.h`):
+
+| Camera, once nothing moves | Plate felt | The bin |
+|---|---|---|
+| 0.2% or more changed | an impact | scans |
+| 1% or more changed | nothing | scans (an item too light to feel) |
+| 80% or more changed | nothing | takes it as the light and watches the new view |
+| under 0.2% changed, 1 s on | an impact | logs a bump and doesn't scan |
+
+The servo's own starts and stops jolt the plate too, so impacts only count
+with the servo home and still for 0.5 s.
+
+Without the chip the bin runs as before, and looks for one every second, so
+a loose wire that comes back is picked up again. `imu off` makes the bin
+ignore it (saved).
+
+First run with the IMU:
+
+1. `imu`: the chip, the tilt, and the gravity it reads. At rest gravity
+   should be close to 1.00 g; if not, the chip's range differs from the
+   MPU-6050's. The plate should read `still` with the servo holding home;
+   if it always reads `moving`, the servo's hum shakes it more than
+   `IMU_STILL_G` (0.03 g) allows, so raise that.
+2. With the plate home, check it is level with a spirit level (adjust
+   `angle home` until it is), then type `imu level`. Tilt reads from there
+   on, however the chip is fixed. Until then it assumes the chip lies flat.
+3. Drop a few items and read the impacts in `imu`
+   (`Impacts: 3, the last 0.42 g`) and the `[watch]` lines. Raise
+   `IMU_IMPACT_G` (0.08 g) if the servo's hum or the room counts as an
+   impact; lower it if light items go unfelt.
 
 ## Build and flash
 
@@ -141,12 +210,13 @@ reset are normal.
 The log is color coded, here and in the [viewer](#viewer). Red means the
 board held (the servo stays home), a connection failed or the chip crashed;
 yellow is a warning. The steps of a scan: `[watch]` and `[camera]` cyan,
-`[scan]` green, `[route]` bold green, `[servo]` magenta, `[wifi]` and `[link]`
+`[scan]` green, `[route]` bold green, `[servo]` and `[imu]` magenta, `[wifi]` and `[link]`
 blue, `[time]` grey. The rules are in `scripts/log_colors.py`;
 `NO_COLOR=1` turns the colors off.
 
-The routing rule lives in `include/routing.h` and has unit tests that run on
-the Mac, without the board:
+The routing rule (`include/routing.h`), the IMU's arithmetic
+(`include/imu_math.h`) and the camera-and-IMU rules (`include/presence.h`)
+have unit tests that run on the Mac, without the board:
 
 ```sh
 ~/.platformio/penv/bin/pio test -d firmware -e native
@@ -208,8 +278,8 @@ connects to it. The simulator has no live camera, so only scan photos show.
 ## Simulator (no board needed)
 
 The [Wokwi](https://wokwi.com) extension for VS Code runs the real firmware
-on a simulated ESP32-S3 with the servo and a green button wired to the BOOT
-pin (`diagram.json`). Wokwi has no camera, so the simulator build sends
+on a simulated ESP32-S3 with the servo, an MPU-6050 and a green button wired
+to the BOOT pin (`diagram.json`). Wokwi has no camera, so the simulator build sends
 photos from `sim/photos` instead, one per scan, in turn. Its Wi-Fi reaches
 the internet, so scans go to the real detection server.
 
@@ -235,6 +305,13 @@ and sign in with a free Wokwi account.
 and the servo in the diagram turns. `photos` lists the photos and
 `photo 3` picks the next one to send.
 
+The MPU-6050 stands for the plate. Click it while the simulation runs to
+change what it reads (or set `accelX`, `accelY` and `accelZ` in its `attrs`
+in `diagram.json`). Any change counts as an impact and starts a scan, since
+there is no camera to look. Lean it (`accelX` 0.2, about 11°) to see a scan
+hold because the plate is off level. It doesn't tip when the servo turns, so
+after each scan the log says the plate tipped 0° and the LED turns red.
+
 ### Simulator photos
 
 `sim/photos` holds 11 photos on plain backgrounds from the **test split** of
@@ -256,7 +333,8 @@ To add photos, put JPEG, PNG or HEIC files in `sim/photos` (they are shrunk
 to 640 px) and build `sim` again. Git ignores them, like the `demo/` videos.
 
 What the simulator can't show: the camera itself, the servo's real torque,
-and power problems such as the board resetting when the servo starts.
+the plate tipping, and power problems such as the board resetting when the
+servo starts.
 
 ## First run
 
@@ -467,13 +545,17 @@ unsure.
 | `snap` | take a photo and send it to the viewer, without the server |
 | `scan` | photo → server → servo, same as BOOT |
 | `auto on\|off` | [automatic scans](#automatic-scans); on after every restart |
+| `imu` | what the [IMU](#imu-mpu-6050-optional) reads: tilt, shake, impacts |
+| `imu level` | save the plate's tilt now as level (plate home and level) |
+| `imu on\|off` | use the IMU's checks, or ignore it; saved |
 | `reboot` | restart |
 
 Commands work at any time, even during a scan or while the board is
-connecting to the server. The board runs four tasks (`main.cpp`): one
+connecting to the server. The board runs five tasks (`main.cpp`): one
 reads what you type and runs the commands that only read or save settings
 at once; one owns the camera and servo; one keeps the server connection;
-one signs in to ChatGPT and renews the sign-in (`llm.cpp`).
+one signs in to ChatGPT and renews the sign-in (`llm.cpp`); one reads the
+IMU (`imu.cpp`).
 `scan`, `snap`, `servo` and `angle` need the camera or servo, so while
 either is busy they wait their turn, up to 8 at a time, and a yellow
 `[busy]` line says so. A `scan` or BOOT press while a scan is running or

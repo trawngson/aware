@@ -6,7 +6,7 @@
 // to that stream's angle. It holds there, then returns home. On any failure it
 // holds: the servo stays home (scan.cpp).
 //
-// Four tasks share the work, so typed commands are read at all times, even
+// Five tasks share the work, so typed commands are read at all times, even
 // during a scan:
 // - the console (Arduino's loop, below) runs the prompt (console.cpp), the
 //   BOOT button and Wi-Fi changes (wifi_join.cpp), and at once every command
@@ -15,13 +15,15 @@
 //   LED. It watches the plate (plate_watch.cpp), scans, and runs "scan",
 //   "snap", "servo" and "angle" in the order they came;
 // - the link task keeps the server connection open (server_link.cpp);
-// - the sign-in task signs in to ChatGPT and renews it, for LLM mode (llm.cpp).
+// - the sign-in task signs in to ChatGPT and renews it, for LLM mode (llm.cpp);
+// - the IMU task reads the MPU-6050 under the plate, if there is one (imu.cpp).
 
 #include <Arduino.h>
 
 #include "commands.h"
 #include "config.h"
 #include "console.h"
+#include "imu.h"
 #include "llm.h"
 #include "plate_watch.h"
 #include "server_link.h"
@@ -66,6 +68,7 @@ void setup() {
   settings::load();
   ledBegin();
   servoBegin();
+  imuBegin();
   startCamera();
 
   wifiBegin();

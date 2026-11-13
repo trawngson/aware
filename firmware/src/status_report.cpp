@@ -13,6 +13,7 @@
 #include "console.h"
 #include "esp_mac.h"
 #include "esp_timer.h"
+#include "imu.h"
 #include "llm.h"
 #include "plate_watch.h"
 #include "server_link.h"
@@ -93,7 +94,47 @@ const struct {
 };
 constexpr size_t kArtWidth = 32;
 
+// The IMU in one line, for "status".
+String imuText() {
+  if (!imuPresent()) return paint("90", formatText("none on GPIO %d (SDA) and %d (SCL)", IMU_PIN_SDA, IMU_PIN_SCL));
+  if (!settings::imuOn) return imuChipText() + ", " + paint("33", "off");
+  const ImuReading r = imuNow();
+  const String tilt = formatText("tilt %.1f°", r.tiltDeg);
+  return imuChipText() + ", " + (r.tiltDeg > IMU_LEVEL_TOLERANCE_DEG ? paint("31", tilt) : tilt) +
+         (settings::haveImuLevel ? "" : " (from flat: no level saved)") + (r.still ? ", still" : ", moving");
+}
+
 }  // namespace
+
+void printImu() {
+  if (!imuPresent()) {
+    say("IMU: none on GPIO %d (SDA) and %d (SCL). The bin runs without it and looks for one every %u s.\n",
+        IMU_PIN_SDA, IMU_PIN_SCL, static_cast<unsigned>(IMU_RETRY_MS / 1000));
+    return;
+  }
+  const ImuReading r = imuNow();
+  const float g = imu::length(r.gravityG);
+  String impacts = "none yet";
+  if (r.impacts) {
+    impacts = formatText("%u, the last %.2f g, %.0f s ago", static_cast<unsigned>(r.impacts), r.lastImpactPeakG,
+                         (millis() - r.lastImpactMs) / 1000.0);
+  }
+  ConsoleLock lock;
+  Serial.printf("IMU: %s on GPIO %d (SDA) and %d (SCL), %s\n", imuChipText().c_str(), IMU_PIN_SDA, IMU_PIN_SCL,
+                settings::imuOn ? "in use" : "off (\"imu on\")");
+  Serial.printf("Tilt: %.1f° %s (level within %.1f°)\n", r.tiltDeg,
+                settings::haveImuLevel ? "from the saved level" : "from flat; no level saved (\"imu level\")",
+                IMU_LEVEL_TOLERANCE_DEG);
+  if (r.still) {
+    Serial.printf("Plate: still for %.1f s, shake %.3f g\n", r.stillForMs / 1000.0, r.shakeG);
+  } else {
+    Serial.printf("Plate: moving, shake %.3f g\n", r.shakeG);
+  }
+  Serial.printf("Gravity: x %.3f, y %.3f, z %.3f g (%.2f g%s)\n", r.gravityG.x, r.gravityG.y, r.gravityG.z, g,
+                r.still && (g < 0.9f || g > 1.1f) ? ": 1 g expected at rest, so the chip's range may be off" : "");
+  Serial.printf("Rotation: %.1f°/s, temperature %.1f °C\n", r.rotationDps, r.temperatureC);
+  Serial.printf("Impacts: %s (one counts above %.2f g)\n", impacts.c_str(), IMU_IMPACT_G);
+}
 
 void printStatus() {
   const bool llmMode = settings::mode == Mode::Llm;
@@ -111,12 +152,14 @@ void printStatus() {
                           static_cast<unsigned>(ESP.getCpuFreqMHz()), static_cast<unsigned>(ESP.getFlashChipSize() >> 20)));
   add("Uptime", uptime());
 #ifdef AWARE_SIMULATOR
-  add("Camera", cameraReady ? String("simulator photos (no automatic scans)") : paint("31", "no simulator photos"));
+  add("Camera", cameraReady ? String("simulator photos (no live camera)") : paint("31", "no simulator photos"));
+  add("Auto scan", settings::autoScan ? String("on an MPU-6050 impact (no camera to watch)") : paint("33", "off"));
 #else
   add("Camera", cameraReady ? formatText("%s, 640x480, JPEG quality %d", cameraModel(), settings::jpegQuality)
                             : paint("31", "NOT ready"));
   add("Auto scan", settings::autoScan ? String("on") : paint("33", "off"));
 #endif
+  add("IMU", imuText());
   const Activity now = workerActivity();
   const unsigned waiting = waitingJobs();
   add("Bin", (now == Activity::Free ? paint("32", "free") : paint("33", activityText(now))) +

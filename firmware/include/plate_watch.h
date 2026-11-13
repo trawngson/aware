@@ -6,6 +6,8 @@
 // that move and leave nothing behind, such as a hand or a shadow, don't.
 // While the viewer asks for the live view, every frame also goes to it, as
 // fast as the cable carries them, and the plate is checked on each frame.
+// With the IMU in use, impacts count too (presence.h). In the simulator,
+// which has no live camera, an impact alone starts a scan.
 #pragma once
 
 #ifdef AWARE_SIMULATOR

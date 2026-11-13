@@ -3,3 +3,6 @@
 #pragma once
 
 void printStatus();
+
+// "imu": what the MPU-6050 under the plate reads now.
+void printImu();

@@ -3,10 +3,14 @@
 #pragma once
 
 #include <atomic>
+#include <cstdint>
 
 // The angle last sent to the servo, -1 before the first. The console reads it
 // for "status".
 extern std::atomic<int> servoAngle;
+// millis() of the last step sent to the servo. The IMU ignores the jolts of
+// the servo's own starts and stops for a moment after it.
+extern std::atomic<uint32_t> servoMovedAt;
 
 // Sets up the servo signal and sends the servo home.
 void servoBegin();

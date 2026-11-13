@@ -6,7 +6,7 @@
 
 #include "esp_camera.h"
 
-#define FIRMWARE_VERSION "mvp-0.6.0"
+#define FIRMWARE_VERSION "mvp-0.7.0"
 
 // Camera: ESP32-S3 N16R8 CAM boards with an OV2640 use the ESP32-S3-EYE
 // (Freenove) camera pins.
@@ -177,3 +177,33 @@ constexpr int WATCH_PIXEL_DIFF = 24;          // grey levels (of 255) that count
 constexpr float WATCH_ITEM_SHARE = 0.01f;     // changed from the empty plate: an item
 constexpr float WATCH_STILL_SHARE = 0.005f;   // changed since the last check below this: still
 constexpr int WATCH_STILL_CHECKS = 2;         // still checks in a row before a scan
+// With the IMU in use (imu.h), a felt impact lowers the share that counts as
+// an item, and a change this big with no impact is the light (presence.h).
+// Kept high: a sheet of paper that floats down flat may not jolt the plate,
+// yet covers half the view. Above 1 turns the rule off.
+constexpr float WATCH_FELT_SHARE = 0.002f;
+constexpr float WATCH_LIGHT_SHARE = 0.8f;
+
+// IMU: an MPU-6050 under the plate, optional (imu.h). It uses I2C port 0;
+// the camera's SCCB has port 1. GPIO 1 and 2 are free on these boards (not
+// camera, PSRAM, SD card, USB or strapping pins).
+constexpr int IMU_PIN_SDA = 1;
+constexpr int IMU_PIN_SCL = 2;
+constexpr uint32_t IMU_I2C_HZ = 100000;  // slow and sure over the wires out to the plate
+constexpr uint32_t IMU_SAMPLE_HZ = 200;
+constexpr uint32_t IMU_RETRY_MS = 1000;  // how often it looks for a missing chip
+constexpr uint32_t IMU_TASK_STACK_BYTES = 4096;
+// Checks around each tip. All are first guesses until tested on the bin.
+constexpr float IMU_LEVEL_TOLERANCE_DEG = 3.0f;  // off level at home: the scan holds
+constexpr float IMU_MIN_TIP_DEG = 10.0f;         // less at a bin: the plate didn't tip
+constexpr uint32_t IMU_SETTLE_MS = 500;          // longest wait for the plate to stop moving
+constexpr uint32_t IMU_STILL_MS = 100;           // still this long counts as settled
+// Impacts: shake is how far the acceleration is from its slow average
+// (imu_math.h). The "imu" command shows the last impact's peak, for tuning.
+constexpr float IMU_STILL_G = 0.03f;
+constexpr float IMU_IMPACT_G = 0.08f;
+constexpr float IMU_REARM_G = 0.04f;
+constexpr uint32_t IMU_IMPACT_GAP_MS = 300;    // bounces closer than this are one impact
+constexpr uint32_t IMU_AFTER_MOVE_MS = 500;    // the servo's own jolts: no impacts until then
+constexpr uint32_t IMU_FELT_WINDOW_MS = 10000; // an impact older than this is forgotten
+constexpr uint32_t IMU_BUMP_AFTER_MS = 1000;   // time for the camera to see what landed

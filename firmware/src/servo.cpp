@@ -4,9 +4,11 @@
 
 #include "config.h"
 #include "console.h"
+#include "imu.h"
 #include "settings.h"
 
 std::atomic<int> servoAngle{-1};
+std::atomic<uint32_t> servoMovedAt{0};
 
 namespace {
 
@@ -20,6 +22,7 @@ uint32_t dutyFor(int angle) {
 void writeServo(int angle) {
   ledcWrite(SERVO_PIN, dutyFor(angle));
   servoAngle = angle;
+  servoMovedAt = millis();
 }
 
 }  // namespace
@@ -55,6 +58,8 @@ void moveServo(int target) {
 
 void visit(int angle) {
   moveServo(angle);
-  delay(DWELL_MS);
+  const uint32_t arrived = millis();
+  imuReportTilt();
+  while (millis() - arrived < DWELL_MS) delay(1);
   moveServo(settings::homeAngle);
 }

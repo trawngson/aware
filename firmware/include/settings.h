@@ -11,6 +11,7 @@
 
 #include <atomic>
 
+#include "imu_math.h"
 #include "routing.h"
 
 // Who names the items on the plate: the detection server's YOLO model, or an
@@ -45,12 +46,15 @@ extern Mode mode;
 extern String llmModel;
 extern int jpegQuality;
 extern float wifiTxDbm;
+extern imu::Vec3 imuLevel;  // the way gravity points with the plate level ("imu level")
+extern bool haveImuLevel;
 
 // Shared.
 extern std::atomic<float> minConfidence;
 extern std::atomic<int> homeAngle;
 extern std::atomic<int> servoSpeed;
 extern std::atomic<bool> autoScan;   // not saved: "auto off" lasts until the next start
+extern std::atomic<bool> imuOn;      // "imu off" ignores the IMU
 extern Destination destinations[3];  // same order as routing::Stream
 
 Destination& destinationFor(routing::Stream stream);
@@ -74,5 +78,7 @@ void saveAngle(Destination& destination, int angle);
 void saveServoSpeed(int degreesPerSecond);
 void saveJpegQuality(int quality);
 void saveWifiTxDbm(float dbm);
+void saveImuOn(bool on);
+void saveImuLevel(imu::Vec3 level);
 
 }  // namespace settings

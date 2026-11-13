@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "config.h"
 #include "console.h"
+#include "imu.h"
 #include "plate_watch.h"
 #include "scan.h"
 #include "servo.h"
@@ -41,6 +42,7 @@ void doWork(const Work& work) {
     case Job::Servo: {
       Busy busy(Activity::Servo);
       moveServo(work.angle);
+      imuReportTilt();
       break;
     }
     case Job::CameraOff:

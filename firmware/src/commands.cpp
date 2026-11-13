@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "config.h"
 #include "console.h"
+#include "imu.h"
 #include "llm.h"
 #include "plate_watch.h"
 #include "server_link.h"
@@ -37,7 +38,7 @@ void queue(const Work& work, const String& what) {
 }
 
 const char* const kCommands[] = {
-    "angle", "auto", "camera", "conf", "connect", "feed", "help", "llm", "mode",
+    "angle", "auto", "camera", "conf", "connect", "feed", "help", "imu", "llm", "mode",
 #ifdef AWARE_SIMULATOR
     "photo", "photos",
 #endif
@@ -70,6 +71,9 @@ void printHelp() {
       "  auto on|off            scan by itself when an item lands (on after every start)\n"
       "  camera on|off          stop or start the camera (to test whether it disturbs Wi-Fi)\n"
       "  feed [off]             open (or close) the live camera window on the Mac\n"
+      "  imu                    the plate's tilt, shake and impacts (MPU-6050)\n"
+      "  imu level              save the plate's tilt now as level (plate home and level)\n"
+      "  imu on|off             use the IMU's checks, or ignore it (saved)\n"
       "  reboot                 restart the board\n"
       "Commands work at any time. scan, snap, servo and angle wait their turn\n"
       "while the camera or servo is busy.\n"
@@ -243,6 +247,27 @@ void setTxPower(const String& arg) {
   say("Wi-Fi transmit power saved: %.1f dBm (the radio uses %.1f)\n", value, txPowerNow());
 }
 
+void imuCommand(String arg) {
+  arg.toLowerCase();
+  if (arg.isEmpty()) {
+    printImu();
+  } else if (arg == "on" || arg == "off") {
+    settings::saveImuOn(arg == "on");
+    say("IMU %s (saved)%s\n", settings::imuOn ? "on: its checks apply" : "off: the bin ignores it",
+        settings::imuOn && !imuPresent() ? ", once one is found" : "");
+  } else if (arg == "level") {
+    const float before = imuNow().tiltDeg;
+    String why;
+    if (!imuSaveLevel(why)) {
+      fail("[imu] can't save the level: %s\n", why.c_str());
+      return;
+    }
+    say("Level saved: the tilt reads from here now (it read %.1f° before)\n", before);
+  } else {
+    fail("Usage: imu [level|on|off]\n");
+  }
+}
+
 }  // namespace
 
 void pointLink() {
@@ -270,6 +295,8 @@ void completeWords(const String& before, std::vector<const char*>& words) {
   command.toLowerCase();
   if (command == "angle") {
     words = {"home", "paper", "plastic_bottles", "other"};
+  } else if (command == "imu") {
+    words = {"level", "on", "off"};
   } else if (command == "auto" || command == "camera" || command == "feed") {
     words = {"on", "off"};
   } else if (command == "mode") {
@@ -342,6 +369,8 @@ void handleCommand(String line) {
   } else if (cmd == "auto") {
     settings::autoScan = arg != "off";
     say("Automatic scans %s\n", settings::autoScan ? "on" : "off");
+  } else if (cmd == "imu") {
+    imuCommand(arg);
   } else if (cmd == "photos") {
     lastCommandOk = cameraListPhotos();
   } else if (cmd == "photo") {

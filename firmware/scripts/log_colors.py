@@ -28,6 +28,8 @@ RULES = (
     ("[llm] the sign-in failed", RED),
     ("[llm] ChatGPT ended", RED),
     ("[llm] no Wi-Fi", RED),
+    ("[imu] the plate", RED),  # it didn't tip, or isn't level back home
+    ("[imu] could not", RED),
     ("Bad server address", RED),
     ("Camera: NOT ready", RED),
     ("Guru Meditation", RED),
@@ -46,6 +48,9 @@ RULES = (
     ("[busy] ", YELLOW),  # a command waits for the camera or servo, or was skipped
     ("[llm] nobody entered", YELLOW),
     ("[llm] sign-in stopped", YELLOW),
+    ("[imu] lost", YELLOW),
+    ("[imu] the chip didn't", YELLOW),
+    ("[imu] can't", YELLOW),
     ("Usage:", YELLOW),
     ("Unknown command", YELLOW),
     ("W (", YELLOW),
@@ -57,6 +62,7 @@ RULES = (
     ("[scan] ", GREEN),
     ("[route] ", BOLD_GREEN),
     ("[servo] ", MAGENTA),
+    ("[imu] ", MAGENTA),
     ("[wifi] ", BLUE),
     ("[link] ", BLUE),
     ("[llm] To sign", BOLD),  # the sign-in code to type
