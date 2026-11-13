@@ -6,7 +6,8 @@ lands on the plate and stops moving ([automatic scans](#automatic-scans)), or
 when you press the board's **BOOT** button (or type `scan`), it:
 
 1. takes a 640 × 480 photo of the plate,
-2. sends it to the detection server over HTTPS,
+2. sends it to the detection server over HTTPS (or, in [LLM mode](#llm-mode),
+   straight to an OpenAI model),
 3. routes the detections with routing-v1 (below),
 4. turns the servo to that stream's angle, holds it for 1 s, and returns home.
 
@@ -25,8 +26,9 @@ Green and red stay on for 3 s, then the LED goes dark. The LED is the
 WS2812 on GPIO 48, built into ESP32-S3 DevKitC-1 style boards; `LED_PIN`,
 `LED_BRIGHTNESS` and `LED_RESULT_MS` in `include/config.h` change it.
 
-Not in the MVP: fill sensors, the IMU, the display, the drawer switches and
-relay, and the yaw-then-tilt pair of servos.
+Not in the MVP: fill sensors, the display, the drawer switches and relay, and
+the yaw-then-tilt pair of servos. An [IMU](#imu-mpu-6050-optional) under the
+plate is optional: without one the bin runs as described here.
 
 ## Automatic scans
 
@@ -42,18 +44,21 @@ light don't trigger a scan either.
 
 Things to know:
 - A sudden lasting change, such as lights switched on, triggers one scan. The
-  server finds nothing, so the empty plate tips into `other`.
+  server finds nothing, so the empty plate tips into `other`. With the
+  [IMU](#imu-mpu-6050-optional), a change over 80% of the view that the
+  plate didn't feel is taken as the light instead.
 - An item that looks almost like the plate (white tissue on a white plate)
-  may change too little to trigger. Press **BOOT** for those. The IMU is
-  planned to catch them.
+  may change too little to trigger. Press **BOOT** for those. The IMU
+  catches the ones heavy enough to jolt the plate, but not a tissue.
 - It only watches while the servo is at home, so `servo <angle>` doesn't set
   it off.
 - `auto off` stops it, for example while you aim the camera by hand. It's
   back on after every restart.
 - The thresholds in `include/config.h` (`WATCH_*`) are first guesses. Tune
   them on the bin with the `[watch]` log lines.
-- The simulator has no live camera, so there it doesn't run. Use the green
-  button.
+- The simulator has no live camera, so there only an impact on its
+  MPU-6050 starts a scan ([Simulator](#simulator-no-board-needed)). Or use
+  the green button.
 
 ## Routing (routing-v1, approved 2026-10-17)
 
@@ -82,6 +87,71 @@ Do not power the servo from the board's 5 V pin. An MG996R can draw over 2 A
 when it starts, which resets the ESP32. Both grounds must be joined, or the
 signal has no reference. A large capacitor (470–2200 µF, 10 V or more) across
 the servo supply helps. Test with the horn free before fixing anything to it.
+
+## IMU (MPU-6050, optional)
+
+An MPU-6050 (accelerometer and gyro) fixed under the plate tells the bin how
+the plate really sits, since the servo has no feedback of its own. It can't
+weigh anything: it feels tilt and jolts.
+
+| MPU-6050 pin | Goes to |
+|---|---|
+| VCC | 3V3 |
+| GND | GND |
+| SDA | GPIO 1 |
+| SCL | GPIO 2 |
+| AD0 | leave open (address 0x68), or 3V3 for 0x69 |
+| INT, XDA, XCL | not used |
+
+It uses I²C port 0 at 100 kHz; the camera has port 1. Wire it with the board
+off. Fix it flat and close to the tilt axis, where the plate's own motion
+disturbs the reading least, and give the wires a slack loop with strain
+relief, because they bend on every tip. Twist SDA and SCL with GND if they
+run near the servo's wires. The pins and every threshold below are in
+`include/config.h` (`IMU_*`).
+
+What it does once found (the bin logs `[imu] MPU-6050 at 0x68` at start):
+
+- **Before each scan** the plate must be level within 3° at home, or the
+  scan holds: `[hold] the plate is 6.2° off level at home`.
+- **After each tip** the log says how far the plate went and whether it came
+  back: `[imu] tipped to 44.8°, back at 0.4°`. The LED turns red if the
+  plate tipped less than 10° (stuck, or the servo stalled) or isn't level
+  back home.
+- **`servo` and `angle`** print the plate's real tilt (`[imu] plate at
+  22.5° from level`), so you can set the angles by the plate rather than the
+  servo.
+- **Automatic scans** weigh what the plate felt with what the camera saw
+  (`include/presence.h`):
+
+| Camera, once nothing moves | Plate felt | The bin |
+|---|---|---|
+| 0.2% or more changed | an impact | scans |
+| 1% or more changed | nothing | scans (an item too light to feel) |
+| 80% or more changed | nothing | takes it as the light and watches the new view |
+| under 0.2% changed, 1 s on | an impact | logs a bump and doesn't scan |
+
+The servo's own starts and stops jolt the plate too, so impacts only count
+with the servo home and still for 0.5 s.
+
+Without the chip the bin runs as before, and looks for one every second, so
+a loose wire that comes back is picked up again. `imu off` makes the bin
+ignore it (saved).
+
+First run with the IMU:
+
+1. `imu`: the chip, the tilt, and the gravity it reads. At rest gravity
+   should be close to 1.00 g; if not, the chip's range differs from the
+   MPU-6050's. The plate should read `still` with the servo holding home;
+   if it always reads `moving`, the servo's hum shakes it more than
+   `IMU_STILL_G` (0.03 g) allows, so raise that.
+2. With the plate home, check it is level with a spirit level (adjust
+   `angle home` until it is), then type `imu level`. Tilt reads from there
+   on, however the chip is fixed. Until then it assumes the chip lies flat.
+3. Drop a few items and read the impacts in `imu`
+   (`Impacts: 3, the last 0.42 g`) and the `[watch]` lines. Raise
+   `IMU_IMPACT_G` (0.08 g) if the servo's hum or the room counts as an
+   impact; lower it if light items go unfelt.
 
 ## Build and flash
 
@@ -140,12 +210,13 @@ reset are normal.
 The log is color coded, here and in the [viewer](#viewer). Red means the
 board held (the servo stays home), a connection failed or the chip crashed;
 yellow is a warning. The steps of a scan: `[watch]` and `[camera]` cyan,
-`[scan]` green, `[route]` bold green, `[servo]` magenta, `[wifi]` and `[link]`
+`[scan]` green, `[route]` bold green, `[servo]` and `[imu]` magenta, `[wifi]` and `[link]`
 blue, `[time]` grey. The rules are in `scripts/log_colors.py`;
 `NO_COLOR=1` turns the colors off.
 
-The routing rule lives in `include/routing.h` and has unit tests that run on
-the Mac, without the board:
+The routing rule (`include/routing.h`), the IMU's arithmetic
+(`include/imu_math.h`) and the camera-and-IMU rules (`include/presence.h`)
+have unit tests that run on the Mac, without the board:
 
 ```sh
 ~/.platformio/penv/bin/pio test -d firmware -e native
@@ -207,8 +278,8 @@ connects to it. The simulator has no live camera, so only scan photos show.
 ## Simulator (no board needed)
 
 The [Wokwi](https://wokwi.com) extension for VS Code runs the real firmware
-on a simulated ESP32-S3 with the servo and a green button wired to the BOOT
-pin (`diagram.json`). Wokwi has no camera, so the simulator build sends
+on a simulated ESP32-S3 with the servo, an MPU-6050 and a green button wired
+to the BOOT pin (`diagram.json`). Wokwi has no camera, so the simulator build sends
 photos from `sim/photos` instead, one per scan, in turn. Its Wi-Fi reaches
 the internet, so scans go to the real detection server.
 
@@ -234,6 +305,13 @@ and sign in with a free Wokwi account.
 and the servo in the diagram turns. `photos` lists the photos and
 `photo 3` picks the next one to send.
 
+The MPU-6050 stands for the plate. Click it while the simulation runs to
+change what it reads (or set `accelX`, `accelY` and `accelZ` in its `attrs`
+in `diagram.json`). Any change counts as an impact and starts a scan, since
+there is no camera to look. Lean it (`accelX` 0.2, about 11°) to see a scan
+hold because the plate is off level. It doesn't tip when the servo turns, so
+after each scan the log says the plate tipped 0° and the LED turns red.
+
 ### Simulator photos
 
 `sim/photos` holds 11 photos on plain backgrounds from the **test split** of
@@ -255,7 +333,8 @@ To add photos, put JPEG, PNG or HEIC files in `sim/photos` (they are shrunk
 to 640 px) and build `sim` again. Git ignores them, like the `demo/` videos.
 
 What the simulator can't show: the camera itself, the servo's real torque,
-and power problems such as the board resetting when the servo starts.
+the plate tipping, and power problems such as the board resetting when the
+servo starts.
 
 ## First run
 
@@ -349,6 +428,104 @@ BIN_TOKEN=<token> python3 scripts/measure_latency.py sim/photos/*.jpg
 `speed` sets the servo's speed in degrees a second (default 300; 0 lets the
 servo go at its own top speed).
 
+## LLM mode
+
+`mode llm` sends each photo from the board straight to an OpenAI model
+(GPT-6-Luna by default) instead of to the detection server. The model lists
+the items it sees, and routing-v1 routes them as it routes the server's
+boxes. `mode yolo` switches back. The mode is saved.
+
+The board talks to the ChatGPT Codex backend
+(`chatgpt.com/backend-api/codex/responses`), the server OpenAI's Codex CLI
+uses, with a ChatGPT sign-in of its own, so it needs no OpenAI API key. This
+is not a published API: OpenAI can change or block it at any time, and a
+ChatGPT plan's terms may not cover this use. Use it for tests.
+
+### Sign in
+
+Once, with the board on Wi-Fi:
+
+```
+llm login
+```
+
+The board prints a code. Open https://auth.openai.com/codex/device on a phone
+or the Mac, sign in to ChatGPT and enter the code within 15 minutes. `status`
+then shows `ChatGPT: signed in as <email>, token good for 9 days`. If the
+sign-in fails at once, device-code sign-in may need turning on in ChatGPT's
+security settings (as `codex login --device-auth` may need).
+
+The board saves the tokens and renews them a day before they run out (they
+last 10 days), in the background, so a scan never waits for the sign-in. It
+needs the time for that, which it gets from the internet once Wi-Fi joins.
+`llm logout` forgets the sign-in.
+
+The board signs in on its own rather than taking a copy of the Mac's Codex
+sign-in: each renewal replaces the renewal token, so two programs sharing
+one sign-in would log each other out. Anyone with the board can read the
+tokens from its flash, so sign out (`llm logout`) before you lend it.
+
+### What changes in LLM mode
+
+Expected log:
+
+```
+[scan] start
+[scan] photo 640x480, 23 KB
+[scan] asking gpt-6-luna
+[scan] gpt-6-luna saw plastic_bottle
+[route] plastic_bottles, liner 2: every item goes to plastic_bottles
+```
+
+- There are no boxes, so the viewer shows the photo and the decision only.
+- `conf` doesn't apply: the model gives no confidence.
+- The model may name an item with no v4 class (`drink_carton`, `can`,
+  `hazard`, `other`, ...). The plate then goes to other.
+- The board holds when no answer comes within 15 s (`LLM_TIMEOUT_MS`), when
+  ChatGPT refuses the sign-in (401: it renews the token; scan again), and at
+  the plan's usage limit (429).
+- `llm model <name>` picks another model, for example `gpt-6-sol`.
+
+The question the model gets is in `include/llm_prompt.h`: the 7 v4 classes
+plus 11 labels for common items with no class (drink cartons, food waste,
+foam boxes, cans, straws, chopsticks, pens, masks, glass, hazards such as
+batteries, and other). Those 11 all send the plate to other, as an item with
+no class always has. The model, its reasoning effort (`low`) and the image
+detail (`high`) are in `include/config.h`. The board sends the photo as base64 inside the JSON
+request, and the reply streams 15–25 KB of events, from which the board
+takes the answer.
+
+### Speed
+
+From a Mac in Vietnam on 2026-11-07, the answer took 1.3–4.8 s (median about
+1.8 s) over the 11 simulator photos sent twice, against about 0.4 s for the
+detection server. Most of it is the model's server: usually 0.6–1.6 s before
+the first byte comes back, then 0.5–1 s for the answer. 20 of the 22 went to
+the right stream; both misses were photo 10, where the model took the small
+paper cup among four bottles for a bottle, so a mixed plate went to
+`plastic_bottles` (in an earlier run it got the same photo right 3 times out
+of 3). The simulator photos are from the test split, so don't tune the prompt
+on them; use bin photos. These did not make it faster:
+OpenAI's priority tier, a WebSocket instead of HTTPS, HTTP/2, a 320 × 240
+photo, and dropping the JSON schema. With the 18-label prompt, reasoning
+`low` and `none` both routed all 22 right, at a median of 1.6 s and 1.8 s
+(`llm_latency.py --effort none` compares them).
+
+To time it from the Mac with the board's exact request (it uses the Mac's
+own Codex sign-in in `~/.codex/auth.json`, read only):
+
+```sh
+cd firmware
+python3 scripts/llm_latency.py --rounds 2 sim/photos/*.jpg
+```
+
+It prints each photo's time, the model's items and the stream they route
+to, checked against `sim/photos/sources.json`.
+
+Not yet: saving the photo with the model's labels and boxes as training
+data, and a mode that asks the model only when the detection server is
+unsure.
+
 ## Commands
 
 | Command | Does |
@@ -356,7 +533,11 @@ servo go at its own top speed).
 | `status` | the bin at a glance: settings, connection, memory |
 | `ssid <name>`, `pass <password>`, `connect` | join Wi-Fi (2.4 GHz only); saved |
 | `server <url>` | detection server address; saved |
-| `conf <0.05-0.95>` | lowest confidence routed to a recycling liner; saved |
+| `mode [yolo\|llm]` | who names the items: the detection server (yolo) or an LLM ([LLM mode](#llm-mode)); saved |
+| `llm login`, `llm logout` | sign the board in to ChatGPT for LLM mode, or forget the sign-in |
+| `llm model <name>` | the model LLM mode asks (default `gpt-6-luna`); saved |
+| `llm` | the ChatGPT sign-in and the model |
+| `conf <0.05-0.95>` | lowest confidence routed to a recycling liner (yolo mode); saved |
 | `speed <0-1000>` | servo speed in degrees a second, 0 for its top speed; saved (default 300) |
 | `quality <4-63>` | camera JPEG quality, lower is sharper and bigger; saved (default 12) |
 | `servo <0-180>` | turn the servo now |
@@ -364,12 +545,17 @@ servo go at its own top speed).
 | `snap` | take a photo and send it to the viewer, without the server |
 | `scan` | photo → server → servo, same as BOOT |
 | `auto on\|off` | [automatic scans](#automatic-scans); on after every restart |
+| `imu` | what the [IMU](#imu-mpu-6050-optional) reads: tilt, shake, impacts |
+| `imu level` | save the plate's tilt now as level (plate home and level) |
+| `imu on\|off` | use the IMU's checks, or ignore it; saved |
 | `reboot` | restart |
 
 Commands work at any time, even during a scan or while the board is
-connecting to the server. The board runs three tasks (`main.cpp`): one
+connecting to the server. The board runs five tasks (`main.cpp`): one
 reads what you type and runs the commands that only read or save settings
-at once; one owns the camera and servo; one keeps the server connection.
+at once; one owns the camera and servo; one keeps the server connection;
+one signs in to ChatGPT and renews the sign-in (`llm.cpp`); one reads the
+IMU (`imu.cpp`).
 `scan`, `snap`, `servo` and `angle` need the camera or servo, so while
 either is busy they wait their turn, up to 8 at a time, and a yellow
 `[busy]` line says so. A `scan` or BOOT press while a scan is running or
@@ -379,8 +565,14 @@ instead of joining first.
 
 ## Server contract
 
-`POST` the raw JPEG as the body with `Content-Type: image/jpeg` and the bin
-token in `X-Bin-Token`. The reply:
+The detection server is `server/app.py`, a [Modal](https://modal.com) app
+(`smart-bin-api`). Deploy it from the repository root with
+`modal deploy server/app.py`. Its `/config` repeats routing-v1 for the demo
+page, so a change to `include/routing.h` goes there too.
+
+In yolo mode, `POST` the raw JPEG as the body with `Content-Type: image/jpeg`
+and the bin token in `X-Bin-Token`. ([LLM mode](#llm-mode) doesn't use this
+server.) The reply:
 
 ```json
 {"count": 1, "objects": [{"label": "plastic_bottle", "conf": 0.91, "box": [207, 108, 428, 480]}], "image_size": [640, 480]}

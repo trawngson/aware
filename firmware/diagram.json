@@ -23,6 +23,13 @@
       "top": 250,
       "left": 230,
       "attrs": { "color": "green", "label": "BOOT (scan)" }
+    },
+    {
+      "type": "wokwi-mpu6050",
+      "id": "imu",
+      "top": 120,
+      "left": 230,
+      "attrs": {}
     }
   ],
   "connections": [
@@ -32,7 +39,11 @@
     ["servo:V+", "esp:5V", "red", []],
     ["servo:GND", "esp:GND.1", "black", []],
     ["scan:1.l", "esp:0", "green", []],
-    ["scan:2.l", "esp:GND.2", "black", []]
+    ["scan:2.l", "esp:GND.2", "black", []],
+    ["imu:SDA", "esp:1", "blue", []],
+    ["imu:SCL", "esp:2", "purple", []],
+    ["imu:VCC", "esp:3V3.1", "red", []],
+    ["imu:GND", "esp:GND.2", "black", []]
   ],
   "serialMonitor": { "display": "terminal", "convertEol": true },
   "dependencies": {}

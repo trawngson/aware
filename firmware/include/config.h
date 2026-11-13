@@ -6,7 +6,7 @@
 
 #include "esp_camera.h"
 
-#define FIRMWARE_VERSION "mvp-0.5.0"
+#define FIRMWARE_VERSION "mvp-0.7.0"
 
 // Camera: ESP32-S3 N16R8 CAM boards with an OV2640 use the ESP32-S3-EYE
 // (Freenove) camera pins.
@@ -139,6 +139,33 @@ constexpr uint32_t LIVE_HOLD_MS = 3000;
 #define LOCAL_WIFI_PASS ""
 #endif
 
+// LLM mode ("mode llm"; README, LLM mode): the board sends the photo straight
+// to an OpenAI model through the ChatGPT sign-in that Codex uses ("llm login"),
+// instead of to the detection server. The question it asks is in llm_prompt.h.
+#define LLM_URL "https://chatgpt.com/backend-api/codex/responses"
+// "llm model" changes it, saved.
+#define LLM_DEFAULT_MODEL "gpt-6-luna"
+// With the 18-label prompt (2026-11-07, scripts/llm_latency.py, sim/photos
+// twice) "low" and "none" both sorted all 22 right; "low" took a median of
+// 1.6 s (slowest 3.3 s), "none" 1.8 s (slowest 2.5 s).
+#define LLM_REASONING_EFFORT "low"
+// "low" shrinks the photo to 512 px before the model sees it, and then small
+// items get mixed up (a paper cup among bottles); "high" was no slower.
+#define LLM_IMAGE_DETAIL "high"
+// The answer usually comes in 1-2 s; a stuck request holds after this.
+constexpr uint32_t LLM_TIMEOUT_MS = 15000;
+// The reply streams 15-25 KB of events; the answer is one of them.
+constexpr size_t LLM_MAX_REPLY_BYTES = 65536;
+// Sign-in: the device-code flow and client ID of OpenAI's Codex CLI.
+#define OPENAI_AUTH_HOST "auth.openai.com"
+#define CODEX_CLIENT_ID "app_EMoamEEZ73f0CkXaXp7hrann"
+// Access tokens last 10 days; the board renews its own this long before
+// they run out, in the background.
+constexpr uint32_t LLM_REFRESH_AHEAD_S = 24 * 3600;
+constexpr uint32_t LLM_LOGIN_TIMEOUT_MS = 15 * 60 * 1000;  // to type the code
+constexpr uint32_t LLM_AUTH_CHECK_MS = 60000;              // how often to check the token
+constexpr uint32_t LLM_AUTH_TASK_STACK_BYTES = 16384;      // TLS and two tokens' JSON
+
 // Detections beyond this many send the plate to other.
 constexpr size_t MAX_DETECTIONS = 32;
 
@@ -150,3 +177,33 @@ constexpr int WATCH_PIXEL_DIFF = 24;          // grey levels (of 255) that count
 constexpr float WATCH_ITEM_SHARE = 0.01f;     // changed from the empty plate: an item
 constexpr float WATCH_STILL_SHARE = 0.005f;   // changed since the last check below this: still
 constexpr int WATCH_STILL_CHECKS = 2;         // still checks in a row before a scan
+// With the IMU in use (imu.h), a felt impact lowers the share that counts as
+// an item, and a change this big with no impact is the light (presence.h).
+// Kept high: a sheet of paper that floats down flat may not jolt the plate,
+// yet covers half the view. Above 1 turns the rule off.
+constexpr float WATCH_FELT_SHARE = 0.002f;
+constexpr float WATCH_LIGHT_SHARE = 0.8f;
+
+// IMU: an MPU-6050 under the plate, optional (imu.h). It uses I2C port 0;
+// the camera's SCCB has port 1. GPIO 1 and 2 are free on these boards (not
+// camera, PSRAM, SD card, USB or strapping pins).
+constexpr int IMU_PIN_SDA = 1;
+constexpr int IMU_PIN_SCL = 2;
+constexpr uint32_t IMU_I2C_HZ = 100000;  // slow and sure over the wires out to the plate
+constexpr uint32_t IMU_SAMPLE_HZ = 200;
+constexpr uint32_t IMU_RETRY_MS = 1000;  // how often it looks for a missing chip
+constexpr uint32_t IMU_TASK_STACK_BYTES = 4096;
+// Checks around each tip. All are first guesses until tested on the bin.
+constexpr float IMU_LEVEL_TOLERANCE_DEG = 3.0f;  // off level at home: the scan holds
+constexpr float IMU_MIN_TIP_DEG = 10.0f;         // less at a bin: the plate didn't tip
+constexpr uint32_t IMU_SETTLE_MS = 500;          // longest wait for the plate to stop moving
+constexpr uint32_t IMU_STILL_MS = 100;           // still this long counts as settled
+// Impacts: shake is how far the acceleration is from its slow average
+// (imu_math.h). The "imu" command shows the last impact's peak, for tuning.
+constexpr float IMU_STILL_G = 0.03f;
+constexpr float IMU_IMPACT_G = 0.08f;
+constexpr float IMU_REARM_G = 0.04f;
+constexpr uint32_t IMU_IMPACT_GAP_MS = 300;    // bounces closer than this are one impact
+constexpr uint32_t IMU_AFTER_MOVE_MS = 500;    // the servo's own jolts: no impacts until then
+constexpr uint32_t IMU_FELT_WINDOW_MS = 10000; // an impact older than this is forgotten
+constexpr uint32_t IMU_BUMP_AFTER_MS = 1000;   // time for the camera to see what landed

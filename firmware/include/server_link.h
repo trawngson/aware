@@ -1,4 +1,6 @@
-// One kept-open connection to the detection server.
+// One kept-open connection to the server that answers scans: the detection
+// server, or in LLM mode the model's server (pointLink in commands.cpp
+// switches it).
 //
 // Opening an HTTPS connection costs DNS, a TCP round trip, a two-round-trip
 // TLS 1.2 handshake and certificate checks done in software. From Hanoi to a
@@ -9,6 +11,8 @@
 #pragma once
 
 #include <Arduino.h>
+
+#include "config.h"
 
 struct LinkTiming {
   bool reused = false;      // the scan found the connection already open
@@ -25,6 +29,20 @@ struct LinkReply {
   LinkTiming timing;
 };
 
+struct LinkRequest {
+  // Where the request goes. When it isn't where the link is, the link
+  // switches there first, so a request never reaches a server it wasn't
+  // meant for, even when the mode changed in the meantime.
+  String url;
+  const uint8_t* body = nullptr;
+  size_t length = 0;
+  const char* contentType = "";
+  String headers;                        // extra header lines, each ending in \r\n
+  const char* accept = nullptr;          // Accept header, when set
+  size_t maxReplyBytes = MAX_REPLY_BYTES;
+  uint32_t timeoutMs = HTTP_TIMEOUT_MS;  // from the end of sending to the end of the reply
+};
+
 // Starts the link task. Call in setup() before the other link functions.
 void linkBegin();
 
@@ -32,6 +50,12 @@ void linkBegin();
 // task closes any open connection and connects to the new server. Returns at
 // once; the [link] lines report the connection.
 bool linkSetServer(const String& url, String& error);
+
+// Checks an address the way linkSetServer does, without switching to it.
+bool linkCheckUrl(const String& url, String& error);
+
+// Closes the connection and keeps it closed until a server is set again.
+void linkClearServer();
 
 // Asks the link task to connect now instead of at its next retry, for
 // example when Wi-Fi has just joined.
@@ -43,4 +67,4 @@ bool linkIsOpen();      // as of the link task's last check, at most 1 s ago
 // POSTs the body and reads the reply, connecting first if needed. A reused
 // connection that turns out to be dead is reopened once and the request sent
 // again. Waits while the link task is connecting, then uses that connection.
-LinkReply linkPost(const uint8_t* body, size_t length, const char* contentType);
+LinkReply linkPost(const LinkRequest& request);
